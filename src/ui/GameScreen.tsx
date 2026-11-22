@@ -1,0 +1,183 @@
+import { useEffect, useReducer, useRef, useState } from 'react';
+import type { GameController } from '../engine/controller';
+import { RenderManager } from '../render/renderManager';
+import { Joystick, Portrait, Stage25D, useTypewriter } from './parts';
+import { ChecklistTask, ComposeTask, RosterTask, TerminalTask } from './Tasks';
+import { CareerPanel, FlowPanel, RelationsPanel, RosterPanel, SavePanel, SettingsPanel, TimelinePanel } from './Panels';
+import { EVAL_LABEL } from '../engine/worldState';
+import type { EvalKey } from '../engine/types';
+
+export function useCtl(c: GameController) { const [, f] = useReducer((x: number) => x + 1, 0); useEffect(() => c.subscribe(f), [c]); return c.version; }
+
+const INFLUENCE: Record<string, string> = {
+  'legacy.wish_station': '配属面談で「駅の接客を極めたい」と申告 → 異動面談での説明に反映',
+  'legacy.wish_depot': '配属面談で「車両・設備への関心」を申告 → 基地への異動条件の説明に反映',
+  'legacy.wish_planning': '配属面談で「輸送計画への関心」を申告 → 企画系部署の条件の説明に反映',
+  'legacy.wish_open': '配属面談で希望を決めずに経験を優先 → 駅長の助言に反映',
+  'legacy.helped_kajiwara': '梶原さんに窓口まで付き添った → 第2章冒頭に梶原さんが再訪する',
+  'legacy.concealed': '案内の誤りに正面から触れなかった → 第2章で記録の食い違いを確認される',
+  'legacy.depot_tour': '山科さんと車両基地の見学会へ → 第2章冒頭が見学会の場面になる',
+  'legacy.mentor_line': '久保田さんの自主練習に参加 → 第2章冒頭が練習の場面になる',
+  'legacy.rested': '公休はしっかり休んだ → 第2章は静かな月曜から始まる',
+  'ch1.admitted_error': '案内の誤りを自分から報告した → 久保田・駅長からの信頼が上がる',
+  'ch1.delay_verified': '遅延時に確認してから案内した → 指令・旅客からの信頼が上がる',
+  'ch1.delay_late': '遅延対応に出遅れた → 久保田が先に対応した',
+  'ch1.guessed_info': '見込みを断定的に案内した → 旅客が乗り継ぎに失敗した'
+};
+
+export function GameScreen({ c, onExit }: { c: GameController; onExit: () => void }) {
+  useCtl(c);
+  const cv3 = useRef<HTMLCanvasElement>(null), cv2 = useRef<HTMLCanvasElement>(null); const [webglFail, setWebglFail] = useState(false); const [stats, setStats] = useState<any>(null);
+  const debug = typeof location !== 'undefined' && /[?&](debug|stats|audit)/.test(location.search);
+
+  useEffect(() => {
+    if (!cv3.current || !cv2.current) return;
+    const rm = new RenderManager({
+      canvas: cv3.current, plan: cv2.current, sim: c.sim, rail: c.rail, data: c.data, characters: c.story.characters, playerName: c.world.playerName, quality: c.settings.quality, auto: c.settings.autoQuality,
+      onFootstep: s => c.audio.footstep(s), onQuality: q => { c.settings.quality = q; c.say(`描画品質を自動調整しました：${q === 'high' ? '最高' : q === 'medium' ? '標準' : '最低'}`); },
+      onRailEvent: e => { const dir = e.service.track === 'A' ? '1番線（海浜口方面）' : '2番線（空港連絡方面）'; if (e.type === 'approach') c.audio.chime('approach', `まもなく${dir}に${e.service.kind} ${e.service.dest}行きが到着します。黄色い線の内側でお待ちください。`); if (e.type === 'depart') c.audio.chime('depart', `${dir}の${e.service.kind}が発車します。`); },
+      onTrainAudio: (v, g, p, d) => c.audio.trainUpdate(v, g, p, d)
+    });
+    c.attachRender(rm); if (!rm.webgl) { setWebglFail(true); rm.setViewMode('2d'); } else rm.setViewMode(c.settings.view);
+    c.afterAttach(); rm.resize(); rm.start(); (window as any).__RR = { c, rm }; let last = performance.now(); let n = 0;
+    rm.onUpdate = () => { const t = performance.now(); c.tick(Math.min(0.1, (t - last) / 1000)); last = t; if (debug && ++n % 20 === 0) setStats(rm.stats()); };
+    const ro = new ResizeObserver(() => rm.resize()); ro.observe(cv3.current.parentElement!); const onVis = () => { rm.paused = document.hidden; }; document.addEventListener('visibilitychange', onVis);
+    return () => { ro.disconnect(); document.removeEventListener('visibilitychange', onVis); rm.dispose(); c.rm = undefined; };
+  }, [c]); // eslint-disable-line
+
+  useEffect(() => {
+    const k = (e: KeyboardEvent) => {
+      if (/INPUT|TEXTAREA|SELECT/.test((e.target as HTMLElement).tagName)) return; const v = c.view;
+      if (e.code === 'Space' || e.code === 'Enter') { if (v?.kind === 'line' && !c.panel) { e.preventDefault(); c.advanceLine(); } else if (v?.kind === 'hub' && c.prompt && !c.panel) { e.preventDefault(); c.doPrompt(); } }
+      if (e.code === 'KeyE' && v?.kind === 'hub' && c.prompt && !c.panel) c.doPrompt();
+      if (v?.kind === 'choice' && /^Digit[1-9]$/.test(e.code)) { const o = v.options[+e.code.slice(5) - 1]; if (o) c.choose(o.id); }
+      if (e.code === 'Escape' && c.panel) { c.panel = null; c.notify(); }
+    };
+    window.addEventListener('keydown', k); return () => window.removeEventListener('keydown', k);
+  }, [c]);
+
+  const v = c.view; const hint = v && 'node' in v ? v.node.view : undefined; const stage = !!v && (v.kind === 'line' || v.kind === 'choice') && hint?.mode === '25d'; const hub = v?.kind === 'hub';
+  const startAudio = () => { if (!c.audio.started) c.audio.start().then(() => { c.audio.setZone(c.audio.zone); c.notify(); }); };
+
+  return (
+    <div className="game" onPointerDown={startAudio}>
+      <div className="stage" style={{ visibility: stage ? 'hidden' : 'visible' }}><canvas ref={cv3} aria-label="3D表示" /><canvas ref={cv2} aria-label="2D平面図" style={{ visibility: 'hidden' }} /></div>
+      {stage && v && (v.kind === 'line' || v.kind === 'choice') && <StageView c={c} />}
+      {!stage && <Hud c={c} onExit={onExit} />}
+      {hub && !c.panel && <HubControls c={c} />}
+      {v?.kind === 'line' && <DialogueBox c={c} />}
+      {v?.kind === 'choice' && <ChoiceBox c={c} />}
+      {v?.kind === 'task' && <TaskHost c={c} />}
+      {c.endResult && v?.kind === 'end' && <ChapterEnd c={c} onExit={onExit} />}
+      {c.panel === 'roster' && <RosterPanel c={c} />}{c.panel === 'career' && <CareerPanel c={c} />}{c.panel === 'relations' && <RelationsPanel c={c} />}{c.panel === 'timeline' && <TimelinePanel c={c} />}{c.panel === 'flow' && <FlowPanel c={c} />}{c.panel === 'save' && <SavePanel c={c} />}{c.panel === 'settings' && <SettingsPanel c={c} onClose={() => { c.panel = null; c.notify(); }} />}
+      {c.toast && <div className="toast" role="status" data-ui>{c.toast.text}</div>}
+      {c.caption && <div className="caption" role="status" aria-live="polite">🔊 {c.caption.text}</div>}
+      {webglFail && <div className="toast" style={{ top: 120 }}>この端末では3D描画（WebGL）を開始できなかったため、2D表示で動作しています。</div>}
+      {debug && stats && <div className="stats">{stats.view}/{stats.cam} {stats.quality} {stats.fps}fps {stats.frameMs}ms calls:{stats.calls} tris:{stats.triangles} geo:{stats.geometries} tex:{stats.textures} heap:{stats.heapMB ?? '-'}MB</div>}
+    </div>
+  );
+}
+
+function Hud({ c, onExit }: { c: GameController; onExit: () => void }) {
+  const s = c.settings; const rm = c.rm; const hub = c.view?.kind === 'hub'; const cap = c.view && 'node' in c.view ? c.view.node.view?.caption : undefined; const [open, setOpen] = useState(false);
+  const P = (id: string) => () => { c.panel = id; c.audio.ui('click'); c.notify(); };
+  return (
+    <>
+      <div className="hud-top" data-ui>
+        <div className="chip"><div className="clock">{c.clockLabel}<small>{c.dateLabel}</small></div>{cap && <div className="small">{cap}</div>}</div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 6, alignItems: 'flex-end', minWidth: 0 }}>
+          <div className="hud-btns">
+            <div className="seg" role="group" aria-label="表示方式">{(['3d', '25d', '2d'] as const).map(m => <button key={m} className={s.view === m ? 'on' : ''} onClick={() => c.setView(m)} aria-pressed={s.view === m}>{m === '3d' ? '3D' : m === '25d' ? '擬似3D' : '2D'}</button>)}</div>
+            <button className="btn sm" onClick={() => setOpen(o => !o)} aria-expanded={open}>メニュー ▾</button>
+          </div>
+          {open && <div className="hud-btns" style={{ maxWidth: 360 }}>
+            <button className="btn sm" onClick={P('roster')}>勤務表</button><button className="btn sm" onClick={P('career')}>経歴・評価</button><button className="btn sm" onClick={P('relations')}>人物関係</button><button className="btn sm" onClick={P('timeline')}>年表・日誌</button><button className="btn sm" onClick={P('flow')}>分岐図</button><button className="btn sm" onClick={P('save')}>セーブ</button><button className="btn sm" onClick={P('settings')}>設定</button><button className="btn sm danger" onClick={() => { c.saveSlot('auto', true); onExit(); }}>タイトルへ</button>
+          </div>}
+          {hub && s.view !== '2d' && <div className="hud-btns"><div className="seg" role="group" aria-label="カメラ">{([['follow', '追従'], ['free', '自由'], ['first', '一人称']] as const).map(([m, l]) => <button key={m} className={rm?.camMode === m ? 'on' : ''} onClick={() => c.setCam(m)}>{l}</button>)}</div>
+            <select aria-label="カメラ位置" value={rm?.presetName ?? ''} onChange={e => { rm?.setPreset(e.target.value || null); c.notify(); }} style={{ width: 'auto', minHeight: 38, padding: '4px 8px' }}><option value="">視点プリセット</option>{rm && Object.keys(rm.data.presets).map(k => <option key={k} value={k}>{PRESET_JA[k] ?? k}</option>)}</select></div>}
+        </div>
+      </div>
+    </>
+  );
+}
+const PRESET_JA: Record<string, string> = { plaza: '駅前広場', overview: '全景（俯瞰）', top: '真上', front: '正面（北）', back: '背面（南）', side: '側面（西）', gate: '改札', concourse: 'コンコース', office: '駅事務室', platform: 'ホーム', platform_high: 'ホーム俯瞰', rail: '線路沿い', vend: '券売機', board: '発車標', tactile: '点字ブロック' };
+
+function HubControls({ c }: { c: GameController }) {
+  const v = c.view; if (v?.kind !== 'hub') return null; const p = c.prompt; const [goals, setGoals] = useState(true);
+  return (
+    <>
+      <div className="goals chip" data-ui><b>{c.textWorld(v.node.title)}</b>　<button className="btn sm ghost" style={{ minHeight: 28, padding: '0 8px' }} onClick={() => setGoals(g => !g)}>{goals ? '▲' : '▼'}</button>
+        {goals && <><ul>{v.goals.map(g => <li key={g.id} className={g.done ? 'done' : ''}><span className="ck">{g.done ? '✓' : ''}</span>{g.label}</li>)}</ul>{v.node.hint && <div className="hint">{v.node.hint}</div>}</>}</div>
+      <Joystick onMove={(x, y) => c.rm?.setMoveInput(x, y)} />
+      <div className="act" data-ui>
+        {p ? <button className="main" onClick={() => c.doPrompt()}>{p.label}<small>タップ／E／Enter</small></button> : <div className="chip small">歩いて設備や人物に近づく（黄色い◆が調べる対象）</div>}
+        {v.canExit && <button className="btn primary" onClick={() => c.exitHub()}>{v.node.exit.label}</button>}
+        <button className="btn sm" onClick={() => c.waitMinutes(30)} title="時間を進める">⏩ 30分進める</button>
+      </div>
+    </>
+  );
+}
+
+function StageView({ c }: { c: GameController }) {
+  const v = c.view!; if (v.kind !== 'line' && v.kind !== 'choice') return null; const h = v.node.view!; const line = v.kind === 'line' ? v.node.lines[c.lineIndex] : null;
+  return <Stage25D bg={h.bg ?? 'office'} cast={h.focus ?? []} speaker={line?.who ?? (v.kind === 'choice' ? v.node.who : undefined)} characters={c.story.characters} caption={h.caption} mood={line?.mood} />;
+}
+
+function DialogueBox({ c }: { c: GameController }) {
+  const v = c.view; if (v?.kind !== 'line') return null; const l = v.node.lines[c.lineIndex]; const text = c.textWorld(l.text); const def = l.who && l.who !== 'player' ? c.story.characters[l.who] : undefined;
+  const tw = useTypewriter(text, c.settings.textSpeed, v.node.id + ':' + c.lineIndex); const last = c.lineIndex === v.node.lines.length - 1; const [log, setLog] = useState(false);
+  const click = () => { if (!tw.done) tw.skip(); else c.advanceLine(); };
+  return (
+    <div className="dlg" data-ui>
+      <div className={'dlg-box' + (def ? '' : ' noav')} onClick={click} role="button" tabIndex={0} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); click(); } }} aria-label="会話。タップで次へ">
+        {def && <div className="av"><Portrait def={def} mood={l.mood} size={74} /></div>}
+        <div><div className="dlg-name">{l.narration ? '' : l.who === 'player' ? c.world.playerName : def?.name}{def && <small>{def.role}</small>}</div><div className={'dlg-text' + (l.narration ? ' nar' : '')} aria-live="polite">{tw.shown}</div></div>
+        <div className="dlg-foot"><span>{c.lineIndex + 1}/{v.node.lines.length}</span><span><button className="btn sm ghost" onClick={e => { e.stopPropagation(); setLog(x => !x); }}>ログ</button> <span className="next">{tw.done ? (last ? '▶ 次へ' : '▼') : '…'}</span></span></div>
+      </div>
+      {log && <div className="toast" style={{ top: 'auto', bottom: 170, maxHeight: '40vh', overflow: 'auto', width: 'min(640px, 92vw)', textAlign: 'left' }} onClick={() => setLog(false)}>{c.backlog.slice(-10).map((b, i) => <p key={i} style={{ margin: '4px 0' }}><b style={{ color: '#ffb938' }}>{b.who}</b> {b.text}</p>)}</div>}
+    </div>
+  );
+}
+
+function ChoiceBox({ c }: { c: GameController }) {
+  const v = c.view; if (v?.kind !== 'choice') return null; const [now, setNow] = useState(performance.now());
+  useEffect(() => { if (c.choiceDeadline === null) return; const id = setInterval(() => setNow(performance.now()), 100); return () => clearInterval(id); }, [c.choiceDeadline]);
+  const left = c.choiceDeadline ? Math.max(0, (c.choiceDeadline - now) / 1000) : null;
+  return (
+    <div className="choice" data-ui role="dialog" aria-label="選択">
+      <div className="choice-in">
+        <div className="choice-q">{v.node.important && <span className="imp">重要な選択</span>}{c.textWorld(v.node.prompt)}</div>
+        {left !== null && <div><div className="timer" aria-label="残り時間"><i style={{ width: (left / c.choiceTotal) * 100 + '%' }} /></div><div className="small">残り {Math.ceil(left)} 秒（時間切れは「{c.textWorld(v.node.options.find(o => o.id === v.node.defaultOption)?.label ?? '')}」）</div></div>}
+        {v.options.map((o, i) => <button key={o.id} className="choice-opt" onClick={() => c.choose(o.id)}><b style={{ color: '#ffb938' }}>{i + 1}.</b> {c.textWorld(o.label)}{o.hint && <div className="small">{o.hint}</div>}</button>)}
+      </div>
+    </div>
+  );
+}
+
+function TaskHost({ c }: { c: GameController }) {
+  const v = c.view; if (v?.kind !== 'task') return null; const n = v.node; const done = (s: number) => c.resolveTask(s);
+  if (n.kind === 'checklist') return <ChecklistTask key={n.id} node={n} onDone={done} />; if (n.kind === 'compose') return <ComposeTask key={n.id} node={n} onDone={done} />;
+  if (n.kind === 'terminal') return <TerminalTask key={n.id} node={n} onDone={done} rail={c.rail} minute={c.world.clock.minute} />; return <RosterTask key={n.id} node={n} onDone={done} world={c.world} startYear={c.story.startYear} />;
+}
+
+function ChapterEnd({ c, onExit }: { c: GameController; onExit: () => void }) {
+  const r = c.endResult!; const n = c.view?.kind === 'end' ? c.view.node : null; const w = c.world; const flags = Object.keys(w.flags).filter(f => INFLUENCE[f]);
+  const RC: Record<string, string> = { A: '#7bd88f', B: '#6fb6ff', C: '#ffb938', D: '#ff6b5a' };
+  return (
+    <div className="fullscreen" data-ui>
+      <div className="in">
+        <p className="small" style={{ margin: 0 }}>章の終了</p><h1 style={{ margin: '4px 0 6px', fontFamily: 'var(--display)' }}>{n?.title}</h1><p>{n?.summary}</p>
+        <div className="result-hero"><div className="rating" style={{ color: RC[r.rating], borderColor: RC[r.rating] }}>{r.rating}</div><div className="small">勤務評価（{n?.chapter === 'ch1' ? '勤務初日' : '導入'}の暫定評価）<br />{c.dateLabel} {c.clockLabel} 終了</div></div>
+        <h3>評価の内訳</h3>{(Object.keys(EVAL_LABEL) as EvalKey[]).map(k => <div className="bar" key={k}><span>{EVAL_LABEL[k]}</span><i><b style={{ width: r.scores[k] + '%' }} /></i><span>{Math.round(r.scores[k])}</span></div>)}
+        <h3>人物関係の変化</h3><table className="tbl"><tbody>{Object.entries(r.relDelta).filter(([, d]) => d.trust || d.rapport).map(([id, d]) => <tr key={id}><td>{c.story.characters[id]?.name ?? id}</td><td>信頼 {d.trust >= 0 ? '+' : ''}{d.trust}</td><td>親しさ {d.rapport >= 0 ? '+' : ''}{d.rapport}</td></tr>)}</tbody></table>
+        <h3>{n?.nextChapter ? '次の章への影響' : '今回の判断の記録'}</h3>
+        {flags.length ? <ul>{flags.map(f => <li key={f}>{INFLUENCE[f]}</li>)}</ul> : <p className="small">特筆すべき分岐はありません。</p>}
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 18 }}>
+          {n?.nextChapter && <button className="btn primary" onClick={() => c.startNextChapter()}>第2章 冒頭（体験版）へ進む</button>}
+          <button className="btn" onClick={() => { c.panel = 'flow'; c.notify(); }}>分岐図を見る</button><button className="btn" onClick={() => { c.panel = 'career'; c.notify(); }}>経歴・異動可否</button><button className="btn" onClick={() => { c.panel = 'save'; c.notify(); }}>セーブ</button><button className="btn ghost" onClick={onExit}>タイトルへ</button>
+        </div>
+        {!n?.nextChapter && <p className="small" style={{ marginTop: 14 }}>実装済みの範囲はここまでです。第3章以降（全96章企画）は未実装です。</p>}
+      </div>
+    </div>
+  );
+}

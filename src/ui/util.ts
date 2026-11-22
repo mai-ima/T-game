@@ -1,0 +1,3 @@
+export function fmtMinSafe(ts: number) {
+  try { const d = new Date(ts); return `${d.getMonth() + 1}/${d.getDate()} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`; } catch { return ''; }
+}

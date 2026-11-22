@@ -1,0 +1,10 @@
+{
+  "station": { "name": "駅営業・駅務", "short": "駅", "system": "駅務系統", "desc": "改札・窓口・案内・ホーム整理・運行情報の取扱い", "requirements": { "minMonths": 0, "certs": [], "training": [], "minEval": {} }, "demand": 3, "sites": ["青嶺中央駅", "海浜口駅", "翠川駅"] },
+  "crew": { "name": "乗務関連・教育", "short": "乗務", "system": "運転系統", "desc": "運転士・車掌の養成と乗務支援（資格取得後に乗務）", "requirements": { "minMonths": 18, "certs": ["station_basic"], "training": ["crew_selection"], "minEval": { "safety": 60, "accuracy": 58 } }, "demand": 1, "sites": ["青浜総合車両センター 乗務員区"] },
+  "depot": { "name": "車両基地・検修", "short": "基地", "system": "車両系統", "desc": "編成の検査記録・作業進捗・入出区の準備", "requirements": { "minMonths": 12, "certs": ["station_basic"], "training": ["depot_intro"], "minEval": { "safety": 58, "accuracy": 56 } }, "demand": 2, "sites": ["青浜総合車両センター", "星峰車両区"] },
+  "planning": { "name": "輸送計画・運用補助", "short": "計画", "system": "輸送系統", "desc": "ダイヤ案の読み取り・会議資料・他部署照会", "requirements": { "minMonths": 24, "certs": ["station_basic"], "training": [], "minEval": { "reporting": 60, "accuracy": 58 } }, "demand": 1, "sites": ["本社 輸送計画課"] },
+  "facility": { "name": "施設・設備部門", "short": "施設", "system": "施設系統", "desc": "保守対象の確認・巡回報告・工程調整", "requirements": { "minMonths": 18, "certs": ["station_basic"], "training": [], "minEval": { "safety": 60 } }, "demand": 2, "sites": ["青海保線技術センター"] },
+  "hr": { "name": "総務・人材育成", "short": "総務", "system": "管理系統", "desc": "研修企画・相談・議事録・社内通知", "requirements": { "minMonths": 24, "certs": [], "training": [], "minEval": { "teamwork": 60, "reporting": 58 } }, "demand": 1, "sites": ["本社 人事課"] },
+  "pr": { "name": "広報・地域連携", "short": "広報", "system": "管理系統", "desc": "地域説明会の準備・イベント・利用者意見の整理", "requirements": { "minMonths": 18, "certs": [], "training": [], "minEval": { "service": 60, "teamwork": 56 } }, "demand": 1, "sites": ["本社 広報課"] },
+  "digital": { "name": "デジタル・改善推進", "short": "改善", "system": "管理系統", "desc": "業務課題の整理・UI改善提案・現場ヒアリング", "requirements": { "minMonths": 18, "certs": [], "training": [], "minEval": { "accuracy": 60, "reporting": 58 } }, "demand": 1, "sites": ["本社 改善推進室"] }
+}
