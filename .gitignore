@@ -5,3 +5,4 @@ audit/tmp
 dist-lab
 coverage/
 .claude/worktrees/
+dist-art/

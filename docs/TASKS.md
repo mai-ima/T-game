@@ -21,7 +21,7 @@
 | RRR-QA-002 | 3D視覚監査 | 多視点・画面幅比較・修正 | R7-002 | リード | scripts/audit.mjs | audit/ 実行中 | in_progress | - |
 | RRR-QA-003 | ストーリー・セーブ監査 | 到達条件とセーブを自動試験 | R7-004 | リード | tests, scripts/dev/walk.mjs | walk PASS／audit実行中 | in_progress | - |
 | RRR-QA-004 | 高/低品質比較・性能 | 各2画像・FPS/メモリ | R7-002 | リード | audit節3,10,11 | 実行中 | in_progress | - |
-| RRR-RELEASE-001 | Artifacts試作確認 | 公開して動作確認・Vercelに出さない | QA-002/003 | リード | artifact/ | - | pending | - |
+| RRR-RELEASE-001 | Artifacts試作の公開 | ユーザー判断により不要（Vercelには出さない方針は継続） | - | - | artifact/（生成のみ） | - | cancelled（DEC-012） | - |
 
 ## 第1波の拡張（completed）
 RRR-R7-010 一日の業務拡充（34依頼・6種のミニゲーム）／R7-011 持ち場分岐・自由選択／R7-012 昼休憩の2D長尺会話／AUDIO-001 BGM・文字送り音・雑音低減／QA-005 ESLint・madge・knip・coverage／RRR-A11Y-001 アクセシビリティ審査と修正／RRR-FIX-001 会話タップ不具合の修正（scripts/dev/tap.mjs）／RRR-R7-005 第2章の実プレイ化（scripts/story/ch2.mjs）／RRR-R7-007 章ごとの分岐図の自動生成／RRR-RAIL-001 313系参考の走行物理（src/engine/railPhysics.ts, 13テスト, commit 611f9f0）／RRR-DOC-001 要求ID一覧（docs/REQUIREMENTS.md）。

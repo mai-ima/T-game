@@ -36,7 +36,7 @@
 | REQ-QA-04 | 分岐・保存・モード独立の自動検査（§17.8） | vitest＋walk | DONE | tests |
 | REQ-QA-05 | PASS/FAIL/UNVERIFIEDで管理（§17.9） | 全項目に付与 | DONE | audit/REPORT.md |
 | REQ-REL-01 | 試作はArtifactsのみ、Vercel禁止（§16,§G） | Vercelへ公開しない | DONE（遵守中） | 公開は Artifact ツールのみ |
-| REQ-REL-02 | Artifactsで実際に動く（§19 Phase1） | 公開して動作確認 | TODO | RRR-RELEASE-001（監査完走後） |
+| REQ-REL-02 | Artifactsで実際に動く（§19 Phase1） | 公開して動作確認 | WAIVED（ユーザー判断で試作公開は不要。2026-11-23） | DEC-012。ビルド成果物 artifact/index.html の生成までは維持 |
 | REQ-RAIL-01 | 313系ほか5形式・車両物理（§5） | 物理モデルと単体テスト | PARTIAL | railPhysics.ts（313系参考・推定値フラグ）。他4形式 TODO |
 | REQ-RAIL-02 | 車両基地A・2D配線・入出区同期（§3） | 配線・占有の一致 | TODO | RRR-DEPOT-001 |
 | REQ-RAIL-03 | 運転台・路線・線形（§2,§6） | 走行・停止 | TODO | 未着手 |

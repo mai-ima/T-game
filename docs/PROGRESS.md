@@ -6,7 +6,7 @@
 - ブランチ：`claude/determined-babbage-4drhs6`（pushは開発ブランチのみ。main直push・force push禁止）
 - ビルド：`npx vite build` OK、`npm run check`（tsc／ESLint／madge／vitest 56件）PASS
 - iPhone実機：UNVERIFIED／実機の音・FPS・発熱：UNVERIFIED／ESLint導入済み（0エラー）
-- Artifact：`artifact/index.html` 生成済み（約6MB）。**まだ公開していない**（監査完了後に公開。Vercelは使わない）
+- Artifact：ユーザー判断により**試作の公開は不要**（DEC-012）。`artifact/index.html` は生成のみ維持。Vercelは使わない
 
 ## 今回までの成果（実装済み）
 14モードメニュー（R7のみプレイ可）／共通エンジン（条件・効果・保存・キャリア）／R7第1章（309ノード、重要選択4、34依頼、6種のミニゲーム、持ち場3分岐、ch2冒頭）／3D駅（GLBモデル、改札・扉・事務室）／3D・擬似3D・2D切替／2Dピクセル会話／BGM・効果音／スマホHUD・目的地ナビ。
@@ -17,7 +17,7 @@
 - Vercel MCPは接続されているが、**試作では使用しない**（禁止）。Agent Teamsは実験的機能で既定では無効（有効化はユーザー判断）。
 
 ## 次の1〜3タスク
-1. 総合監査（`SOAK_SEC=20 node scripts/audit.mjs`、背景実行）を完走 → FAIL修正 → `audit/REPORT.md` 更新 → Artifact公開（RRR-QA-002/003/004, RELEASE-001）
+1. 総合監査（`SOAK_SEC=20 node scripts/audit.mjs`、背景実行）を完走 → FAIL修正 → `audit/REPORT.md` 更新（RRR-QA-002/003/004。試作のArtifact公開は不要）
 2. RRR-RAIL-001（313系走行物理の単体テスト付き純エンジン）
 3. RRR-ENGINE-010 → RRR-R8-001（複数ストーリー登録とR8第1章）
 
