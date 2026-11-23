@@ -4,3 +4,13 @@
 [PASS] 14モードのメインメニュー — カード14枚／プレイ可能1（R7のみ）
 [PASS] 未実装モードをプレイ可能と偽らない — 13モードに「未実装」表示
 [PASS] 未実装モードの案内 — 開始ボタンなし・設計のみと明記
+node:internal/modules/run_main:123
+    triggerUncaughtException(
+    ^
+
+page.evaluate: Target page, context or browser has been closed
+    at gc (/home/user/T-game/scripts/audit.mjs:22:35)
+    at toHub (/home/user/T-game/scripts/audit.mjs:23:77)
+    at /home/user/T-game/async file:/home/user/T-game/scripts/audit.mjs:47:188
+
+Node.js v22.23.5

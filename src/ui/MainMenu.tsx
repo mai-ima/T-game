@@ -4,6 +4,8 @@ import { MODES, type ModeDef } from '../data/modes';
 import type { SaveFile } from '../engine/save';
 import { SettingsPanel, StatusPanel } from './Panels';
 import { fmtMinSafe } from './util';
+import heroUrl from '../assets/hero.jpg';
+import { Icon } from './icons';
 
 type Slots = Record<string, SaveFile | 'corrupt' | undefined>;
 
@@ -15,9 +17,9 @@ export function MainMenu({ c, onStart }: { c: GameController; onStart: () => voi
   return (
     <div className="menu">
       <div className="menu-in">
-        <div className="menu-head">
+        <div className="hero" style={{ backgroundImage: `url(${heroUrl})` }} role="img" aria-label="青嶺中央駅（架空）に停車する313系参考の電車">
+          <div className="hero-tools"><button className="btn sm" onClick={() => { c.audio.ui('click'); setStatus(true); }}>検証状況</button><button className="btn sm" onClick={() => setSettings(true)}><span style={{ display: 'inline-flex', gap: 6, alignItems: 'center' }}><Icon.gear />設定</span></button></div>
           <div className="nameplate"><div className="band" /><div className="in"><h1>REAL RAIL &amp; ROAD</h1><p>鉄道・自動車 統合シミュレーション　プロトタイプ（Claude Artifacts 版）</p></div></div>
-          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}><button className="btn sm" onClick={() => { c.audio.ui('click'); setStatus(true); }}>検証状況</button><button className="btn sm" onClick={() => setSettings(true)}>設定</button></div>
         </div>
         <div className="board-strip" aria-label="実装状況">プレイ可能 {impl}/14　R7 第1章 実装済み　R7 第2章 冒頭のみ（体験版）　<span className="d">そのほか13モード 未実装（設計のみ）</span>　{rows.slice(0, 3).map(r => `${r.line}番線 ${r.time} ${r.kind} ${r.dest}`).join('　')}</div>
 

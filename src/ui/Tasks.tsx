@@ -30,7 +30,7 @@ export function ChecklistTask({ node, onDone }: { node: TaskNode; onDone: Done }
         </div>
       ))}
       {!fin ? <button className="btn primary" disabled={Object.keys(ans).length < items.length} onClick={() => setFin(true)}>判定する（{Object.keys(ans).length}/{items.length}）</button>
-        : <div><p><b>正答率 {score}%</b></p><button className="btn primary" onClick={() => onDone(score)}>報告して戻る</button></div>}
+        : <div style={{ display: 'flex', gap: 14, alignItems: 'center', flexWrap: 'wrap' }}><span className="stamp">確認<br />済</span><p style={{ margin: 0 }}><b>正答率 {score}%</b></p><button className="btn primary" onClick={() => onDone(score)}>報告して戻る</button></div>}
     </TaskShell>
   );
 }
@@ -48,7 +48,7 @@ export function ComposeTask({ node, onDone }: { node: TaskNode; onDone: Done }) 
       ))}
       <div className="term" style={{ margin: '10px 0', whiteSpace: 'normal' }}>【構内放送（案）】{assembled || '（未選択）'}</div>
       {!fin ? <button className="btn primary" disabled={Object.keys(pick).length < slots.length} onClick={() => setFin(true)}>放送文を確定する</button>
-        : <div><p><b>適切な項目 {good}/{slots.length}</b></p><button className="btn primary" onClick={() => onDone(score)}>放送して戻る</button></div>}
+        : <div style={{ display: 'flex', gap: 14, alignItems: 'center', flexWrap: 'wrap' }}><span className="stamp">校閲<br />済</span><p style={{ margin: 0 }}><b>適切な項目 {good}/{slots.length}</b></p><button className="btn primary" onClick={() => onDone(score)}>放送して戻る</button></div>}
     </TaskShell>
   );
 }

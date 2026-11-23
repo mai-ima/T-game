@@ -91,7 +91,7 @@ export class RenderManager {
     }
   }
   get gateY() { return D + 0.86; }
-  rigLo = false;
+  rigLo = false; shiftRun = false;
   setQuality(q: QualityId, fromAuto = false) { const was = this.quality !== 'high'; this.quality = q; this.adaptive.current = q; if (!fromAuto) this.adaptive.cooldown = 10; this.applyQuality(); if (was !== (q !== 'high') && this.webgl) this.buildRigs(); }
   setAuto(v: boolean) { this.adaptive.enabled = v; }
   applyQuality() {
@@ -140,8 +140,8 @@ export class RenderManager {
     const up = (e: PointerEvent) => { const wasTap = this.downInfo && !this.downInfo.moved && performance.now() - this.downInfo.t < 400 && this.pointers.size === 1; this.pointers.delete(e.pointerId); if (wasTap) this.tap(e.clientX, e.clientY); if (this.pointers.size === 0) this.downInfo = null; if (this.pointers.size < 2) this.pinch = 0; };
     el.addEventListener('pointerup', up); el.addEventListener('pointercancel', up);
     el.addEventListener('wheel', e => { e.preventDefault(); this.zoom(e.deltaY * 0.01); }, { passive: false }); el.addEventListener('contextmenu', e => e.preventDefault());
-    window.addEventListener('keydown', e => { if (/INPUT|TEXTAREA|SELECT/.test((e.target as HTMLElement)?.tagName)) return; this.keys.add(e.code); if (e.shiftKey) this.run = true; });
-    window.addEventListener('keyup', e => { this.keys.delete(e.code); if (!e.shiftKey) this.run = false; });
+    window.addEventListener('keydown', e => { if (/INPUT|TEXTAREA|SELECT/.test((e.target as HTMLElement)?.tagName)) return; this.keys.add(e.code); if (e.shiftKey) { this.run = true; this.shiftRun = true; } });
+    window.addEventListener('keyup', e => { this.keys.delete(e.code); if (!e.shiftKey && this.shiftRun) { this.run = false; this.shiftRun = false; } });
   }
   private pinchDist() { const a = [...this.pointers.values()]; return a.length < 2 ? 0 : Math.hypot(a[0].x - a[1].x, a[0].y - a[1].y); }
   private drag(dx: number, dy: number, pan: boolean, _two = false) {

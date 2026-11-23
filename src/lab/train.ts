@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { buildCabFront, frontTextures } from './trainFront';
 import { Parts, pbr, rbox, rrShape, extrude, ring, csgSub, T, tex, brushedRough, mesh, FONT, rnd, setMaxSeg } from './kit';
 
 /** JR東海313系（3扉・ステンレス車体）を参考にした車両モデル。
@@ -130,23 +131,12 @@ export function trainCar(kind: 'cab' | 'mid', detail: Detail = 'high') {
   const endX = (s: number) => s * (LEN / 2);
   const gang = (s: number) => { P.add(rubber, ring(1.2, 2.0, 0.12, 0.16, 0.5, 1), new THREE.Matrix4().multiplyMatrices(T(endX(s) + s * 0.28, FLOOR + 1.0, 0), T(0, 0, 0, 0, Math.PI / 2, 0))); P.add(dark, rbox(0.12, 2.1, 1.3, 0.04), T(endX(s) + s * 0.06, FLOOR + 1.0, 0)); P.add(steelM, tube(new THREE.Vector3(endX(s), 0.95, 0), new THREE.Vector3(endX(s) + s * 0.5, 0.95, 0), 0.07, 10)); P.add(dark, rbox(0.3, 0.26, 0.34, 0.05), T(endX(s) + s * 0.3, 0.95, 0)); };
   gang(-1); if (kind === 'mid') gang(1);
-  // ---- 先頭部（kind==='cab'：+x側）----
+  // ---- 先頭部（kind==='cab'：+x側）：trainFront.ts の高精細な前頭部 ----
   if (kind === 'cab') {
-    const depth = 0.42; const cap = extrude(bodyProfile(W - 0.02, TOP - 0.02, SILL), depth, 0.035, 7); cap.rotateY(Math.PI / 2); cap.translate(LEN / 2 + depth / 2 - 0.02, 0, 0);
-    const pos = cap.attributes.position; for (let i = 0; i < pos.count; i++) { const x = pos.getX(i), y = pos.getY(i), z = pos.getZ(i); const t = Math.max(0, Math.min(1, (x - (LEN / 2 - 0.02)) / depth)); pos.setXYZ(i, x - 0.18 * t * Math.max(0, (y - 2.2) / 1.4), y, z * (1 - 0.025 * t)); } cap.computeVertexNormals();
-    const fx = LEN / 2 + depth - 0.06;
-    let front = csgSub(cap, [{ g: rbox(0.5, 0.84, 1.16, 0.08), m: T(fx + 0.02, 2.74, 0.68) }, { g: rbox(0.5, 0.84, 1.16, 0.08), m: T(fx + 0.02, 2.74, -0.68) }, { g: rbox(0.4, 0.26, 1.0, 0.05), m: T(fx + 0.02, 3.3, 0) }, { g: rbox(0.4, 0.3, 0.4, 0.05), m: T(fx - 0.06, 1.5, 1.12) }, { g: rbox(0.4, 0.3, 0.4, 0.05), m: T(fx - 0.06, 1.5, -1.12) }, { g: rbox(0.4, 1.9, 0.78, 0.04), m: T(fx + 0.0, 2.1, 0) }]);
-    root.add(mesh(front, stainless, 'FrontCap'));
-    P.add(glass, rbox(0.04, 0.8, 1.12, 0.07), T(fx - 0.06, 2.74, 0.68)); P.add(glass, rbox(0.04, 0.8, 1.12, 0.07), T(fx - 0.06, 2.74, -0.68)); P.add(black, rbox(0.03, 0.2, 0.96, 0.04), T(fx - 0.1, 3.3, 0));
-    const dm = new THREE.Mesh(new THREE.PlaneGeometry(0.9, 0.2), new THREE.MeshStandardMaterial({ name: 'FrontDestination', map: tx.dest, emissiveMap: tx.dest, emissive: '#fff', emissiveIntensity: 1.0 })); dm.rotation.y = Math.PI / 2; dm.position.set(fx - 0.075, 3.3, 0); dm.name = 'FrontDestination'; root.add(dm);
-    P.add(dark, rbox(0.05, 1.86, 0.74, 0.03), T(fx - 0.04, 2.1, 0)); P.add(glass, rbox(0.03, 0.62, 0.48, 0.04), T(fx - 0.02, 2.55, 0)); P.add(steelM, rbox(0.02, 0.08, 0.1, 0.01), T(fx - 0.01, 2.0, 0.28));
-    for (const z of [1.12, -1.12]) { P.add(headM, rbox(0.05, 0.22, 0.32, 0.07), T(fx - 0.1, 1.5, z)); P.add(tailM, rbox(0.04, 0.12, 0.1, 0.03), T(fx - 0.1, 1.5, z * 0.82)); }
-    P.add(orange, rbox(0.01, 0.1, W - 0.2, 0.004), T(fx + 0.0, 1.0, 0)); P.add(teal, rbox(0.01, 0.1, W - 0.2, 0.004), T(fx + 0.0, 0.85, 0));
-    P.add(dark, rbox(0.5, 0.34, 2.1, 0.07), T(fx - 0.05, 0.72, 0, 0, 0, 0.0)); P.add(steelM, tube(new THREE.Vector3(fx - 0.05, 0.95, 0), new THREE.Vector3(fx + 0.35, 0.95, 0), 0.07, 12)); P.add(dark, rbox(0.34, 0.28, 0.4, 0.05), T(fx + 0.3, 0.95, 0));
-    for (const z of [-0.85, 0.85]) P.add(steelM, tube(new THREE.Vector3(fx - 0.1, 0.8, z), new THREE.Vector3(fx + 0.1, 0.6, z * 1.2), 0.02, 6));
-    for (const z of [-0.3, 0.3]) P.add(black, new THREE.CylinderGeometry(0.035, 0.035, 0.08, 10), T(fx + 0.0, 3.62, z, Math.PI / 2, 0, 0));
+    const ft = frontTextures(); const Mf = { stainless, glass, black, dark, steel: steelM, rubber, head: headM, tail: tailM, orange, blue: teal, white, frontDest: new THREE.MeshStandardMaterial({ name: 'FrontDestination', map: ft.dest, emissiveMap: ft.dest, emissive: '#ffffff', emissiveIntensity: 1 }), plate: new THREE.MeshStandardMaterial({ name: 'FrontPlate', map: ft.plate, roughness: 0.5 }) } as Record<string, THREE.Material>;
+    buildCabFront({ P, root, M: Mf, LEN, W, TOP, SILL, profile: bodyProfile, tube, hi });
   }
   P.build('Parts', root);
-  root.userData = { kind: 'train', variant: kind, detail, length: LEN + (kind === 'cab' ? 0.42 : 0), width: W, height: TOP + 0.4, floor: FLOOR, doorCenters: doorX, wheelCount: wheels.length };
+  root.userData = { kind: 'train', variant: kind, detail, length: LEN + (kind === 'cab' ? 0.46 : 0), width: W, height: TOP + 0.4, floor: FLOOR, doorCenters: doorX, wheelCount: wheels.length };
   return root;
 }

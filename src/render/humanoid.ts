@@ -41,7 +41,7 @@ export function createHumanoid(look: HumanoidLook, name?: string): Humanoid {
   g.scale.setScalar(s);
   let label: THREE.Sprite | undefined;
   if (name) {
-    const tex = canvasTex(256, 64, (c, w, h) => { c.fillStyle = 'rgba(14,20,34,.82)'; c.beginPath(); c.roundRect(2, 2, w - 4, h - 4, 14); c.fill(); c.fillStyle = '#fff'; c.font = 'bold 30px "Noto Sans JP","WenQuanYi Zen Hei",sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(name, w / 2, h / 2 + 2); }, { repeat: false });
+    const tex = canvasTex(256, 64, (c, w, h) => { c.fillStyle = 'rgba(14,20,34,.88)'; c.fillRect(2, 2, w - 4, h - 4); c.fillStyle = '#fff'; c.font = 'bold 30px "Noto Sans JP","WenQuanYi Zen Hei",sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(name, w / 2, h / 2 + 2); }, { repeat: false });
     label = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex ?? undefined, transparent: true, depthTest: true })); label.scale.set(1.1, 0.28, 1); label.position.y = 2.15; label.renderOrder = 20; g.add(label);
   }
   return {
@@ -62,7 +62,7 @@ export function createHumanoidFrom(template: THREE.Object3D, look: HumanoidLook,
   const legL = node('LegL')!, legR = node('LegR')!, armL = node('ArmL')!, armR = node('ArmR')!, shinL = node('ShinL')!, shinR = node('ShinR')!, foreL = node('ForearmL')!, foreR = node('ForearmR')!, torso = node('Torso')!;
   let label: THREE.Sprite | undefined;
   if (name) {
-    const tex = canvasTex(256, 64, (c, w, h) => { c.fillStyle = 'rgba(14,20,34,.82)'; c.beginPath(); c.roundRect(2, 2, w - 4, h - 4, 14); c.fill(); c.fillStyle = '#fff'; c.font = 'bold 30px "Noto Sans JP","WenQuanYi Zen Hei",sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(name, w / 2, h / 2 + 2); }, { repeat: false });
+    const tex = canvasTex(256, 64, (c, w, h) => { c.fillStyle = 'rgba(14,20,34,.88)'; c.fillRect(2, 2, w - 4, h - 4); c.fillStyle = '#fff'; c.font = 'bold 30px "Noto Sans JP","WenQuanYi Zen Hei",sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(name, w / 2, h / 2 + 2); }, { repeat: false });
     label = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex ?? undefined, transparent: true, depthTest: true })); label.scale.set(1.1 / s, 0.28 / s, 1); label.position.y = 2.1; label.renderOrder = 20; g.add(label);
   }
   const base = torso.position.y;

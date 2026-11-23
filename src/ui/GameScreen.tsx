@@ -6,6 +6,7 @@ import { Joystick, Portrait, Stage25D, useTypewriter } from './parts';
 import { ChecklistTask, ComposeTask, RosterTask, TerminalTask } from './Tasks';
 import { CareerPanel, FlowPanel, RelationsPanel, RosterPanel, SavePanel, SettingsPanel, TimelinePanel } from './Panels';
 import { EVAL_LABEL } from '../engine/worldState';
+import { Icon, FlapClock } from './icons';
 import type { EvalKey } from '../engine/types';
 
 export function useCtl(c: GameController) { const [, f] = useReducer((x: number) => x + 1, 0); useEffect(() => c.subscribe(f), [c]); return c.version; }
@@ -92,14 +93,14 @@ function Hud({ c, onExit }: { c: GameController; onExit: () => void }) {
   return (
     <>
       <div className="hud-top" data-ui>
-        <div className="clock"><div className="t">{c.clockLabel}</div><div className="d">{c.dateLabel}</div>{cap && <div className="d" style={{ color: '#ffa83a' }}>{cap}</div>}</div>
+        <div className="clock"><div className="t"><FlapClock text={c.clockLabel} /></div><div className="d">{c.dateLabel}</div>{cap && <div className="d" style={{ color: '#ffa83a' }}>{cap}</div>}</div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 6, alignItems: 'flex-end', minWidth: 0 }}>
           <div className="hud-btns">
-            <div className="seg" role="group" aria-label="表示方式">{(['3d', '25d', '2d'] as const).map(m => <button key={m} className={s.view === m ? 'on' : ''} onClick={() => c.setView(m)} aria-pressed={s.view === m}>{m === '3d' ? '3D' : m === '25d' ? '擬似3D' : '2D'}</button>)}</div>
+            <div className="seg" role="group" aria-label="表示方式">{(['3d', '25d', '2d'] as const).map(m => <button key={m} className={s.view === m ? 'on' : ''} onClick={() => c.setView(m)} aria-pressed={s.view === m} aria-label={m === '3d' ? '3D表示' : m === '25d' ? '擬似3D表示' : '2D表示'}>{m === '3d' ? <Icon.view3d /> : m === '25d' ? <Icon.view25 /> : <Icon.view2 />}<span className="lbl">{m === '3d' ? '3D' : m === '25d' ? '擬似3D' : '2D'}</span></button>)}</div>
             <button className="btn sm" onClick={() => setOpen(o => !o)} aria-expanded={open}>メニュー ▾</button>
           </div>
-          {open && <div className="hud-btns" style={{ maxWidth: 360 }}>
-            <button className="btn sm" onClick={P('roster')}>勤務表</button><button className="btn sm" onClick={P('career')}>経歴・評価</button><button className="btn sm" onClick={P('relations')}>人物関係</button><button className="btn sm" onClick={P('timeline')}>年表・日誌</button><button className="btn sm" onClick={P('flow')}>分岐図</button><button className="btn sm" onClick={P('save')}>セーブ</button><button className="btn sm" onClick={P('settings')}>設定</button><button className="btn sm danger" onClick={() => { c.saveSlot('auto', true); onExit(); }}>タイトルへ</button>
+          {open && <div className="tilegrid">
+            <button className="tile" onClick={P('roster')}><Icon.roster />勤務表</button><button className="tile" onClick={P('career')}><Icon.career />経歴・評価</button><button className="tile" onClick={P('relations')}><Icon.people />人物関係</button><button className="tile" onClick={P('timeline')}><Icon.timeline />年表・日誌</button><button className="tile" onClick={P('flow')}><Icon.branch />分岐図</button><button className="tile" onClick={P('save')}><Icon.save />セーブ</button><button className="tile" onClick={P('settings')}><Icon.gear />設定</button><button className="tile danger" onClick={() => { c.saveSlot('auto', true); onExit(); }}><Icon.title />タイトルへ</button>
           </div>}
           {hub && s.view !== '2d' && <div className="hud-btns"><div className="seg" role="group" aria-label="カメラ">{([['follow', '追従'], ['free', '自由'], ['first', '一人称']] as const).map(([m, l]) => <button key={m} className={rm?.camMode === m ? 'on' : ''} onClick={() => c.setCam(m)}>{l}</button>)}</div>
             <select aria-label="カメラ位置" value={rm?.presetName ?? ''} onChange={e => { rm?.setPreset(e.target.value || null); c.notify(); }} style={{ width: 'auto', minHeight: 38, padding: '4px 8px' }}><option value="">視点プリセット</option>{rm && Object.keys(rm.data.presets).map(k => <option key={k} value={k}>{PRESET_JA[k] ?? k}</option>)}</select></div>}
@@ -111,7 +112,7 @@ function Hud({ c, onExit }: { c: GameController; onExit: () => void }) {
 const PRESET_JA: Record<string, string> = { plaza: '駅前広場', overview: '全景（俯瞰）', top: '真上', front: '正面（北）', back: '背面（南）', side: '側面（西）', gate: '改札', gate_close: '改札機（IC読取部）', gate_side: '改札列（側面）', gate_back: '改札（内側から）', gate_wide: '幅広・有人通路', vend_close: '券売機（接写）', seisan: '精算機', concourse: 'コンコース', office: '駅事務室', platform: 'ホーム（西向き）', platform_east: 'ホーム（東向き）', train: '停車中の列車', train_front: '列車（前方）', train_side: '列車（側面・北から）', platform_high: 'ホーム俯瞰', rail: '線路沿い', vend: '券売機', board: '発車標', tactile: '点字ブロック' };
 
 function HubControls({ c }: { c: GameController }) {
-  const v = c.view; if (v?.kind !== 'hub') return null; const p = c.prompt; const [goals, setGoals] = useState(typeof window === 'undefined' || window.innerWidth >= 760);
+  const v = c.view; if (v?.kind !== 'hub') return null; const p = c.prompt; const [run, setRun] = useState(false); const [goals, setGoals] = useState(typeof window === 'undefined' || window.innerWidth >= 760);
   return (
     <>
       <div className="goals chip" data-ui><b>業務メモ　{c.textWorld(v.node.title)}</b>　<button className="btn sm ghost" style={{ minHeight: 28, padding: '0 8px' }} onClick={() => setGoals(g => !g)}>{goals ? 'たたむ' : '開く'}</button>
@@ -120,7 +121,7 @@ function HubControls({ c }: { c: GameController }) {
       <div className="act" data-ui>
         {p ? <button className="main" onClick={() => c.doPrompt()}>{p.label}<small>タップ／E／Enter</small></button> : <div className="note">歩いて設備や人物に近づきます（黄色い標識が調べる対象）</div>}
         {v.canExit && <button className="btn primary" onClick={() => c.exitHub()}>{v.node.exit.label}</button>}
-        <button className="btn sm" onClick={() => c.waitMinutes(30)} title="時間を進める">30分進める</button>
+        <div style={{ display: 'flex', gap: 6 }}><button className={'tile' + (run ? ' on' : '')} onClick={() => { if (c.rm) { c.rm.run = !c.rm.run; setRun(c.rm.run); } }} aria-pressed={run}><Icon.run />走る</button><button className="tile" onClick={() => c.waitMinutes(30)} title="時間を進める"><Icon.wait />30分進める</button></div>
       </div>
     </>
   );

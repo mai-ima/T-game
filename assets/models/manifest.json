@@ -1,215 +1,272 @@
 {
- "generated": "2026-11-23T00:29:04.357Z",
+ "generated": "2026-11-23T00:48:41.200Z",
  "models": {
-  "gate_unit": {
+  "train_313_cab": {
    "top": [
     [
      "Body",
-     1202
+     10379
     ],
     [
-     "TopSlab",
-     857
+     "Parts_Steel",
+     8496
     ],
     [
-     "GateParts_LedCyan",
-     768
+     "Parts_UnderDark",
+     7368
     ],
     [
-     "GateParts_Black",
-     432
+     "Parts_Black",
+     4356
     ],
     [
-     "Housing",
-     300
+     "BogieParts_Steel",
+     3968
     ],
     [
-     "GateParts_Rubber",
-     300
+     "BogieParts_Steel",
+     3968
     ],
     [
-     "GateParts_LedGreen",
-     144
+     "Parts_Moquette",
+     3600
     ]
    ],
-   "tris": 4129,
-   "meshes": 12,
+   "tris": 70468,
+   "meshes": 60,
    "materials": [
-    "GateBody",
-    "GateHousing",
-    "GateTop",
-    "ICPad",
-    "DisplayGo",
-    "DisplayStop",
+    "Stainless",
+    "WindowGlass",
     "Rubber",
+    "SideDest",
+    "CarNumber",
+    "Steel",
+    "UnderDark",
+    "FrontDestination",
+    "FrontPlate",
+    "StripeOrange",
+    "StripeBlue",
+    "BodyTrim",
+    "Roof",
+    "RoofWhite",
     "Black",
-    "LedAmber",
-    "LedGreen",
-    "LedCyan"
+    "Floor",
+    "Moquette",
+    "Ceiling",
+    "CeilingLight",
+    "HeadLight",
+    "TailLight"
    ],
    "size": [
-    0.382,
-    1.116,
-    1.376
+    20.96,
+    4.707,
+    2.976
    ],
    "center": [
-    0,
-    0.558,
-    0.001
+    0.2,
+    2.321,
+    0
    ],
-   "named": 13,
-   "glbKB": 178,
-   "rawKB": 418
+   "named": 75,
+   "glbKB": 795,
+   "rawKB": 3741
   },
-  "gate_unit_wide": {
+  "train_313_mid": {
    "top": [
     [
      "Body",
-     1202
+     14462
     ],
     [
-     "TopSlab",
-     857
+     "Parts_UnderDark",
+     6380
     ],
     [
-     "GateParts_LedCyan",
-     768
+     "Parts_Steel",
+     6288
     ],
     [
-     "GateParts_Black",
-     432
+     "Parts_Moquette",
+     4800
     ],
     [
-     "Housing",
-     300
+     "BogieParts_Steel",
+     3968
     ],
     [
-     "GateParts_Rubber",
-     300
+     "BogieParts_Steel",
+     3968
     ],
     [
-     "GateParts_LedGreen",
-     144
+     "Parts_BodyTrim",
+     3840
     ]
    ],
-   "tris": 4143,
-   "meshes": 14,
+   "tris": 71026,
+   "meshes": 67,
    "materials": [
-    "GateBody",
-    "GateHousing",
-    "GateTop",
-    "ICPad",
-    "DisplayGo",
-    "DisplayStop",
-    "WheelchairSign",
+    "Stainless",
+    "WindowGlass",
     "Rubber",
+    "SideDest",
+    "CarNumber",
+    "Steel",
+    "UnderDark",
+    "StripeOrange",
+    "StripeBlue",
+    "BodyTrim",
+    "Roof",
+    "RoofWhite",
+    "Floor",
+    "Moquette",
     "Black",
-    "LedAmber",
-    "LedGreen",
-    "LedCyan",
-    "GateBlue"
+    "Ceiling",
+    "CeilingLight"
    ],
    "size": [
-    0.382,
-    1.116,
-    1.377
+    20.56,
+    4.182,
+    2.976
    ],
    "center": [
     0,
-    0.558,
-    0.001
-   ],
-   "named": 15,
-   "glbKB": 183,
-   "rawKB": 425
-  },
-  "gate_flap": {
-   "top": [
-    [
-     "FlapHinge",
-     108
-    ],
-    [
-     "FlapPlate",
-     108
-    ],
-    [
-     "FlapBracketA",
-     108
-    ],
-    [
-     "FlapBracketB",
-     108
-    ],
-    [
-     "FlapEdgeLed",
-     12
-    ]
-   ],
-   "tris": 444,
-   "meshes": 5,
-   "materials": [
-    "SteelDark",
-    "FlapBlue",
-    "LedCyan"
-   ],
-   "size": [
-    0.406,
-    0.16,
-    0.032
-   ],
-   "center": [
-    0.187,
-    0,
+    2.059,
     0
    ],
-   "named": 7,
-   "glbKB": 10,
-   "rawKB": 47
+   "named": 86,
+   "glbKB": 808,
+   "rawKB": 4040
   },
-  "gate_flap_wide": {
+  "train_313_cab_lo": {
    "top": [
     [
-     "FlapPlate",
-     300
+     "Body",
+     4835
     ],
     [
-     "FlapHinge",
-     108
+     "Parts_Steel",
+     2384
     ],
     [
-     "FlapBracketA",
-     108
+     "Parts_UnderDark",
+     2272
     ],
     [
-     "FlapBracketB",
-     108
+     "Parts_BodyTrim",
+     1408
     ],
     [
-     "FlapEdgeLed",
-     12
+     "BogieParts_UnderDark",
+     1188
+    ],
+    [
+     "BogieParts_UnderDark",
+     1188
+    ],
+    [
+     "FrontCap",
+     1094
     ]
    ],
-   "tris": 636,
-   "meshes": 5,
+   "tris": 21761,
+   "meshes": 51,
    "materials": [
-    "SteelDark",
-    "FlapBlue",
-    "LedCyan"
+    "Stainless",
+    "WindowGlass",
+    "Rubber",
+    "SideDest",
+    "Steel",
+    "UnderDark",
+    "FrontDestination",
+    "FrontPlate",
+    "StripeOrange",
+    "StripeBlue",
+    "BodyTrim",
+    "Roof",
+    "RoofWhite",
+    "Black",
+    "Floor",
+    "Moquette",
+    "Ceiling",
+    "HeadLight",
+    "TailLight"
    ],
    "size": [
-    0.606,
-    0.16,
-    0.032
+    20.96,
+    4.707,
+    2.976
    ],
    "center": [
-    0.287,
-    0,
+    0.2,
+    2.321,
     0
    ],
-   "named": 7,
-   "glbKB": 14,
-   "rawKB": 65
+   "named": 66,
+   "glbKB": 422,
+   "rawKB": 1533
+  },
+  "train_313_mid_lo": {
+   "top": [
+    [
+     "Body",
+     6670
+    ],
+    [
+     "Parts_BodyTrim",
+     1920
+    ],
+    [
+     "BogieParts_UnderDark",
+     1188
+    ],
+    [
+     "BogieParts_UnderDark",
+     1188
+    ],
+    [
+     "Parts_UnderDark",
+     972
+    ],
+    [
+     "WheelParts_Steel",
+     608
+    ],
+    [
+     "WheelParts_Steel",
+     608
+    ]
+   ],
+   "tris": 20162,
+   "meshes": 57,
+   "materials": [
+    "Stainless",
+    "WindowGlass",
+    "Rubber",
+    "SideDest",
+    "Steel",
+    "UnderDark",
+    "StripeOrange",
+    "StripeBlue",
+    "BodyTrim",
+    "Roof",
+    "RoofWhite",
+    "Floor",
+    "Moquette",
+    "Ceiling"
+   ],
+   "size": [
+    20.56,
+    4.022,
+    2.976
+   ],
+   "center": [
+    0,
+    1.979,
+    0
+   ],
+   "named": 76,
+   "glbKB": 399,
+   "rawKB": 1591
   }
  }
 }

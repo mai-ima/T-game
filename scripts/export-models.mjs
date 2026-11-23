@@ -24,8 +24,8 @@ for (const n of names) {
   writeFileSync(`assets/models/${n}.glb`, Buffer.from(b64, 'base64')); const rawKB = Math.round(statSync(`assets/models/${n}.glb`).size / 1024);
   { const doc = await io.read(`assets/models/${n}.glb`); await doc.transform(dedup(), prune(), quantize({ quantizePosition: 14, quantizeNormal: 10, quantizeTexcoord: 12 }), meshopt({ encoder: MeshoptEncoder, level: 'high' })); await io.write(`assets/models/${n}.glb`, doc); }
   const kb = Math.round(statSync(`assets/models/${n}.glb`).size / 1024); report[n] = { ...st, glbKB: kb, rawKB };
-  const views = [['pz', 0, 0.08, 1.15], ['px', Math.PI / 2, 0.08, 1.15], ['nz', Math.PI, 0.08, 1.15], ['nx', -Math.PI / 2, 0.08, 1.15], ['top', 0.3, 1.25, 1.15], ['three', 0.7, 0.35, 1.0], ['close', 0.5, 0.2, 0.55]];
-  for (const [v, yaw, pitch, mul] of views) { const url = await page.evaluate(([n, yaw, pitch, mul]) => window.LAB.preview(n, yaw, pitch, mul ?? 1.7, 800, 560), [n, yaw, pitch, mul]); writeFileSync(`audit/models/${n}_${v}.jpg`, Buffer.from(url.split(',')[1], 'base64')); }
+  const views = [['pz', 0, 0.08, 1.15], ['px', Math.PI / 2, 0.08, 1.15], ['nz', Math.PI, 0.08, 1.15], ['nx', -Math.PI / 2, 0.08, 1.15], ['top', 0.3, 1.25, 1.15], ['three', 0.7, 0.35, 1.0], ['close', 0.5, 0.2, 0.55]]; if (n.includes('cab')) views.push(['face', Math.PI / 2 - 0.5, 0.1, 0, { target: [10.1, 2.1, 0], dist: 6 }], ['face2', Math.PI / 2 + 0.35, 0.12, 0, { target: [10.1, 2.0, 0], dist: 4.2 }], ['facelow', Math.PI / 2 - 0.25, 0.0, 0, { target: [10.3, 1.2, 0], dist: 3.4 }]);
+  for (const [v, yaw, pitch, mul, o] of views) { const url = await page.evaluate(([n, yaw, pitch, mul, o]) => window.LAB.preview(n, yaw, pitch, mul ?? 1.7, 800, 560, o ?? {}), [n, yaw, pitch, mul, o]); writeFileSync(`audit/models/${n}_${v}.jpg`, Buffer.from(url.split(',')[1], 'base64')); }
   console.log(n, JSON.stringify(report[n]));
 }
 writeFileSync('assets/models/manifest.json', JSON.stringify({ generated: new Date().toISOString(), models: report }, null, 1));

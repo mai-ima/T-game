@@ -21,7 +21,7 @@ async function boot(opts = {}) {
 async function startGame(page, name = '水野 湊') { await page.click('button.card.playable'); await page.fill('#pname', name); await page.click('text=最初から（第1章）'); await page.waitForSelector('.dlg-box'); }
 const gc = (page, f, arg) => page.evaluate(f, arg);
 async function toHub(page) { for (let i = 0; i < 60; i++) { const k = await gc(page, () => window.__GC.view.kind); if (k === 'hub') return true; if (k === 'line') await page.click('.dlg-box'), await page.click('.dlg-box').catch(() => {}); else if (k === 'choice') await page.click('.choice-opt >> nth=0'); else await page.waitForTimeout(100); } return false; }
-async function shot(page, name, opts = {}) { await page.screenshot({ path: `${SHOT}/${name}.jpg`, type: 'jpeg', quality: opts.q ?? 82 }); return name; }
+async function shot(page, name, opts = {}) { await page.screenshot({ path: `${SHOT}/${name}.jpg`, type: 'jpeg', quality: opts.q ?? 82, timeout: 180000 }); return name; }
 async function stats(page) { return gc(page, () => window.__RR.rm.stats()); }
 async function lum(page, file) { // 画像の平均輝度・分散（真っ黒/真っ白の描画失敗検出）
   const b64 = readFileSync(file).toString('base64');
