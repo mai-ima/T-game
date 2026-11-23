@@ -12,7 +12,7 @@ if (/import\.meta/.test(js)) console.warn('警告: import.meta が含まれま�
 
 const out = `<title>REAL RAIL &amp; ROAD</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Zen+Kaku+Gothic+New:wght@500;700;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=DotGothic16&display=swap">
 <style>${css}</style>
 <div id="root"></div>
 <script>${js}</script>

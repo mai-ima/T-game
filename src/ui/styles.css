@@ -211,3 +211,27 @@ button, a, .dlg-box, .choice-opt { touch-action: manipulation; }
 .s25 .cast .who { display: flex; align-items: flex-end; justify-content: center; }
 .s25 .cast .who svg { max-height: 100%; width: auto; height: 100%; filter: drop-shadow(0 8px 14px rgba(0,0,0,.4)); }
 @media (max-width: 640px) { .dlg-box .av { width: 74px; } }
+
+/* ---- 2D場面はドット（ブロック）調：拡大はにじませない ---- */
+:root { --pixel: 'DotGothic16', 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'WenQuanYi Zen Hei', sans-serif; --notch: polygon(0 6px, 6px 6px, 6px 0, calc(100% - 6px) 0, calc(100% - 6px) 6px, 100% 6px, 100% calc(100% - 6px), calc(100% - 6px) calc(100% - 6px), calc(100% - 6px) 100%, 6px 100%, 6px calc(100% - 6px), 0 calc(100% - 6px)); }
+.pxp, .pxbg { image-rendering: pixelated; image-rendering: crisp-edges; }
+.s25 .pxbg { position: absolute; inset: 0; background-size: cover; background-position: center bottom; background-repeat: no-repeat; }
+.s25 .cast .who img { height: 100%; width: auto; max-height: 100%; filter: drop-shadow(6px 6px 0 rgba(0,0,0,.35)); }
+.s25 .cast .who.dim { filter: brightness(.6) saturate(.7); }
+.s25 .cap { font-family: var(--pixel); border: 3px solid #fff; background: #000; color: #ffd35a; clip-path: var(--notch); padding: 4px 14px; letter-spacing: .08em; }
+.dlg-box { font-family: var(--pixel); border: 0; outline: 0; background: #14233f; clip-path: var(--notch); padding: 14px 18px 10px; box-shadow: none; position: relative; }
+.dlg-box::before { content: ''; position: absolute; inset: 0; clip-path: var(--notch); border: 6px solid #fff; pointer-events: none; }
+.dlg-box::after { content: ''; position: absolute; inset: 6px; border: 3px solid #4a6a9e; clip-path: var(--notch); pointer-events: none; }
+.dlg-box .av { background: #fff; border: 0; padding: 4px; clip-path: polygon(0 4px, 4px 4px, 4px 0, calc(100% - 4px) 0, calc(100% - 4px) 4px, 100% 4px, 100% 100%, 0 100%); }
+.dlg-box .av .ph { background: #a9c3dc; image-rendering: pixelated; }
+.dlg-box .av .ph img { width: 100%; height: auto; display: block; }
+.dlg-box .av .nm { font-family: var(--pixel); font-size: .78em; }
+.dlg-name b { font-family: var(--pixel); clip-path: polygon(0 3px, 3px 3px, 3px 0, calc(100% - 3px) 0, calc(100% - 3px) 3px, 100% 3px, 100% calc(100% - 3px), calc(100% - 3px) calc(100% - 3px), calc(100% - 3px) 100%, 3px 100%, 3px calc(100% - 3px), 0 calc(100% - 3px)); padding: 0 12px; }
+.dlg-text { font-size: 1.12em; line-height: 1.8; letter-spacing: .03em; }
+.dlg-foot { font-family: var(--pixel); }
+.choice-q, .choice-opt { font-family: var(--pixel); clip-path: var(--notch); border-width: 4px; border-bottom-width: 4px; }
+.choice-opt { border-color: #fff; background: #14233f; color: #fff; border-style: solid; }
+.choice-opt .n { background: #ffd35a; color: #14233f; clip-path: none; }
+.choice-opt:hover, .choice-opt:focus-visible { background: #254468; }
+.choice-q { background: #1a2f55; border-color: #fff; }
+@media (max-width: 640px) { .dlg-box { padding: 10px 12px 8px; } .dlg-box .av { width: 78px; } }
