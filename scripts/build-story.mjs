@@ -767,9 +767,7 @@ const chapters = [
 ];
 
 const IT = id => N['ch1.hub'].interactions.find(i => i.id === id); const GL = id => N['ch1.hub'].goals.find(g => g.id === id);
-const gate = (ids, route) => { for (const id of ids) { const it = IT(id); it.requires = ALL(it.requires, F(route)); const g = GL('g_' + (id === 'shopnote' ? 'shop' : id === 'toilet' ? 'wc' : id)); if (g) g.showWhen = ALL(g.showWhen, F(route)); } };
 // 持ち場（route.*）は専用イベントと第2章の展開を決めるだけで、通常業務はどの持ち場でも自由に選べる。
-void gate;
 N['ch1.hub'].interactions.push(
   { id: 'angry', object: 'ogawa', label: '怒っているお客様に対応する（遅延証明書）', goto: 'ch1.angry_1', requires: ALL(F('route.service'), T('>=', hm(14, 0)), T('<', hm(15, 30))), once: true },
   { id: 'cable', object: 'riku', label: '線路にスマートフォンを落とした高校生', goto: 'ch1.cable_1', requires: ALL(F('route.platform'), T('>=', hm(14, 0)), T('<', hm(15, 30))), once: true },

@@ -116,7 +116,7 @@ await p1.close(); await c1.close();
   await go('ch1.jam_task'); for (let i = 0; i < 3; i++) { await page.waitForTimeout(500); await page.click('.mg-big'); } await page.click('text=報告して戻る'); res.timing = await nodeId();
   await go('ch1.fare_task'); for (const a of ['精算機で処理', '払い戻しの窓口へ', '口頭で案内', '精算機で処理', '払い戻しの窓口へ', '口頭で案内']) await page.click(`.mg-bin:has-text("${a}")`); await page.click('text=報告して戻る'); res.sort = await nodeId();
   await go('ch1.timetable_task'); await page.click('text=覚えた'); for (const a of ['2番線', '9:52', '普通', '南河原']) await page.click(`.mg-bin:has-text("${a}")`); await page.click('text=報告して戻る'); res.memory = await nodeId();
-  await go('ch1.wheel_task'); for (const [x, y] of [[1,0],[2,0],[3,0],[3,1],[3,2],[4,2],[5,2],[6,2],[7,2],[8,2]]) await page.locator('.mg-cell').nth(y * 9 + x).dispatchEvent('pointerdown'); await page.click('text=報告して戻る'); res.route = await nodeId();
+  await go('ch1.wheel_task'); for (const [x, y] of [[1,0],[2,0],[3,0],[3,1],[3,2],[4,2],[5,2],[6,2],[7,2],[8,2]]) await page.locator('.mg-cell').nth(y * 9 + x).dispatchEvent('click'); await page.click('text=報告して戻る'); res.route = await nodeId();
   await go('ch1.watch1_task'); res.watch = await page.waitForSelector('.mg-person', { timeout: 20000 }).then(() => 'ui').catch(() => 'none');
   const okAll = res.find.endsWith('_good') && res.sort.endsWith('_good') && res.memory.endsWith('_good') && res.route.endsWith('_good') && res.timing.startsWith('ch1.jam_') && res.watch === 'ui';
   add('業務ミニゲーム6形式：UI操作で完了し、結果の場面へ分岐', okAll ? 'PASS' : 'FAIL', JSON.stringify(res));

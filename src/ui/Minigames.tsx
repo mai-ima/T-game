@@ -28,7 +28,7 @@ export function TimingTask({ node, onDone }: { node: TaskNode; onDone: Done }) {
     <TaskShell title={node.title} intro={node.intro}>
       <div className="mg-meta">{rounds.map((r, k) => <span key={k} className={'mg-pip' + (k < res.length ? (res[k] >= 100 ? ' ok' : res[k] >= 55 ? ' mid' : ' ng') : k === i ? ' on' : '')}>{r.label}</span>)}</div>
       <div className="mg-gauge" aria-hidden>{!fin && <i className="zone" style={{ left: zone[i] * 100 + '%', width: w * 100 + '%' }} />}<b className="needle" style={{ left: pos * 100 + '%' }} /></div>
-      {!fin ? <button className="btn primary mg-big" onPointerDown={stop}>{cfg.button ?? '今！'}（{i + 1}/{rounds.length}：{rounds[i].label}）</button> : <Finish score={score} label="作業の正確さ" onDone={onDone} />}
+      {!fin ? <button className="btn primary mg-big" onClick={stop}>{cfg.button ?? '今！'}（{i + 1}/{rounds.length}：{rounds[i].label}）</button> : <Finish score={score} label="作業の正確さ" onDone={onDone} />}
     </TaskShell>
   );
 }
@@ -37,7 +37,8 @@ export function TimingTask({ node, onDone }: { node: TaskNode; onDone: Done }) {
 interface Spot { id: string; x: number; y: number; r?: number; label: string; real?: boolean }
 export function FindTask({ node, onDone }: { node: TaskNode; onDone: Done }) {
   const cfg = node.config ?? {}; const spots: Spot[] = cfg.spots ?? []; const real = spots.filter(s => s.real !== false); const [found, setFound] = useState<string[]>([]); const [miss, setMiss] = useState(0); const [left, setLeft] = useState(cfg.seconds ?? 40); const [note, setNote] = useState(''); const [fin, setFin] = useState(false);
-  useEffect(() => { if (fin) return; const id = setInterval(() => setLeft((n: number) => { if (n <= 1) { setFin(true); return 0; } return n - 1; }), 1000); return () => clearInterval(id); }, [fin]);
+  useEffect(() => { if (fin) return; const id = setInterval(() => setLeft((n: number) => Math.max(0, n - 1)), 1000); return () => clearInterval(id); }, [fin]);
+  useEffect(() => { if (left <= 0) setFin(true); }, [left]);
   useEffect(() => { if (found.length >= real.length && real.length) setFin(true); }, [found, real.length]);
   const tap = (e: React.PointerEvent<HTMLDivElement>) => {
     if (fin) return; const r = e.currentTarget.getBoundingClientRect(); const x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
@@ -76,12 +77,12 @@ export function WatchTask({ node, onDone }: { node: TaskNode; onDone: Done }) {
   useEffect(() => { if (spawned.current >= total && ps.length >= total && ps.every(p => p.state !== 'go' || !p.bad)) { const id = setTimeout(() => setFin(true), 700); return () => clearTimeout(id); } }, [ps, total]);
   const tap = (id: number) => setPs(a => a.map(p => p.id === id && p.state === 'go' ? (p.bad ? { ...p, state: 'saved', y: 0.4 } : { ...p }) : p));
   const bads = ps.filter(p => p.bad); const saved = bads.filter(p => p.state === 'saved').length; const lost = bads.filter(p => p.state === 'lost').length;
-  const score = clamp((saved / Math.max(1, bads.length)) * 100 - lost * 5);
+  const score = bads.length === 0 ? 100 : clamp((saved / bads.length) * 100 - lost * 5);
   return (
     <TaskShell title={node.title} intro={node.intro}>
       <div className="mg-meta"><span>声かけ成功 {saved}</span><span>線を越えた {lost}</span></div>
       <div className="mg-scene watch" aria-label="ホーム。黄色い線へ近づいた人をタップして声をかける"><div className="mg-line" /><div className="mg-edge">ホーム端</div>
-        {ps.map(p => <button key={p.id} className={'mg-person ' + (p.state === 'saved' ? 'saved' : p.state === 'lost' ? 'lost' : p.bad ? 'bad' : 'safe')} style={{ left: p.x * 100 + '%', top: p.y * 100 + '%' }} onPointerDown={() => tap(p.id)} aria-label={p.bad ? '線に近づく人' : '立ち止まっている人'}>{p.state === 'saved' ? '😊' : p.state === 'lost' ? '⚠' : p.bad ? '🚶' : '🧍'}</button>)}
+        {ps.map(p => <button key={p.id} className={'mg-person ' + (p.state === 'saved' ? 'saved' : p.state === 'lost' ? 'lost' : p.bad ? 'bad' : 'safe')} style={{ left: p.x * 100 + '%', top: p.y * 100 + '%' }} onClick={() => tap(p.id)} aria-label={p.bad ? '線に近づく人' : '立ち止まっている人'}>{p.state === 'saved' ? '😊' : p.state === 'lost' ? '⚠' : p.bad ? '🚶' : '🧍'}</button>)}
       </div>
       <p className="small">黄色い線に向かって歩いてくる人をタップして、声をかけて下がってもらいます。立ち止まっている人は見守るだけで大丈夫です。</p>
       {fin && <Finish score={score} label="見守り" onDone={onDone} />}
@@ -106,7 +107,7 @@ export function RouteTask({ node, onDone }: { node: TaskNode; onDone: Done }) {
     <TaskShell title={node.title} intro={node.intro}>
       <div className="mg-meta"><span>歩数 {path.length - 1}</span>{waypoints.length > 0 && <span>必ず通る {hit.length}/{waypoints.length}</span>}<button className="btn sm" onClick={() => { setPath([start]); setFin(false); }}>やり直す</button></div>
       <div className="mg-grid" style={{ gridTemplateColumns: `repeat(${W}, 1fr)` }}>
-        {grid.flatMap((row, y) => [...row].map((ch, x) => { const on = path.some(p => p[0] === x && p[1] === y); const cur = last[0] === x && last[1] === y; return <button key={x + ',' + y} className={`mg-cell c${ch === '.' ? 'f' : ch === '#' ? 'w' : ch === '~' ? 'r' : ch === 'S' ? 's' : ch === 'G' ? 'g' : 'k'}${on ? ' on' : ''}${cur ? ' cur' : ''}`} onPointerDown={() => tap(x, y)} aria-label={legend[ch] ?? ch}>{ch === 'S' ? '起' : ch === 'G' ? '着' : ch !== '.' && ch !== '#' && ch !== '~' ? ch : cur ? '●' : ''}</button>; }))}
+        {grid.flatMap((row, y) => [...row].map((ch, x) => { const on = path.some(p => p[0] === x && p[1] === y); const cur = last[0] === x && last[1] === y; return <button key={x + ',' + y} className={`mg-cell c${ch === '.' ? 'f' : ch === '#' ? 'w' : ch === '~' ? 'r' : ch === 'S' ? 's' : ch === 'G' ? 'g' : 'k'}${on ? ' on' : ''}${cur ? ' cur' : ''}`} onClick={() => tap(x, y)} aria-label={legend[ch] ?? ch}>{ch === 'S' ? '起' : ch === 'G' ? '着' : ch !== '.' && ch !== '#' && ch !== '~' ? ch : cur ? '●' : ''}</button>; }))}
       </div>
       <p className="small">{Object.entries(legend).map(([k, v]) => `${k === '#' ? '■' : k === '~' ? '▒' : k}：${v}`).join('　')}　／　隣のマスをタップして道をつなぎます。戻るには通ったマスをタップ。</p>
       {fin && <Finish score={score} label="ご案内" onDone={onDone} note={reached ? `最短との差 ${Math.max(0, cost - best)}` : ''} />}
@@ -118,7 +119,8 @@ export function RouteTask({ node, onDone }: { node: TaskNode; onDone: Done }) {
 export function SortTask({ node, onDone }: { node: TaskNode; onDone: Done }) {
   const cfg = node.config ?? {}; const bins: { id: string; label: string }[] = cfg.bins ?? []; const items: { id: string; label: string; bin: string; why: string }[] = cfg.items ?? [];
   const [i, setI] = useState(0); const [ok, setOk] = useState(0); const [msg, setMsg] = useState(''); const [left, setLeft] = useState(cfg.perItem ?? 7); const fin = i >= items.length;
-  const next = useCallback((good: boolean, why: string) => { if (good) setOk(n => n + 1); setMsg((good ? '○ ' : '× ') + why); setI(n => n + 1); setLeft(cfg.perItem ?? 7); }, [cfg.perItem]);
+  const handled = useRef(-1); // 同じ問題をタップと時間切れで二重に進めない
+  const next = useCallback((good: boolean, why: string) => { if (handled.current === i) return; handled.current = i; if (good) setOk(n => n + 1); setMsg((good ? '○ ' : '× ') + why); setI(n => n + 1); setLeft(cfg.perItem ?? 7); }, [cfg.perItem, i]);
   useEffect(() => { if (fin) return; const id = setInterval(() => setLeft((n: number) => n - 1), 1000); return () => clearInterval(id); }, [fin, i]);
   useEffect(() => { if (!fin && left <= 0) next(false, '時間切れ：' + items[i].why); }, [left]);  
   const cur = items[i]; const score = clamp((ok / Math.max(1, items.length)) * 100);
@@ -126,7 +128,7 @@ export function SortTask({ node, onDone }: { node: TaskNode; onDone: Done }) {
     <TaskShell title={node.title} intro={node.intro}>
       <div className="mg-meta"><span>{Math.min(i + 1, items.length)}/{items.length}</span><span>正しく仕分け {ok}</span>{!fin && <span>残り {left}秒</span>}</div>
       {!fin && <div className="mg-card" key={i}><b>{cur.label}</b><i className="mg-timer"><b style={{ width: (left / (cfg.perItem ?? 7)) * 100 + '%' }} /></i></div>}
-      <div className="mg-bins">{bins.map(b => <button key={b.id} className="btn mg-bin" disabled={fin} onPointerDown={() => next(cur.bin === b.id, cur.why)}>{b.label}</button>)}</div>
+      <div className="mg-bins">{bins.map(b => <button key={b.id} className="btn mg-bin" disabled={fin} onClick={() => next(cur.bin === b.id, cur.why)}>{b.label}</button>)}</div>
       <p className="small" style={{ minHeight: 40 }}>{msg || '品物をどの扱いにするか、素早く決めます。'}</p>
       {fin && <Finish score={score} label="仕分け" onDone={onDone} />}
     </TaskShell>
@@ -145,7 +147,7 @@ export function MemoryTask({ node, onDone }: { node: TaskNode; onDone: Done }) {
       {phase === 'show' && <><div className="term" style={{ whiteSpace: 'normal' }}><p className="small" style={{ margin: 0 }}>{cfg.showLabel ?? '次の順に変更します。覚えてください'}（{left}秒）</p><ol className="mg-seq">{seq.map((s, k) => <li key={k}>{s}</li>)}</ol></div><button className="btn" onClick={() => setPhase('input')}>覚えた</button></>}
       {phase !== 'show' && <>
         <div className="term" style={{ whiteSpace: 'normal' }}><p className="small" style={{ margin: 0 }}>{cfg.inputLabel ?? '同じ順に選んでください'}</p><ol className="mg-seq">{seq.map((_, k) => <li key={k} className={phase === 'done' ? (ans[k] === seq[k] ? 'ok' : 'ng') : ''}>{ans[k] ?? '＿＿'}{phase === 'done' && ans[k] !== seq[k] && <small>（正：{seq[k]}）</small>}</li>)}</ol></div>
-        {phase === 'input' && <div className="mg-bins">{pool.map(p => <button key={p} className="btn mg-bin" onPointerDown={() => add(p)}>{p}</button>)}</div>}
+        {phase === 'input' && <div className="mg-bins">{pool.map(p => <button key={p} className="btn mg-bin" onClick={() => add(p)}>{p}</button>)}</div>}
         {phase === 'input' && ans.length > 0 && <button className="btn sm" onClick={() => setAns(a => a.slice(0, -1))}>1つ戻す</button>}
       </>}
       {phase === 'done' && <Finish score={score} label="入力の正確さ" onDone={onDone} />}

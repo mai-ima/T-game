@@ -113,6 +113,7 @@ function HubControls({ c }: { c: GameController }) {
       <Joystick onMove={(x, y) => c.rm?.setMoveInput(x, y)} />
       <div className="act" data-ui>
         {p ? <button className="main" onClick={() => c.doPrompt()}>{p.label}<small>タップ／E／Enter</small></button> : tgt ? <button className="main nav" onClick={() => { c.audio.ui('click'); c.navigateTo(tgt.id, true); }} aria-label={'目的地へ自動で歩く：' + tgt.label}><span className="arrow" style={{ transform: `rotate(${tgt.bearing}rad)` }}>➤</span><span>目的地へ<small>{tgt.label}（約{Math.round(tgt.dist)}m）</small></span></button> : <div className="note">歩いて設備や人物に近づきます（黄色い標識が調べる対象）</div>}
+        {p?.others?.map(o => <button key={o.id} className="btn sm" onClick={() => c.interact(o.id)}>{o.label}</button>)}
         {v.canExit && <button className="btn primary" onClick={() => c.exitHub()}>{v.node.exit.label}</button>}
         <div style={{ display: 'flex', gap: 6 }}><button className={'tile' + (run ? ' on' : '')} onClick={() => { if (c.rm) { c.rm.run = !c.rm.run; setRun(c.rm.run); } }} aria-pressed={run}><Icon.run />走る</button><button className="tile" onClick={() => c.waitMinutes(30)} title="時間を進める"><Icon.wait />30分進める</button></div>
       </div>

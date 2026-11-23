@@ -14,7 +14,7 @@ import { QUALITY, type QualityId } from './quality';
 export interface Settings { quality: QualityId; autoQuality: boolean; view: ViewMode; textSpeed: 'fast' | 'normal' | 'slow'; timeLimits: boolean; subtitles: boolean; clockRunning: boolean; master: number; sfx: number; ambient: number; music: number; muted: boolean; fontScale: number }
 export const DEFAULT_SETTINGS: Settings = { quality: 'high', autoQuality: true, view: '3d', textSpeed: 'normal', timeLimits: true, subtitles: true, clockRunning: true, master: 0.8, sfx: 0.6, ambient: 0.4, music: 0.5, muted: false, fontScale: 1 };
 
-export interface Prompt { object: string; label: string; interactionId: string; icon?: string }
+export interface Prompt { object: string; label: string; interactionId: string; icon?: string; others?: { id: string; label: string }[] }
 export const STORY = storyJson as unknown as StoryData;
 export const SECONDS_PER_GAME_MIN = 6;
 
@@ -152,10 +152,12 @@ export class GameController {
   updatePrompt(force = false) {
     let next: Prompt | null = null;
     if (this.view?.kind === 'hub') {
-      const objs = new Map(this.view.interactions.map(i => [i.object, i])); const near = this.sim.nearest(99, id => objs.has(id));
-      if (near) { const it = objs.get(near.id)!; next = { object: near.id, label: this.textWorld(it.label), interactionId: it.id, icon: it.icon }; }
+      // 同じ設備に複数の依頼があるときは、先に定義された依頼を主にして、残りは「ほかの用件」として並べる
+      const ints = this.view.interactions; const objs = new Map<string, typeof ints>(); for (const i of ints) objs.set(i.object, [...(objs.get(i.object) ?? []), i]);
+      const near = this.sim.nearest(99, id => objs.has(id));
+      if (near) { const list = objs.get(near.id)!; const it = list[0]; next = { object: near.id, label: this.textWorld(it.label), interactionId: it.id, icon: it.icon, others: list.slice(1).map(o => ({ id: o.id, label: this.textWorld(o.label) })) }; }
     }
-    const k = next ? next.interactionId : ''; if (k !== this.promptKey || force) { this.promptKey = k; this.prompt = next; this.notify(); }
+    const k = next ? [next.interactionId, ...(next.others ?? []).map(o => o.id)].join('|') : ''; if (k !== this.promptKey || force) { this.promptKey = k; this.prompt = next; this.notify(); }
   }
   /** 場面に合わせてBGMを切り替える（緊張する場面・温かい場面・基地・事務室・昼の駅） */
   musicFor(): string {
@@ -186,7 +188,7 @@ export class GameController {
     return { ...best, bearing: -rel };
   }
   onTap(id: string, near: boolean) {
-    if (this.view?.kind !== 'hub') return; const it = this.view.interactions.find(i => i.object === id);
+    if (this.view?.kind !== 'hub') return; const its = this.view.interactions.filter(i => i.object === id); const it = its[0];
     if (it && near) { this.interact(it.id); return; }
     const a = this.data.anchors[id]; if (a && !it) { this.say(EXAMINE[id] ? EXAMINE[id] : a.label); this.audio.ui('click'); }
   }
