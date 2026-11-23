@@ -4,3 +4,4 @@ audit/*.png
 audit/tmp
 dist-lab
 coverage/
+.claude/worktrees/
