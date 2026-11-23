@@ -23,7 +23,7 @@ export function Sheet({ title, onClose, children, wide }: { title: string; onClo
 
 export function RosterPanel({ c }: { c: GameController }) {
   const w = c.world; const roster = useMemo(() => sampleRoster(), []); const today = w.clock.day; const shift = roster[today] ?? '日勤';
-  const blocks = [{ a: 8 * 60 + 30, b: 9 * 60, t: '点呼', c: '#6fb6ff' }, { a: 9 * 60, b: 12 * 60, t: '駅務・巡回', c: '#36c9b4' }, { a: 12 * 60, b: 12 * 60 + 45, t: '昼休憩', c: '#90a3ba' }, { a: 12 * 60 + 45, b: 16 * 60, t: '案内・設備確認', c: '#36c9b4' }, { a: 16 * 60, b: 17 * 60 + 15, t: '記録・面談', c: '#ffb938' }];
+  const blocks = [{ a: 8 * 60 + 30, b: 9 * 60, t: '点呼', c: '#1a2f55' }, { a: 9 * 60, b: 12 * 60, t: '駅務・巡回', c: '#1b6f45' }, { a: 12 * 60, b: 12 * 60 + 45, t: '昼休憩', c: '#6b6f73' }, { a: 12 * 60 + 45, b: 16 * 60, t: '案内・設備確認', c: '#1b6f45' }, { a: 16 * 60, b: 17 * 60 + 15, t: '記録・面談', c: '#a35c00' }];
   const lo = 8 * 60, hi = 18 * 60; const pct = (m: number) => ((m - lo) / (hi - lo)) * 100; const issues = validateRoster(roster);
   return (
     <Sheet title="勤務表" onClose={() => (c.panel = null, c.notify())}>
@@ -35,7 +35,7 @@ export function RosterPanel({ c }: { c: GameController }) {
   );
 }
 
-const RATE_CLR: Record<string, string> = { A: '#7bd88f', B: '#6fb6ff', C: '#ffb938', D: '#ff6b5a' };
+const RATE_CLR: Record<string, string> = { A: '#14663f', B: '#1a4fa0', C: '#a35c00', D: '#c8281e' };
 export function CareerPanel({ c }: { c: GameController }) {
   const w = c.world; const car = w.career; const { score, rating } = overallRating(car); const today = w.clock.day; const cur = car.assignments[car.assignments.length - 1];
   return (
@@ -57,11 +57,11 @@ export function RelationsPanel({ c }: { c: GameController }) {
   return (
     <Sheet title="人物関係" onClose={() => (c.panel = null, c.notify())}>
       {ids.length === 0 ? <p className="small">まだ誰とも関係が記録されていません。</p> : <>
-        <svg className="rel-svg" viewBox="0 0 440 320" role="img" aria-label="人物相関図"><circle cx={cx} cy={cy} r="26" fill="#18283f" stroke="#ffb938" strokeWidth="2" /><text x={cx} y={cy + 4} textAnchor="middle" fill="#e9eef5" fontSize="11">{w.playerName.slice(0, 5)}</text>
+        <svg className="rel-svg" viewBox="0 0 440 320" role="img" aria-label="人物相関図"><circle cx={cx} cy={cy} r="26" fill="#fff" stroke="#c8281e" strokeWidth="3" /><text x={cx} y={cy + 4} textAnchor="middle" fill="#15181d" fontSize="11">{w.playerName.slice(0, 5)}</text>
           {ids.map((id, i) => { const a = (i / ids.length) * Math.PI * 2 - Math.PI / 2; const x = cx + Math.cos(a) * R * 1.45, y = cy + Math.sin(a) * R * 0.95; const r = w.relationships[id]; const def = c.story.characters[id]; return <g key={id}>
-            <line x1={cx} y1={cy} x2={x} y2={y} stroke={r.trust >= 0 ? '#36c9b4' : '#ff6b5a'} strokeWidth={1 + Math.abs(r.trust) * 0.7} opacity=".8" strokeDasharray={r.rapport > 3 ? '' : '4 4'} />
-            <circle cx={x} cy={y} r="22" fill="#0f1a2a" stroke="#34506f" /><foreignObject x={x - 20} y={y - 20} width="40" height="40"><div style={{ width: 40, height: 40, borderRadius: 20, overflow: 'hidden' }}><Portrait def={def} size={40} /></div></foreignObject>
-            <text x={x} y={y + 36} textAnchor="middle" fill="#e9eef5" fontSize="11">{def.name}</text></g>; })}
+            <line x1={cx} y1={cy} x2={x} y2={y} stroke={r.trust >= 0 ? '#1b6f45' : '#c8281e'} strokeWidth={1 + Math.abs(r.trust) * 0.7} opacity=".8" strokeDasharray={r.rapport > 3 ? '' : '4 4'} />
+            <circle cx={x} cy={y} r="22" fill="#fff" stroke="#1a2f55" strokeWidth="2" /><foreignObject x={x - 20} y={y - 20} width="40" height="40"><div style={{ width: 40, height: 40, borderRadius: 20, overflow: 'hidden' }}><Portrait def={def} size={40} /></div></foreignObject>
+            <text x={x} y={y + 36} textAnchor="middle" fill="#15181d" fontSize="11">{def.name}</text></g>; })}
         </svg>
         <table className="tbl"><thead><tr><th>人物</th><th>信頼</th><th>親しさ</th><th>メモ</th></tr></thead><tbody>{ids.map(id => { const r = w.relationships[id]; const d = c.story.characters[id]; return <tr key={id}><td><b>{d.name}</b><div className="small">{d.role}</div></td><td><Meter v={r.trust} min={-5} max={10} /></td><td><Meter v={r.rapport} min={0} max={10} /></td><td className="small">{r.notes.join(' ') || d.trait}</td></tr>; })}</tbody></table></>}
     </Sheet>
@@ -74,7 +74,7 @@ export function TimelinePanel({ c }: { c: GameController }) {
   return (
     <Sheet title="年表・業務日誌" onClose={() => (c.panel = null, c.notify())}>
       <div className="tabs"><button className={tab === 'tl' ? 'on' : ''} onClick={() => setTab('tl')}>年表</button><button className={tab === 'log' ? 'on' : ''} onClick={() => setTab('log')}>業務日誌・選択履歴</button><button className={tab === 'bl' ? 'on' : ''} onClick={() => setTab('bl')}>会話ログ</button></div>
-      {tab === 'bl' ? <div className="small">{c.backlog.slice(-40).map((b, i) => <p key={i} style={{ margin: '4px 0' }}><b style={{ color: '#ffb938' }}>{b.who}</b> {b.text}</p>)}</div>
+      {tab === 'bl' ? <div className="small">{c.backlog.slice(-40).map((b, i) => <p key={i} style={{ margin: '4px 0' }}><b>{b.who}</b> {b.text}</p>)}</div>
         : <table className="tbl"><tbody>{items.length === 0 && <tr><td className="small">記録はまだありません。</td></tr>}{items.map((e, i) => <tr key={i}><td className="small" style={{ whiteSpace: 'nowrap' }}>{g(e.day)} {fmtTime(e.minute)}</td><td>{e.text}{e.tag === 'choice' && <span className="pill warn" style={{ marginLeft: 6 }}>選択</span>}</td></tr>)}</tbody></table>}
     </Sheet>
   );
@@ -96,12 +96,12 @@ export function FlowPanel({ c }: { c: GameController }) {
     <Sheet title={`分岐図：${chap.title}`} onClose={() => (c.panel = null, c.notify())} wide>
       <p className="small" style={{ marginTop: 0 }}>● 到達済み　○ 未到達（{reveal ? '章を終えたため表示' : 'ネタバレ防止のため伏せています'}）　◆ 選択肢　★ 重要な選択　■ 場面（ハブ）</p>
       <div className="flow-wrap"><svg width={layout.width} height={layout.height} role="img" aria-label="分岐フローチャート">
-        {layout.nodes.flatMap(n => successors(n).filter(s => layout.pos.has(s) && s !== n.id).map(s => { const a = layout.pos.get(n.id)!, b = layout.pos.get(s)!; const walked = vis.has(n.id) && vis.has(s); const show = walked || reveal; return show ? <line key={n.id + s} x1={a.x} y1={a.y} x2={b.x} y2={b.y} stroke={walked ? '#ffb938' : '#2c4262'} strokeWidth={walked ? 1.8 : 1} opacity={b.x < a.x ? 0.25 : 0.9} /> : null; }))}
-        {layout.nodes.map(n => { const p = layout.pos.get(n.id)!; const seen = vis.has(n.id); const show = seen || reveal; const isChoice = n.type === 'choice'; const imp = isChoice && n.important; const fill = seen ? (imp ? '#ffb938' : n.type === 'hub' ? '#36c9b4' : n.type === 'end' ? '#ff8a5a' : '#6fb6ff') : '#17263a';
+        {layout.nodes.flatMap(n => successors(n).filter(s => layout.pos.has(s) && s !== n.id).map(s => { const a = layout.pos.get(n.id)!, b = layout.pos.get(s)!; const walked = vis.has(n.id) && vis.has(s); const show = walked || reveal; return show ? <line key={n.id + s} x1={a.x} y1={a.y} x2={b.x} y2={b.y} stroke={walked ? '#c8281e' : '#a9a595'} strokeWidth={walked ? 1.8 : 1} opacity={b.x < a.x ? 0.25 : 0.9} /> : null; }))}
+        {layout.nodes.map(n => { const p = layout.pos.get(n.id)!; const seen = vis.has(n.id); const show = seen || reveal; const isChoice = n.type === 'choice'; const imp = isChoice && n.important; const fill = seen ? (imp ? '#f2c500' : n.type === 'hub' ? '#1b6f45' : n.type === 'end' ? '#c8281e' : '#1a2f55') : '#e3e0d2';
           return <g key={n.id}><title>{show ? (n.type === 'choice' ? n.prompt : n.type === 'line' ? n.lines[0].text.slice(0, 40) : n.id) : '未到達'}</title>
-            {isChoice ? <rect x={p.x - 8} y={p.y - 8} width="16" height="16" transform={`rotate(45 ${p.x} ${p.y})`} fill={fill} stroke={imp ? '#fff' : '#34506f'} /> : n.type === 'hub' ? <rect x={p.x - 9} y={p.y - 9} width="18" height="18" fill={fill} stroke="#34506f" /> : <circle cx={p.x} cy={p.y} r="7" fill={fill} stroke="#34506f" />}
-            {imp && <text x={p.x} y={p.y + 4} textAnchor="middle" fontSize="11" fill="#1a1200">★</text>}{!show && <text x={p.x} y={p.y + 3} textAnchor="middle" fontSize="9" fill="#4a6280">?</text>}
-            {isChoice && seen && n.options.map((o, i) => chosen.has(n.id + '>' + o.id) ? <circle key={o.id} cx={p.x + 12 + i * 4} cy={p.y - 10} r="2.5" fill="#7bd88f" /> : null)}</g>; })}
+            {isChoice ? <rect x={p.x - 8} y={p.y - 8} width="16" height="16" transform={`rotate(45 ${p.x} ${p.y})`} fill={fill} stroke={imp ? '#15181d' : '#6b6f73'} /> : n.type === 'hub' ? <rect x={p.x - 9} y={p.y - 9} width="18" height="18" fill={fill} stroke="#6b6f73" /> : <circle cx={p.x} cy={p.y} r="7" fill={fill} stroke="#6b6f73" />}
+            {imp && <text x={p.x} y={p.y + 4} textAnchor="middle" fontSize="11" fill="#15181d">★</text>}{!show && <text x={p.x} y={p.y + 3} textAnchor="middle" fontSize="9" fill="#8c9196">?</text>}
+            {isChoice && seen && n.options.map((o, i) => chosen.has(n.id + '>' + o.id) ? <circle key={o.id} cx={p.x + 12 + i * 4} cy={p.y - 10} r="2.5" fill="#14663f" /> : null)}</g>; })}
       </svg></div>
       <p className="small">選択した分岐は緑の点で示されます。到達ノード {w.story.visited.filter(x => x.startsWith(prefix)).length}／{layout.nodes.length}。</p>
     </Sheet>

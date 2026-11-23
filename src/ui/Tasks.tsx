@@ -46,7 +46,7 @@ export function ComposeTask({ node, onDone }: { node: TaskNode; onDone: Done }) 
           <div className="opts">{s.options.map(o => <label key={o.id} className={pick[s.id] === o.id ? 'on' : ''}><input type="radio" name={s.id} disabled={fin} checked={pick[s.id] === o.id} onChange={() => setPick(p => ({ ...p, [s.id]: o.id }))} /><span>{o.text}{fin && pick[s.id] === o.id && <span className="small"> — {o.good ? '○ ' : '× '}{o.why}</span>}</span></label>)}</div>
         </div>
       ))}
-      <div className="term" style={{ margin: '10px 0' }}>【構内放送（案）】{assembled || '（未選択）'}</div>
+      <div className="term" style={{ margin: '10px 0', whiteSpace: 'normal' }}>【構内放送（案）】{assembled || '（未選択）'}</div>
       {!fin ? <button className="btn primary" disabled={Object.keys(pick).length < slots.length} onClick={() => setFin(true)}>放送文を確定する</button>
         : <div><p><b>適切な項目 {good}/{slots.length}</b></p><button className="btn primary" onClick={() => onDone(score)}>放送して戻る</button></div>}
     </TaskShell>

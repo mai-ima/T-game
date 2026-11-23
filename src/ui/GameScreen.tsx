@@ -79,7 +79,7 @@ export function GameScreen({ c, onExit }: { c: GameController; onExit: () => voi
       {c.endResult && v?.kind === 'end' && <ChapterEnd c={c} onExit={onExit} />}
       {c.panel === 'roster' && <RosterPanel c={c} />}{c.panel === 'career' && <CareerPanel c={c} />}{c.panel === 'relations' && <RelationsPanel c={c} />}{c.panel === 'timeline' && <TimelinePanel c={c} />}{c.panel === 'flow' && <FlowPanel c={c} />}{c.panel === 'save' && <SavePanel c={c} />}{c.panel === 'settings' && <SettingsPanel c={c} onClose={() => { c.panel = null; c.notify(); }} />}
       {c.toast && <div className="toast" role="status" data-ui>{c.toast.text}</div>}
-      {c.caption && <div className="caption" role="status" aria-live="polite">🔊 {c.caption.text}</div>}
+      {c.caption && <div className="caption" role="status" aria-live="polite">［放送］{c.caption.text}</div>}
       {webglFail && <div className="toast" style={{ top: 120 }}>この端末では3D描画（WebGL）を開始できなかったため、2D表示で動作しています。</div>}
       {debug && stats && <div className="stats">{stats.view}/{stats.cam} {stats.quality} {stats.fps}fps {stats.frameMs}ms calls:{stats.calls} tris:{stats.triangles} geo:{stats.geometries} tex:{stats.textures} heap:{stats.heapMB ?? '-'}MB</div>}
     </div>
@@ -92,7 +92,7 @@ function Hud({ c, onExit }: { c: GameController; onExit: () => void }) {
   return (
     <>
       <div className="hud-top" data-ui>
-        <div className="chip"><div className="clock">{c.clockLabel}<small>{c.dateLabel}</small></div>{cap && <div className="small">{cap}</div>}</div>
+        <div className="clock"><div className="t">{c.clockLabel}</div><div className="d">{c.dateLabel}</div>{cap && <div className="d" style={{ color: '#ffa83a' }}>{cap}</div>}</div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 6, alignItems: 'flex-end', minWidth: 0 }}>
           <div className="hud-btns">
             <div className="seg" role="group" aria-label="表示方式">{(['3d', '25d', '2d'] as const).map(m => <button key={m} className={s.view === m ? 'on' : ''} onClick={() => c.setView(m)} aria-pressed={s.view === m}>{m === '3d' ? '3D' : m === '25d' ? '擬似3D' : '2D'}</button>)}</div>
@@ -114,13 +114,13 @@ function HubControls({ c }: { c: GameController }) {
   const v = c.view; if (v?.kind !== 'hub') return null; const p = c.prompt; const [goals, setGoals] = useState(typeof window === 'undefined' || window.innerWidth >= 760);
   return (
     <>
-      <div className="goals chip" data-ui><b>{c.textWorld(v.node.title)}</b>　<button className="btn sm ghost" style={{ minHeight: 28, padding: '0 8px' }} onClick={() => setGoals(g => !g)}>{goals ? '▲' : '▼'}</button>
+      <div className="goals chip" data-ui><b>業務メモ　{c.textWorld(v.node.title)}</b>　<button className="btn sm ghost" style={{ minHeight: 28, padding: '0 8px' }} onClick={() => setGoals(g => !g)}>{goals ? 'たたむ' : '開く'}</button>
         {goals && <><ul>{v.goals.map(g => <li key={g.id} className={g.done ? 'done' : ''}><span className="ck">{g.done ? '✓' : ''}</span>{g.label}</li>)}</ul>{v.node.hint && <div className="hint">{v.node.hint}</div>}</>}</div>
       <Joystick onMove={(x, y) => c.rm?.setMoveInput(x, y)} />
       <div className="act" data-ui>
-        {p ? <button className="main" onClick={() => c.doPrompt()}>{p.label}<small>タップ／E／Enter</small></button> : <div className="chip small">歩いて設備や人物に近づく（黄色い◆が調べる対象）</div>}
+        {p ? <button className="main" onClick={() => c.doPrompt()}>{p.label}<small>タップ／E／Enter</small></button> : <div className="note">歩いて設備や人物に近づきます（黄色い標識が調べる対象）</div>}
         {v.canExit && <button className="btn primary" onClick={() => c.exitHub()}>{v.node.exit.label}</button>}
-        <button className="btn sm" onClick={() => c.waitMinutes(30)} title="時間を進める">⏩ 30分進める</button>
+        <button className="btn sm" onClick={() => c.waitMinutes(30)} title="時間を進める">30分進める</button>
       </div>
     </>
   );
@@ -138,11 +138,11 @@ function DialogueBox({ c }: { c: GameController }) {
   return (
     <div className="dlg" data-ui>
       <div className={'dlg-box' + (def ? '' : ' noav')} onClick={click} role="button" tabIndex={0} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); click(); } }} aria-label="会話。タップで次へ">
-        {def && <div className="av"><Portrait def={def} mood={l.mood} size={74} /></div>}
-        <div><div className="dlg-name">{l.narration ? '' : l.who === 'player' ? c.world.playerName : def?.name}{def && <small>{def.role}</small>}</div><div className={'dlg-text' + (l.narration ? ' nar' : '')} aria-live="polite">{tw.shown}</div></div>
-        <div className="dlg-foot"><span>{c.lineIndex + 1}/{v.node.lines.length}</span><span><button className="btn sm ghost" onClick={e => { e.stopPropagation(); setLog(x => !x); }}>ログ</button> <span className="next">{tw.done ? (last ? '▶ 次へ' : '▼') : '…'}</span></span></div>
+        {def && <div className="av"><Portrait def={def} mood={l.mood} size={78} /><span className="nm">{def.name}</span></div>}
+        <div><div className="dlg-name">{!l.narration && <b>{l.who === 'player' ? c.world.playerName : def?.name}</b>}{def && <small>{def.role}</small>}</div><div className={'dlg-text' + (l.narration ? ' nar' : '')} aria-live="polite">{tw.shown}</div></div>
+        <div className="dlg-foot"><span>{c.lineIndex + 1}/{v.node.lines.length}</span><span><button className="btn sm ghost" onClick={e => { e.stopPropagation(); setLog(x => !x); }}>ログ</button> <span className="next">{tw.done ? (last ? '次へ' : '続く') : ''}</span></span></div>
       </div>
-      {log && <div className="toast" style={{ top: 'auto', bottom: 170, maxHeight: '40vh', overflow: 'auto', width: 'min(640px, 92vw)', textAlign: 'left' }} onClick={() => setLog(false)}>{c.backlog.slice(-10).map((b, i) => <p key={i} style={{ margin: '4px 0' }}><b style={{ color: '#ffb938' }}>{b.who}</b> {b.text}</p>)}</div>}
+      {log && <div className="toast" style={{ top: 'auto', bottom: 170, maxHeight: '40vh', overflow: 'auto', width: 'min(640px, 92vw)', textAlign: 'left' }} onClick={() => setLog(false)}>{c.backlog.slice(-10).map((b, i) => <p key={i} style={{ margin: '4px 0' }}><b style={{ color: '#f2c500' }}>{b.who}</b> {b.text}</p>)}</div>}
     </div>
   );
 }
@@ -156,7 +156,7 @@ function ChoiceBox({ c }: { c: GameController }) {
       <div className="choice-in">
         <div className="choice-q">{v.node.important && <span className="imp">重要な選択</span>}{c.textWorld(v.node.prompt)}</div>
         {left !== null && <div><div className="timer" aria-label="残り時間"><i style={{ width: (left / c.choiceTotal) * 100 + '%' }} /></div><div className="small">残り {Math.ceil(left)} 秒（時間切れは「{c.textWorld(v.node.options.find(o => o.id === v.node.defaultOption)?.label ?? '')}」）</div></div>}
-        {v.options.map((o, i) => <button key={o.id} className="choice-opt" onClick={() => c.choose(o.id)}><b style={{ color: '#ffb938' }}>{i + 1}.</b> {c.textWorld(o.label)}{o.hint && <div className="small">{o.hint}</div>}</button>)}
+        {v.options.map((o, i) => <button key={o.id} className="choice-opt" onClick={() => c.choose(o.id)}><span className="n">{i + 1}</span><span>{c.textWorld(o.label)}{o.hint && <div className="small">{o.hint}</div>}</span></button>)}
       </div>
     </div>
   );
@@ -170,7 +170,7 @@ function TaskHost({ c }: { c: GameController }) {
 
 function ChapterEnd({ c, onExit }: { c: GameController; onExit: () => void }) {
   const r = c.endResult!; const n = c.view?.kind === 'end' ? c.view.node : null; const w = c.world; const flags = Object.keys(w.flags).filter(f => INFLUENCE[f]);
-  const RC: Record<string, string> = { A: '#7bd88f', B: '#6fb6ff', C: '#ffb938', D: '#ff6b5a' };
+  const RC: Record<string, string> = { A: '#14663f', B: '#1a4fa0', C: '#a35c00', D: '#c8281e' };
   return (
     <div className="fullscreen" data-ui>
       <div className="in">
