@@ -1,0 +1,1 @@
+{ "entry": ["src/main.tsx", "src/lab/main.ts", "tests/*.test.ts"], "project": ["src/**/*.{ts,tsx}"], "ignore": ["src/data/**"], "ignoreDependencies": ["madge", "@gltf-transform/core", "@gltf-transform/extensions", "@gltf-transform/functions", "meshoptimizer", "@vitest/coverage-v8"] }

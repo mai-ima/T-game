@@ -15,13 +15,13 @@ const Finish = ({ score, label, onDone, note }: { score: number; label: string; 
 /* ---------- 1) タイミング：ゲージが緑の範囲にあるうちに止める ---------- */
 export function TimingTask({ node, onDone }: { node: TaskNode; onDone: Done }) {
   const cfg = node.config ?? {}; const rounds: { label: string }[] = cfg.rounds ?? [{ label: '1' }, { label: '2' }, { label: '3' }];
-  const [i, setI] = useState(0); const [pos, setPos] = useState(0); const [res, setRes] = useState<number[]>([]); const dir = useRef(1); const p = useRef(0); const zone = useMemo(() => rounds.map(() => 0.2 + Math.random() * 0.5), []); // eslint-disable-line
+  const [i, setI] = useState(0); const [pos, setPos] = useState(0); const [res, setRes] = useState<number[]>([]); const dir = useRef(1); const p = useRef(0); const zone = useMemo(() => rounds.map(() => 0.2 + Math.random() * 0.5), []);  
   const w = cfg.width ?? 0.16; const fin = i >= rounds.length;
   useEffect(() => {
     if (fin) return; let raf = 0, last = performance.now(); const speed = (cfg.speed ?? 0.7) * (1 + i * 0.25);
     const tick = (t: number) => { const dt = (t - last) / 1000; last = t; p.current += dir.current * speed * dt; if (p.current > 1) { p.current = 1; dir.current = -1; } if (p.current < 0) { p.current = 0; dir.current = 1; } setPos(p.current); raf = requestAnimationFrame(tick); };
     raf = requestAnimationFrame(tick); return () => cancelAnimationFrame(raf);
-  }, [i, fin]); // eslint-disable-line
+  }, [i, fin]);  
   const stop = () => { if (fin) return; const d = Math.abs(p.current - (zone[i] + w / 2)); const s = d <= w / 2 ? 100 : d <= w ? 55 : 10; setRes(r => [...r, s]); setI(n => n + 1); p.current = 0; dir.current = 1; };
   const score = clamp(res.reduce((a, b) => a + b, 0) / rounds.length);
   return (
@@ -72,7 +72,7 @@ export function WatchTask({ node, onDone }: { node: TaskNode; onDone: Done }) {
       setPs(a => a.map(p => { if (p.state !== 'go') return p; const y = p.y + p.vy * dt; return y >= 0.93 && p.bad ? { ...p, y, state: 'lost' } : { ...p, y }; }));
       raf = requestAnimationFrame(tick);
     }; raf = requestAnimationFrame(tick); return () => cancelAnimationFrame(raf);
-  }, [fin]); // eslint-disable-line
+  }, [fin]);  
   useEffect(() => { if (spawned.current >= total && ps.length >= total && ps.every(p => p.state !== 'go' || !p.bad)) { const id = setTimeout(() => setFin(true), 700); return () => clearTimeout(id); } }, [ps, total]);
   const tap = (id: number) => setPs(a => a.map(p => p.id === id && p.state === 'go' ? (p.bad ? { ...p, state: 'saved', y: 0.4 } : { ...p }) : p));
   const bads = ps.filter(p => p.bad); const saved = bads.filter(p => p.state === 'saved').length; const lost = bads.filter(p => p.state === 'lost').length;
@@ -120,7 +120,7 @@ export function SortTask({ node, onDone }: { node: TaskNode; onDone: Done }) {
   const [i, setI] = useState(0); const [ok, setOk] = useState(0); const [msg, setMsg] = useState(''); const [left, setLeft] = useState(cfg.perItem ?? 7); const fin = i >= items.length;
   const next = useCallback((good: boolean, why: string) => { if (good) setOk(n => n + 1); setMsg((good ? '○ ' : '× ') + why); setI(n => n + 1); setLeft(cfg.perItem ?? 7); }, [cfg.perItem]);
   useEffect(() => { if (fin) return; const id = setInterval(() => setLeft((n: number) => n - 1), 1000); return () => clearInterval(id); }, [fin, i]);
-  useEffect(() => { if (!fin && left <= 0) next(false, '時間切れ：' + items[i].why); }, [left]); // eslint-disable-line
+  useEffect(() => { if (!fin && left <= 0) next(false, '時間切れ：' + items[i].why); }, [left]);  
   const cur = items[i]; const score = clamp((ok / Math.max(1, items.length)) * 100);
   return (
     <TaskShell title={node.title} intro={node.intro}>

@@ -1,0 +1,5 @@
+{
+  "permissions": {
+    "deny": ["Read(./dist/**)", "Read(./dist-lab/**)", "Read(./artifact/**)", "Read(./audit/shots/**)", "Read(./node_modules/**)", "Read(./src/data/r7/story.json)", "Read(./package-lock.json)", "Read(./coverage/**)"]
+  }
+}

@@ -17,7 +17,7 @@ export function buildCabFront(c: FrontCtx) {
   for (let i = 0; i < S; i++) for (let j = 0; j < N; j++) { const a = i * N + j, b = i * N + (j + 1) % N, c2 = (i + 1) * N + j, d = (i + 1) * N + (j + 1) % N; idx.push(a, b, c2, b, d, c2); }
   const cy = (SILL + TOP) / 2; const cb = pos.length / 3; pos.push(X0, cy, 0); const cf = pos.length / 3; pos.push(XF - rake(cy), cy - 0.2 * 0.3, 0);
   for (let j = 0; j < N; j++) { const a = (j + 1) % N; idx.push(cb, j, a); const o = S * N; idx.push(cf, o + a, o + j); }
-  let nose = new THREE.BufferGeometry(); nose.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); nose.setIndex(idx); nose.computeVertexNormals();
+  const nose = new THREE.BufferGeometry(); nose.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); nose.setIndex(idx); nose.computeVertexNormals();
   if (signedVolume(nose) < 0) { const ix = nose.index!; for (let i = 0; i < ix.count; i += 3) { const t = ix.getX(i + 1); ix.setX(i + 1, ix.getX(i + 2)); ix.setX(i + 2, t); } } nose.computeVertexNormals();
   if (!nose.attributes.uv) nose.setAttribute('uv', new THREE.BufferAttribute(new Float32Array((pos.length / 3) * 2), 2));
   // ---- 凹み（窓・扉・表示器・灯具・番号板・連結器口）をCSGで抜く ----

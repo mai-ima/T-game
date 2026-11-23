@@ -39,7 +39,7 @@ export function GameScreen({ c, onExit }: { c: GameController; onExit: () => voi
     cleanup = () => { ro.disconnect(); document.removeEventListener('visibilitychange', onVis); rm.dispose(); c.rm = undefined; };
     });
     return () => { dead = true; cleanup?.(); };
-  }, [c]); // eslint-disable-line
+  }, [c]);  
 
   useEffect(() => {
     const k = (e: KeyboardEvent) => {
@@ -104,7 +104,8 @@ function Hud({ c, onExit }: { c: GameController; onExit: () => void }) {
 const PRESET_JA: Record<string, string> = { plaza: '駅前広場', overview: '全景（俯瞰）', top: '真上', front: '正面（北）', back: '背面（南）', side: '側面（西）', gate: '改札', gate_close: '改札機（IC読取部）', gate_side: '改札列（側面）', gate_back: '改札（内側から）', gate_wide: '幅広・有人通路', vend_close: '券売機（接写）', seisan: '精算機', concourse: 'コンコース', office: '駅事務室', platform: 'ホーム（西向き）', platform_east: 'ホーム（東向き）', train: '停車中の列車', office_in: '駅事務室（内）', shop: '売店', toilet: 'トイレ', info: '観光案内所', waiting: 'ホーム待合室', entrance: '入口の自動ドア', bus: 'バスのりば', train_front: '列車（前方）', train_side: '列車（側面・北から）', platform_high: 'ホーム俯瞰', rail: '線路沿い', vend: '券売機', board: '発車標', tactile: '点字ブロック' };
 
 function HubControls({ c }: { c: GameController }) {
-  const v = c.view; if (v?.kind !== 'hub') return null; const p = c.prompt; const [run, setRun] = useState(false); const [goals, setGoals] = useState(typeof window === 'undefined' || window.innerWidth >= 760); const tgt = c.suggestTarget();
+  const [run, setRun] = useState(false); const [goals, setGoals] = useState(typeof window === 'undefined' || window.innerWidth >= 760);
+  const v = c.view; if (v?.kind !== 'hub') return null; const p = c.prompt; const tgt = c.suggestTarget();
   return (
     <>
       <div className="goals chip" data-ui><b>業務メモ　{v.goals.filter(g => g.done).length}/{v.goals.length}</b>　<button className="btn sm ghost" style={{ minHeight: 28, padding: '0 8px' }} onClick={() => setGoals(g => !g)}>{goals ? 'たたむ' : '開く'}</button>
@@ -125,10 +126,11 @@ function StageView({ c }: { c: GameController }) {
 }
 
 function DialogueBox({ c }: { c: GameController }) {
-  const v = c.view; if (v?.kind !== 'line') return null; const l = v.node.lines[c.lineIndex]; const text = c.textWorld(l.text); const def = l.who && l.who !== 'player' ? c.story.characters[l.who] : undefined;
-  const tw = useTypewriter(text, c.settings.textSpeed, v.node.id + ':' + c.lineIndex); const last = c.lineIndex === v.node.lines.length - 1; const [log, setLog] = useState(false);
-  const lastLen = useRef(0); useEffect(() => { const n = tw.shown.length; if (n > lastLen.current && n % 3 === 0 && /\S/.test(tw.shown[n - 1] ?? '')) c.audio.blip(c.voiceOf(l.who), l.narration ? 'narration' : 'voice'); lastLen.current = n; }, [tw.shown]); // eslint-disable-line
-  useEffect(() => { lastLen.current = 0; }, [v.node.id, c.lineIndex]);
+  const v = c.view; const ln = v?.kind === 'line' ? v.node : null; const l = ln?.lines[c.lineIndex]; const text = l ? c.textWorld(l.text) : ''; const def = l?.who && l.who !== 'player' ? c.story.characters[l.who] : undefined;
+  const tw = useTypewriter(text, c.settings.textSpeed, (ln?.id ?? '') + ':' + c.lineIndex); const [log, setLog] = useState(false);
+  const lastLen = useRef(0); useEffect(() => { const n = tw.shown.length; if (l && n > lastLen.current && n % 3 === 0 && /\S/.test(tw.shown[n - 1] ?? '')) c.audio.blip(c.voiceOf(l.who), l.narration ? 'narration' : 'voice'); lastLen.current = n; }, [tw.shown]); // eslint-disable-line
+  useEffect(() => { lastLen.current = 0; }, [ln?.id, c.lineIndex]);
+  if (v?.kind !== 'line' || !l) return null; const last = c.lineIndex === v.node.lines.length - 1;
   const click = () => { if (!tw.done) tw.skip(); else c.advanceLine(); };
   return (
     <div className="dlg" data-ui>
@@ -143,8 +145,9 @@ function DialogueBox({ c }: { c: GameController }) {
 }
 
 function ChoiceBox({ c }: { c: GameController }) {
-  const v = c.view; if (v?.kind !== 'choice') return null; const [now, setNow] = useState(performance.now());
+  const [now, setNow] = useState(performance.now());
   useEffect(() => { if (c.choiceDeadline === null) return; const id = setInterval(() => setNow(performance.now()), 100); return () => clearInterval(id); }, [c.choiceDeadline]);
+  const v = c.view; if (v?.kind !== 'choice') return null;
   const left = c.choiceDeadline ? Math.max(0, (c.choiceDeadline - now) / 1000) : null;
   return (
     <div className="choice" data-ui role="dialog" aria-label="選択">

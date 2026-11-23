@@ -23,7 +23,7 @@ function MapView({ c, map, vis, cur, reveal }: { c: GameController; map: NonNull
   const ref = useRef<HTMLDivElement>(null); const seen = (n: typeof map.nodes[number]) => n.reveal.some(r => vis.has(r)); const here = (n: typeof map.nodes[number]) => n.reveal.includes(cur) || (n.choice === cur);
   const W = LX + (Math.max(...map.nodes.map(n => n.x)) + 1) * (CW + GX), H = map.lanes.length * (CH + GY) + 20; const pos = (n: typeof map.nodes[number]) => ({ x: LX + n.x * (CW + GX), y: 10 + n.lane * (CH + GY) });
   const byId = useMemo(() => new Map(map.nodes.map(n => [n.id, n])), [map]); const current = map.nodes.find(here);
-  useEffect(() => { if (ref.current && current) ref.current.scrollLeft = Math.max(0, pos(current).x - 160); }, []); // eslint-disable-line
+  useEffect(() => { if (ref.current && current) ref.current.scrollLeft = Math.max(0, pos(current).x - 160); }, []);  
   const chosen = (n: typeof map.nodes[number]) => { if (!n.choice) return ''; const ch = c.world.story.choices.filter(x => x.node === n.choice).at(-1); const node = c.story.nodes[n.choice] as StoryNode | undefined; if (!ch || node?.type !== 'choice') return ''; const o = node.options.find(x => x.id === ch.option); return o ? c.textWorld(o.label).replace(/[「」]/g, '').slice(0, 22) + (o.label.length > 22 ? '…' : '') : ''; };
   return (
     <>

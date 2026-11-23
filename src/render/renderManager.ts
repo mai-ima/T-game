@@ -281,7 +281,7 @@ export class RenderManager {
       this.clipPlane.constant = p.y > 4 ? D + 3.6 : 4.6; this.data.dynamic.sky.position.copy(this.ortho.position); return;
     }
     if (this.camMode === 'follow' && !this.focusId && this.sim.player.walking && this.time - this.lastCamTouch > 1.2) { let df = (this.sim.player.yaw + Math.PI) - this.yaw; while (df > Math.PI) df -= 2 * Math.PI; while (df < -Math.PI) df += 2 * Math.PI; this.yaw += df * Math.min(1, dt * 1.6); }
-    let pos = new THREE.Vector3(), tgt = new THREE.Vector3(); let fov = 55;
+    const pos = new THREE.Vector3(), tgt = new THREE.Vector3(); let fov = 55;
     if (this.focusId) { pos.copy(this.focusPos); tgt.copy(this.focusTarget); fov = 42; }
     else if (this.camMode === 'preset') { pos.copy(this.presetPos); tgt.copy(this.presetTarget); fov = this.presetFov; }
     else if (this.camMode === 'first') { pos.set(p.x, p.y + 1.62, p.z); tgt.set(p.x - Math.sin(this.fpYaw + Math.PI) * Math.cos(this.fpPitch), p.y + 1.62 + Math.sin(this.fpPitch), p.z - Math.cos(this.fpYaw + Math.PI) * Math.cos(this.fpPitch)); fov = 70; }
