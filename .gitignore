@@ -3,3 +3,4 @@ dist
 audit/*.png
 audit/tmp
 dist-lab
+coverage/
