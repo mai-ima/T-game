@@ -234,3 +234,19 @@ describe('業務の形式が多様である', () => {
   });
   it('1日の仕事が増えた（ハブの依頼が30件以上）', () => { expect((S.nodes['ch1.hub'] as any).interactions.length).toBeGreaterThanOrEqual(30); });
 });
+
+describe('v3.3 追加検査（第17A章：非暴力・時間軸）', () => {
+  const texts = (): string[] => { const out: string[] = []; const walk = (o: unknown) => { if (typeof o === 'string') out.push(o); else if (Array.isArray(o)) o.forEach(walk); else if (o && typeof o === 'object') Object.values(o).forEach(walk); }; walk(Object.values(S.nodes)); return out; };
+  it('ホラー・殺人・暴力に依存する語彙が、台詞・選択肢・業務文に含まれない', () => {
+    const ban = /殺人|殺害|殺す|殺され|死体|遺体|流血|出血|血まみれ|幽霊|怪異|心霊|呪い|暴行|拷問|監禁|脅迫|自殺/;
+    const hits = texts().filter(t => ban.test(t)); expect(hits.slice(0, 3)).toEqual([]);
+  });
+  it('時計操作の効果が不正な値（24時超・負の日数）を作らない', () => {
+    const bad: string[] = []; for (const n of Object.values(S.nodes) as any[]) { const effs = [...(n.effects ?? []), ...((n.results ?? []).flatMap((r: any) => r.effects ?? [])), ...((n.options ?? []).flatMap((o: any) => o.effects ?? []))]; for (const e of effs) if (e.clock && ((e.clock.minute ?? 0) > 1439 || (e.clock.addDay ?? 0) < 0)) bad.push(n.id); }
+    expect(bad).toEqual([]);
+  });
+  it('章ごとに、開始ノードと終了ノードが対になっている', () => {
+    for (const c of S.chapters as any[]) { if (c.status !== 'playable') continue; expect(S.nodes[c.start], c.id).toBeTruthy(); }
+  });
+});
+
