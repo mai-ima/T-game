@@ -888,6 +888,26 @@ const maps = { ch1: {
   edges: [['m0', 'm1'], ['m1', 'm2'], ['m2', 'm3'], ['m3', 'm4'], ['m4', 'm5'], ['m5', 's1'], ['m5', 'p1'], ['m5', 'o1'], ['s1', 's2'], ['p1', 'p2'], ['o1', 'o2'], ['s2', 'm6'], ['p2', 'm6'], ['o2', 'm6'], ['m6', 'm7'], ['m7', 'w1'], ['m7', 'w2'], ['m7', 'w3'], ['w1', 'm8'], ['w2', 'm8'], ['w3', 'm8']]
 } };
 
+// ---- 章ごとのあらすじ分岐図を、重要選択と分岐ノードから自動生成する（手作りの地図がある章は除く）----
+const succ = n => { const o = []; const add = x => x && o.push(x); add(n.next); (n.options ?? []).forEach(x => add(x.goto)); (n.cases ?? []).forEach(x => add(x.goto)); add(n.else); (n.interactions ?? []).forEach(x => add(x.goto)); (n.timed ?? []).forEach(x => add(x.goto)); add(n.exit?.goto); (n.results ?? []).forEach(x => add(x.goto)); return o; };
+const FLAG_JA = { 'route.service': '接客', 'route.platform': 'ホーム', 'route.office': '事務室' };
+const autoMap = ch => {
+  const order = []; const seen = new Set(); const q = [ch + '.open'];
+  while (q.length) { const id = q.shift(); if (seen.has(id) || !N[id] || !id.startsWith(ch + '.')) continue; seen.add(id); order.push(id); succ(N[id]).forEach(x => q.push(x)); }
+  const chs = order.filter(id => N[id].type === 'choice' && (N[id].important || (N[id].options ?? []).length >= 3));
+  const lanes = [{ id: 'common', label: '共通の流れ', color: '#1a2f55' }, ...['#1b6f45', '#a35c00', '#6a3aa8', '#a52a2a'].map((color, i) => ({ id: 'o' + i, label: `選んだ道 ${'ABCD'[i]}`, color }))];
+  const nodes = [{ id: 'a0', lane: 0, x: 0, label: (N[ch + '.end']?.title ?? '開始').replace(/^第\d+章\s*/, '').slice(0, 14), sub: '章のはじまり', reveal: [ch + '.open'] }]; const edges = []; let prev = 'a0'; let x = 1;
+  chs.forEach((id, i) => {
+    const c = N[id]; const cid = 'c' + i; nodes.push({ id: cid, lane: 0, x, label: c.prompt.replace(/[{}]/g, '').slice(0, 16), sub: c.important ? '重要な選択' : '選択', star: !!c.important, reveal: [id], choice: id }); edges.push([prev, cid]);
+    c.options.slice(0, 4).forEach((o, j) => { const oid = `${cid}o${j}`; const fl = (o.effects ?? []).map(e => e.set).filter(Boolean)[0]; nodes.push({ id: oid, lane: 1 + j, x: x + 1, label: o.label.replace(/[{}]/g, '').slice(0, 15), sub: fl ? (FLAG_JA[fl] ?? '道が決まる') : undefined, reveal: [o.goto] }); edges.push([cid, oid]); });
+    prev = cid; x += 2;
+  });
+  const endId = order.find(id => N[id].type === 'end'); nodes.push({ id: 'z', lane: 0, x, label: '章末', sub: '評価と引き継ぎ', reveal: endId ? [endId] : [] });
+  chs.forEach((_, i) => { const nextId = i + 1 < chs.length ? 'c' + (i + 1) : 'z'; for (let j = 0; j < Math.min(4, N[chs[i]].options.length); j++) edges.push([`c${i}o${j}`, nextId]); }); if (!chs.length) edges.push(['a0', 'z']);
+  return { lanes: lanes.slice(0, 1 + Math.max(1, ...chs.map(id => Math.min(4, N[id].options.length)))), nodes, edges };
+};
+for (const ch of chapterIds) if (!maps[ch] && N[ch + '.open'] && N[ch + '.end']) maps[ch] = autoMap(ch);
+
 for (const c of (typeof chapters !== 'undefined' ? chapters : [])) { if (N[c.id + '.open']) { c.status = 'playable'; c.start = c.id + '.open'; } }
 const story = { storyId: 'r7', mode: 'R7', title: '配属先は、明日変わる', subtitle: '超リアル社員異動・長編キャリア', startYear: 2027, characters, chapters, nodes: N, maps };
 mkdirSync('src/data/r7', { recursive: true });

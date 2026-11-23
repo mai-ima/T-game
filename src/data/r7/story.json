@@ -13941,6 +13941,264 @@
      "m8"
     ]
    ]
+  },
+  "ch2": {
+   "lanes": [
+    {
+     "id": "common",
+     "label": "共通の流れ",
+     "color": "#1a2f55"
+    },
+    {
+     "id": "o0",
+     "label": "選んだ道 A",
+     "color": "#1b6f45"
+    },
+    {
+     "id": "o1",
+     "label": "選んだ道 B",
+     "color": "#a35c00"
+    },
+    {
+     "id": "o2",
+     "label": "選んだ道 C",
+     "color": "#6a3aa8"
+    }
+   ],
+   "nodes": [
+    {
+     "id": "a0",
+     "lane": 0,
+     "x": 0,
+     "label": "最初の週末",
+     "sub": "章のはじまり",
+     "reveal": [
+      "ch2.open"
+     ]
+    },
+    {
+     "id": "c0",
+     "lane": 0,
+     "x": 1,
+     "label": "気づいたことを、どう扱いますか？",
+     "sub": "重要な選択",
+     "star": true,
+     "reveal": [
+      "ch2.idea_choice"
+     ],
+     "choice": "ch2.idea_choice"
+    },
+    {
+     "id": "c0o0",
+     "lane": 1,
+     "x": 2,
+     "label": "久保田さんに相談して、改善提案",
+     "sub": "道が決まる",
+     "reveal": [
+      "ch2.idea_c"
+     ]
+    },
+    {
+     "id": "c0o1",
+     "lane": 2,
+     "x": 2,
+     "label": "手書きの案内を作って、自分で券",
+     "sub": "道が決まる",
+     "reveal": [
+      "ch2.idea_s"
+     ]
+    },
+    {
+     "id": "c0o2",
+     "lane": 3,
+     "x": 2,
+     "label": "今は自分の仕事を覚えるのが先。",
+     "sub": "道が決まる",
+     "reveal": [
+      "ch2.idea_k"
+     ]
+    },
+    {
+     "id": "c1",
+     "lane": 0,
+     "x": 3,
+     "label": "昼休憩を、誰と過ごしますか？",
+     "sub": "選択",
+     "star": false,
+     "reveal": [
+      "ch2.lunch_choice"
+     ],
+     "choice": "ch2.lunch_choice"
+    },
+    {
+     "id": "c1o0",
+     "lane": 1,
+     "x": 4,
+     "label": "久保田さんと、午前の振り返りを",
+     "sub": "道が決まる",
+     "reveal": [
+      "ch2.lunch_k"
+     ]
+    },
+    {
+     "id": "c1o1",
+     "lane": 2,
+     "x": 4,
+     "label": "山科さんと、お互いの近況を話す",
+     "sub": "道が決まる",
+     "reveal": [
+      "ch2.lunch_y"
+     ]
+    },
+    {
+     "id": "c1o2",
+     "lane": 3,
+     "x": 4,
+     "label": "駅長の隣に座って、駅の話を聞く",
+     "sub": "道が決まる",
+     "reveal": [
+      "ch2.lunch_s"
+     ]
+    },
+    {
+     "id": "c2",
+     "lane": 0,
+     "x": 5,
+     "label": "来週、いちばん伸ばしたいことは？",
+     "sub": "重要な選択",
+     "star": true,
+     "reveal": [
+      "ch2.rv_choice"
+     ],
+     "choice": "ch2.rv_choice"
+    },
+    {
+     "id": "c2o0",
+     "lane": 1,
+     "x": 6,
+     "label": "お客様への声かけと、接客",
+     "sub": "道が決まる",
+     "reveal": [
+      "ch2.closing"
+     ]
+    },
+    {
+     "id": "c2o1",
+     "lane": 2,
+     "x": 6,
+     "label": "正確さ。手順と確認の徹底",
+     "sub": "道が決まる",
+     "reveal": [
+      "ch2.closing"
+     ]
+    },
+    {
+     "id": "c2o2",
+     "lane": 3,
+     "x": 6,
+     "label": "同僚との連携と、相談のしかた",
+     "sub": "道が決まる",
+     "reveal": [
+      "ch2.closing"
+     ]
+    },
+    {
+     "id": "z",
+     "lane": 0,
+     "x": 7,
+     "label": "章末",
+     "sub": "評価と引き継ぎ",
+     "reveal": [
+      "ch2.end"
+     ]
+    }
+   ],
+   "edges": [
+    [
+     "a0",
+     "c0"
+    ],
+    [
+     "c0",
+     "c0o0"
+    ],
+    [
+     "c0",
+     "c0o1"
+    ],
+    [
+     "c0",
+     "c0o2"
+    ],
+    [
+     "c0",
+     "c1"
+    ],
+    [
+     "c1",
+     "c1o0"
+    ],
+    [
+     "c1",
+     "c1o1"
+    ],
+    [
+     "c1",
+     "c1o2"
+    ],
+    [
+     "c1",
+     "c2"
+    ],
+    [
+     "c2",
+     "c2o0"
+    ],
+    [
+     "c2",
+     "c2o1"
+    ],
+    [
+     "c2",
+     "c2o2"
+    ],
+    [
+     "c0o0",
+     "c1"
+    ],
+    [
+     "c0o1",
+     "c1"
+    ],
+    [
+     "c0o2",
+     "c1"
+    ],
+    [
+     "c1o0",
+     "c2"
+    ],
+    [
+     "c1o1",
+     "c2"
+    ],
+    [
+     "c1o2",
+     "c2"
+    ],
+    [
+     "c2o0",
+     "z"
+    ],
+    [
+     "c2o1",
+     "z"
+    ],
+    [
+     "c2o2",
+     "z"
+    ]
+   ]
   }
  }
 }

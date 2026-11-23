@@ -8,15 +8,26 @@ const CW = 142, CH = 56, GX = 22, GY = 34, LX = 118;
 
 /** あらすじ分岐図：共通の一日から、午後の持ち場・週末へと分かれる大きな流れを一枚で見せる。未到達の場面はネタバレを避けて伏せる。 */
 export function FlowPanel({ c }: { c: GameController }) {
-  const w = c.world; const [tab, setTab] = useState<'map' | 'log' | 'graph'>('map'); const chap = c.story.chapters.find(x => x.id === (w.story.chapter === 'ch2' ? 'ch1' : w.story.chapter))!;
+  const w = c.world; const [tab, setTab] = useState<'map' | 'log' | 'graph'>('map');
+  const avail = c.story.chapters.filter(x => c.story.maps?.[x.id] && (x.id === w.story.chapter || w.story.completedChapters.includes(x.id))); // 到達済みの章だけ（ネタバレ防止）
+  const [chapId, setChapId] = useState(avail.some(x => x.id === w.story.chapter) ? w.story.chapter : (avail[avail.length - 1]?.id ?? 'ch1')); const chap = c.story.chapters.find(x => x.id === chapId)!;
   const map = c.story.maps?.[chap.id]; const reveal = w.story.completedChapters.includes(chap.id); const vis = new Set(w.story.visited); const cur = w.story.node;
   return (
     <Sheet title={`分岐図　${chap.title}`} onClose={() => (c.panel = null, c.notify())} wide>
+      <RouteBadge c={c} />
+      {avail.length > 1 && <div className="tabs" role="tablist" aria-label="章">{avail.map(x => <button key={x.id} role="tab" className={x.id === chapId ? 'on' : ''} onClick={() => setChapId(x.id)}>{x.id.replace('ch', '第') + '章'}</button>)}</div>}
       <div className="tabs"><button className={tab === 'map' ? 'on' : ''} onClick={() => setTab('map')}>あらすじ分岐図</button><button className={tab === 'log' ? 'on' : ''} onClick={() => setTab('log')}>選んだ道の記録</button><button className={tab === 'graph' ? 'on' : ''} onClick={() => { c.panel = 'graph'; c.notify(); }}>詳細グラフ</button></div>
       {tab === 'map' && map && <MapView c={c} map={map} vis={vis} cur={cur} reveal={reveal} />}
       {tab === 'log' && <ChoiceLog c={c} chapId={chap.id} reveal={reveal} />}
     </Sheet>
   );
+}
+
+/** いま進んでいる「戻らないルート」（持ち場・希望部署・体調・山科への対応など）を表示する */
+const ROUTE_LABEL: Record<string, string> = { 'route.service': '持ち場：接客', 'route.platform': '持ち場：ホーム', 'route.office': '持ち場：事務室', 'ch3.honest': '早番：体調を申告', 'ch3.pushed': '早番：無理を押した', 'ch4.secret_kept': '山科：隠した', 'ch4.trust_built': '山科：報告して是正', 'ch6.wish_station': '希望：駅務', 'ch6.wish_depot': '希望：車両基地', 'ch6.wish_dispatch': '希望：運行指令', 'ch6.wish_planning': '希望：輸送計画', 'ch10.stay': '実習後：今の道を深める', 'ch10.transfer': '実習後：異動を希望' };
+function RouteBadge({ c }: { c: GameController }) {
+  const on = Object.keys(ROUTE_LABEL).filter(f => c.world.flags[f]); if (!on.length) return null;
+  return <p className="small" style={{ margin: '0 0 8px' }} aria-label="いま進んでいるルート">いまのルート：{on.map(f => <span key={f} className="pill ok" style={{ marginRight: 6 }}>{ROUTE_LABEL[f]}</span>)}</p>;
 }
 
 function MapView({ c, map, vis, cur, reveal }: { c: GameController; map: NonNullable<GameController['story']['maps']>[string]; vis: Set<string>; cur: string; reveal: boolean }) {
