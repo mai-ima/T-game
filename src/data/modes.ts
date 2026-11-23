@@ -16,7 +16,7 @@ export const MODES: ModeDef[] = [
   { id: 'R4', name: '鉄道フリープレイ', kind: 'free', group: 'rail', tagline: '運転・指令・基地見学・路線編集', core: '自由運転・編集・サンドボックス', management: true, status: 'unimplemented' },
   { id: 'R5', name: '新入社員から会長へ', kind: 'story', group: 'rail', tagline: '多職種を経験する数十年のキャリア', core: '現場体験・人間関係・長期選択', management: false, status: 'unimplemented' },
   { id: 'R6', name: '交差するレール', kind: 'story', group: 'rail', tagline: '複数主人公の群像ミステリー（非暴力）', core: '調査・会話・記録の照合', management: false, status: 'unimplemented' },
-  { id: 'R7', name: '配属先は、明日変わる', kind: 'story', group: 'rail', tagline: '部署異動・研修・評価・勤続人生', core: '駅務・勤務表・異動・人間関係', management: false, status: 'playable', playableScope: '第1章「新しい名札」を実装／第2章は冒頭のみ（体験版）。全96章中 2章分（うち1章完成）。', seasons: '8シーズン×12章以上（企画）' },
+  { id: 'R7', name: '配属先は、明日変わる', kind: 'story', group: 'rail', tagline: '部署異動・研修・評価・勤続人生', core: '駅務・勤務表・異動・人間関係', management: false, status: 'playable', playableScope: '第1〜4章を実装（以降の章は制作中）：第1章「新しい名札」、第2章「最初の週末」、第3章「はじめての早番」、第4章「同期の距離」', seasons: '8シーズン×12章以上（企画）' },
   { id: 'R8', name: '消えた引継ぎ帳', kind: 'story', group: 'rail', tagline: '職場調査サスペンス（非暴力）', core: '文書の版比較・聞き取り・説明責任', management: false, status: 'playable', playableScope: '第1章「白紙の一頁」を実装（版管理された文書の比較・聞き取り・確度を分けた報告。結末4通り）。全96章企画のうち1章分。', seasons: '8シーズン×12章以上（企画）' },
   { id: 'R9', name: '特急42号の空白', kind: 'story', group: 'rail', tagline: 'タイムライン・ヒューマンミステリー', core: '時刻表照合・証言整理', management: false, status: 'unimplemented' },
   { id: 'R10', name: '白紙の再開発計画', kind: 'story', group: 'rail', tagline: '企業・地域の調整サスペンス', core: '駅前案比較・説明会・合意形成', management: false, status: 'unimplemented' },

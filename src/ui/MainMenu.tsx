@@ -6,12 +6,14 @@ import { SettingsPanel, StatusPanel } from './Panels';
 import { fmtMinSafe } from './util';
 import heroUrl from '../assets/hero.jpg';
 import { Icon } from './icons';
+import { storyFor } from '../data/stories';
 
 type Slots = Record<string, SaveFile | 'corrupt' | undefined>;
 
 export function MainMenu({ c, onStart }: { c: GameController; onStart: () => void }) {
   const [sel, setSel] = useState<ModeDef | null>(null); const [settings, setSettings] = useState(false); const [status, setStatus] = useState(false);
-  const rail = MODES.filter(m => m.group === 'rail'), road = MODES.filter(m => m.group === 'road'); const rows = c.rail.board(8 * 60 + 20, 'A').concat(c.rail.board(8 * 60 + 20, 'B'));
+  const playable = MODES.filter(m => m.status === 'playable'); const rail = MODES.filter(m => m.group === 'rail' && m.status !== 'playable'), road = MODES.filter(m => m.group === 'road' && m.status !== 'playable');
+  const chapterCount = (m: ModeDef) => storyFor(m.id).chapters.filter(x => x.status === 'playable').length; const rows = c.rail.board(8 * 60 + 20, 'A').concat(c.rail.board(8 * 60 + 20, 'B'));
   const impl = MODES.filter(m => m.status === 'playable').length;
   const open = (m: ModeDef) => { c.audio.ui('click'); setSel(m); };
   return (
@@ -21,11 +23,13 @@ export function MainMenu({ c, onStart }: { c: GameController; onStart: () => voi
           <div className="hero-tools"><button className="btn sm" onClick={() => { c.audio.ui('click'); setStatus(true); }}>検証状況</button><button className="btn sm" onClick={() => setSettings(true)}><span style={{ display: 'inline-flex', gap: 6, alignItems: 'center' }}><Icon.gear />設定</span></button></div>
           <div className="nameplate"><div className="band" /><div className="in"><h1>REAL RAIL &amp; ROAD</h1><p>鉄道・自動車 統合シミュレーション　プロトタイプ（Claude Artifacts 版）</p></div></div>
         </div>
-        <div className="board-strip" aria-label="実装状況">プレイ可能 {impl}/14　R7 第1章 実装済み・第2章 冒頭のみ（体験版）　R8 第1章 実装済み　<span className="d">そのほか{14 - impl}モード 未実装（設計のみ）</span>　{rows.slice(0, 3).map(r => `${r.line}番線 ${r.time} ${r.kind} ${r.dest}`).join('　')}</div>
+        <div className="board-strip" aria-label="実装状況">いま遊べる {impl}/14　{playable.map(m => `${m.id} 第${chapterCount(m)}章まで`).join('　')}　<span className="d">そのほか{MODES.length - impl}モードは準備中（設計のみ）</span></div>
 
-        <div className="sect-h"><span>鉄道モード</span><small>R1〜R11（R4のみ自由モード）</small></div>
+        <div className="sect-h"><span>いま遊べるモード</span><small>タップして、はじめる・続きから</small></div>
+        <div className="grid playable-grid">{playable.map(m => <ModeRow key={m.id} m={m} chapters={chapterCount(m)} onClick={() => open(m)} />)}</div>
+        <div className="sect-h dim"><span>準備中：鉄道モード</span><small>設計のみ（まだ遊べません）</small></div>
         <div className="grid">{rail.map(m => <ModeRow key={m.id} m={m} onClick={() => open(m)} />)}</div>
-        <div className="sect-h"><span>自動車モード</span><small>C1〜C3（C3のみ自由モード）</small></div>
+        <div className="sect-h dim"><span>準備中：自動車モード</span><small>設計のみ（まだ遊べません）</small></div>
         <div className="grid">{road.map(m => <ModeRow key={m.id} m={m} onClick={() => open(m)} />)}</div>
         <p className="small" style={{ marginTop: 22 }}>実在車両・路線は参考にした架空設計です。音はすべて独自合成です。プロトタイプは Claude Artifacts のみで提供し、Vercel には公開していません。</p>
       </div>
@@ -36,13 +40,13 @@ export function MainMenu({ c, onStart }: { c: GameController; onStart: () => voi
   );
 }
 
-function ModeRow({ m, onClick }: { m: ModeDef; onClick: () => void }) {
+function ModeRow({ m, onClick, chapters }: { m: ModeDef; onClick: () => void; chapters?: number }) {
   const playable = m.status === 'playable';
   return (
     <button className={'card' + (playable ? ' playable' : ' dim')} onClick={onClick} aria-label={`${m.id} ${m.name} ${playable ? 'プレイ可能' : '未実装'}`}>
       <span className="id">{m.id}</span>
       <h3>{m.name}</h3>
-      <span className={'st ' + (playable ? 'ok' : 'off')}>{playable ? 'プレイ可能（第1章）' : '未実装'}</span>
+      <span className={'st ' + (playable ? 'ok' : 'off')}>{playable ? `遊べる（第${chapters ?? 1}章まで）` : '準備中（未実装）'}</span>
       <p>{m.tagline}／{m.kind === 'free' ? '自由モード' : 'ストーリー'}{m.management ? '・経営あり' : ''}</p>
     </button>
   );

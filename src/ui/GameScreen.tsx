@@ -29,7 +29,7 @@ export function GameScreen({ c, onExit }: { c: GameController; onExit: () => voi
     if (dead || !cv3.current || !cv2.current) return; setLoading(false);
     const rm = new RenderManager({
       assets: assets ?? undefined, canvas: cv3.current, plan: cv2.current, sim: c.sim, rail: c.rail, data: c.data, characters: c.story.characters, playerName: c.world.playerName, quality: c.settings.quality, auto: c.settings.autoQuality,
-      onFootstep: s => c.audio.footstep(s), onGate: ok => c.audio.gate(ok), onDoor: k => c.audio.door(k), onQuality: q => { c.settings.quality = q; c.say(`描画品質を自動調整しました：${q === 'high' ? '最高' : q === 'medium' ? '標準' : '最低'}`); },
+      onFootstep: s => c.audio.footstep(s), onGate: ok => c.audio.gate(ok), onDoor: k => c.audio.door(k), onQuality: q => { c.settings.quality = q; if (debug) c.say(`描画品質を自動調整しました：${q === 'high' ? '最高' : q === 'medium' ? '標準' : '最低'}`); },
       onRailEvent: e => { const dir = e.service.track === 'A' ? '1番線（海浜口方面）' : '2番線（空港連絡方面）'; if (e.type === 'approach') c.audio.chime('approach', `まもなく${dir}に${e.service.kind} ${e.service.dest}行きが到着します。黄色い線の内側でお待ちください。`); if (e.type === 'depart') c.audio.chime('depart', `${dir}の${e.service.kind}が発車します。`); },
       onTrainAudio: (v, g, p, d) => c.audio.trainUpdate(v, g, p, d)
     });
@@ -141,7 +141,7 @@ function DialogueBox({ c }: { c: GameController }) {
       <div className={'dlg-box' + (def ? '' : ' noav')} onClick={click} role="button" tabIndex={0} aria-label="会話。タップで次へ">
         {def && <div className="av"><div className="ph"><Portrait def={def} mood={l.mood} size={108} /></div><span className="nm">{def.name}</span></div>}
         <div><div className="dlg-name">{!l.narration && <b>{l.who === 'player' ? c.world.playerName : def?.name}</b>}{def && <small>{def.role}</small>}</div><div className={'dlg-text' + (l.narration ? ' nar' : '')} aria-live="polite">{tw.shown}</div></div>
-        <div className="dlg-foot"><span>{c.lineIndex + 1}/{v.node.lines.length}</span><span><button className="btn sm ghost" onClick={e => { e.stopPropagation(); setLog(x => !x); }}>ログ</button> <span className="next">{tw.done ? (last ? '次へ' : '続く') : ''}</span></span></div>
+        <div className="dlg-foot"><span>{c.lineIndex + 1}/{v.node.lines.length}</span><span><button className="btn sm ghost" onClick={e => { e.stopPropagation(); setLog(x => !x); }}>ログ</button> <span className="next">{tw.done ? <><i className="nx" aria-hidden>▼</i>{last ? '次へ' : '続く'}</> : '　'}</span></span></div>
       </div>
       {log && <div className="toast" style={{ top: 'auto', bottom: 170, maxHeight: '40vh', overflow: 'auto', width: 'min(640px, 92vw)', textAlign: 'left' }} onClick={() => setLog(false)}>{c.backlog.slice(-10).map((b, i) => <p key={i} style={{ margin: '4px 0' }}><b style={{ color: '#f2c500' }}>{b.who}</b> {b.text}</p>)}</div>}
     </div>

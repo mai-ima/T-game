@@ -29,7 +29,7 @@ export function ChecklistTask({ node, onDone }: { node: TaskNode; onDone: Done }
           {fin && <div className="why">{ans[i.id] === i.truth ? '○ 正解。' : `× 正しくは「${i.truth === 'ok' ? (node.config?.labels?.[0] ?? '正常') : (node.config?.labels?.[1] ?? '異常')}」。`}{i.why}</div>}
         </div>
       ))}
-      {!fin ? <button className="btn primary" disabled={Object.keys(ans).length < items.length} onClick={() => setFin(true)}>判定する（{Object.keys(ans).length}/{items.length}）</button>
+      {!fin ? <button className="btn primary" disabled={Object.keys(ans).length < items.length} onClick={() => setFin(true)}>{Object.keys(ans).length < items.length ? `あと${items.length - Object.keys(ans).length}件を選ぶと判定できます` : '判定する'}</button>
         : <div style={{ display: 'flex', gap: 14, alignItems: 'center', flexWrap: 'wrap' }}><span className="stamp">確認<br />済</span><p style={{ margin: 0 }}><b>正答率 {score}%</b></p><button className="btn primary" onClick={() => onDone(score)}>報告して戻る</button></div>}
     </TaskShell>
   );
