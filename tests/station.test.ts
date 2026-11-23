@@ -111,3 +111,17 @@ describe('配置監査（浮き・埋没・貫通）', () => {
     expect(r.issues.map(i => `${i.kind}:${i.a}${i.b ? '×' + i.b : ''} ${i.detail}`)).toEqual([]);
   });
 });
+
+describe('経路探索（目的地ナビ）', () => {
+  it('広場から主要な仕事場所まで経路が見つかり、折れ点が少ない', () => {
+    const sim = new StationSim(data);
+    for (const id of ['shiraishi', 'terminal', 'shop', 'info_desk', 'toilet', 'waiting_room', 'vend3', 'tactile', 'kubota']) {
+      sim.reset(); sim.spawn('spawn_plaza'); const p = sim.standNear(id)!; const path = sim.findPath({ x: p.x, z: p.z }); expect(path, `${id} の経路`).not.toBeNull(); expect(path!.length, `${id} の折れ点`).toBeLessThan(40);
+    }
+  });
+  it('経路どおりに歩くと実際に到着できる', () => {
+    const sim = new StationSim(data); sim.reset(); sim.spawn('spawn_plaza'); const p = sim.standNear('terminal')!; const path = sim.findPath({ x: p.x, z: p.z })!;
+    for (const w of path) { let n = 0; while (Math.hypot(w.x - sim.player.x, w.z - sim.player.z) > 0.28 && n++ < 3000) { const dx = w.x - sim.player.x, dz = w.z - sim.player.z; sim.move(dx, dz, 1 / 60, true); } expect(n).toBeLessThan(3000); }
+    expect(Math.hypot(p.x - sim.player.x, p.z - sim.player.z)).toBeLessThan(0.6);
+  });
+});

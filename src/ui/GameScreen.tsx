@@ -139,7 +139,7 @@ function DialogueBox({ c }: { c: GameController }) {
   return (
     <div className="dlg" data-ui>
       <div className={'dlg-box' + (def ? '' : ' noav')} onClick={click} role="button" tabIndex={0} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); click(); } }} aria-label="会話。タップで次へ">
-        {def && <div className="av"><Portrait def={def} mood={l.mood} size={78} /><span className="nm">{def.name}</span></div>}
+        {def && <div className="av"><div className="ph"><Portrait def={def} mood={l.mood} size={108} /></div><span className="nm">{def.name}</span></div>}
         <div><div className="dlg-name">{!l.narration && <b>{l.who === 'player' ? c.world.playerName : def?.name}</b>}{def && <small>{def.role}</small>}</div><div className={'dlg-text' + (l.narration ? ' nar' : '')} aria-live="polite">{tw.shown}</div></div>
         <div className="dlg-foot"><span>{c.lineIndex + 1}/{v.node.lines.length}</span><span><button className="btn sm ghost" onClick={e => { e.stopPropagation(); setLog(x => !x); }}>ログ</button> <span className="next">{tw.done ? (last ? '次へ' : '続く') : ''}</span></span></div>
       </div>

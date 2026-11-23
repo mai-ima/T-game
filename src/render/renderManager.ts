@@ -21,7 +21,7 @@ export interface RMOptions {
   characters: Record<string, CharacterDef>; playerName: string; quality: QualityId; auto: boolean;
   onTap?: (id: string, near: boolean) => void; onFootstep?: (surface: 'tile' | 'concrete' | 'stairs') => void;
   onRailEvent?: (e: { type: 'approach' | 'arrive' | 'depart'; service: TrainState['service'] }) => void;
-  onGate?: (ok: boolean) => void; onDoor?: (kind: 'slide' | 'swing') => void; onQuality?: (q: QualityId) => void; onTrainAudio?: (speed01: number, gain: number, pan: number, dwell: boolean) => void;
+  onNavigate?: (id: string) => void; onArrive?: () => void; onGate?: (ok: boolean) => void; onDoor?: (kind: 'slide' | 'swing') => void; onQuality?: (q: QualityId) => void; onTrainAudio?: (speed01: number, gain: number, pan: number, dwell: boolean) => void;
 }
 
 const MARK_H: Record<string, number> = { tactile: 1.3, lost_item: 1.4, elevator: 3.4, aed: 2.3, vend2: 2.5, roster_board: 2.5, terminal: 1.7, departure_board: 3.6, timetable: 2.3, emergency_btn: 1.7, fare_map: 3.2, gate_wide: 1.8, mic: 1.6, ticket_office: 2.4 };
@@ -36,7 +36,7 @@ export class RenderManager {
   private curPos = new THREE.Vector3(); private curTarget = new THREE.Vector3(); private camInit = false;
   humans: Record<string, Humanoid> = {}; player!: Humanoid; crowd: Humanoid[] = []; rigs: Record<'A' | 'B', TrainRig> = {} as any;
   markers = new Map<string, THREE.Sprite>(); activeMarkers: PlanMarker[] = []; pickables: THREE.Object3D[] = []; markerTex?: THREE.CanvasTexture | null;
-  joy = { x: 0, y: 0 }; keys = new Set<string>(); run = false; walkTarget: { x: number; z: number; id?: string } | null = null; stuck = 0;
+  joy = { x: 0, y: 0 }; keys = new Set<string>(); run = false; walkTarget: { x: number; z: number; id?: string } | null = null; stuck = 0; path: { x: number; z: number }[] = []; lastCamTouch = -99; onPathDone?: () => void;
   simMinute = 8 * 60 + 20; private lastMinute = -1; private lastBoardMinute = -1; trains: TrainState[] = [];
   private raf = 0; private last = 0; private acc = 0; private walkPhase = 0; private lastStepSign = 1; fps = 60; frameMs = 16; paused = false; time = 0;
   plan: PlanView = { cx: 0, cz: -10, scale: 6 }; planFollow = true; planLevel: 'auto' | 'ground' | 'platform' | 'deck' = 'auto'; ctx2d?: CanvasRenderingContext2D | null;
@@ -120,6 +120,8 @@ export class RenderManager {
     if (this.camMode !== 'free') { /* 会話中は追従 */ }
   }
   resetCamera() { this.yaw = this.sim.player.yaw + Math.PI; this.pitch = 0.32; this.dist = 6.2; this.camInit = false; }
+  /** 経路に沿って自動で歩く（到達時に done を呼ぶ） */
+  followPath(pts: { x: number; z: number }[] | null, done?: () => void) { this.walkTarget = null; this.path = pts ? [...pts] : []; this.onPathDone = done; }
   setMoveInput(x: number, y: number) { this.joy.x = x; this.joy.y = y; }
   setMarkers(list: PlanMarker[]) {
     this.activeMarkers = list; const want = new Set(list.map(m => m.object));
@@ -145,6 +147,7 @@ export class RenderManager {
   }
   private pinchDist() { const a = [...this.pointers.values()]; return a.length < 2 ? 0 : Math.hypot(a[0].x - a[1].x, a[0].y - a[1].y); }
   private drag(dx: number, dy: number, pan: boolean, _two = false) {
+    this.lastCamTouch = this.time;
     if (this.viewMode === '2d') { const k = 1 / this.plan.scale; this.plan.cx -= dx * k; this.plan.cz -= dy * k; this.planFollow = false; return; }
     if (this.viewMode === '25d') { if (pan) { const k = this.isoZoom / 500; const c = Math.cos(this.isoYaw), s = Math.sin(this.isoYaw); this.freeTarget.x += (-dx * c - dy * s * 1.4) * k; this.freeTarget.z += (dx * s - dy * c * 1.4) * k; this.camMode = 'free'; } else this.isoYaw -= dx * 0.008; return; }
     if (this.camMode === 'preset') { this.camMode = 'free'; this.freeTarget.copy(this.presetTarget); const v = this.presetPos.clone().sub(this.presetTarget); this.dist = v.length(); this.yaw = Math.atan2(v.x, v.z); this.pitch = Math.asin(v.y / this.dist); }
@@ -159,17 +162,17 @@ export class RenderManager {
     if (this.viewMode === '2d') {
       const wx = this.plan.cx + (cx - rect.left - rect.width / 2) / this.plan.scale, wz = this.plan.cz + (cy - rect.top - rect.height / 2) / this.plan.scale;
       let best: string | null = null, bd = 2.2; for (const a of Object.values(this.data.anchors)) { if (a.id.startsWith('spawn')) continue; const n = this.sim.npcs[a.id]; if (a.kind === 'npc' && !n?.visible) continue; const d = Math.hypot((n ? n.x : a.x) - wx, (n ? n.z : a.z) - wz); if (d < bd) { bd = d; best = a.id; } }
-      if (best) { this.tapObject(best); return; } this.walkTarget = { x: wx, z: wz }; return;
+      if (best) { this.tapObject(best); return; } this.followPath(this.sim.findPath({ x: wx, z: wz })); return;
     }
     const ray = new THREE.Raycaster(); ray.setFromCamera(new THREE.Vector2(nx, ny), this.activeCam());
     const targets: THREE.Object3D[] = [...this.markers.values(), ...this.pickables]; const hits = ray.intersectObjects(targets, true);
     for (const h of hits) { let o: THREE.Object3D | null = h.object; while (o && !o.userData.anchorId) o = o.parent; if (o?.userData.anchorId) { const id = o.userData.anchorId as string; if (this.o.characters[id] || this.data.anchors[id]) { this.tapObject(id); return; } } }
-    const pl = new THREE.Plane(new THREE.Vector3(0, 1, 0), -this.sim.player.y); const pt = new THREE.Vector3(); if (ray.ray.intersectPlane(pl, pt) && pt.distanceTo(this.persp.position) < 120) this.walkTarget = { x: pt.x, z: pt.z };
+    const pl = new THREE.Plane(new THREE.Vector3(0, 1, 0), -this.sim.player.y); const pt = new THREE.Vector3(); if (ray.ray.intersectPlane(pl, pt) && pt.distanceTo(this.persp.position) < 120) this.followPath(this.sim.findPath({ x: pt.x, z: pt.z }));
   }
   private tapObject(id: string) {
     const a = this.data.anchors[id]; const n = this.sim.npcs[id]; const ax = n ? n.x : a.x, az = n ? n.z : a.z; const d = Math.hypot(ax - this.sim.player.x, az - this.sim.player.z);
     const near = d <= a.radius && Math.abs((n ? n.y : a.y) - this.sim.player.y) < 2.2; this.o.onTap?.(id, near);
-    if (!near && this.activeMarkers.some(m => m.object === id)) { const dx = ax - this.sim.player.x, dz = az - this.sim.player.z; const l = Math.hypot(dx, dz) || 1; this.walkTarget = { x: ax - (dx / l) * 1.2, z: az - (dz / l) * 1.2, id }; }
+    if (!near && this.activeMarkers.some(m => m.object === id)) this.o.onNavigate?.(id);
   }
 
   // ===== メインループ =====
@@ -186,11 +189,12 @@ export class RenderManager {
     let ix = this.joy.x, iy = this.joy.y; const k = this.keys;
     if (k.has('KeyW') || k.has('ArrowUp')) iy -= 1; if (k.has('KeyS') || k.has('ArrowDown')) iy += 1; if (k.has('KeyA') || k.has('ArrowLeft')) ix -= 1; if (k.has('KeyD') || k.has('ArrowRight')) ix += 1;
     const l = Math.hypot(ix, iy); if (l > 1) { ix /= l; iy /= l; }
-    if (l > 0.02) this.walkTarget = null;
+    if (l > 0.02) { this.walkTarget = null; if (this.path.length) { this.path = []; this.onPathDone = undefined; } }
     const yaw = this.viewMode === '2d' ? 0 : this.viewMode === '25d' ? this.isoYaw : this.camMode === 'first' ? this.fpYaw + Math.PI : this.camMode === 'follow' || this.camMode === 'preset' ? this.yaw : this.yaw;
     const fx = -Math.sin(yaw), fz = -Math.cos(yaw), rx = Math.cos(yaw), rz = -Math.sin(yaw);
     let mx = fx * -iy + rx * ix, mz = fz * -iy + rz * ix;
-    if (l <= 0.02 && this.walkTarget) { const dx = this.walkTarget.x - this.sim.player.x, dz = this.walkTarget.z - this.sim.player.z; const d = Math.hypot(dx, dz); if (d < 0.3) this.walkTarget = null; else { mx = dx / d; mz = dz / d; } }
+    if (l <= 0.02 && this.path.length) { const t = this.path[0]; const dx = t.x - this.sim.player.x, dz = t.z - this.sim.player.z; const dd = Math.hypot(dx, dz); if (dd < 0.28) { this.path.shift(); if (!this.path.length) { const cb = this.onPathDone; this.onPathDone = undefined; cb?.(); this.o.onArrive?.(); } } else { mx = dx / dd; mz = dz / dd; } }
+    else if (l <= 0.02 && this.walkTarget) { const dx = this.walkTarget.x - this.sim.player.x, dz = this.walkTarget.z - this.sim.player.z; const d = Math.hypot(dx, dz); if (d < 0.3) this.walkTarget = null; else { mx = dx / d; mz = dz / d; } }
     return { x: mx, z: mz };
   }
 
@@ -276,6 +280,7 @@ export class RenderManager {
       const pit = 0.615, dd = 90; this.ortho.position.set(this.target.x + Math.sin(this.isoYaw) * Math.cos(pit) * dd, this.target.y + Math.sin(pit) * dd, this.target.z + Math.cos(this.isoYaw) * Math.cos(pit) * dd); this.ortho.lookAt(this.target); this.camInit = true;
       this.clipPlane.constant = p.y > 4 ? D + 3.6 : 4.6; this.data.dynamic.sky.position.copy(this.ortho.position); return;
     }
+    if (this.camMode === 'follow' && !this.focusId && this.sim.player.walking && this.time - this.lastCamTouch > 1.2) { let df = (this.sim.player.yaw + Math.PI) - this.yaw; while (df > Math.PI) df -= 2 * Math.PI; while (df < -Math.PI) df += 2 * Math.PI; this.yaw += df * Math.min(1, dt * 1.6); }
     let pos = new THREE.Vector3(), tgt = new THREE.Vector3(); let fov = 55;
     if (this.focusId) { pos.copy(this.focusPos); tgt.copy(this.focusTarget); fov = 42; }
     else if (this.camMode === 'preset') { pos.copy(this.presetPos); tgt.copy(this.presetTarget); fov = this.presetFov; }

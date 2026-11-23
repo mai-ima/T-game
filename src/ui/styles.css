@@ -205,3 +205,9 @@ button, a, .dlg-box, .choice-opt { touch-action: manipulation; }
   .s25 .cast { height: 54%; bottom: 150px; }
   .s25 .cast .who { width: min(62vw, 300px); }
 }
+
+.dlg-box .av { width: 108px; padding: 0; }
+.dlg-box .av .ph { background: linear-gradient(180deg, #a9c3dc 0%, #d9e6f2 100%); overflow: hidden; aspect-ratio: 360 / 440; }
+.s25 .cast .who { display: flex; align-items: flex-end; justify-content: center; }
+.s25 .cast .who svg { max-height: 100%; width: auto; height: 100%; filter: drop-shadow(0 8px 14px rgba(0,0,0,.4)); }
+@media (max-width: 640px) { .dlg-box .av { width: 74px; } }

@@ -1,31 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { CharacterDef } from '../engine/types';
+import { Portrait2D } from './Portrait2D';
 
-/** 人物の胸像（SVG）。人物データ（制服色・髪・肌・小物）から生成する。 */
-export function Portrait({ def, mood = 'normal', size = 100, bare = false }: { def?: CharacterDef; mood?: string; size?: number; bare?: boolean }) {
-  if (!def) return <svg viewBox="0 0 100 100" width={size} height={size}><rect width="100" height="100" fill="#14233a" /><circle cx="50" cy="40" r="16" fill="#587" /><path d="M16 100c0-26 14-34 34-34s34 8 34 34z" fill="#456" /></svg>;
-  const f = def.gender === 'f'; const elderly = def.age >= 65;
-  const brow = mood === 'worry' ? 'M36 33q6-4 12-1M52 32q6-3 12 1' : mood === 'serious' ? 'M36 31l12 2M52 33l12-2' : 'M36 32q6-3 12 0M52 32q6-3 12 0';
-  const mouth = mood === 'smile' ? 'M42 56q8 8 16 0' : mood === 'worry' ? 'M42 59q8-5 16 0' : mood === 'surprise' ? 'M46 56a4 5 0 1 0 8 0a4 5 0 1 0-8 0' : 'M43 57q7 3 14 0';
-  return (
-    <svg viewBox="0 0 100 100" width={size} height={size} role="img" aria-label={def.name}>
-      <defs><linearGradient id={'bg' + def.id} x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#1d3552" /><stop offset="1" stopColor="#0e1a2b" /></linearGradient></defs>
-      {!bare && <rect width="100" height="100" fill={`url(#bg${def.id})`} />}
-      <path d="M8 100c0-24 16-32 42-32s42 8 42 32z" fill={def.uniform} /><path d="M42 68l8 12 8-12" fill="#f4f4f0" />
-      {def.dept === 'station' || def.dept === 'dispatch' ? <path d="M50 74l-3 14h6z" fill="#b02a2a" /> : null}
-      <rect x="44" y="58" width="12" height="12" fill={def.skin} />
-      {f && <path d={`M26 50c-2-26 12-36 24-36s26 10 24 36c-2 8-4 18-4 18H30s-2-10-4-18z`} fill={def.hair} />}
-      <ellipse cx="50" cy="42" rx="19" ry="22" fill={def.skin} />
-      <path d={f ? 'M30 40c0-18 10-24 20-24s20 6 20 24c-6-8-14-12-20-12s-14 4-20 12z' : elderly ? 'M31 34c2-14 10-18 19-18s17 4 19 18c-6-6-12-8-19-8s-13 2-19 8z' : 'M30 38c0-18 10-24 20-24s20 6 20 24c-4-6-8-10-12-11-6 4-18 4-28 11z'} fill={def.hair} />
-      {def.accessory === 'cap' && <g><path d="M29 30c0-14 9-19 21-19s21 5 21 19z" fill="#1d2a44" /><rect x="29" y="28" width="42" height="5" fill="#141c2e" /><rect x="46" y="17" width="8" height="6" rx="1" fill="#d8b030" /></g>}
-      <path d={brow} stroke="#2b2118" strokeWidth="2" fill="none" strokeLinecap="round" />
-      <circle cx="42" cy="42" r="2.2" fill="#1a1a1a" /><circle cx="58" cy="42" r="2.2" fill="#1a1a1a" />
-      {def.accessory === 'glasses' && <g stroke="#222" strokeWidth="1.6" fill="none"><circle cx="42" cy="42" r="6.5" /><circle cx="58" cy="42" r="6.5" /><path d="M48 42h4" /></g>}
-      <path d={mouth} stroke="#7a3a30" strokeWidth="2" fill={mood === 'surprise' ? '#5a2020' : 'none'} strokeLinecap="round" />
-      {elderly && <path d="M38 50q2 2 4 0M58 50q2 2 4 0" stroke="#b08a6a" strokeWidth="1" fill="none" />}
-    </svg>
-  );
-}
+/** 会話用の人物画（2Dベクター）。詳細は Portrait2D.tsx */
+export function Portrait({ def, mood = 'normal', size = 100 }: { def?: CharacterDef; mood?: string; size?: number; bare?: boolean; yaw?: number }) { return <Portrait2D def={def} mood={mood} size={size} />; }
 
 /** バーチャルジョイスティック（タッチ／マウス）。data-uiでカメラ操作と分離する。 */
 export function Joystick({ onMove }: { onMove: (x: number, y: number) => void }) {
@@ -55,7 +33,7 @@ export function Stage25D({ bg, cast, speaker, characters, caption, mood }: { bg:
   return (
     <div className="s25" onPointerMove={onMove} aria-label="擬似3Dシーン">
       <div className="layer" style={tr(10)}>{back}</div><div className="layer" style={tr(26)}>{mid}</div>
-      <div className="cast" style={tr(46)}>{cast.map(id => <div key={id} className={'who' + (speaker && speaker !== id ? ' dim' : '')}><Portrait def={characters[id]} mood={speaker === id ? mood : 'normal'} size={400} bare /></div>)}</div>
+      <div className="cast" style={tr(46)}>{cast.map(id => <div key={id} className={'who' + (speaker && speaker !== id ? ' dim' : '')}><Portrait def={characters[id]} mood={speaker === id ? mood : 'normal'} size={420} /></div>)}</div>
       <div className="layer" style={tr(70)}>{front}</div>
       {caption && <div className="cap">{caption}</div>}
     </div>

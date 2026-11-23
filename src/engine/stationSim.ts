@@ -74,6 +74,27 @@ export class StationSim {
     for (let r = r0; r <= a.radius - 0.2; r += 0.15) for (let k = 0; k < 24; k++) { const t = (k / 24) * Math.PI * 2 + a.yaw; const x = ax + Math.sin(t) * r, z = az + Math.cos(t) * r; const h = canStandAt(this.data, x, z, ay, PLAYER_R, this.npcCircles()); if (h !== null) return { x, y: h, z }; }
     return null;
   }
+  /** 経路探索（A*）：歩ける地点だけをたどり、壁・階段・扉の開口を通る。直線で行ける区間は間引く */
+  findPath(to: { x: number; z: number }, cell = 0.5, maxNodes = 40000): { x: number; z: number }[] | null {
+    const p = this.player; const others = this.npcCircles(); const key = (i: number, j: number, l: number) => `${i},${j},${l}`;
+    let goalH = null as number | null, best: { x: number; z: number; d: number } | null = null;
+    const gi = Math.round(to.x / cell), gj = Math.round(to.z / cell);
+    const start = { i: Math.round(p.x / cell), j: Math.round(p.z / cell), y: p.y }; type N = { i: number; j: number; y: number; g: number; f: number; prev?: N };
+    const open: N[] = [{ ...start, g: 0, f: Math.hypot(gi - start.i, gj - start.j) }]; const seen = new Map<string, number>(); seen.set(key(start.i, start.j, Math.round(p.y * 4)), 0); let cnt = 0; let found: N | null = null;
+    const dirs = [[1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [1, -1], [-1, 1], [-1, -1]];
+    while (open.length && cnt++ < maxNodes) {
+      let bi = 0; for (let k = 1; k < open.length; k++) if (open[k].f < open[bi].f) bi = k; const cur = open.splice(bi, 1)[0];
+      if (Math.hypot(cur.i - gi, cur.j - gj) <= 1.5) { found = cur; break; }
+      const d0 = Math.hypot(cur.i - gi, cur.j - gj); if (!best || d0 < best.d) best = { x: cur.i * cell, z: cur.j * cell, d: d0 };
+      for (const [di, dj] of dirs) { const ni = cur.i + di, nj = cur.j + dj; const h = canStandAt(this.data, ni * cell, nj * cell, cur.y, PLAYER_R, others); if (h === null) continue; if (di !== 0 && dj !== 0 && (canStandAt(this.data, ni * cell, cur.j * cell, cur.y, PLAYER_R, others) === null || canStandAt(this.data, cur.i * cell, nj * cell, cur.y, PLAYER_R, others) === null)) continue; const k = key(ni, nj, Math.round(h * 4)); const g = cur.g + Math.hypot(di, dj) * (Math.abs(h - cur.y) > 0.05 ? 1.3 : 1); if (seen.has(k) && seen.get(k)! <= g) continue; seen.set(k, g); open.push({ i: ni, j: nj, y: h, g, f: g + Math.hypot(ni - gi, nj - gj), prev: cur }); }
+    }
+    void goalH; if (!found) return null;
+    const pts: { x: number; z: number; y: number }[] = []; for (let n: N | undefined = found; n; n = n.prev) pts.push({ x: n.i * cell, z: n.j * cell, y: n.y }); pts.reverse();
+    // 視線が通る区間を間引く（高さが変わる所は残す）
+    const out: { x: number; z: number }[] = []; let a = 0;
+    while (a < pts.length - 1) { let b = pts.length - 1; for (; b > a + 1; b--) { let ok = true; for (let t = 0.1; t < 1; t += 0.1) { const x = pts[a].x + (pts[b].x - pts[a].x) * t, z = pts[a].z + (pts[b].z - pts[a].z) * t, yi = pts[a].y + (pts[b].y - pts[a].y) * t; const h = canStandAt(this.data, x, z, yi, PLAYER_R + 0.05, others); if (h === null || Math.abs(h - yi) > 0.2) { ok = false; break; } } if (ok) break; } out.push({ x: pts[b].x, z: pts[b].z }); a = b; }
+    out.push({ x: to.x, z: to.z }); return out;
+  }
   settleHeight(dt: number) { const p = this.player; const h = heightAt(this.data.zones, p.x, p.z, p.y); if (h !== null && Math.abs(h - p.y) > 0.001) p.y += (h - p.y) * Math.min(1, dt * 14); }
 
   nearest(maxDist = 99, filter?: (id: string) => boolean): { id: string; dist: number } | null {

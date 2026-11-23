@@ -160,7 +160,21 @@ export class GameController {
   updateAudioZone() { const p = this.sim.player; const z = this.view?.kind !== 'hub' && this.view && 'node' in this.view && this.view.node.view?.mode === '25d' ? 'office' : p.y > 4 ? (p.x > 7 && p.z < -1 && p.z > -12 ? 'office' : 'concourse') : p.y > 1 ? 'platform' : 'plaza'; if (this.audio.zone !== z) this.audio.setZone(z); }
 
   // ===== 描画連携 =====
-  attachRender(rm: RenderManager) { this.rm = rm; rm.o.onTap = (id, near) => this.onTap(id, near); }
+  attachRender(rm: RenderManager) { this.rm = rm; rm.o.onTap = (id, near) => this.onTap(id, near); rm.o.onNavigate = id => this.navigateTo(id, true); }
+  /** 目的地（人物・設備）まで経路探索して自動で歩く。到着したら自動で調べる／話す */
+  navigateTo(id: string, autoInteract = true) {
+    const pt = this.sim.standNear(id); if (!pt || !this.rm) { this.say('そこへは行けません'); return false; }
+    const path = this.sim.findPath({ x: pt.x, z: pt.z }); if (!path) { this.say('経路が見つかりません'); return false; }
+    this.nav = { id, auto: autoInteract }; this.rm.followPath(path, () => { this.nav = null; if (autoInteract) { this.updatePrompt(true); if (this.prompt?.object === id) this.doPrompt(); } this.notify(); }); this.notify(); return true;
+  }
+  nav: { id: string; auto: boolean } | null = null;
+  /** 次に向かう場所の候補：選べる仕事のうち、いちばん近いもの（必須の目標を優先） */
+  suggestTarget(): { id: string; label: string; dist: number; bearing: number } | null {
+    const v = this.view; if (v?.kind !== 'hub' || !this.rm) return null; let best: { id: string; label: string; dist: number } | null = null;
+    for (const it of v.interactions) { const a = this.data.anchors[it.object]; if (!a) continue; const n = this.sim.npcs[it.object]; if (n && !n.visible) continue; const ax = n ? n.x : a.x, az = n ? n.z : a.z, ay = n ? n.y : a.y; const d = Math.hypot(ax - this.sim.player.x, az - this.sim.player.z) + Math.abs(ay - this.sim.player.y) * 3; if (!best || d < best.dist) best = { id: it.object, label: this.textWorld(it.label), dist: d }; }
+    if (!best) return null; const a = this.data.anchors[best.id]; const n = this.sim.npcs[best.id]; const dx = (n ? n.x : a.x) - this.sim.player.x, dz = (n ? n.z : a.z) - this.sim.player.z; const th = this.rm.yaw; const af = Math.atan2(-Math.sin(th), -Math.cos(th)); const at = Math.atan2(dx, dz); let rel = at - af; while (rel > Math.PI) rel -= 2 * Math.PI; while (rel < -Math.PI) rel += 2 * Math.PI;
+    return { ...best, bearing: -rel };
+  }
   onTap(id: string, near: boolean) {
     if (this.view?.kind !== 'hub') return; const it = this.view.interactions.find(i => i.object === id);
     if (it && near) { this.interact(it.id); return; }
