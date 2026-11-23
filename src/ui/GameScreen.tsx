@@ -78,6 +78,7 @@ export function GameScreen({ c, onExit }: { c: GameController; onExit: () => voi
 function Hud({ c, onExit }: { c: GameController; onExit: () => void }) {
   const s = c.settings; const rm = c.rm; const hub = c.view?.kind === 'hub'; const cap = c.view && 'node' in c.view ? c.view.node.view?.caption : undefined; const [open, setOpen] = useState(false);
   const P = (id: string) => () => { c.panel = id; c.audio.ui('click'); c.notify(); };
+  useEffect(() => { if (!open) return; const k = (e: KeyboardEvent) => { if (e.code === 'Escape') setOpen(false); }; window.addEventListener('keydown', k); return () => window.removeEventListener('keydown', k); }, [open]);
   return (
     <>
       <div className="hud-top" data-ui>
@@ -162,9 +163,9 @@ function ChoiceBox({ c }: { c: GameController }) {
 }
 
 function TaskHost({ c }: { c: GameController }) {
-  const v = c.view; if (v?.kind !== 'task') return null; const n = v.node; const done = (s: number) => c.resolveTask(s);
-  if (n.kind === 'timing') return <TimingTask key={n.id} node={n} onDone={done} />; if (n.kind === 'find') return <FindTask key={n.id} node={n} onDone={done} />; if (n.kind === 'watch') return <WatchTask key={n.id} node={n} onDone={done} />;
-  if (n.kind === 'route') return <RouteTask key={n.id} node={n} onDone={done} />; if (n.kind === 'sort') return <SortTask key={n.id} node={n} onDone={done} />; if (n.kind === 'memory') return <MemoryTask key={n.id} node={n} onDone={done} />;
+  const v = c.view; if (v?.kind !== 'task') return null; const n = v.node; const done = (s: number) => c.resolveTask(s); const relaxed = !c.settings.timeLimits;
+  if (n.kind === 'timing') return <TimingTask key={n.id} node={n} onDone={done} />; if (n.kind === 'find') return <FindTask key={n.id} node={n} onDone={done} relaxed={relaxed} />; if (n.kind === 'watch') return <WatchTask key={n.id} node={n} onDone={done} relaxed={relaxed} />;
+  if (n.kind === 'route') return <RouteTask key={n.id} node={n} onDone={done} />; if (n.kind === 'sort') return <SortTask key={n.id} node={n} onDone={done} relaxed={relaxed} />; if (n.kind === 'memory') return <MemoryTask key={n.id} node={n} onDone={done} />;
   if (n.kind === 'checklist') return <ChecklistTask key={n.id} node={n} onDone={done} />; if (n.kind === 'compose') return <ComposeTask key={n.id} node={n} onDone={done} />;
   if (n.kind === 'terminal') return <TerminalTask key={n.id} node={n} onDone={done} rail={c.rail} minute={c.world.clock.minute} />; return <RosterTask key={n.id} node={n} onDone={done} world={c.world} startYear={c.story.startYear} />;
 }

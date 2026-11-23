@@ -35,17 +35,18 @@ export function TimingTask({ node, onDone }: { node: TaskNode; onDone: Done }) {
 
 /* ---------- 2) 探す：場面の中から異常箇所をタップして見つける ---------- */
 interface Spot { id: string; x: number; y: number; r?: number; label: string; real?: boolean }
-export function FindTask({ node, onDone }: { node: TaskNode; onDone: Done }) {
-  const cfg = node.config ?? {}; const spots: Spot[] = cfg.spots ?? []; const real = spots.filter(s => s.real !== false); const [found, setFound] = useState<string[]>([]); const [miss, setMiss] = useState(0); const [left, setLeft] = useState(cfg.seconds ?? 40); const [note, setNote] = useState(''); const [fin, setFin] = useState(false);
+export function FindTask({ node, onDone, relaxed }: { node: TaskNode; onDone: Done; relaxed?: boolean }) {
+  const cfg = node.config ?? {}; const spots: Spot[] = cfg.spots ?? []; const real = spots.filter(s => s.real !== false); const [found, setFound] = useState<string[]>([]); const [miss, setMiss] = useState(0); const [left, setLeft] = useState((cfg.seconds ?? 40) * (relaxed ? 3 : 1)); const [note, setNote] = useState(''); const [fin, setFin] = useState(false);
   useEffect(() => { if (fin) return; const id = setInterval(() => setLeft((n: number) => Math.max(0, n - 1)), 1000); return () => clearInterval(id); }, [fin]);
   useEffect(() => { if (left <= 0) setFin(true); }, [left]);
   useEffect(() => { if (found.length >= real.length && real.length) setFin(true); }, [found, real.length]);
-  const tap = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (fin) return; const r = e.currentTarget.getBoundingClientRect(); const x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
-    const hit = spots.find(s => Math.hypot((s.x - x) * (r.width / r.height), s.y - y) < (s.r ?? 0.09));
+  const aspect = useRef(1.6);
+  const probe = (x: number, y: number) => {
+    if (fin) return; const hit = spots.find(s => Math.hypot((s.x - x) * aspect.current, s.y - y) < (s.r ?? 0.09) + 0.02);
     if (hit && hit.real !== false) { if (!found.includes(hit.id)) { setFound(f => [...f, hit.id]); setNote('見つけた：' + hit.label); } }
     else if (hit) { setMiss(m => m + 1); setNote('問題ありません：' + hit.label); } else { setMiss(m => m + 1); setNote('何もありません'); }
   };
+  const tap = (e: React.PointerEvent<HTMLDivElement>) => { const r = e.currentTarget.getBoundingClientRect(); aspect.current = r.width / r.height; probe((e.clientX - r.left) / r.width, (e.clientY - r.top) / r.height); };
   const score = clamp((found.length / Math.max(1, real.length)) * 100 - miss * 8);
   return (
     <TaskShell title={node.title} intro={node.intro}>
@@ -55,6 +56,8 @@ export function FindTask({ node, onDone }: { node: TaskNode; onDone: Done }) {
         {spots.map(s => found.includes(s.id) && <em key={s.id} className="mg-ring" style={{ left: s.x * 100 + '%', top: s.y * 100 + '%' }} />)}
         {fin && real.filter(s => !found.includes(s.id)).map(s => <em key={s.id} className="mg-ring miss" style={{ left: s.x * 100 + '%', top: s.y * 100 + '%' }} />)}
       </div>
+      <details className="mg-kbd"><summary>キーボード・読み上げで操作する（区画を選ぶ）</summary>
+        <div className="mg-kgrid" role="group" aria-label="場面を3行4列に分けた区画">{[0, 1, 2].flatMap(r => [0, 1, 2, 3].map(q => <button key={r + '-' + q} className="btn sm" disabled={fin} onClick={() => probe((q + 0.5) / 4, (r + 0.5) / 3)} aria-label={`${r + 1}行${q + 1}列を調べる`}>{r + 1}-{q + 1}</button>))}</div></details>
       <p className="small" style={{ minHeight: 22 }}>{note || '怪しい場所・壊れた場所を見つけてタップします。'}</p>
       {fin && <Finish score={score} label="点検の結果" onDone={onDone} note={`見落とし ${real.length - found.length}件`} />}
     </TaskShell>
@@ -62,14 +65,14 @@ export function FindTask({ node, onDone }: { node: TaskNode; onDone: Done }) {
 }
 
 /* ---------- 3) 見守り：黄色い線を越えた人を素早く下がらせる ---------- */
-export function WatchTask({ node, onDone }: { node: TaskNode; onDone: Done }) {
+export function WatchTask({ node, onDone, relaxed }: { node: TaskNode; onDone: Done; relaxed?: boolean }) {
   const cfg = node.config ?? {}; const total = cfg.total ?? 8; type P = { id: number; x: number; y: number; vy: number; bad: boolean; hp: number; state: 'go' | 'saved' | 'lost' };
   const [ps, setPs] = useState<P[]>([]); const [t, setT] = useState(0); const nid = useRef(0); const spawned = useRef(0); const [fin, setFin] = useState(false);
   useEffect(() => {
     if (fin) return; let raf = 0, last = performance.now(), acc = 0;
     const tick = (now: number) => {
       const dt = Math.min(0.05, (now - last) / 1000); last = now; acc += dt; setT(x => x + dt);
-      if (spawned.current < total && acc > 1.1) { acc = 0; spawned.current++; const bad = Math.random() < 0.7; setPs(a => [...a, { id: nid.current++, x: 0.1 + Math.random() * 0.8, y: 0.5 + Math.random() * 0.15, vy: bad ? 0.1 + Math.random() * 0.04 : 0, bad, hp: 1, state: 'go' }]); }
+      if (spawned.current < total && acc > 1.1) { acc = 0; spawned.current++; const bad = Math.random() < 0.7; setPs(a => [...a, { id: nid.current++, x: 0.1 + Math.random() * 0.8, y: 0.5 + Math.random() * 0.15, vy: bad ? (0.1 + Math.random() * 0.04) * (relaxed ? 0.45 : 1) : 0, bad, hp: 1, state: 'go' }]); }
       setPs(a => a.map(p => { if (p.state !== 'go') return p; const y = p.y + p.vy * dt; return y >= 0.93 && p.bad ? { ...p, y, state: 'lost' } : { ...p, y }; }));
       raf = requestAnimationFrame(tick);
     }; raf = requestAnimationFrame(tick); return () => cancelAnimationFrame(raf);
@@ -116,18 +119,18 @@ export function RouteTask({ node, onDone }: { node: TaskNode; onDone: Done }) {
 }
 
 /* ---------- 5) 仕分け：流れてくる物を、正しい行き先へ ---------- */
-export function SortTask({ node, onDone }: { node: TaskNode; onDone: Done }) {
+export function SortTask({ node, onDone, relaxed }: { node: TaskNode; onDone: Done; relaxed?: boolean }) {
   const cfg = node.config ?? {}; const bins: { id: string; label: string }[] = cfg.bins ?? []; const items: { id: string; label: string; bin: string; why: string }[] = cfg.items ?? [];
-  const [i, setI] = useState(0); const [ok, setOk] = useState(0); const [msg, setMsg] = useState(''); const [left, setLeft] = useState(cfg.perItem ?? 7); const fin = i >= items.length;
+  const [i, setI] = useState(0); const [ok, setOk] = useState(0); const [msg, setMsg] = useState(''); const per = (cfg.perItem ?? 7) * (relaxed ? 3 : 1); const [left, setLeft] = useState(per); const fin = i >= items.length;
   const handled = useRef(-1); // 同じ問題をタップと時間切れで二重に進めない
-  const next = useCallback((good: boolean, why: string) => { if (handled.current === i) return; handled.current = i; if (good) setOk(n => n + 1); setMsg((good ? '○ ' : '× ') + why); setI(n => n + 1); setLeft(cfg.perItem ?? 7); }, [cfg.perItem, i]);
+  const next = useCallback((good: boolean, why: string) => { if (handled.current === i) return; handled.current = i; if (good) setOk(n => n + 1); setMsg((good ? '○ ' : '× ') + why); setI(n => n + 1); setLeft(per); }, [per, i]);
   useEffect(() => { if (fin) return; const id = setInterval(() => setLeft((n: number) => n - 1), 1000); return () => clearInterval(id); }, [fin, i]);
   useEffect(() => { if (!fin && left <= 0) next(false, '時間切れ：' + items[i].why); }, [left]);  
   const cur = items[i]; const score = clamp((ok / Math.max(1, items.length)) * 100);
   return (
     <TaskShell title={node.title} intro={node.intro}>
       <div className="mg-meta"><span>{Math.min(i + 1, items.length)}/{items.length}</span><span>正しく仕分け {ok}</span>{!fin && <span>残り {left}秒</span>}</div>
-      {!fin && <div className="mg-card" key={i}><b>{cur.label}</b><i className="mg-timer"><b style={{ width: (left / (cfg.perItem ?? 7)) * 100 + '%' }} /></i></div>}
+      {!fin && <div className="mg-card" key={i}><b>{cur.label}</b><i className="mg-timer"><b style={{ width: (left / per) * 100 + '%' }} /></i></div>}
       <div className="mg-bins">{bins.map(b => <button key={b.id} className="btn mg-bin" disabled={fin} onClick={() => next(cur.bin === b.id, cur.why)}>{b.label}</button>)}</div>
       <p className="small" style={{ minHeight: 40 }}>{msg || '品物をどの扱いにするか、素早く決めます。'}</p>
       {fin && <Finish score={score} label="仕分け" onDone={onDone} />}
