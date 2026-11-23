@@ -16,6 +16,7 @@
 | iPhone Safari実機 | 実機操作 | UNVERIFIED | 環境にない |
 | 音の聴感・音量バランス | 耳での確認 | UNVERIFIED | イベントログ・出力レベルのみ自動確認 |
 | 実車との寸法照合 | 公開資料との比較 | UNVERIFIED | 313系参考の外形のみ。比較資料未取得 |
+| Artifacts公式仕様の再確認 | 公式ヘルプを読む（サブエージェントが取得） | PARTIAL | WebGL/Web Audio/IndexedDBの可否は記載なし → 公開後に実際に動作確認する（DEC-011） |
 | Artifacts/Vercel同等性 | 正式版のみ | 対象外 | 試作はArtifactsのみ |
 
 ## 既知の不具合・制約
