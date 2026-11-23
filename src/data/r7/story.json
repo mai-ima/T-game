@@ -287,6 +287,97 @@
     ]
    }
   },
+  "ogawa": {
+   "id": "ogawa",
+   "name": "小川 誠",
+   "kana": "おがわ まこと",
+   "role": "利用者（会社員）",
+   "dept": "none",
+   "age": 52,
+   "years": 0,
+   "uniform": "#4a4a52",
+   "hair": "#2a2a2a",
+   "skin": "#e8c29c",
+   "trait": "大事な会議の前で、気が立っている。",
+   "bio": "地域の再開発に関わる仕事をしている。",
+   "gender": "m",
+   "accessory": "bag",
+   "visibleWhen": {
+    "all": [
+     {
+      "time": {
+       "op": ">=",
+       "val": 840
+      }
+     },
+     {
+      "time": {
+       "op": "<",
+       "val": 930
+      }
+     },
+     {
+      "flag": "route.service"
+     },
+     {
+      "notFlag": "ch1.angry_done"
+     }
+    ]
+   }
+  },
+  "riku": {
+   "id": "riku",
+   "name": "高校生",
+   "kana": "こうこうせい",
+   "role": "利用者（高校2年生）",
+   "dept": "none",
+   "age": 17,
+   "years": 0,
+   "uniform": "#3a4a6a",
+   "hair": "#1c1c28",
+   "skin": "#efc9a6",
+   "trait": "焦っていて、つい無茶をしそうになる。",
+   "bio": "通学で毎朝この駅を使う。",
+   "gender": "m",
+   "visibleWhen": {
+    "all": [
+     {
+      "time": {
+       "op": ">=",
+       "val": 840
+      }
+     },
+     {
+      "time": {
+       "op": "<",
+       "val": 930
+      }
+     },
+     {
+      "flag": "route.platform"
+     },
+     {
+      "notFlag": "ch1.cable_done"
+     }
+    ]
+   }
+  },
+  "tachibana": {
+   "id": "tachibana",
+   "name": "橘 源三",
+   "kana": "たちばな げんぞう",
+   "role": "車両基地 検修長",
+   "dept": "depot",
+   "age": 58,
+   "years": 38,
+   "uniform": "#2f4f6a",
+   "hair": "#9a9a96",
+   "skin": "#dcb48c",
+   "trait": "口数は少ないが、床下を見る目は確か。",
+   "bio": "青浜総合車両センターの検修長。新人を厳しく、そして温かく育てる。",
+   "gender": "m",
+   "accessory": "cap"
+  },
   "traveler": {
    "id": "traveler",
    "name": "旅行客",
@@ -1012,16 +1103,23 @@
      "requires": {
       "all": [
        {
-        "flag": "ch1.tenko"
+        "all": [
+         {
+          "flag": "ch1.tenko"
+         },
+         {
+          "time": {
+           "op": ">=",
+           "val": 780
+          }
+         },
+         {
+          "flag": "ch1.delay_done"
+         }
+        ]
        },
        {
-        "time": {
-         "op": ">=",
-         "val": 780
-        }
-       },
-       {
-        "flag": "ch1.delay_done"
+        "flag": "route.office"
        }
       ]
      },
@@ -1035,19 +1133,26 @@
      "requires": {
       "all": [
        {
-        "flag": "ch1.tenko"
+        "all": [
+         {
+          "flag": "ch1.tenko"
+         },
+         {
+          "time": {
+           "op": ">=",
+           "val": 800
+          }
+         },
+         {
+          "time": {
+           "op": "<",
+           "val": 860
+          }
+         }
+        ]
        },
        {
-        "time": {
-         "op": ">=",
-         "val": 800
-        }
-       },
-       {
-        "time": {
-         "op": "<",
-         "val": 860
-        }
+        "flag": "route.service"
        }
       ]
      },
@@ -1061,22 +1166,29 @@
      "requires": {
       "all": [
        {
-        "flag": "ch1.tenko"
+        "all": [
+         {
+          "flag": "ch1.tenko"
+         },
+         {
+          "flag": "legacy.helped_kajiwara"
+         },
+         {
+          "time": {
+           "op": ">=",
+           "val": 810
+          }
+         },
+         {
+          "time": {
+           "op": "<",
+           "val": 900
+          }
+         }
+        ]
        },
        {
-        "flag": "legacy.helped_kajiwara"
-       },
-       {
-        "time": {
-         "op": ">=",
-         "val": 810
-        }
-       },
-       {
-        "time": {
-         "op": "<",
-         "val": 900
-        }
+        "flag": "route.service"
        }
       ]
      },
@@ -1090,13 +1202,20 @@
      "requires": {
       "all": [
        {
-        "flag": "ch1.platform"
+        "all": [
+         {
+          "flag": "ch1.platform"
+         },
+         {
+          "time": {
+           "op": ">=",
+           "val": 810
+          }
+         }
+        ]
        },
        {
-        "time": {
-         "op": ">=",
-         "val": 810
-        }
+        "flag": "route.platform"
        }
       ]
      },
@@ -1110,19 +1229,26 @@
      "requires": {
       "all": [
        {
-        "flag": "ch1.tenko"
+        "all": [
+         {
+          "flag": "ch1.tenko"
+         },
+         {
+          "time": {
+           "op": ">=",
+           "val": 860
+          }
+         },
+         {
+          "time": {
+           "op": "<",
+           "val": 920
+          }
+         }
+        ]
        },
        {
-        "time": {
-         "op": ">=",
-         "val": 860
-        }
-       },
-       {
-        "time": {
-         "op": "<",
-         "val": 920
-        }
+        "flag": "route.platform"
        }
       ]
      },
@@ -1136,13 +1262,20 @@
      "requires": {
       "all": [
        {
-        "flag": "ch1.tenko"
+        "all": [
+         {
+          "flag": "ch1.tenko"
+         },
+         {
+          "time": {
+           "op": ">=",
+           "val": 885
+          }
+         }
+        ]
        },
        {
-        "time": {
-         "op": ">=",
-         "val": 885
-        }
+        "flag": "route.service"
        }
       ]
      },
@@ -1156,13 +1289,20 @@
      "requires": {
       "all": [
        {
-        "flag": "ch1.tenko"
+        "all": [
+         {
+          "flag": "ch1.tenko"
+         },
+         {
+          "time": {
+           "op": ">=",
+           "val": 910
+          }
+         }
+        ]
        },
        {
-        "time": {
-         "op": ">=",
-         "val": 910
-        }
+        "flag": "route.office"
        }
       ]
      },
@@ -1176,13 +1316,20 @@
      "requires": {
       "all": [
        {
-        "flag": "ch1.tenko"
+        "all": [
+         {
+          "flag": "ch1.tenko"
+         },
+         {
+          "time": {
+           "op": ">=",
+           "val": 930
+          }
+         }
+        ]
        },
        {
-        "time": {
-         "op": ">=",
-         "val": 930
-        }
+        "flag": "route.service"
        }
       ]
      },
@@ -1202,6 +1349,78 @@
         "time": {
          "op": ">=",
          "val": 950
+        }
+       }
+      ]
+     },
+     "once": true
+    },
+    {
+     "id": "angry",
+     "object": "ogawa",
+     "label": "怒っているお客様に対応する（遅延証明書）",
+     "goto": "ch1.angry_1",
+     "requires": {
+      "all": [
+       {
+        "flag": "route.service"
+       },
+       {
+        "time": {
+         "op": ">=",
+         "val": 840
+        }
+       },
+       {
+        "time": {
+         "op": "<",
+         "val": 930
+        }
+       }
+      ]
+     },
+     "once": true
+    },
+    {
+     "id": "cable",
+     "object": "riku",
+     "label": "線路にスマートフォンを落とした高校生",
+     "goto": "ch1.cable_1",
+     "requires": {
+      "all": [
+       {
+        "flag": "route.platform"
+       },
+       {
+        "time": {
+         "op": ">=",
+         "val": 840
+        }
+       },
+       {
+        "time": {
+         "op": "<",
+         "val": 930
+        }
+       }
+      ]
+     },
+     "once": true
+    },
+    {
+     "id": "board",
+     "object": "departure_board",
+     "label": "発車標の表示を確認する（誤表示の連絡）",
+     "goto": "ch1.board_1",
+     "requires": {
+      "all": [
+       {
+        "flag": "route.office"
+       },
+       {
+        "time": {
+         "op": ">=",
+         "val": 850
         }
        }
       ]
@@ -1367,10 +1586,17 @@
      },
      "optional": true,
      "showWhen": {
-      "time": {
-       "op": ">=",
-       "val": 780
-      }
+      "all": [
+       {
+        "time": {
+         "op": ">=",
+         "val": 780
+        }
+       },
+       {
+        "flag": "route.office"
+       }
+      ]
      }
     },
     {
@@ -1381,10 +1607,17 @@
      },
      "optional": true,
      "showWhen": {
-      "time": {
-       "op": ">=",
-       "val": 800
-      }
+      "all": [
+       {
+        "time": {
+         "op": ">=",
+         "val": 800
+        }
+       },
+       {
+        "flag": "route.service"
+       }
+      ]
      }
     },
     {
@@ -1395,10 +1628,17 @@
      },
      "optional": true,
      "showWhen": {
-      "time": {
-       "op": ">=",
-       "val": 810
-      }
+      "all": [
+       {
+        "time": {
+         "op": ">=",
+         "val": 810
+        }
+       },
+       {
+        "flag": "route.platform"
+       }
+      ]
      }
     },
     {
@@ -1409,10 +1649,17 @@
      },
      "optional": true,
      "showWhen": {
-      "time": {
-       "op": ">=",
-       "val": 860
-      }
+      "all": [
+       {
+        "time": {
+         "op": ">=",
+         "val": 860
+        }
+       },
+       {
+        "flag": "route.platform"
+       }
+      ]
      }
     },
     {
@@ -1451,10 +1698,17 @@
      },
      "optional": true,
      "showWhen": {
-      "time": {
-       "op": ">=",
-       "val": 930
-      }
+      "all": [
+       {
+        "time": {
+         "op": ">=",
+         "val": 930
+        }
+       },
+       {
+        "flag": "route.service"
+       }
+      ]
      }
     },
     {
@@ -1469,6 +1723,69 @@
        "op": ">=",
        "val": 950
       }
+     }
+    },
+    {
+     "id": "g_angry",
+     "label": "（専用）怒っているお客様への対応",
+     "when": {
+      "flag": "ch1.angry_done"
+     },
+     "optional": true,
+     "showWhen": {
+      "all": [
+       {
+        "flag": "route.service"
+       },
+       {
+        "time": {
+         "op": ">=",
+         "val": 840
+        }
+       }
+      ]
+     }
+    },
+    {
+     "id": "g_cable",
+     "label": "（専用）線路に落ちた物への対応",
+     "when": {
+      "flag": "ch1.cable_done"
+     },
+     "optional": true,
+     "showWhen": {
+      "all": [
+       {
+        "flag": "route.platform"
+       },
+       {
+        "time": {
+         "op": ">=",
+         "val": 840
+        }
+       }
+      ]
+     }
+    },
+    {
+     "id": "g_board",
+     "label": "（専用）発車標の誤表示の訂正",
+     "when": {
+      "flag": "ch1.board_done"
+     },
+     "optional": true,
+     "showWhen": {
+      "all": [
+       {
+        "flag": "route.office"
+       },
+       {
+        "time": {
+         "op": ">=",
+         "val": 850
+        }
+       }
+      ]
      }
     }
    ],
@@ -3623,7 +3940,7 @@
      }
     }
    ],
-   "next": "ch1.hub"
+   "next": "ch1.route_intro"
   },
   "ch1.yama_ask": {
    "id": "ch1.yama_ask",
@@ -3994,7 +4311,7 @@
      "text": "…そっか。じゃあ、見学会の話は聞かせるよ。"
     }
    ],
-   "next": "ch1.closing3",
+   "next": "ch1.epi_mentor",
    "view": {
     "mode": "25d",
     "bg": "office",
@@ -4018,7 +4335,7 @@
      "text": "見学は良い経験です。ただ、戻ったら必ず、学んだことを駅の仕事にどう生かすか、聞かせてくださいね。"
     }
    ],
-   "next": "ch1.closing3",
+   "next": "ch1.epi_depot",
    "view": {
     "mode": "25d",
     "bg": "office",
@@ -4041,7 +4358,7 @@
      "text": "分かった。見学会は、俺一人で行ってくるよ。"
     }
    ],
-   "next": "ch1.closing3",
+   "next": "ch1.epi_rest",
    "view": {
     "mode": "25d",
     "bg": "office",
@@ -4308,15 +4625,60 @@
    "cases": [
     {
      "when": {
+      "flag": "legacy.rule_break"
+     },
+     "goto": "ch2.warn"
+    },
+    {
+     "when": {
       "flag": "legacy.concealed"
      },
      "goto": "ch2.audit"
     },
     {
      "when": {
-      "flag": "legacy.helped_kajiwara"
+      "all": [
+       {
+        "flag": "route.office"
+       },
+       {
+        "flag": "legacy.notebook_missing"
+       }
+      ]
+     },
+     "goto": "ch2.notebook"
+    },
+    {
+     "when": {
+      "flag": "route.platform"
+     },
+     "goto": "ch2.r_platform"
+    },
+    {
+     "when": {
+      "all": [
+       {
+        "flag": "route.service"
+       },
+       {
+        "any": [
+         {
+          "flag": "legacy.helped_kajiwara"
+         },
+         {
+          "flag": "legacy.ogawa_known"
+         }
+        ]
+       }
+      ]
      },
      "goto": "ch2.kaji"
+    },
+    {
+     "when": {
+      "flag": "route.service"
+     },
+     "goto": "ch2.r_service"
     }
    ],
    "else": "ch2.plain"
@@ -7123,7 +7485,7 @@
      "text": "一つひとつ、記録も残してくれていました。"
     }
    ],
-   "next": "ch1.closing2",
+   "next": "ch1.cl_route",
    "effects": [
     {
      "eval": {
@@ -7159,7 +7521,7 @@
      "text": "依頼に応えながら、基本の業務も進められた。バランスは悪くない。"
     }
    ],
-   "next": "ch1.closing2",
+   "next": "ch1.cl_route",
    "effects": [
     {
      "eval": {
@@ -7185,7 +7547,7 @@
      "text": "依頼が出ていたのに、対応できなかったものがあったようだ。駅は、次々と仕事が生まれる場所だ。明日は、周りをもっと見てみよう。"
     }
    ],
-   "next": "ch1.closing2",
+   "next": "ch1.cl_route",
    "effects": [
     {
      "eval": {
@@ -7200,6 +7562,1507 @@
     "focus": [
      "shiraishi"
     ]
+   }
+  },
+  "ch1.route_intro": {
+   "id": "ch1.route_intro",
+   "type": "line",
+   "lines": [
+    {
+     "who": "shiraishi",
+     "text": "午後は、持ち場を分けよう。全部を一度に見る必要はない。今日どこを見たいか、自分で選びなさい。"
+    },
+    {
+     "who": "kubota",
+     "text": "選んだ持ち場で、午後の仕事も、人との関係も変わります。あとで入れ替えることは、今日はできません。",
+     "mood": "serious"
+    }
+   ],
+   "next": "ch1.route_choice",
+   "view": {
+    "mode": "25d",
+    "bg": "office",
+    "focus": [
+     "shiraishi",
+     "kubota"
+    ],
+    "caption": "12:45 駅事務室"
+   }
+  },
+  "ch1.route_choice": {
+   "id": "ch1.route_choice",
+   "type": "choice",
+   "prompt": "午後の持ち場を選ぶ。",
+   "options": [
+    {
+     "id": "service",
+     "label": "窓口・券売機まわりで、お客様への対応を担当する（久保田さんと）",
+     "goto": "ch1.route_s",
+     "tone": "caring",
+     "effects": [
+      {
+       "set": "route.service"
+      },
+      {
+       "rel": {
+        "char": "kubota",
+        "trust": 2,
+        "rapport": 1
+       }
+      },
+      {
+       "skill": {
+        "key": "service",
+        "add": 3
+       }
+      },
+      {
+       "log": {
+        "text": "午後の持ち場：窓口・券売機（接客）",
+        "tag": "route"
+       }
+      }
+     ]
+    },
+    {
+     "id": "platform",
+     "label": "ホームで、列車の発着と安全の確認を担当する（山科さんと）",
+     "goto": "ch1.route_p",
+     "tone": "careful",
+     "effects": [
+      {
+       "set": "route.platform"
+      },
+      {
+       "rel": {
+        "char": "yamashina",
+        "trust": 2,
+        "rapport": 2
+       }
+      },
+      {
+       "skill": {
+        "key": "patrol",
+        "add": 3
+       }
+      },
+      {
+       "log": {
+        "text": "午後の持ち場：ホーム（安全確認）",
+        "tag": "route"
+       }
+      }
+     ]
+    },
+    {
+     "id": "office",
+     "label": "駅事務室で、記録・連絡・放送を担当する（白石駅長と）",
+     "goto": "ch1.route_o",
+     "tone": "honest",
+     "effects": [
+      {
+       "set": "route.office"
+      },
+      {
+       "rel": {
+        "char": "shiraishi",
+        "trust": 2,
+        "rapport": 1
+       }
+      },
+      {
+       "eval": {
+        "key": "reporting",
+        "add": 3
+       }
+      },
+      {
+       "log": {
+        "text": "午後の持ち場：駅事務室（記録・連絡）",
+        "tag": "route"
+       }
+      }
+     ]
+    }
+   ],
+   "important": true,
+   "who": "shiraishi",
+   "view": {
+    "mode": "25d",
+    "bg": "office",
+    "focus": [
+     "shiraishi",
+     "kubota"
+    ]
+   }
+  },
+  "ch1.route_s": {
+   "id": "ch1.route_s",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "決まりですね。窓口と券売機は、駅の顔です。お客様の言葉にならない困りごとまで、聞き取れるようになりましょう。",
+     "mood": "smile"
+    }
+   ],
+   "next": "ch1.hub",
+   "view": {
+    "mode": "3d",
+    "cam": "follow",
+    "caption": "午後：接客ルート"
+   }
+  },
+  "ch1.route_p": {
+   "id": "ch1.route_p",
+   "type": "line",
+   "lines": [
+    {
+     "who": "yamashina",
+     "text": "ホームか！ 一緒だな。列車が近づくとき、足元と周りを見るのが仕事だ。…怖いけど、一番、鉄道が好きな場所だ。",
+     "mood": "smile"
+    }
+   ],
+   "next": "ch1.hub",
+   "view": {
+    "mode": "3d",
+    "cam": "follow",
+    "caption": "午後：ホームルート"
+   }
+  },
+  "ch1.route_o": {
+   "id": "ch1.route_o",
+   "type": "line",
+   "lines": [
+    {
+     "who": "shiraishi",
+     "text": "事務室を選んだか。表に出ない仕事ほど、駅を支えている。記録と連絡を、軽く見ないことだ。"
+    }
+   ],
+   "next": "ch1.hub",
+   "view": {
+    "mode": "3d",
+    "cam": "follow",
+    "caption": "午後：事務ルート"
+   }
+  },
+  "ch1.angry_1": {
+   "id": "ch1.angry_1",
+   "type": "line",
+   "lines": [
+    {
+     "who": "ogawa",
+     "text": "遅延証明書を、今すぐ出してくれ。午前の遅れで、大事な会議に遅れたんだ。どうしてくれる。",
+     "mood": "serious"
+    },
+    {
+     "who": "kubota",
+     "text": "落ち着いて対応しましょう。まず、お客様のお話を最後まで聞いてください。"
+    }
+   ],
+   "next": "ch1.angry_c1",
+   "view": {
+    "mode": "3d",
+    "cam": "npc:ogawa",
+    "caption": "きっぷうりば前"
+   }
+  },
+  "ch1.angry_c1": {
+   "id": "ch1.angry_c1",
+   "type": "choice",
+   "prompt": "小川さんに、どう答えますか？",
+   "options": [
+    {
+     "id": "calm",
+     "label": "「ご迷惑をおかけしました。事情をうかがい、すぐ証明書をご用意します」",
+     "goto": "ch1.angry_a",
+     "tone": "caring",
+     "effects": [
+      {
+       "time": 5
+      },
+      {
+       "eval": {
+        "key": "service",
+        "add": 4
+       }
+      },
+      {
+       "rel": {
+        "char": "ogawa",
+        "trust": 1,
+        "rapport": 1
+       }
+      }
+     ]
+    },
+    {
+     "id": "rebut",
+     "label": "「遅れは車両点検のためで、駅員のせいではありません」",
+     "goto": "ch1.angry_b",
+     "tone": "risky",
+     "effects": [
+      {
+       "eval": {
+        "key": "service",
+        "add": -3
+       }
+      },
+      {
+       "rel": {
+        "char": "ogawa",
+        "trust": -2,
+        "rapport": 0
+       }
+      },
+      {
+       "rel": {
+        "char": "kubota",
+        "trust": -1,
+        "rapport": 0
+       }
+      }
+     ]
+    },
+    {
+     "id": "defer",
+     "label": "「駅長に代わります」とすぐ事務室へ案内する",
+     "goto": "ch1.angry_c",
+     "tone": "neutral",
+     "effects": [
+      {
+       "eval": {
+        "key": "reporting",
+        "add": 1
+       }
+      },
+      {
+       "eval": {
+        "key": "service",
+        "add": -1
+       }
+      }
+     ]
+    }
+   ],
+   "view": {
+    "mode": "3d",
+    "cam": "npc:ogawa"
+   }
+  },
+  "ch1.angry_a": {
+   "id": "ch1.angry_a",
+   "type": "line",
+   "lines": [
+    {
+     "who": "ogawa",
+     "text": "…すまない。言い過ぎた。実は今日、地元の再開発の説明会でね。大事な日だったんだ。",
+     "mood": "worry"
+    },
+    {
+     "who": "ogawa",
+     "text": "駅前の話なんだ。この駅が変わるかもしれない。"
+    }
+   ],
+   "next": "ch1.angry_c2",
+   "effects": [
+    {
+     "set": "legacy.ogawa_known"
+    }
+   ]
+  },
+  "ch1.angry_b": {
+   "id": "ch1.angry_b",
+   "type": "line",
+   "lines": [
+    {
+     "who": "ogawa",
+     "text": "理由なんて聞いていない！ 責任者を呼べ！",
+     "mood": "serious"
+    },
+    {
+     "who": "shiraishi",
+     "text": "（事務室から出てきて）失礼いたしました。ご用件を、あらためて承ります。"
+    }
+   ],
+   "next": "ch1.angry_end_b",
+   "effects": [
+    {
+     "set": "legacy.ogawa_angry"
+    }
+   ]
+  },
+  "ch1.angry_c": {
+   "id": "ch1.angry_c",
+   "type": "line",
+   "lines": [
+    {
+     "who": "ogawa",
+     "text": "…駅長？ 最初から出てくればいい。",
+     "mood": "serious"
+    },
+    {
+     "who": "shiraishi",
+     "text": "申し訳ありません。（目で合図する）あとで、一緒に振り返ろう。"
+    }
+   ],
+   "next": "ch1.angry_end_c"
+  },
+  "ch1.angry_c2": {
+   "id": "ch1.angry_c2",
+   "type": "choice",
+   "prompt": "証明書を、どう渡しますか？",
+   "options": [
+    {
+     "id": "print",
+     "label": "「ここで発行します。会議先にも、遅れの理由をお伝えください」",
+     "goto": "ch1.angry_end_a",
+     "tone": "honest",
+     "effects": [
+      {
+       "eval": {
+        "key": "accuracy",
+        "add": 3
+       }
+      },
+      {
+       "eval": {
+        "key": "service",
+        "add": 2
+       }
+      },
+      {
+       "rel": {
+        "char": "ogawa",
+        "trust": 1,
+        "rapport": 1
+       }
+      }
+     ]
+    },
+    {
+     "id": "later",
+     "label": "「事務室で発行しますので、少しお待ちください」",
+     "goto": "ch1.angry_end_a2",
+     "tone": "neutral",
+     "effects": [
+      {
+       "time": 5
+      },
+      {
+       "eval": {
+        "key": "accuracy",
+        "add": 1
+       }
+      }
+     ]
+    }
+   ]
+  },
+  "ch1.angry_end_a": {
+   "id": "ch1.angry_end_a",
+   "type": "line",
+   "lines": [
+    {
+     "who": "ogawa",
+     "text": "助かる。…君の名前を、覚えておくよ。",
+     "mood": "smile"
+    },
+    {
+     "who": "kubota",
+     "text": "相手の背景に耳を傾けられた。それが、いちばん大切な対応です。",
+     "mood": "smile"
+    }
+   ],
+   "next": "ch1.angry_end"
+  },
+  "ch1.angry_end_a2": {
+   "id": "ch1.angry_end_a2",
+   "type": "line",
+   "lines": [
+    {
+     "who": "ogawa",
+     "text": "ああ、頼む。"
+    }
+   ],
+   "next": "ch1.angry_end"
+  },
+  "ch1.angry_end_b": {
+   "id": "ch1.angry_end_b",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "事実を伝えることと、相手の気持ちを受け止めることは、別のことです。お客様が先に求めているのは、たいてい後者です。",
+     "mood": "serious"
+    }
+   ],
+   "next": "ch1.angry_end"
+  },
+  "ch1.angry_end_c": {
+   "id": "ch1.angry_end_c",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "上司に任せるのは悪くありません。ただ、最初の一言は、あなたが言えたはずです。"
+    }
+   ],
+   "next": "ch1.angry_end"
+  },
+  "ch1.angry_end": {
+   "id": "ch1.angry_end",
+   "type": "effect",
+   "effects": [
+    {
+     "set": "ch1.angry_done"
+    },
+    {
+     "var": {
+      "key": "ch1.extra",
+      "add": 1
+     }
+    },
+    {
+     "time": 15
+    },
+    {
+     "log": {
+      "text": "怒っているお客様への対応（遅延証明書）",
+      "tag": "work"
+     }
+    },
+    {
+     "set": "legacy.route_service_cleared"
+    }
+   ],
+   "next": "ch1.hub"
+  },
+  "ch1.cable_1": {
+   "id": "ch1.cable_1",
+   "type": "line",
+   "lines": [
+    {
+     "who": "riku",
+     "text": "すみません、スマホを線路に落としちゃって…！ 次の電車、もうすぐ来ますよね？ 拾ってきます！",
+     "mood": "surprise"
+    },
+    {
+     "who": "yamashina",
+     "text": "待て、降りるな！ それは絶対にだめだ！",
+     "mood": "serious"
+    }
+   ],
+   "next": "ch1.cable_c1",
+   "view": {
+    "mode": "3d",
+    "cam": "npc:riku",
+    "caption": "島式ホーム"
+   }
+  },
+  "ch1.cable_c1": {
+   "id": "ch1.cable_c1",
+   "type": "choice",
+   "prompt": "高校生と、落とし物に、どう対応しますか？",
+   "options": [
+    {
+     "id": "contact",
+     "label": "「動かないでください」と止め、運転士と指令へ連絡して停止の手配を依頼する",
+     "goto": "ch1.cable_a",
+     "tone": "careful",
+     "effects": [
+      {
+       "eval": {
+        "key": "safety",
+        "add": 5
+       }
+      },
+      {
+       "eval": {
+        "key": "reporting",
+        "add": 3
+       }
+      },
+      {
+       "rel": {
+        "char": "yamashina",
+        "trust": 1,
+        "rapport": 1
+       }
+      }
+     ]
+    },
+    {
+     "id": "pick",
+     "label": "「手を貸すから、すぐに拾おう」と一緒に降りる",
+     "goto": "ch1.cable_b",
+     "tone": "risky",
+     "effects": [
+      {
+       "eval": {
+        "key": "safety",
+        "add": -6
+       }
+      },
+      {
+       "rel": {
+        "char": "yamashina",
+        "trust": -2,
+        "rapport": 0
+       }
+      },
+      {
+       "set": "legacy.rule_break"
+      }
+     ]
+    },
+    {
+     "id": "stopbtn",
+     "label": "列車非常停止ボタンを押して、まず列車を止める",
+     "goto": "ch1.cable_c",
+     "tone": "quick",
+     "effects": [
+      {
+       "eval": {
+        "key": "safety",
+        "add": 1
+       }
+      },
+      {
+       "eval": {
+        "key": "reporting",
+        "add": -1
+       }
+      },
+      {
+       "set": "ch1.train_delayed_by_you"
+      }
+     ]
+    }
+   ],
+   "view": {
+    "mode": "3d",
+    "cam": "npc:riku"
+   }
+  },
+  "ch1.cable_a": {
+   "id": "ch1.cable_a",
+   "type": "line",
+   "lines": [
+    {
+     "who": "yamashina",
+     "text": "よし！ 俺は柵の前で人を止める。指令には、場所と状況を短く！"
+    },
+    {
+     "who": "hamaguchi",
+     "text": "了解。次の列車の運転士に連絡し、停止位置を調整します。保守担当が、後で安全に回収します。"
+    },
+    {
+     "who": "riku",
+     "text": "すみません…ありがとうございます。",
+     "mood": "worry"
+    }
+   ],
+   "next": "ch1.cable_end",
+   "effects": [
+    {
+     "set": "legacy.phone_saved"
+    }
+   ]
+  },
+  "ch1.cable_b": {
+   "id": "ch1.cable_b",
+   "type": "line",
+   "lines": [
+    {
+     "who": "shiraishi",
+     "text": "（駆けつけて）何をしている！ 線路には降りない。絶対に。たとえ一瞬でもだ！",
+     "mood": "serious"
+    },
+    {
+     "who": "kubota",
+     "text": "…幸い、列車は来ていません。でも、これは大きな問題です。"
+    }
+   ],
+   "next": "ch1.cable_end_b"
+  },
+  "ch1.cable_c": {
+   "id": "ch1.cable_c",
+   "type": "line",
+   "lines": [
+    {
+     "who": "yamashina",
+     "text": "押した！？ …確かに、安全に倒したけど…。次の列車が駅の手前で止まったぞ。",
+     "mood": "surprise"
+    },
+    {
+     "who": "hamaguchi",
+     "text": "駅の非常停止を確認。3分ほど遅れが出ます。状況の説明をお願いします。"
+    }
+   ],
+   "next": "ch1.cable_c2"
+  },
+  "ch1.cable_c2": {
+   "id": "ch1.cable_c2",
+   "type": "line",
+   "lines": [
+    {
+     "who": "shiraishi",
+     "text": "非常停止ボタンは、人が危険な目にあったときの最後の手段だ。物を落としただけなら、まず連絡と確認だ。次は、順番を覚えなさい。"
+    }
+   ],
+   "next": "ch1.cable_end"
+  },
+  "ch1.cable_end_b": {
+   "id": "ch1.cable_end_b",
+   "type": "line",
+   "lines": [
+    {
+     "who": "shiraishi",
+     "text": "今日の件は、記録に残す。始末書は書かなくていいが、あなたの判断は、評価にも残る。安全は、親切より先にある。",
+     "mood": "serious"
+    }
+   ],
+   "next": "ch1.cable_end"
+  },
+  "ch1.cable_end": {
+   "id": "ch1.cable_end",
+   "type": "effect",
+   "effects": [
+    {
+     "set": "ch1.cable_done"
+    },
+    {
+     "var": {
+      "key": "ch1.extra",
+      "add": 1
+     }
+    },
+    {
+     "time": 25
+    },
+    {
+     "log": {
+      "text": "線路に落ちたスマートフォンへの対応",
+      "tag": "work"
+     }
+    },
+    {
+     "set": "legacy.route_platform_cleared"
+    }
+   ],
+   "next": "ch1.hub"
+  },
+  "ch1.board_1": {
+   "id": "ch1.board_1",
+   "type": "line",
+   "lines": [
+    {
+     "who": "hamaguchi",
+     "text": "輸送指令です。発車標に、回復済みの遅れが、まだ表示されているようです。確認をお願いします。"
+    }
+   ],
+   "next": "ch1.board_c1",
+   "view": {
+    "mode": "3d",
+    "cam": "npc:shiraishi",
+    "caption": "駅事務室"
+   }
+  },
+  "ch1.board_c1": {
+   "id": "ch1.board_c1",
+   "type": "choice",
+   "prompt": "誤表示を、どう直しますか？",
+   "options": [
+    {
+     "id": "confirm",
+     "label": "指令に現在の運行状況を確認し、表示を訂正して、訂正した時刻を記録する",
+     "goto": "ch1.board_a",
+     "tone": "honest",
+     "effects": [
+      {
+       "eval": {
+        "key": "accuracy",
+        "add": 4
+       }
+      },
+      {
+       "eval": {
+        "key": "reporting",
+        "add": 3
+       }
+      },
+      {
+       "rel": {
+        "char": "hamaguchi",
+        "trust": 1,
+        "rapport": 0
+       }
+      }
+     ]
+    },
+    {
+     "id": "self",
+     "label": "「たぶん回復しているから」と、確認せずに表示を消す",
+     "goto": "ch1.board_b",
+     "tone": "risky",
+     "effects": [
+      {
+       "eval": {
+        "key": "accuracy",
+        "add": -4
+       }
+      },
+      {
+       "eval": {
+        "key": "reporting",
+        "add": -2
+       }
+      }
+     ]
+    },
+    {
+     "id": "leave",
+     "label": "次の勤務の人が気づくと思い、後回しにする",
+     "goto": "ch1.board_c",
+     "tone": "neutral",
+     "effects": [
+      {
+       "eval": {
+        "key": "reporting",
+        "add": -3
+       }
+      }
+     ]
+    }
+   ],
+   "view": {
+    "mode": "3d",
+    "cam": "npc:shiraishi"
+   }
+  },
+  "ch1.board_a": {
+   "id": "ch1.board_a",
+   "type": "line",
+   "lines": [
+    {
+     "who": "shiraishi",
+     "text": "確認、訂正、記録。三つそろって、一つの仕事だ。"
+    }
+   ],
+   "next": "ch1.board_book",
+   "effects": [
+    {
+     "rel": {
+      "char": "shiraishi",
+      "trust": 1,
+      "rapport": 0
+     }
+    }
+   ]
+  },
+  "ch1.board_b": {
+   "id": "ch1.board_b",
+   "type": "line",
+   "lines": [
+    {
+     "who": "hamaguchi",
+     "text": "確認なしで表示を消すのは危険です。実際は、まだ12分の遅れが残っていました。",
+     "mood": "serious"
+    },
+    {
+     "who": "shiraishi",
+     "text": "案内は、確認してから変える。覚えなさい。"
+    }
+   ],
+   "next": "ch1.board_book"
+  },
+  "ch1.board_c": {
+   "id": "ch1.board_c",
+   "type": "line",
+   "lines": [
+    {
+     "who": "shiraishi",
+     "text": "後回しにした分だけ、お客様は誤った情報で動く。気づいた人が、動くんだ。",
+     "mood": "serious"
+    }
+   ],
+   "next": "ch1.board_book"
+  },
+  "ch1.board_book": {
+   "id": "ch1.board_book",
+   "type": "line",
+   "lines": [
+    {
+     "text": "訂正の履歴を探すうち、棚の奥にある古い「引継ぎ帳」を見つけた。ページを繰ると、一枚だけ、不自然に切り取られている。",
+     "narration": true
+    },
+    {
+     "who": "shiraishi",
+     "text": "…それか。古い帳面だ。昔、表示の更新手順が書いてあった。今は端末に移ったから、誰も見ない。",
+     "mood": "worry"
+    },
+    {
+     "who": "shiraishi",
+     "text": "切り取られた頁のことは、私も知らない。…気になるなら、いつか調べればいい。"
+    }
+   ],
+   "next": "ch1.board_c2",
+   "effects": [
+    {
+     "set": "legacy.notebook_missing"
+    }
+   ]
+  },
+  "ch1.board_c2": {
+   "id": "ch1.board_c2",
+   "type": "choice",
+   "prompt": "切り取られた頁について、どうしますか？",
+   "options": [
+    {
+     "id": "ask",
+     "label": "「その頁には、何が書いてあったのでしょう」と駅長に尋ねる",
+     "goto": "ch1.board_d1",
+     "tone": "honest",
+     "effects": [
+      {
+       "set": "legacy.notebook_asked"
+      },
+      {
+       "eval": {
+        "key": "reporting",
+        "add": 1
+       }
+      },
+      {
+       "rel": {
+        "char": "shiraishi",
+        "trust": 1,
+        "rapport": 1
+       }
+      }
+     ]
+    },
+    {
+     "id": "keep",
+     "label": "気になるが、今日は黙って棚に戻す",
+     "goto": "ch1.board_d2",
+     "tone": "neutral",
+     "effects": []
+    }
+   ]
+  },
+  "ch1.board_d1": {
+   "id": "ch1.board_d1",
+   "type": "line",
+   "lines": [
+    {
+     "who": "shiraishi",
+     "text": "…昔、手順を巡って、駅と指令の間で行き違いがあった。それだけだ。詳しくは、いずれ話そう。",
+     "mood": "serious"
+    }
+   ],
+   "next": "ch1.board_end"
+  },
+  "ch1.board_d2": {
+   "id": "ch1.board_d2",
+   "type": "line",
+   "lines": [
+    {
+     "who": "shiraishi",
+     "text": "（あなたの手元の帳面を見て、何も言わなかった）"
+    }
+   ],
+   "next": "ch1.board_end"
+  },
+  "ch1.board_end": {
+   "id": "ch1.board_end",
+   "type": "effect",
+   "effects": [
+    {
+     "set": "ch1.board_done"
+    },
+    {
+     "var": {
+      "key": "ch1.extra",
+      "add": 1
+     }
+    },
+    {
+     "time": 20
+    },
+    {
+     "log": {
+      "text": "発車標の誤表示の訂正と、古い引継ぎ帳の発見",
+      "tag": "work"
+     }
+    },
+    {
+     "set": "legacy.route_office_cleared"
+    }
+   ],
+   "next": "ch1.hub"
+  },
+  "ch1.epi_mentor": {
+   "id": "ch1.epi_mentor",
+   "type": "line",
+   "lines": [
+    {
+     "text": "4月3日（土）。誰もいない券売機の前で、久保田と並んで、障害時の案内を繰り返した。",
+     "narration": true
+    },
+    {
+     "who": "kubota",
+     "text": "…私も、新人の頃に、誤った案内で、お客様を逆方向の電車に乗せてしまったことがあります。",
+     "mood": "worry"
+    },
+    {
+     "who": "kubota",
+     "text": "泣きそうになりました。そのとき、先輩が言ったんです。「失敗した事実より、どう直したかが、あなたの仕事になる」って。"
+    }
+   ],
+   "next": "ch1.epi_mentor_c",
+   "view": {
+    "mode": "25d",
+    "bg": "office",
+    "focus": [
+     "kubota"
+    ],
+    "caption": "4月3日（土） 駅構内"
+   },
+   "effects": [
+    {
+     "set": "legacy.kubota_story"
+    }
+   ]
+  },
+  "ch1.epi_mentor_c": {
+   "id": "ch1.epi_mentor_c",
+   "type": "choice",
+   "prompt": "久保田さんの話に、どう答えますか？",
+   "options": [
+    {
+     "id": "thank",
+     "label": "「話してくれて、ありがとうございます。私も、そうありたいです」",
+     "goto": "ch1.epi_mentor_a",
+     "tone": "honest",
+     "effects": [
+      {
+       "rel": {
+        "char": "kubota",
+        "trust": 2,
+        "rapport": 2
+       }
+      }
+     ]
+    },
+    {
+     "id": "joke",
+     "label": "「久保田さんでも、失敗するんですね」と、笑ってみせる",
+     "goto": "ch1.epi_mentor_b",
+     "tone": "risky",
+     "effects": [
+      {
+       "rel": {
+        "char": "kubota",
+        "trust": 0,
+        "rapport": 1
+       }
+      }
+     ]
+    }
+   ],
+   "view": {
+    "mode": "25d",
+    "bg": "office",
+    "focus": [
+     "kubota"
+    ]
+   }
+  },
+  "ch1.epi_mentor_a": {
+   "id": "ch1.epi_mentor_a",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "ふふ、ありがとう。じゃあ、次は後輩のあなたの番です。いつか、誰かに話してあげてください。",
+     "mood": "smile"
+    }
+   ],
+   "next": "ch1.closing3",
+   "view": {
+    "mode": "25d",
+    "bg": "office",
+    "focus": [
+     "kubota"
+    ]
+   }
+  },
+  "ch1.epi_mentor_b": {
+   "id": "ch1.epi_mentor_b",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "しますよ、たくさん。だから、一緒に直すんです。",
+     "mood": "smile"
+    }
+   ],
+   "next": "ch1.closing3",
+   "view": {
+    "mode": "25d",
+    "bg": "office",
+    "focus": [
+     "kubota"
+    ]
+   }
+  },
+  "ch1.epi_depot": {
+   "id": "ch1.epi_depot",
+   "type": "line",
+   "lines": [
+    {
+     "text": "4月10日（土）。青浜総合車両センター。整然と並ぶ留置線の向こうで、検修庫のシャッターが開いている。",
+     "narration": true
+    },
+    {
+     "who": "tachibana",
+     "text": "見学か。駅の若いのが基地に来るのは、珍しいな。…床下を、見るか。"
+    },
+    {
+     "who": "tachibana",
+     "text": "車両の足元は、嘘をつかない。音と、においと、手の感触だ。毎日見ている人間にしか、分からん違いがある。"
+    }
+   ],
+   "next": "ch1.epi_depot_c",
+   "view": {
+    "mode": "25d",
+    "bg": "depot",
+    "focus": [
+     "tachibana",
+     "yamashina"
+    ],
+    "caption": "4月10日（土） 青浜総合車両センター"
+   },
+   "effects": [
+    {
+     "set": "legacy.tachibana_met"
+    }
+   ]
+  },
+  "ch1.epi_depot_c": {
+   "id": "ch1.epi_depot_c",
+   "type": "choice",
+   "prompt": "橘さんの言葉に、どう答えますか？",
+   "options": [
+    {
+     "id": "ask",
+     "label": "「駅の仕事と、基地の仕事は、どうつながっていますか」と尋ねる",
+     "goto": "ch1.epi_depot_a",
+     "tone": "careful",
+     "effects": [
+      {
+       "skill": {
+        "key": "depot",
+        "add": 4
+       }
+      },
+      {
+       "eval": {
+        "key": "reporting",
+        "add": 1
+       }
+      }
+     ]
+    },
+    {
+     "id": "yama",
+     "label": "山科さんに「ここで働きたい理由を、橘さんに話してみたら」とすすめる",
+     "goto": "ch1.epi_depot_b",
+     "tone": "caring",
+     "effects": [
+      {
+       "rel": {
+        "char": "yamashina",
+        "trust": 2,
+        "rapport": 2
+       }
+      }
+     ]
+    }
+   ],
+   "view": {
+    "mode": "25d",
+    "bg": "depot",
+    "focus": [
+     "tachibana",
+     "yamashina"
+    ]
+   }
+  },
+  "ch1.epi_depot_a": {
+   "id": "ch1.epi_depot_a",
+   "type": "line",
+   "lines": [
+    {
+     "who": "tachibana",
+     "text": "駅が正確に案内する。基地が正確に整備する。どちらかが欠けたら、お客様は乗れん。…いい質問だ。",
+     "mood": "smile"
+    }
+   ],
+   "next": "ch1.closing3",
+   "view": {
+    "mode": "25d",
+    "bg": "depot",
+    "focus": [
+     "tachibana"
+    ]
+   }
+  },
+  "ch1.epi_depot_b": {
+   "id": "ch1.epi_depot_b",
+   "type": "line",
+   "lines": [
+    {
+     "who": "yamashina",
+     "text": "…俺、車両の床下が好きなんです。図面じゃなくて、実物に触れたい。",
+     "mood": "worry"
+    },
+    {
+     "who": "tachibana",
+     "text": "好きなら、資格を取れ。来年、待っている。"
+    }
+   ],
+   "next": "ch1.closing3",
+   "view": {
+    "mode": "25d",
+    "bg": "depot",
+    "focus": [
+     "tachibana",
+     "yamashina"
+    ]
+   },
+   "effects": [
+    {
+     "set": "legacy.yamashina_tachibana"
+    }
+   ]
+  },
+  "ch1.epi_rest": {
+   "id": "ch1.epi_rest",
+   "type": "line",
+   "lines": [
+    {
+     "text": "4月3日（土）。久しぶりに、ゆっくり眠った。昼過ぎ、同期のグループチャットが、通知で鳴り続けている。",
+     "narration": true
+    },
+    {
+     "who": "yamashina",
+     "text": "（チャット）初日おつかれ！ 俺、今日は基地の本ばかり読んでる。そっちはどうだった？",
+     "mood": "smile"
+    }
+   ],
+   "next": "ch1.epi_rest_c",
+   "view": {
+    "mode": "25d",
+    "bg": "hr",
+    "focus": [],
+    "caption": "4月3日（土）"
+   }
+  },
+  "ch1.epi_rest_c": {
+   "id": "ch1.epi_rest_c",
+   "type": "choice",
+   "prompt": "山科さんに、どう返しますか？",
+   "options": [
+    {
+     "id": "reply",
+     "label": "「初日は大変だったけど、案内がうまくいったとき、うれしかった」と返す",
+     "goto": "ch1.epi_rest_a",
+     "tone": "caring",
+     "effects": [
+      {
+       "rel": {
+        "char": "yamashina",
+        "trust": 1,
+        "rapport": 2
+       }
+      }
+     ]
+    },
+    {
+     "id": "sleep",
+     "label": "返事はせず、もう少し寝て休む",
+     "goto": "ch1.epi_rest_b",
+     "tone": "neutral",
+     "effects": [
+      {
+       "eval": {
+        "key": "safety",
+        "add": 1
+       }
+      }
+     ]
+    }
+   ],
+   "view": {
+    "mode": "25d",
+    "bg": "hr",
+    "focus": []
+   }
+  },
+  "ch1.epi_rest_a": {
+   "id": "ch1.epi_rest_a",
+   "type": "line",
+   "lines": [
+    {
+     "who": "yamashina",
+     "text": "（チャット）おお、いいな。俺も、来週は、負けないぞ！"
+    }
+   ],
+   "next": "ch1.closing3",
+   "view": {
+    "mode": "25d",
+    "bg": "hr",
+    "focus": []
+   }
+  },
+  "ch1.epi_rest_b": {
+   "id": "ch1.epi_rest_b",
+   "type": "line",
+   "lines": [
+    {
+     "text": "夕方、窓の外が赤く染まった。月曜が、少しだけ、楽しみだった。",
+     "narration": true
+    }
+   ],
+   "next": "ch1.closing3",
+   "view": {
+    "mode": "25d",
+    "bg": "hr",
+    "focus": []
+   }
+  },
+  "ch1.cl_route": {
+   "id": "ch1.cl_route",
+   "type": "branch",
+   "cases": [
+    {
+     "when": {
+      "flag": "route.service"
+     },
+     "goto": "ch1.clr_s"
+    },
+    {
+     "when": {
+      "flag": "route.platform"
+     },
+     "goto": "ch1.clr_p"
+    }
+   ],
+   "else": "ch1.clr_o"
+  },
+  "ch1.clr_s": {
+   "id": "ch1.clr_s",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "接客は、手順より、相手の気持ちです。今日は、それを見ようとしていました。",
+     "mood": "smile"
+    },
+    {
+     "who": "shiraishi",
+     "text": "お客様の背景を聞く姿勢は、財産だ。"
+    }
+   ],
+   "next": "ch1.closing2",
+   "effects": [
+    {
+     "eval": {
+      "key": "service",
+      "add": 2
+     }
+    }
+   ],
+   "view": {
+    "mode": "25d",
+    "bg": "office",
+    "focus": [
+     "shiraishi",
+     "kubota"
+    ]
+   }
+  },
+  "ch1.clr_p": {
+   "id": "ch1.clr_p",
+   "type": "line",
+   "lines": [
+    {
+     "who": "yamashina",
+     "text": "（部屋に顔を出して）ホーム、疲れたけど、楽しかったな。"
+    },
+    {
+     "who": "shiraishi",
+     "text": "ホームは、一瞬の判断が、人の命につながる。慎重さを、忘れないように。"
+    }
+   ],
+   "next": "ch1.closing2",
+   "effects": [
+    {
+     "eval": {
+      "key": "safety",
+      "add": 2
+     }
+    }
+   ],
+   "view": {
+    "mode": "25d",
+    "bg": "office",
+    "focus": [
+     "shiraishi",
+     "yamashina"
+    ]
+   }
+  },
+  "ch1.clr_o": {
+   "id": "ch1.clr_o",
+   "type": "line",
+   "lines": [
+    {
+     "who": "shiraishi",
+     "text": "記録と連絡は、地味だが、現場を支える背骨だ。今日の訂正の記録は、明日の誰かを救う。"
+    }
+   ],
+   "next": "ch1.closing2",
+   "effects": [
+    {
+     "eval": {
+      "key": "reporting",
+      "add": 2
+     }
+    }
+   ],
+   "view": {
+    "mode": "25d",
+    "bg": "office",
+    "focus": [
+     "shiraishi"
+    ]
+   }
+  },
+  "ch2.warn": {
+   "id": "ch2.warn",
+   "type": "line",
+   "lines": [
+    {
+     "who": "shiraishi",
+     "text": "先週の、線路に降りかけた件を、あらためて話そう。あなたを責めたいのではない。安全の線を、一緒に引き直したい。",
+     "mood": "serious"
+    },
+    {
+     "who": "yamashina",
+     "text": "（小声で）俺も、あのとき動けなかった。一緒に聞くよ。"
+    }
+   ],
+   "next": "ch2.tail",
+   "effects": [
+    {
+     "set": "next.rule_review"
+    }
+   ],
+   "view": {
+    "mode": "25d",
+    "bg": "office",
+    "focus": [
+     "shiraishi",
+     "yamashina"
+    ],
+    "caption": "月曜 8:30"
+   }
+  },
+  "ch2.notebook": {
+   "id": "ch2.notebook",
+   "type": "line",
+   "lines": [
+    {
+     "who": "shiraishi",
+     "text": "…あの引継ぎ帳のことだ。昔の記録を、少し洗い直してみようと思う。手伝ってくれるか。",
+     "mood": "worry"
+    },
+    {
+     "who": "hamaguchi",
+     "text": "（電話口）指令にも、当時の記録が残っているかもしれません。"
+    }
+   ],
+   "next": "ch2.tail",
+   "effects": [
+    {
+     "set": "next.notebook_inquiry"
+    }
+   ],
+   "view": {
+    "mode": "25d",
+    "bg": "office",
+    "focus": [
+     "shiraishi"
+    ],
+    "caption": "月曜 17:00"
+   }
+  },
+  "ch2.r_platform": {
+   "id": "ch2.r_platform",
+   "type": "line",
+   "lines": [
+    {
+     "who": "yamashina",
+     "text": "来週、早番でホームだ。…俺、一人で立ってみたい。見ててくれ。",
+     "mood": "smile"
+    },
+    {
+     "who": "shiraishi",
+     "text": "駅は、一人では回らん。だが、一人で立てる者が、強い。"
+    }
+   ],
+   "next": "ch2.tail",
+   "effects": [
+    {
+     "set": "next.platform_solo"
+    }
+   ],
+   "view": {
+    "mode": "25d",
+    "bg": "office",
+    "focus": [
+     "shiraishi",
+     "yamashina"
+    ],
+    "caption": "月曜 8:30"
+   }
+  },
+  "ch2.r_service": {
+   "id": "ch2.r_service",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "窓口の応対記録が、先週の分から、きちんと残っていました。今週は、苦情の記録の書き方を、一緒に練習しましょう。"
+    }
+   ],
+   "next": "ch2.tail",
+   "effects": [
+    {
+     "set": "next.service_record"
+    }
+   ],
+   "view": {
+    "mode": "25d",
+    "bg": "office",
+    "focus": [
+     "kubota"
+    ],
+    "caption": "月曜 9:00"
    }
   }
  }

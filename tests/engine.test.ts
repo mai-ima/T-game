@@ -44,9 +44,9 @@ describe('ストーリーデータの静的検査', () => {
     const errors = lintStory(S).filter(i => i.level === 'error');
     expect(errors).toEqual([]);
   });
-  it('第1章に重要選択が1〜3個ある', () => {
+  it('第1章の重要選択（大きな分岐）は4個以内', () => {
     const imp = Object.values(S.nodes).filter(n => n.type === 'choice' && n.important && n.id.startsWith('ch1.'));
-    expect(imp.length).toBeGreaterThanOrEqual(1); expect(imp.length).toBeLessThanOrEqual(3);
+    expect(imp.length).toBeGreaterThanOrEqual(1); expect(imp.length).toBeLessThanOrEqual(4);
   });
   it('R7は経営シミュレーション機能を持たない（経営系エフェクトがない）', () => {
     const json = JSON.stringify(S);
@@ -195,19 +195,29 @@ describe('14モード定義', () => {
 export type _W = WorldState;
 
 describe('時間経過で仕事（依頼）が増える', () => {
-  it('朝・昼・午後で選べる仕事が増え、目標欄にも追加される', () => {
-    const w = createWorld(S, 'T'); const run = new StoryRunner(S, w); w.flags['ch1.tenko'] = true; w.flags['ch1.roster'] = true; w.flags['ch1.platform'] = true; run.enter('ch1.hub');
-    const count = (min: number) => { w.clock.minute = min; const v = run.view(); if (v.kind !== 'hub') throw new Error('hub'); return { ints: v.interactions.length, goals: v.goals.length }; };
-    const a = count(8 * 60 + 40), b = count(10 * 60 + 15), c = count(13 * 60 + 40), d = count(16 * 60);
-    expect(b.ints).toBeGreaterThan(a.ints); expect(c.ints).toBeGreaterThan(b.ints); expect(d.goals).toBeGreaterThan(a.goals + 8);
+  const setup = (route: string) => { const w = createWorld(S, 'T'); const run = new StoryRunner(S, w); Object.assign(w.flags, { 'ch1.tenko': true, 'ch1.roster': true, 'ch1.platform': true, [route]: true }); run.enter('ch1.hub'); return { w, run }; };
+  const at = (w: WorldState, run: StoryRunner, min: number) => { w.clock.minute = min; const v = run.view(); if (v.kind !== 'hub') throw new Error('hub'); return v; };
+  it('時刻が進むと、選べる仕事と目標欄が増える', () => {
+    const { w, run } = setup('route.service'); const seen = new Set<string>(); let g0 = 0, g3 = 0;
+    for (const [i, m] of [8 * 60 + 40, 10 * 60 + 15, 13 * 60 + 40, 14 * 60 + 30, 16 * 60].entries()) { const v = at(w, run, m); v.interactions.forEach(x => seen.add(x.id)); if (i === 0) g0 = v.goals.length; if (i === 4) g3 = v.goals.length; }
+    expect(seen.size).toBeGreaterThanOrEqual(16); expect(g3).toBeGreaterThan(g0 + 6);
   });
   it('依頼は少なくとも13種類あり、各依頼に独自の場面がある', () => {
     const hub = S.nodes['ch1.hub'] as any; const timed = hub.interactions.filter((i: any) => (JSON.stringify(i.requires) ?? '').includes('"time"'));
     expect(timed.length).toBeGreaterThanOrEqual(13); expect(new Set(timed.map((i: any) => i.goto)).size).toBe(timed.length);
   });
-  it('梶原さんに付き添った場合だけ、午後に再会の依頼が出る', () => {
-    const w = createWorld(S, 'T'); const run = new StoryRunner(S, w); w.flags['ch1.tenko'] = true; run.enter('ch1.hub'); w.clock.minute = 13 * 60 + 40;
-    const has = () => { const v = run.view(); return v.kind === 'hub' && v.interactions.some(i => i.id === 'kaji2'); };
+  it('午後の持ち場で、できる仕事が大きく分かれる（接客／ホーム／事務室）', () => {
+    const ids = (route: string) => { const { w, run } = setup(route); w.flags['ch1.delay_done'] = true; return new Set(at(w, run, 15 * 60).interactions.map(i => i.id)); };
+    const s = ids('route.service'), p = ids('route.platform'), o = ids('route.office');
+    expect(s.has('angry') && !p.has('angry') && !o.has('angry')).toBe(true); expect(p.has('cable') && !s.has('cable') && !o.has('cable')).toBe(true); expect(o.has('board') && !s.has('board') && !p.has('board')).toBe(true);
+    expect(s.has('gatecheck') && !p.has('gatecheck')).toBe(true); expect(p.has('stroller') && !o.has('stroller')).toBe(true); expect(o.has('phone') && !s.has('phone')).toBe(true);
+  });
+  it('梶原さんに付き添った接客ルートでだけ、午後に再会の依頼が出る', () => {
+    const { w, run } = setup('route.service'); w.clock.minute = 13 * 60 + 40; const has = () => { const v = run.view(); return v.kind === 'hub' && v.interactions.some(i => i.id === 'kaji2'); };
     expect(has()).toBe(false); w.flags['legacy.helped_kajiwara'] = true; expect(has()).toBe(true);
+  });
+  it('持ち場の選択が第2章の冒頭を変える', () => {
+    const starts = ['route.service', 'route.platform', 'route.office'].map(r => { const w = createWorld(S, 'T'); w.flags[r] = true; if (r === 'route.office') w.flags['legacy.notebook_missing'] = true; const run = new StoryRunner(S, w); run.enter('ch2.mon'); return w.story.node; });
+    expect(new Set(starts).size).toBe(3);
   });
 });

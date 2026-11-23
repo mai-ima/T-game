@@ -39,6 +39,9 @@ const characters = {
   nomura: { id: 'nomura', name: '野村 清次', kana: 'のむら せいじ', role: '利用者（杖をつく高齢の方）', dept: 'none', age: 76, years: 0, uniform: '#6a5a4a', hair: '#d8d8d8', skin: '#e8c4a0', trait: '遠慮がちで、頼るのが苦手。', bio: '週に一度、海浜口の友人宅へ通う。', gender: 'm', accessory: 'cane', height: 0.96, visibleWhen: { all: [{ time: { op: '>=', val: 560 } }, { time: { op: '<', val: 640 } }, { notFlag: 'ch1.assist_done' }] } },
   haha: { id: 'haha', name: '母親（ベビーカー）', kana: 'ははおや', role: '利用者', dept: 'none', age: 31, years: 0, uniform: '#5c7a8a', hair: '#3a2a22', skin: '#f2d3b8', trait: '荷物が多く、時間に追われている。', bio: '生後半年の子を連れて通院する。', gender: 'f', accessory: 'bag', visibleWhen: { all: [{ time: { op: '>=', val: 860 } }, { time: { op: '<', val: 920 } }, { notFlag: 'ch1.stroller_done' }] } },
   tourist2: { id: 'tourist2', name: '外国の旅行客', kana: 'がいこくのりょこうきゃく', role: '利用者', dept: 'none', age: 28, years: 0, uniform: '#3a5a8a', hair: '#8a6a3a', skin: '#f3d6bd', trait: '日本語は少し。地図を見ながら困っている。', bio: '星峰線の観光列車に乗りたい。', gender: 'm', accessory: 'suitcase', visibleWhen: { all: [{ time: { op: '>=', val: 800 } }, { time: { op: '<', val: 860 } }, { notFlag: 'ch1.guide_done' }] } },
+  ogawa: { id: 'ogawa', name: '小川 誠', kana: 'おがわ まこと', role: '利用者（会社員）', dept: 'none', age: 52, years: 0, uniform: '#4a4a52', hair: '#2a2a2a', skin: '#e8c29c', trait: '大事な会議の前で、気が立っている。', bio: '地域の再開発に関わる仕事をしている。', gender: 'm', accessory: 'bag', visibleWhen: { all: [{ time: { op: '>=', val: 840 } }, { time: { op: '<', val: 930 } }, { flag: 'route.service' }, { notFlag: 'ch1.angry_done' }] } },
+  riku: { id: 'riku', name: '高校生', kana: 'こうこうせい', role: '利用者（高校2年生）', dept: 'none', age: 17, years: 0, uniform: '#3a4a6a', hair: '#1c1c28', skin: '#efc9a6', trait: '焦っていて、つい無茶をしそうになる。', bio: '通学で毎朝この駅を使う。', gender: 'm', visibleWhen: { all: [{ time: { op: '>=', val: 840 } }, { time: { op: '<', val: 930 } }, { flag: 'route.platform' }, { notFlag: 'ch1.cable_done' }] } },
+  tachibana: { id: 'tachibana', name: '橘 源三', kana: 'たちばな げんぞう', role: '車両基地 検修長', dept: 'depot', age: 58, years: 38, uniform: '#2f4f6a', hair: '#9a9a96', skin: '#dcb48c', trait: '口数は少ないが、床下を見る目は確か。', bio: '青浜総合車両センターの検修長。新人を厳しく、そして温かく育てる。', gender: 'm', accessory: 'cap' },
   traveler: { id: 'traveler', name: '旅行客', kana: 'りょこうきゃく', role: '利用者', dept: 'none', age: 34, years: 0, uniform: '#3a6a5a', hair: '#5a3a2a', skin: '#f0d0b0', trait: '空港連絡線への乗り換えを急いでいる。', bio: '大きなスーツケースを持つ旅行者。', gender: 'f', accessory: 'suitcase', visibleWhen: { all: [{ any: [{ nodePrefix: 'ch1.delay' }, { nodePrefix: 'ch1.dq' }, { nodePrefix: 'ch1.announce' }, { nodePrefix: 'ch1.ann_' }] }, { notFlag: 'ch1.delay_done' }] } }
 };
 
@@ -597,12 +600,133 @@ line('ch1.cl_mid', [['shiraishi', '依頼に応えながら、基本の業務も
 line('ch1.cl_few', [['shiraishi', '依頼が出ていたのに、対応できなかったものがあったようだ。駅は、次々と仕事が生まれる場所だ。明日は、周りをもっと見てみよう。']], 'ch1.closing2', { effects: [ev('teamwork', -1)], view: v25('office', ['shiraishi']) });
 for (const id of ['ch1.cl_admit', 'ch1.cl_blame', 'ch1.cl_silent', 'ch1.cl_careful', 'ch1.cl_generic']) N[id].next = 'ch1.cl_count';
 
+
+// ============ 午後の持ち場：大きな分岐（接客／ホーム／事務室）============
+const lunchEndNode = N['ch1.lunch_end']; lunchEndNode.next = 'ch1.route_intro';
+line('ch1.route_intro', [['shiraishi', '午後は、持ち場を分けよう。全部を一度に見る必要はない。今日どこを見たいか、自分で選びなさい。'], ['kubota', '選んだ持ち場で、午後の仕事も、人との関係も変わります。あとで入れ替えることは、今日はできません。', 'serious']], 'ch1.route_choice', { view: v25('office', ['shiraishi', 'kubota'], '12:45 駅事務室') });
+choice('ch1.route_choice', '午後の持ち場を選ぶ。', [
+  opt('service', '窓口・券売機まわりで、お客様への対応を担当する（久保田さんと）', 'ch1.route_s', { tone: 'caring', effects: [set('route.service'), rel('kubota', 2, 1), sk('service', 3), log('午後の持ち場：窓口・券売機（接客）', 'route')] }),
+  opt('platform', 'ホームで、列車の発着と安全の確認を担当する（山科さんと）', 'ch1.route_p', { tone: 'careful', effects: [set('route.platform'), rel('yamashina', 2, 2), sk('patrol', 3), log('午後の持ち場：ホーム（安全確認）', 'route')] }),
+  opt('office', '駅事務室で、記録・連絡・放送を担当する（白石駅長と）', 'ch1.route_o', { tone: 'honest', effects: [set('route.office'), rel('shiraishi', 2, 1), ev('reporting', 3), log('午後の持ち場：駅事務室（記録・連絡）', 'route')] })
+], { important: true, who: 'shiraishi', view: v25('office', ['shiraishi', 'kubota']) });
+line('ch1.route_s', [['kubota', '決まりですね。窓口と券売機は、駅の顔です。お客様の言葉にならない困りごとまで、聞き取れるようになりましょう。', 'smile']], 'ch1.hub', { view: v3('follow', '午後：接客ルート') });
+line('ch1.route_p', [['yamashina', 'ホームか！ 一緒だな。列車が近づくとき、足元と周りを見るのが仕事だ。…怖いけど、一番、鉄道が好きな場所だ。', 'smile']], 'ch1.hub', { view: v3('follow', '午後：ホームルート') });
+line('ch1.route_o', [['shiraishi', '事務室を選んだか。表に出ない仕事ほど、駅を支えている。記録と連絡を、軽く見ないことだ。']], 'ch1.hub', { view: v3('follow', '午後：事務ルート') });
+
+// ---- 接客ルート専用：怒っているお客様（遅延証明書）----
+line('ch1.angry_1', [['ogawa', '遅延証明書を、今すぐ出してくれ。午前の遅れで、大事な会議に遅れたんだ。どうしてくれる。', 'serious'], ['kubota', '落ち着いて対応しましょう。まず、お客様のお話を最後まで聞いてください。']], 'ch1.angry_c1', { view: v3('npc:ogawa', 'きっぷうりば前') });
+choice('ch1.angry_c1', '小川さんに、どう答えますか？', [
+  opt('calm', '「ご迷惑をおかけしました。事情をうかがい、すぐ証明書をご用意します」', 'ch1.angry_a', { tone: 'caring', effects: [time(5), ev('service', 4), rel('ogawa', 1, 1)] }),
+  opt('rebut', '「遅れは車両点検のためで、駅員のせいではありません」', 'ch1.angry_b', { tone: 'risky', effects: [ev('service', -3), rel('ogawa', -2, 0), rel('kubota', -1, 0)] }),
+  opt('defer', '「駅長に代わります」とすぐ事務室へ案内する', 'ch1.angry_c', { tone: 'neutral', effects: [ev('reporting', 1), ev('service', -1)] })
+], { view: v3('npc:ogawa') });
+line('ch1.angry_a', [['ogawa', '…すまない。言い過ぎた。実は今日、地元の再開発の説明会でね。大事な日だったんだ。', 'worry'], ['ogawa', '駅前の話なんだ。この駅が変わるかもしれない。']], 'ch1.angry_c2', { effects: [set('legacy.ogawa_known')] });
+line('ch1.angry_b', [['ogawa', '理由なんて聞いていない！ 責任者を呼べ！', 'serious'], ['shiraishi', '（事務室から出てきて）失礼いたしました。ご用件を、あらためて承ります。']], 'ch1.angry_end_b', { effects: [set('legacy.ogawa_angry')] });
+line('ch1.angry_c', [['ogawa', '…駅長？ 最初から出てくればいい。', 'serious'], ['shiraishi', '申し訳ありません。（目で合図する）あとで、一緒に振り返ろう。']], 'ch1.angry_end_c');
+choice('ch1.angry_c2', '証明書を、どう渡しますか？', [
+  opt('print', '「ここで発行します。会議先にも、遅れの理由をお伝えください」', 'ch1.angry_end_a', { tone: 'honest', effects: [ev('accuracy', 3), ev('service', 2), rel('ogawa', 1, 1)] }),
+  opt('later', '「事務室で発行しますので、少しお待ちください」', 'ch1.angry_end_a2', { tone: 'neutral', effects: [time(5), ev('accuracy', 1)] })
+]);
+line('ch1.angry_end_a', [['ogawa', '助かる。…君の名前を、覚えておくよ。', 'smile'], ['kubota', '相手の背景に耳を傾けられた。それが、いちばん大切な対応です。', 'smile']], 'ch1.angry_end'); line('ch1.angry_end_a2', [['ogawa', 'ああ、頼む。']], 'ch1.angry_end');
+line('ch1.angry_end_b', [['kubota', '事実を伝えることと、相手の気持ちを受け止めることは、別のことです。お客様が先に求めているのは、たいてい後者です。', 'serious']], 'ch1.angry_end'); line('ch1.angry_end_c', [['kubota', '上司に任せるのは悪くありません。ただ、最初の一言は、あなたが言えたはずです。']], 'ch1.angry_end');
+fx('ch1.angry_end', done('ch1.angry_done', 15, '怒っているお客様への対応（遅延証明書）', [set('legacy.route_service_cleared')]), 'ch1.hub');
+
+// ---- ホームルート専用：線路に落ちたスマートフォン ----
+line('ch1.cable_1', [['riku', 'すみません、スマホを線路に落としちゃって…！ 次の電車、もうすぐ来ますよね？ 拾ってきます！', 'surprise'], ['yamashina', '待て、降りるな！ それは絶対にだめだ！', 'serious']], 'ch1.cable_c1', { view: v3('npc:riku', '島式ホーム') });
+choice('ch1.cable_c1', '高校生と、落とし物に、どう対応しますか？', [
+  opt('contact', '「動かないでください」と止め、運転士と指令へ連絡して停止の手配を依頼する', 'ch1.cable_a', { tone: 'careful', effects: [ev('safety', 5), ev('reporting', 3), rel('yamashina', 1, 1)] }),
+  opt('pick', '「手を貸すから、すぐに拾おう」と一緒に降りる', 'ch1.cable_b', { tone: 'risky', effects: [ev('safety', -6), rel('yamashina', -2, 0), set('legacy.rule_break')] }),
+  opt('stopbtn', '列車非常停止ボタンを押して、まず列車を止める', 'ch1.cable_c', { tone: 'quick', effects: [ev('safety', 1), ev('reporting', -1), set('ch1.train_delayed_by_you')] })
+], { view: v3('npc:riku') });
+line('ch1.cable_a', [['yamashina', 'よし！ 俺は柵の前で人を止める。指令には、場所と状況を短く！'], ['hamaguchi', '了解。次の列車の運転士に連絡し、停止位置を調整します。保守担当が、後で安全に回収します。'], ['riku', 'すみません…ありがとうございます。', 'worry']], 'ch1.cable_end', { effects: [set('legacy.phone_saved')] });
+line('ch1.cable_b', [['shiraishi', '（駆けつけて）何をしている！ 線路には降りない。絶対に。たとえ一瞬でもだ！', 'serious'], ['kubota', '…幸い、列車は来ていません。でも、これは大きな問題です。']], 'ch1.cable_end_b');
+line('ch1.cable_c', [['yamashina', '押した！？ …確かに、安全に倒したけど…。次の列車が駅の手前で止まったぞ。', 'surprise'], ['hamaguchi', '駅の非常停止を確認。3分ほど遅れが出ます。状況の説明をお願いします。']], 'ch1.cable_c2');
+line('ch1.cable_c2', [['shiraishi', '非常停止ボタンは、人が危険な目にあったときの最後の手段だ。物を落としただけなら、まず連絡と確認だ。次は、順番を覚えなさい。']], 'ch1.cable_end');
+line('ch1.cable_end_b', [['shiraishi', '今日の件は、記録に残す。始末書は書かなくていいが、あなたの判断は、評価にも残る。安全は、親切より先にある。', 'serious']], 'ch1.cable_end');
+fx('ch1.cable_end', done('ch1.cable_done', 25, '線路に落ちたスマートフォンへの対応', [set('legacy.route_platform_cleared')]), 'ch1.hub');
+
+// ---- 事務ルート専用：発車標の誤表示と、古い引継ぎ帳 ----
+line('ch1.board_1', [['hamaguchi', '輸送指令です。発車標に、回復済みの遅れが、まだ表示されているようです。確認をお願いします。']], 'ch1.board_c1', { view: v3('npc:shiraishi', '駅事務室') });
+choice('ch1.board_c1', '誤表示を、どう直しますか？', [
+  opt('confirm', '指令に現在の運行状況を確認し、表示を訂正して、訂正した時刻を記録する', 'ch1.board_a', { tone: 'honest', effects: [ev('accuracy', 4), ev('reporting', 3), rel('hamaguchi', 1, 0)] }),
+  opt('self', '「たぶん回復しているから」と、確認せずに表示を消す', 'ch1.board_b', { tone: 'risky', effects: [ev('accuracy', -4), ev('reporting', -2)] }),
+  opt('leave', '次の勤務の人が気づくと思い、後回しにする', 'ch1.board_c', { tone: 'neutral', effects: [ev('reporting', -3)] })
+], { view: v3('npc:shiraishi') });
+line('ch1.board_a', [['shiraishi', '確認、訂正、記録。三つそろって、一つの仕事だ。']], 'ch1.board_book', { effects: [rel('shiraishi', 1, 0)] });
+line('ch1.board_b', [['hamaguchi', '確認なしで表示を消すのは危険です。実際は、まだ12分の遅れが残っていました。', 'serious'], ['shiraishi', '案内は、確認してから変える。覚えなさい。']], 'ch1.board_book');
+line('ch1.board_c', [['shiraishi', '後回しにした分だけ、お客様は誤った情報で動く。気づいた人が、動くんだ。', 'serious']], 'ch1.board_book');
+line('ch1.board_book', [
+  '訂正の履歴を探すうち、棚の奥にある古い「引継ぎ帳」を見つけた。ページを繰ると、一枚だけ、不自然に切り取られている。',
+  ['shiraishi', '…それか。古い帳面だ。昔、表示の更新手順が書いてあった。今は端末に移ったから、誰も見ない。', 'worry'], ['shiraishi', '切り取られた頁のことは、私も知らない。…気になるなら、いつか調べればいい。']
+], 'ch1.board_c2', { effects: [set('legacy.notebook_missing')] });
+choice('ch1.board_c2', '切り取られた頁について、どうしますか？', [
+  opt('ask', '「その頁には、何が書いてあったのでしょう」と駅長に尋ねる', 'ch1.board_d1', { tone: 'honest', effects: [set('legacy.notebook_asked'), ev('reporting', 1), rel('shiraishi', 1, 1)] }),
+  opt('keep', '気になるが、今日は黙って棚に戻す', 'ch1.board_d2', { tone: 'neutral', effects: [] })
+]);
+line('ch1.board_d1', [['shiraishi', '…昔、手順を巡って、駅と指令の間で行き違いがあった。それだけだ。詳しくは、いずれ話そう。', 'serious']], 'ch1.board_end'); line('ch1.board_d2', [['shiraishi', '（あなたの手元の帳面を見て、何も言わなかった）']], 'ch1.board_end');
+fx('ch1.board_end', done('ch1.board_done', 20, '発車標の誤表示の訂正と、古い引継ぎ帳の発見', [set('legacy.route_office_cleared')]), 'ch1.hub');
+
+// ---- 週末エピローグ（各3〜4場面）----
+for (const k of ['mentor', 'depot', 'rest']) N['ch1.cc_' + k].next = 'ch1.epi_' + k;
+line('ch1.epi_mentor', [
+  '4月3日（土）。誰もいない券売機の前で、久保田と並んで、障害時の案内を繰り返した。',
+  ['kubota', '…私も、新人の頃に、誤った案内で、お客様を逆方向の電車に乗せてしまったことがあります。', 'worry'], ['kubota', '泣きそうになりました。そのとき、先輩が言ったんです。「失敗した事実より、どう直したかが、あなたの仕事になる」って。']
+], 'ch1.epi_mentor_c', { view: v25('office', ['kubota'], '4月3日（土） 駅構内'), effects: [set('legacy.kubota_story')] });
+choice('ch1.epi_mentor_c', '久保田さんの話に、どう答えますか？', [
+  opt('thank', '「話してくれて、ありがとうございます。私も、そうありたいです」', 'ch1.epi_mentor_a', { tone: 'honest', effects: [rel('kubota', 2, 2)] }),
+  opt('joke', '「久保田さんでも、失敗するんですね」と、笑ってみせる', 'ch1.epi_mentor_b', { tone: 'risky', effects: [rel('kubota', 0, 1)] })
+], { view: v25('office', ['kubota']) });
+line('ch1.epi_mentor_a', [['kubota', 'ふふ、ありがとう。じゃあ、次は後輩のあなたの番です。いつか、誰かに話してあげてください。', 'smile']], 'ch1.closing3', { view: v25('office', ['kubota']) }); line('ch1.epi_mentor_b', [['kubota', 'しますよ、たくさん。だから、一緒に直すんです。', 'smile']], 'ch1.closing3', { view: v25('office', ['kubota']) });
+line('ch1.epi_depot', [
+  '4月10日（土）。青浜総合車両センター。整然と並ぶ留置線の向こうで、検修庫のシャッターが開いている。',
+  ['tachibana', '見学か。駅の若いのが基地に来るのは、珍しいな。…床下を、見るか。'], ['tachibana', '車両の足元は、嘘をつかない。音と、においと、手の感触だ。毎日見ている人間にしか、分からん違いがある。']
+], 'ch1.epi_depot_c', { view: v25('depot', ['tachibana', 'yamashina'], '4月10日（土） 青浜総合車両センター'), effects: [set('legacy.tachibana_met')] });
+choice('ch1.epi_depot_c', '橘さんの言葉に、どう答えますか？', [
+  opt('ask', '「駅の仕事と、基地の仕事は、どうつながっていますか」と尋ねる', 'ch1.epi_depot_a', { tone: 'careful', effects: [sk('depot', 4), ev('reporting', 1)] }),
+  opt('yama', '山科さんに「ここで働きたい理由を、橘さんに話してみたら」とすすめる', 'ch1.epi_depot_b', { tone: 'caring', effects: [rel('yamashina', 2, 2)] })
+], { view: v25('depot', ['tachibana', 'yamashina']) });
+line('ch1.epi_depot_a', [['tachibana', '駅が正確に案内する。基地が正確に整備する。どちらかが欠けたら、お客様は乗れん。…いい質問だ。', 'smile']], 'ch1.closing3', { view: v25('depot', ['tachibana']) }); line('ch1.epi_depot_b', [['yamashina', '…俺、車両の床下が好きなんです。図面じゃなくて、実物に触れたい。', 'worry'], ['tachibana', '好きなら、資格を取れ。来年、待っている。']], 'ch1.closing3', { view: v25('depot', ['tachibana', 'yamashina']), effects: [set('legacy.yamashina_tachibana')] });
+line('ch1.epi_rest', [
+  '4月3日（土）。久しぶりに、ゆっくり眠った。昼過ぎ、同期のグループチャットが、通知で鳴り続けている。',
+  ['yamashina', '（チャット）初日おつかれ！ 俺、今日は基地の本ばかり読んでる。そっちはどうだった？', 'smile']
+], 'ch1.epi_rest_c', { view: v25('hr', [], '4月3日（土）') });
+choice('ch1.epi_rest_c', '山科さんに、どう返しますか？', [
+  opt('reply', '「初日は大変だったけど、案内がうまくいったとき、うれしかった」と返す', 'ch1.epi_rest_a', { tone: 'caring', effects: [rel('yamashina', 1, 2)] }),
+  opt('sleep', '返事はせず、もう少し寝て休む', 'ch1.epi_rest_b', { tone: 'neutral', effects: [ev('safety', 1)] })
+], { view: v25('hr', []) });
+line('ch1.epi_rest_a', [['yamashina', '（チャット）おお、いいな。俺も、来週は、負けないぞ！']], 'ch1.closing3', { view: v25('hr', []) }); line('ch1.epi_rest_b', ['夕方、窓の外が赤く染まった。月曜が、少しだけ、楽しみだった。'], 'ch1.closing3', { view: v25('hr', []) });
+
+// ---- 終業面談：持ち場ごとの講評 ----
+branch('ch1.cl_route', [[F('route.service'), 'ch1.clr_s'], [F('route.platform'), 'ch1.clr_p']], 'ch1.clr_o');
+line('ch1.clr_s', [['kubota', '接客は、手順より、相手の気持ちです。今日は、それを見ようとしていました。', 'smile'], ['shiraishi', 'お客様の背景を聞く姿勢は、財産だ。']], 'ch1.closing2', { effects: [ev('service', 2)], view: v25('office', ['shiraishi', 'kubota']) });
+line('ch1.clr_p', [['yamashina', '（部屋に顔を出して）ホーム、疲れたけど、楽しかったな。'], ['shiraishi', 'ホームは、一瞬の判断が、人の命につながる。慎重さを、忘れないように。']], 'ch1.closing2', { effects: [ev('safety', 2)], view: v25('office', ['shiraishi', 'yamashina']) });
+line('ch1.clr_o', [['shiraishi', '記録と連絡は、地味だが、現場を支える背骨だ。今日の訂正の記録は、明日の誰かを救う。']], 'ch1.closing2', { effects: [ev('reporting', 2)], view: v25('office', ['shiraishi']) });
+for (const id of ['ch1.cl_busy', 'ch1.cl_mid', 'ch1.cl_few']) N[id].next = 'ch1.cl_route';
+
+// ---- 第2章：ルートで冒頭が大きく変わる ----
+branch('ch2.mon', [[F('legacy.rule_break'), 'ch2.warn'], [F('legacy.concealed'), 'ch2.audit'], [ALL(F('route.office'), F('legacy.notebook_missing')), 'ch2.notebook'], [F('route.platform'), 'ch2.r_platform'], [ALL(F('route.service'), ANY(F('legacy.helped_kajiwara'), F('legacy.ogawa_known'))), 'ch2.kaji'], [F('route.service'), 'ch2.r_service']], 'ch2.plain');
+line('ch2.warn', [['shiraishi', '先週の、線路に降りかけた件を、あらためて話そう。あなたを責めたいのではない。安全の線を、一緒に引き直したい。', 'serious'], ['yamashina', '（小声で）俺も、あのとき動けなかった。一緒に聞くよ。']], 'ch2.tail', { effects: [set('next.rule_review')], view: v25('office', ['shiraishi', 'yamashina'], '月曜 8:30') });
+line('ch2.notebook', [['shiraishi', '…あの引継ぎ帳のことだ。昔の記録を、少し洗い直してみようと思う。手伝ってくれるか。', 'worry'], ['hamaguchi', '（電話口）指令にも、当時の記録が残っているかもしれません。']], 'ch2.tail', { effects: [set('next.notebook_inquiry')], view: v25('office', ['shiraishi'], '月曜 17:00') });
+line('ch2.r_platform', [['yamashina', '来週、早番でホームだ。…俺、一人で立ってみたい。見ててくれ。', 'smile'], ['shiraishi', '駅は、一人では回らん。だが、一人で立てる者が、強い。']], 'ch2.tail', { effects: [set('next.platform_solo')], view: v25('office', ['shiraishi', 'yamashina'], '月曜 8:30') });
+line('ch2.r_service', [['kubota', '窓口の応対記録が、先週の分から、きちんと残っていました。今週は、苦情の記録の書き方を、一緒に練習しましょう。']], 'ch2.tail', { effects: [set('next.service_record')], view: v25('office', ['kubota'], '月曜 9:00') });
+
 const chapters = [
   { id: 'ch1', title: '新しい名札', season: 'S1 新しい名札', start: 'ch1.p1', status: 'playable', synopsis: '入社式の翌日、青嶺中央駅での勤務初日。配属面談から終業面談までを実装済み。' },
   { id: 'ch2', title: '最初の週末', season: 'S1 新しい名札', start: 'ch2.open', status: 'teaser', synopsis: '第1章の選択が反映される冒頭のみ実装（体験版）。' },
   ...['はじめての早番', '同期の距離', '券売機のむこう側', '三か月目の面談', '夏の臨時列車', 'ホームの声', 'はじめての評価', '基地実習へ', '研修の最終日', '新しい名札'].map((t, i) => ({ id: 'ch' + (i + 3), title: t, season: 'S1 新しい名札', start: '', status: 'planned', synopsis: '企画のみ（未制作）。' }))
 ];
 
+const IT = id => N['ch1.hub'].interactions.find(i => i.id === id); const GL = id => N['ch1.hub'].goals.find(g => g.id === id);
+const gate = (ids, route) => { for (const id of ids) { const it = IT(id); it.requires = ALL(it.requires, F(route)); const g = GL('g_' + (id === 'shopnote' ? 'shop' : id === 'toilet' ? 'wc' : id)); if (g) g.showWhen = ALL(g.showWhen, F(route)); } };
+gate(['phone', 'announce2'], 'route.office'); gate(['guide', 'kaji2', 'gatecheck', 'refill'], 'route.service'); gate(['patrol2', 'stroller'], 'route.platform');
+N['ch1.hub'].interactions.push(
+  { id: 'angry', object: 'ogawa', label: '怒っているお客様に対応する（遅延証明書）', goto: 'ch1.angry_1', requires: ALL(F('route.service'), T('>=', hm(14, 0)), T('<', hm(15, 30))), once: true },
+  { id: 'cable', object: 'riku', label: '線路にスマートフォンを落とした高校生', goto: 'ch1.cable_1', requires: ALL(F('route.platform'), T('>=', hm(14, 0)), T('<', hm(15, 30))), once: true },
+  { id: 'board', object: 'departure_board', label: '発車標の表示を確認する（誤表示の連絡）', goto: 'ch1.board_1', requires: ALL(F('route.office'), T('>=', hm(14, 10))), once: true });
+N['ch1.hub'].goals.push(
+  { id: 'g_angry', label: '（専用）怒っているお客様への対応', when: F('ch1.angry_done'), optional: true, showWhen: ALL(F('route.service'), T('>=', hm(14, 0))) },
+  { id: 'g_cable', label: '（専用）線路に落ちた物への対応', when: F('ch1.cable_done'), optional: true, showWhen: ALL(F('route.platform'), T('>=', hm(14, 0))) },
+  { id: 'g_board', label: '（専用）発車標の誤表示の訂正', when: F('ch1.board_done'), optional: true, showWhen: ALL(F('route.office'), T('>=', hm(14, 10))) });
 const story = { storyId: 'r7', mode: 'R7', title: '配属先は、明日変わる', subtitle: '超リアル社員異動・長編キャリア', startYear: 2027, characters, chapters, nodes: N };
 mkdirSync('src/data/r7', { recursive: true });
 writeFileSync('src/data/r7/story.json', JSON.stringify(story, null, 1));

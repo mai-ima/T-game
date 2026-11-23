@@ -38,7 +38,7 @@ export function canStandAt(d: StationData, x: number, z: number, y: number, r = 
   return h;
 }
 
-const HIDDEN = new Set(['traveler', 'hinata', 'nomura', 'haha', 'tourist2']);
+const HIDDEN = new Set(['traveler', 'hinata', 'nomura', 'haha', 'tourist2', 'ogawa', 'riku']);
 export class StationSim {
   player: Ent = { id: 'player', x: 0, y: 0, z: -36, yaw: Math.PI, visible: true, speed: 0, walking: false };
   npcs: Record<string, Npc> = {}; crowd: Crowd[] = [];
