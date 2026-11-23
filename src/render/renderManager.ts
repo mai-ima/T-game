@@ -1,9 +1,11 @@
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import type { StationData } from './stationBuilder';
-import { D, P, TRACK_Z } from './stationBuilder';
-import { buildTrain, type TrainRig } from './trainBuilder';
-import { createHumanoid, lookFromDef, type Humanoid, type HumanoidLook } from './humanoid';
+import { D, P, TRACK_Z, RAIL_TOP } from './stationBuilder';
+import { GATE_Z } from './stationDetail';
+import { buildTrainRig, type TrainRig } from './trainRig';
+import { createHumanoid, createHumanoidFrom, lookFromDef, type Humanoid, type HumanoidLook } from './humanoid';
+import { cloneModel, type Assets } from './assets';
 import { drawPlan, type PlanMarker, type PlanView } from './plan2d';
 import { canvasTex } from './materials';
 import type { StationSim } from '../engine/stationSim';
@@ -15,11 +17,11 @@ export type ViewMode = '3d' | '25d' | '2d';
 export type CamMode = 'follow' | 'free' | 'first' | 'preset';
 
 export interface RMOptions {
-  canvas: HTMLCanvasElement; plan: HTMLCanvasElement; sim: StationSim; rail: RailSim; data: StationData;
+  assets?: Assets; canvas: HTMLCanvasElement; plan: HTMLCanvasElement; sim: StationSim; rail: RailSim; data: StationData;
   characters: Record<string, CharacterDef>; playerName: string; quality: QualityId; auto: boolean;
   onTap?: (id: string, near: boolean) => void; onFootstep?: (surface: 'tile' | 'concrete' | 'stairs') => void;
   onRailEvent?: (e: { type: 'approach' | 'arrive' | 'depart'; service: TrainState['service'] }) => void;
-  onQuality?: (q: QualityId) => void; onTrainAudio?: (speed01: number, gain: number, pan: number, dwell: boolean) => void;
+  onGate?: (ok: boolean) => void; onQuality?: (q: QualityId) => void; onTrainAudio?: (speed01: number, gain: number, pan: number, dwell: boolean) => void;
 }
 
 const MARK_H: Record<string, number> = { tactile: 1.3, lost_item: 1.4, elevator: 3.4, aed: 2.3, vend2: 2.5, roster_board: 2.5, terminal: 1.7, departure_board: 3.6, timetable: 2.3, emergency_btn: 1.7, fare_map: 3.2, gate_wide: 1.8, mic: 1.6, ticket_office: 2.4 };
@@ -56,14 +58,14 @@ export class RenderManager {
   // ===== 初期化 =====
   private setupEntities() {
     const chars = this.o.characters;
-    this.player = createHumanoid({ uniform: '#233658', hair: '#2a2018', skin: '#efc9a6', staff: true, cap: false, gender: 'x' }, this.o.playerName); this.scene.add(this.player.group);
+    this.player = this.mkHuman({ uniform: '#233658', hair: '#2a2018', skin: '#efc9a6', staff: true, cap: false, gender: 'x' }, this.o.playerName); this.scene.add(this.player.group);
     for (const n of Object.values(this.sim.npcs)) {
       const def = chars[n.id]; const look: HumanoidLook = def ? lookFromDef(def) : { uniform: '#556', hair: '#222', skin: '#e8c29c' }; if (n.id === 'traveler') look.accessory = 'suitcase'; if (n.id === 'kajiwara') { look.height = 0.94; look.accessory = 'cane'; }
-      const h = createHumanoid(look, def?.name ?? n.label); h.group.userData.anchorId = n.id; this.humans[n.id] = h; this.scene.add(h.group); this.pickables.push(h.group);
+      const h = this.mkHuman(look, def?.name ?? n.label); h.group.userData.anchorId = n.id; this.humans[n.id] = h; this.scene.add(h.group); this.pickables.push(h.group);
     }
     const palettes = ['#6a4c4c', '#4a5c6a', '#6a6a4c', '#5c4a6a', '#3f6a57', '#8a5a3a', '#44505e', '#7a4a60', '#4c4c4c'];
-    for (let i = 0; i < this.sim.crowd.length; i++) { const h = createHumanoid({ uniform: palettes[i % palettes.length], hair: ['#222', '#3a2a1a', '#6a5a4a', '#111'][i % 4], skin: ['#efc9a6', '#e3b48f', '#f2d3b8'][i % 3], accessory: i % 3 === 0 ? 'bag' : 'none', height: 0.9 + (i % 4) * 0.05, gender: i % 2 ? 'f' : 'm' }); this.crowd.push(h); this.scene.add(h.group); }
-    for (const t of ['A', 'B'] as const) { const r = buildTrain(); r.setHeading(1); r.group.visible = false; this.rigs[t] = r; this.scene.add(r.group); }
+    for (let i = 0; i < this.sim.crowd.length; i++) { const h = this.mkHuman({ uniform: palettes[i % palettes.length], hair: ['#222', '#3a2a1a', '#6a5a4a', '#111'][i % 4], skin: ['#efc9a6', '#e3b48f', '#f2d3b8'][i % 3], accessory: i % 3 === 0 ? 'bag' : 'none', height: 0.9 + (i % 4) * 0.05, gender: i % 2 ? 'f' : 'm' }); this.crowd.push(h); this.scene.add(h.group); }
+    this.buildRigs(); this.placeModels();
     // 調べる対象の拾い用プロキシ
     for (const a of Object.values(this.data.anchors)) {
       if (a.kind === 'npc' || a.id.startsWith('spawn')) continue;
@@ -73,7 +75,24 @@ export class RenderManager {
     this.updateEntities(0);
   }
 
-  setQuality(q: QualityId, fromAuto = false) { this.quality = q; this.adaptive.current = q; if (!fromAuto) this.adaptive.cooldown = 10; this.applyQuality(); }
+  private mkHuman(look: HumanoidLook, name?: string): Humanoid { const t = this.o.assets?.human; return t ? createHumanoidFrom(t, look, name) : createHumanoid(look, name); }
+  /** 編成（GLB）を品質に合わせて構築。高=高精細（内装・足回り込み）／標準・低=軽量版 */
+  buildRigs() {
+    if (!this.o.assets) return; const lo = this.quality !== 'high'; this.rigLo = lo;
+    for (const t of ['A', 'B'] as const) { const old = this.rigs[t]; if (old) this.scene.remove(old.group); const r = buildTrainRig(this.o.assets, t, lo); r.group.visible = false; this.rigs[t] = r; this.scene.add(r.group); }
+  }
+  /** 駅構内のGLBモデル（改札機・券売機・精算機）と、改札の扉（フラップ）を配置 */
+  private placeModels() {
+    const a = this.o.assets; if (!a) return;
+    for (const p of this.data.placements) { const src = a[p.model]; if (!src) continue; const m = cloneModel(src); m.position.set(p.x, p.y, p.z); m.rotation.y = p.ry; m.name = p.name; this.scene.add(m); }
+    for (const g of this.data.dynamic.gates) {
+      const src = a[g.wide ? 'gate_flap_wide' : 'gate_flap']; if (!src) continue;
+      const l = cloneModel(src); l.position.set(g.xl, this.gateY, g.cz); const r = cloneModel(src); r.position.set(g.xr, this.gateY, g.cz); r.scale.x = -1; this.scene.add(l, r); g.left = l; g.right = r;
+    }
+  }
+  get gateY() { return D + 0.86; }
+  rigLo = false;
+  setQuality(q: QualityId, fromAuto = false) { const was = this.quality !== 'high'; this.quality = q; this.adaptive.current = q; if (!fromAuto) this.adaptive.cooldown = 10; this.applyQuality(); if (was !== (q !== 'high') && this.webgl) this.buildRigs(); }
   setAuto(v: boolean) { this.adaptive.enabled = v; }
   applyQuality() {
     const Q = QUALITY[this.quality]; const r = this.renderer; if (!r) return;
@@ -186,19 +205,18 @@ export class RenderManager {
       this.acc -= 1 / 60; steps++;
     }
     if (this.sim.player.walking && this.o.onFootstep) { this.walkPhase += this.sim.player.speed * dt * 2.3; const sg = Math.sin(this.walkPhase) >= 0 ? 1 : -1; if (sg !== this.lastStepSign) { this.lastStepSign = sg; const y = this.sim.player.y; this.o.onFootstep(y > 0.1 && y < D - 0.1 && Math.abs(this.sim.player.x) > 14 || (y > 0.1 && this.sim.player.z < -12 && this.sim.player.z > -26) ? 'stairs' : y > 1 && y < 2 ? 'concrete' : 'tile'); } }
-    this.updateRail(); this.updateEntities(dt); this.updateMarkers(); this.updateCamera(dt); this.render();
+    this.updateRail(dt); this.updateEntities(dt); this.updateGates(dt); this.updateMarkers(); this.updateCamera(dt); this.render();
     this.onUpdate?.({ t: this.time });
   }
 
-  private updateRail() {
+  private updateRail(dtSim = 1 / 60) {
     const t = this.simMinute; const states = this.rail.states(t); this.trains = states;
     if (this.lastMinute >= 0 && t !== this.lastMinute && Math.abs(t - this.lastMinute) < 8) for (const e of this.rail.events(this.lastMinute, t)) this.o.onRailEvent?.(e);
     this.lastMinute = t;
     if (!this.webgl) return;
     for (const tr of ['A', 'B'] as const) {
       const st = states.find(s => s.service.track === tr); const rig = this.rigs[tr]; if (!st) { rig.group.visible = false; continue; }
-      rig.group.visible = true; rig.group.position.set(st.x, 0, tr === 'A' ? TRACK_Z.A : TRACK_Z.B); rig.group.rotation.y = st.service.dir === 1 ? 0 : Math.PI; rig.setDoors(st.doors);
-      for (const w of rig.wheels) w.rotation.z -= (st.speed * (1 / 60)) / 0.43 * 4;
+      rig.group.visible = true; rig.group.position.set(st.x, RAIL_TOP, tr === 'A' ? TRACK_Z.A : TRACK_Z.B); rig.setDoors(st.doors); rig.spin(st.speed * dtSim);
     }
     // 列車音（最も近い列車）
     let best: TrainState | null = null, bd = 1e9; for (const s of states) { const d = Math.abs(s.x - this.sim.player.x) + Math.abs((s.service.track === 'A' ? TRACK_Z.A : TRACK_Z.B) - this.sim.player.z) * 0.5; if (d < bd) { bd = d; best = s; } }
@@ -222,6 +240,17 @@ export class RenderManager {
     for (const n of Object.values(this.sim.npcs)) { const h = this.humans[n.id]; if (!h) continue; h.group.visible = n.visible; h.group.position.set(n.x, n.y, n.z); h.group.rotation.y = n.yaw; h.walk(this.time * 2, 0); }
     this.sim.crowd.forEach((c, i) => { const h = this.crowd[i]; if (!h) return; h.group.visible = c.visible && h.group.userData.allowed !== false; h.group.position.set(c.x, c.y, c.z); h.group.rotation.y = c.yaw; h.walk(this.time * 6 + i, c.walking ? 0.8 : 0); });
     void dt;
+  }
+  /** 自動改札機の扉：通路付近に人がいる間は開き、通過後に閉じる（プレイヤー・NPC・群衆すべて対象） */
+  private updateGates(dt: number) {
+    const gs = this.data.dynamic.gates; if (!gs.length) return; const p = this.sim.player;
+    const pts: { x: number; y: number; z: number }[] = [{ x: p.x, y: p.y, z: p.z }];
+    for (const c of this.sim.crowd) if (c.visible) pts.push(c); for (const n of Object.values(this.sim.npcs)) if (n.visible) pts.push(n);
+    for (const g of gs) {
+      const near = pts.some(q => Math.abs(q.y - D) < 1.2 && Math.abs(q.x - g.cx) < (g.wide ? 0.75 : 0.5) && Math.abs(q.z - GATE_Z) < 1.15);
+      if (near && g.target === 0 && Math.hypot(g.cx - p.x, GATE_Z - p.z) < 14) this.o.onGate?.(true); g.target = near ? 1 : 0;
+      g.open += (g.target - g.open) * Math.min(1, dt * 9); const a = g.open * Math.PI / 2 * 0.97; if (g.left && g.right) { g.left.rotation.y = -a; g.right.rotation.y = -a; }
+    }
   }
   private updateMarkers() {
     for (const [id, s] of this.markers) { const a = this.data.anchors[id]; const n = this.sim.npcs[id]; const x = n ? n.x : a.x, y = n ? n.y : a.y, z = n ? n.z : a.z; const h = n ? 2.55 : (MARK_H[id] ?? 2.0); s.position.set(x, y + h + Math.sin(this.time * 3 + x) * 0.08, z); s.visible = n ? n.visible : true; const d = s.position.distanceTo(this.activeCam().position); const sc = Math.max(0.5, Math.min(1.8, d * 0.06)); s.scale.set(sc, sc, 1); }

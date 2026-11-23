@@ -1,0 +1,215 @@
+{
+ "generated": "2026-11-23T00:29:04.357Z",
+ "models": {
+  "gate_unit": {
+   "top": [
+    [
+     "Body",
+     1202
+    ],
+    [
+     "TopSlab",
+     857
+    ],
+    [
+     "GateParts_LedCyan",
+     768
+    ],
+    [
+     "GateParts_Black",
+     432
+    ],
+    [
+     "Housing",
+     300
+    ],
+    [
+     "GateParts_Rubber",
+     300
+    ],
+    [
+     "GateParts_LedGreen",
+     144
+    ]
+   ],
+   "tris": 4129,
+   "meshes": 12,
+   "materials": [
+    "GateBody",
+    "GateHousing",
+    "GateTop",
+    "ICPad",
+    "DisplayGo",
+    "DisplayStop",
+    "Rubber",
+    "Black",
+    "LedAmber",
+    "LedGreen",
+    "LedCyan"
+   ],
+   "size": [
+    0.382,
+    1.116,
+    1.376
+   ],
+   "center": [
+    0,
+    0.558,
+    0.001
+   ],
+   "named": 13,
+   "glbKB": 178,
+   "rawKB": 418
+  },
+  "gate_unit_wide": {
+   "top": [
+    [
+     "Body",
+     1202
+    ],
+    [
+     "TopSlab",
+     857
+    ],
+    [
+     "GateParts_LedCyan",
+     768
+    ],
+    [
+     "GateParts_Black",
+     432
+    ],
+    [
+     "Housing",
+     300
+    ],
+    [
+     "GateParts_Rubber",
+     300
+    ],
+    [
+     "GateParts_LedGreen",
+     144
+    ]
+   ],
+   "tris": 4143,
+   "meshes": 14,
+   "materials": [
+    "GateBody",
+    "GateHousing",
+    "GateTop",
+    "ICPad",
+    "DisplayGo",
+    "DisplayStop",
+    "WheelchairSign",
+    "Rubber",
+    "Black",
+    "LedAmber",
+    "LedGreen",
+    "LedCyan",
+    "GateBlue"
+   ],
+   "size": [
+    0.382,
+    1.116,
+    1.377
+   ],
+   "center": [
+    0,
+    0.558,
+    0.001
+   ],
+   "named": 15,
+   "glbKB": 183,
+   "rawKB": 425
+  },
+  "gate_flap": {
+   "top": [
+    [
+     "FlapHinge",
+     108
+    ],
+    [
+     "FlapPlate",
+     108
+    ],
+    [
+     "FlapBracketA",
+     108
+    ],
+    [
+     "FlapBracketB",
+     108
+    ],
+    [
+     "FlapEdgeLed",
+     12
+    ]
+   ],
+   "tris": 444,
+   "meshes": 5,
+   "materials": [
+    "SteelDark",
+    "FlapBlue",
+    "LedCyan"
+   ],
+   "size": [
+    0.406,
+    0.16,
+    0.032
+   ],
+   "center": [
+    0.187,
+    0,
+    0
+   ],
+   "named": 7,
+   "glbKB": 10,
+   "rawKB": 47
+  },
+  "gate_flap_wide": {
+   "top": [
+    [
+     "FlapPlate",
+     300
+    ],
+    [
+     "FlapHinge",
+     108
+    ],
+    [
+     "FlapBracketA",
+     108
+    ],
+    [
+     "FlapBracketB",
+     108
+    ],
+    [
+     "FlapEdgeLed",
+     12
+    ]
+   ],
+   "tris": 636,
+   "meshes": 5,
+   "materials": [
+    "SteelDark",
+    "FlapBlue",
+    "LedCyan"
+   ],
+   "size": [
+    0.606,
+    0.16,
+    0.032
+   ],
+   "center": [
+    0.287,
+    0,
+    0
+   ],
+   "named": 7,
+   "glbKB": 14,
+   "rawKB": 65
+  }
+ }
+}

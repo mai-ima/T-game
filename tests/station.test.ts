@@ -98,3 +98,11 @@ describe('鉄道シミュレーション', () => {
     expect(ev).toEqual(['approach', 'arrive', 'depart']);
   });
 });
+
+import { auditPlacement } from '../src/render/audit';
+describe('配置監査（浮き・埋没・貫通）', () => {
+  it('固定設備同士の貫通・浮きがない', () => {
+    const r = auditPlacement(data); expect(r.checked).toBeGreaterThan(300);
+    expect(r.issues.map(i => `${i.kind}:${i.a}${i.b ? '×' + i.b : ''} ${i.detail}`)).toEqual([]);
+  });
+});

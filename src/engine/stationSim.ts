@@ -67,6 +67,12 @@ export class StationSim {
     const targetYaw = Math.atan2(dirX, dirZ); let d = targetYaw - p.yaw; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI; p.yaw += d * Math.min(1, dt * 12);
     p.walking = moved; p.speed = moved ? sp : 0;
   }
+  /** 指定アンカーの近くで立てる地点を探す（テスト・タップ移動用） */
+  standNear(id: string, r0 = 0.9): { x: number; y: number; z: number } | null {
+    const a = this.data.anchors[id]; if (!a) return null; const n = this.npcs[id]; const ax = n ? n.x : a.x, az = n ? n.z : a.z, ay = n ? n.y : a.y;
+    for (let r = r0; r <= a.radius - 0.2; r += 0.15) for (let k = 0; k < 24; k++) { const t = (k / 24) * Math.PI * 2 + a.yaw; const x = ax + Math.sin(t) * r, z = az + Math.cos(t) * r; const h = canStandAt(this.data, x, z, ay, PLAYER_R, this.npcCircles()); if (h !== null) return { x, y: h, z }; }
+    return null;
+  }
   settleHeight(dt: number) { const p = this.player; const h = heightAt(this.data.zones, p.x, p.z, p.y); if (h !== null && Math.abs(h - p.y) > 0.001) p.y += (h - p.y) * Math.min(1, dt * 14); }
 
   nearest(maxDist = 99, filter?: (id: string) => boolean): { id: string; dist: number } | null {

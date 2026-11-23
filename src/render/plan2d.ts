@@ -41,12 +41,12 @@ export function drawPlan(g: CanvasRenderingContext2D, w: number, h: number, view
     const hot = active.has(a.id);
     g.fillStyle = hot ? COLORS.mark : isNpc ? COLORS.npc : '#b8c4d2'; g.beginPath(); g.arc(X(ax), Z(az), Math.max(3.5, S * (isNpc ? 0.5 : 0.35)), 0, 7); g.fill();
     if (hot) { g.strokeStyle = COLORS.mark; g.lineWidth = 2; g.beginPath(); g.arc(X(ax), Z(az), Math.max(8, S * 1.1), 0, 7); g.stroke(); }
-    if (S > 5 || hot || isNpc) { g.fillStyle = COLORS.text; g.fillText(a.label, X(ax), Z(az) - Math.max(8, S * 0.9)); }
+    if (S > 11 || hot || isNpc) { g.fillStyle = COLORS.text; g.fillText(a.label, X(ax), Z(az) - Math.max(8, S * 0.9)); }
   }
   for (const c of sim.crowd) { if (!c.visible) continue; const onLevel = lvl === 'deck' ? c.y > 4 : lvl === 'platform' ? c.y > 0.8 && c.y < 4 : c.y < 0.8; if (!onLevel) continue; g.fillStyle = COLORS.pax; g.beginPath(); g.arc(X(c.x), Z(c.z), Math.max(2.5, S * 0.28), 0, 7); g.fill(); }
   // プレイヤー
   const p = sim.player; g.save(); g.translate(X(p.x), Z(p.z)); g.rotate(-p.yaw + Math.PI); g.fillStyle = COLORS.player; g.beginPath(); const r = Math.max(6, S * 0.7); g.moveTo(0, -r * 1.4); g.lineTo(r, r); g.lineTo(0, r * 0.5); g.lineTo(-r, r); g.closePath(); g.fill(); g.restore();
   // 凡例
-  g.fillStyle = 'rgba(8,12,20,.78)'; g.fillRect(10, 10, 232, 74); g.fillStyle = COLORS.text; g.textAlign = 'left'; g.font = '13px "Noto Sans JP","WenQuanYi Zen Hei",sans-serif';
-  g.fillText(`2D平面図  階層：${lvl === 'deck' ? 'コンコース(+6.6m)' : lvl === 'platform' ? 'ホーム(+1.65m)' : '地上(0m)'}`, 18, 30); g.fillText('● 人物　● 調べる対象　▲ あなた', 18, 50); g.fillText('ドラッグで移動／ホイール・ピンチで拡大', 18, 70);
+  const lx = Math.max(10, w - 262), ly = 128; g.fillStyle = 'rgba(8,12,20,.78)'; g.fillRect(lx, ly, 252, 74); g.fillStyle = COLORS.text; g.textAlign = 'left'; g.font = '13px "Noto Sans JP","WenQuanYi Zen Hei",sans-serif';
+  g.fillText(`2D平面図  階層：${lvl === 'deck' ? 'コンコース(+6.6m)' : lvl === 'platform' ? 'ホーム(+1.65m)' : '地上(0m)'}`, lx + 8, ly + 20); g.fillText('● 人物　● 調べる対象　▲ あなた', lx + 8, ly + 40); g.fillText('ドラッグで移動／ホイール・ピンチで拡大', lx + 8, ly + 60);
 }

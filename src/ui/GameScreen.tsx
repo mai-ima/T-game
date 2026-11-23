@@ -1,6 +1,7 @@
 import { useEffect, useReducer, useRef, useState } from 'react';
 import type { GameController } from '../engine/controller';
 import { RenderManager } from '../render/renderManager';
+import { loadAssets } from '../render/assets';
 import { Joystick, Portrait, Stage25D, useTypewriter } from './parts';
 import { ChecklistTask, ComposeTask, RosterTask, TerminalTask } from './Tasks';
 import { CareerPanel, FlowPanel, RelationsPanel, RosterPanel, SavePanel, SettingsPanel, TimelinePanel } from './Panels';
@@ -30,11 +31,15 @@ export function GameScreen({ c, onExit }: { c: GameController; onExit: () => voi
   const cv3 = useRef<HTMLCanvasElement>(null), cv2 = useRef<HTMLCanvasElement>(null); const [webglFail, setWebglFail] = useState(false); const [stats, setStats] = useState<any>(null);
   const debug = typeof location !== 'undefined' && /[?&](debug|stats|audit)/.test(location.search);
 
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     if (!cv3.current || !cv2.current) return;
+    let dead = false; let cleanup: (() => void) | null = null;
+    loadAssets().catch(() => undefined).then(assets => {
+    if (dead || !cv3.current || !cv2.current) return; setLoading(false);
     const rm = new RenderManager({
-      canvas: cv3.current, plan: cv2.current, sim: c.sim, rail: c.rail, data: c.data, characters: c.story.characters, playerName: c.world.playerName, quality: c.settings.quality, auto: c.settings.autoQuality,
-      onFootstep: s => c.audio.footstep(s), onQuality: q => { c.settings.quality = q; c.say(`描画品質を自動調整しました：${q === 'high' ? '最高' : q === 'medium' ? '標準' : '最低'}`); },
+      assets: assets ?? undefined, canvas: cv3.current, plan: cv2.current, sim: c.sim, rail: c.rail, data: c.data, characters: c.story.characters, playerName: c.world.playerName, quality: c.settings.quality, auto: c.settings.autoQuality,
+      onFootstep: s => c.audio.footstep(s), onGate: ok => c.audio.gate(ok), onQuality: q => { c.settings.quality = q; c.say(`描画品質を自動調整しました：${q === 'high' ? '最高' : q === 'medium' ? '標準' : '最低'}`); },
       onRailEvent: e => { const dir = e.service.track === 'A' ? '1番線（海浜口方面）' : '2番線（空港連絡方面）'; if (e.type === 'approach') c.audio.chime('approach', `まもなく${dir}に${e.service.kind} ${e.service.dest}行きが到着します。黄色い線の内側でお待ちください。`); if (e.type === 'depart') c.audio.chime('depart', `${dir}の${e.service.kind}が発車します。`); },
       onTrainAudio: (v, g, p, d) => c.audio.trainUpdate(v, g, p, d)
     });
@@ -42,7 +47,9 @@ export function GameScreen({ c, onExit }: { c: GameController; onExit: () => voi
     c.afterAttach(); rm.resize(); rm.start(); (window as any).__RR = { c, rm }; let last = performance.now(); let n = 0;
     rm.onUpdate = () => { const t = performance.now(); c.tick(Math.min(0.1, (t - last) / 1000)); last = t; if (debug && ++n % 20 === 0) setStats(rm.stats()); };
     const ro = new ResizeObserver(() => rm.resize()); ro.observe(cv3.current.parentElement!); const onVis = () => { rm.paused = document.hidden; }; document.addEventListener('visibilitychange', onVis);
-    return () => { ro.disconnect(); document.removeEventListener('visibilitychange', onVis); rm.dispose(); c.rm = undefined; };
+    cleanup = () => { ro.disconnect(); document.removeEventListener('visibilitychange', onVis); rm.dispose(); c.rm = undefined; };
+    });
+    return () => { dead = true; cleanup?.(); };
   }, [c]); // eslint-disable-line
 
   useEffect(() => {
@@ -62,6 +69,7 @@ export function GameScreen({ c, onExit }: { c: GameController; onExit: () => voi
   return (
     <div className="game" onPointerDown={startAudio}>
       <div className="stage" style={{ visibility: stage ? 'hidden' : 'visible' }}><canvas ref={cv3} aria-label="3D表示" /><canvas ref={cv2} aria-label="2D平面図" style={{ visibility: 'hidden' }} /></div>
+      {loading && <div className="toast" style={{ top: '45%' }}>3Dモデルを読み込んでいます</div>}
       {stage && v && (v.kind === 'line' || v.kind === 'choice') && <StageView c={c} />}
       {!stage && <Hud c={c} onExit={onExit} />}
       {hub && !c.panel && <HubControls c={c} />}
@@ -100,10 +108,10 @@ function Hud({ c, onExit }: { c: GameController; onExit: () => void }) {
     </>
   );
 }
-const PRESET_JA: Record<string, string> = { plaza: '駅前広場', overview: '全景（俯瞰）', top: '真上', front: '正面（北）', back: '背面（南）', side: '側面（西）', gate: '改札', concourse: 'コンコース', office: '駅事務室', platform: 'ホーム', platform_high: 'ホーム俯瞰', rail: '線路沿い', vend: '券売機', board: '発車標', tactile: '点字ブロック' };
+const PRESET_JA: Record<string, string> = { plaza: '駅前広場', overview: '全景（俯瞰）', top: '真上', front: '正面（北）', back: '背面（南）', side: '側面（西）', gate: '改札', gate_close: '改札機（IC読取部）', gate_side: '改札列（側面）', gate_back: '改札（内側から）', gate_wide: '幅広・有人通路', vend_close: '券売機（接写）', seisan: '精算機', concourse: 'コンコース', office: '駅事務室', platform: 'ホーム（西向き）', platform_east: 'ホーム（東向き）', train: '停車中の列車', train_front: '列車（前方）', train_side: '列車（側面・北から）', platform_high: 'ホーム俯瞰', rail: '線路沿い', vend: '券売機', board: '発車標', tactile: '点字ブロック' };
 
 function HubControls({ c }: { c: GameController }) {
-  const v = c.view; if (v?.kind !== 'hub') return null; const p = c.prompt; const [goals, setGoals] = useState(true);
+  const v = c.view; if (v?.kind !== 'hub') return null; const p = c.prompt; const [goals, setGoals] = useState(typeof window === 'undefined' || window.innerWidth >= 760);
   return (
     <>
       <div className="goals chip" data-ui><b>{c.textWorld(v.node.title)}</b>　<button className="btn sm ghost" style={{ minHeight: 28, padding: '0 8px' }} onClick={() => setGoals(g => !g)}>{goals ? '▲' : '▼'}</button>

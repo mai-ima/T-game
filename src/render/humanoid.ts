@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import type { CharacterDef } from '../engine/types';
 import { canvasTex } from './materials';
+import { cloneModel } from './assets';
 
 export interface HumanoidLook { uniform: string; hair: string; skin: string; accessory?: string; gender?: string; trousers?: string; height?: number; staff?: boolean; cap?: boolean }
 export interface Humanoid { group: THREE.Group; walk(phase: number, amount: number): void; setLabel(visible: boolean): void; look: HumanoidLook; label?: THREE.Sprite }
@@ -41,11 +42,31 @@ export function createHumanoid(look: HumanoidLook, name?: string): Humanoid {
   let label: THREE.Sprite | undefined;
   if (name) {
     const tex = canvasTex(256, 64, (c, w, h) => { c.fillStyle = 'rgba(14,20,34,.82)'; c.beginPath(); c.roundRect(2, 2, w - 4, h - 4, 14); c.fill(); c.fillStyle = '#fff'; c.font = 'bold 30px "Noto Sans JP","WenQuanYi Zen Hei",sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(name, w / 2, h / 2 + 2); }, { repeat: false });
-    label = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex ?? undefined, transparent: true, depthTest: false })); label.scale.set(1.1, 0.28, 1); label.position.y = 2.15; label.renderOrder = 20; g.add(label);
+    label = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex ?? undefined, transparent: true, depthTest: true })); label.scale.set(1.1, 0.28, 1); label.position.y = 2.15; label.renderOrder = 20; g.add(label);
   }
   return {
     group: g, look, label,
     walk(phase, amount) { const a = Math.sin(phase) * 0.7 * amount; legL.rotation.x = a; legR.rotation.x = -a; armL.rotation.x = -a * 0.8; armR.rotation.x = a * 0.8; torso.position.y = 1.2 + Math.abs(Math.sin(phase)) * 0.015 * amount; },
     setLabel(v) { if (label) label.visible = v; }
   };
+}
+
+
+/** GLBテンプレート（src/lab/human.ts製）から個別の人物を作る。材質名で色替え、節点の表示切替で髪型・持ち物を変える。 */
+export function createHumanoidFrom(template: THREE.Object3D, look: HumanoidLook, name?: string): Humanoid {
+  const g = cloneModel(template); const s = look.height ?? 1; g.scale.setScalar(s);
+  const col: Record<string, string> = { Uniform: look.uniform, Hair: look.hair, Skin: look.skin, Trousers: look.trousers ?? (look.staff ? '#232a38' : '#3a3a44'), Accessory: '#1d2a44', Shirt: look.staff ? '#f4f4f0' : look.uniform };
+  g.traverse(o => { const m = o as THREE.Mesh; if (m.isMesh) { const mat = m.material as THREE.MeshStandardMaterial; const c = col[mat.name]; if (c) mat.color.set(c); } });
+  const node = (n: string) => g.getObjectByName(n); const vis = (n: string, v: boolean) => { const o = node(n); if (o) o.visible = v; };
+  vis('HairLong', look.gender === 'f'); vis('HairShort', look.gender !== 'f'); vis('Cap', !!look.cap); vis('Glasses', look.accessory === 'glasses'); vis('Bag', look.accessory === 'bag'); vis('Cane', look.accessory === 'cane'); vis('Suitcase', look.accessory === 'suitcase'); vis('TieNode', !!look.staff);
+  const legL = node('LegL')!, legR = node('LegR')!, armL = node('ArmL')!, armR = node('ArmR')!, shinL = node('ShinL')!, shinR = node('ShinR')!, foreL = node('ForearmL')!, foreR = node('ForearmR')!, torso = node('Torso')!;
+  let label: THREE.Sprite | undefined;
+  if (name) {
+    const tex = canvasTex(256, 64, (c, w, h) => { c.fillStyle = 'rgba(14,20,34,.82)'; c.beginPath(); c.roundRect(2, 2, w - 4, h - 4, 14); c.fill(); c.fillStyle = '#fff'; c.font = 'bold 30px "Noto Sans JP","WenQuanYi Zen Hei",sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(name, w / 2, h / 2 + 2); }, { repeat: false });
+    label = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex ?? undefined, transparent: true, depthTest: true })); label.scale.set(1.1 / s, 0.28 / s, 1); label.position.y = 2.1; label.renderOrder = 20; g.add(label);
+  }
+  const base = torso.position.y;
+  return { group: g as THREE.Group, look, label,
+    walk(phase, amount) { const a = Math.sin(phase) * 0.62 * amount; legL.rotation.x = a; legR.rotation.x = -a; shinL.rotation.x = Math.max(0, -a) * 0.9 * amount; shinR.rotation.x = Math.max(0, a) * 0.9 * amount; armL.rotation.x = -a * 0.7; armR.rotation.x = a * 0.7; foreL.rotation.x = -0.12 - Math.max(0, a) * 0.5 * amount; foreR.rotation.x = -0.12 - Math.max(0, -a) * 0.5 * amount; torso.position.y = base + Math.abs(Math.sin(phase)) * 0.012 * amount; },
+    setLabel(v) { if (label) label.visible = v; } };
 }

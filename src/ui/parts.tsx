@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import type { CharacterDef } from '../engine/types';
 
 /** 人物の胸像（SVG）。人物データ（制服色・髪・肌・小物）から生成する。 */
-export function Portrait({ def, mood = 'normal', size = 100 }: { def?: CharacterDef; mood?: string; size?: number }) {
+export function Portrait({ def, mood = 'normal', size = 100, bare = false }: { def?: CharacterDef; mood?: string; size?: number; bare?: boolean }) {
   if (!def) return <svg viewBox="0 0 100 100" width={size} height={size}><rect width="100" height="100" fill="#14233a" /><circle cx="50" cy="40" r="16" fill="#587" /><path d="M16 100c0-26 14-34 34-34s34 8 34 34z" fill="#456" /></svg>;
   const f = def.gender === 'f'; const elderly = def.age >= 65;
   const brow = mood === 'worry' ? 'M36 33q6-4 12-1M52 32q6-3 12 1' : mood === 'serious' ? 'M36 31l12 2M52 33l12-2' : 'M36 32q6-3 12 0M52 32q6-3 12 0';
@@ -10,7 +10,7 @@ export function Portrait({ def, mood = 'normal', size = 100 }: { def?: Character
   return (
     <svg viewBox="0 0 100 100" width={size} height={size} role="img" aria-label={def.name}>
       <defs><linearGradient id={'bg' + def.id} x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#1d3552" /><stop offset="1" stopColor="#0e1a2b" /></linearGradient></defs>
-      <rect width="100" height="100" fill={`url(#bg${def.id})`} />
+      {!bare && <rect width="100" height="100" fill={`url(#bg${def.id})`} />}
       <path d="M8 100c0-24 16-32 42-32s42 8 42 32z" fill={def.uniform} /><path d="M42 68l8 12 8-12" fill="#f4f4f0" />
       {def.dept === 'station' || def.dept === 'dispatch' ? <path d="M50 74l-3 14h6z" fill="#b02a2a" /> : null}
       <rect x="44" y="58" width="12" height="12" fill={def.skin} />
@@ -55,7 +55,7 @@ export function Stage25D({ bg, cast, speaker, characters, caption, mood }: { bg:
   return (
     <div className="s25" onPointerMove={onMove} aria-label="擬似3Dシーン">
       <div className="layer" style={tr(10)}>{back}</div><div className="layer" style={tr(26)}>{mid}</div>
-      <div className="cast" style={tr(46)}>{cast.map(id => <div key={id} className={'who' + (speaker && speaker !== id ? ' dim' : '')}><Portrait def={characters[id]} mood={speaker === id ? mood : 'normal'} size={400} /></div>)}</div>
+      <div className="cast" style={tr(46)}>{cast.map(id => <div key={id} className={'who' + (speaker && speaker !== id ? ' dim' : '')}><Portrait def={characters[id]} mood={speaker === id ? mood : 'normal'} size={400} bare /></div>)}</div>
       <div className="layer" style={tr(70)}>{front}</div>
       {caption && <div className="cap">{caption}</div>}
     </div>

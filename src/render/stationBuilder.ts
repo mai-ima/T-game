@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { createMaterials, canvasTex, labelTexture, type MatDef } from './materials';
+import { buildGateLine, buildGuidance, buildVending, buildConcourseExtras, type GateUnit, type DetailCtx } from './stationDetail';
 
 /** ===== 青嶺中央駅（架空）: 橋上駅舎＋島式ホーム1面2線。データ（衝突・歩行面・アンカー）と見た目を同一ビルダーから生成する ===== */
 export const D = 6.6;          // 橋上コンコース床高
@@ -20,12 +21,13 @@ export interface StationData {
   root: THREE.Group; colliders: Collider[]; zones: Zone[]; anchors: Record<string, Anchor>; registry: AssetBox[];
   lodObjects: { lod: 1 | 2; obj: THREE.Object3D }[]; presets: Record<string, CamPreset>;
   boards: { departure: THREE.CanvasTexture | null; platformBoards: THREE.CanvasTexture[] };
-  dynamic: { cars: THREE.Group[]; lamps: THREE.Object3D[]; sun: THREE.DirectionalLight; hemi: THREE.HemisphereLight; sky: THREE.Mesh };
+  placements: { model: string; x: number; y: number; z: number; ry: number; name: string }[];
+  dynamic: { cars: THREE.Group[]; lamps: THREE.Object3D[]; sun: THREE.DirectionalLight; hemi: THREE.HemisphereLight; sky: THREE.Mesh; gates: GateUnit[] };
   stats: { boxes: number; meshes: number; triangles: number };
   routes: Record<string, [number, number, number][]>;
 }
 
-interface BoxOpt { ry?: number; lod?: 0 | 1 | 2; collide?: boolean | [number, number]; support?: AssetBox['support']; tag?: string; group?: string; noShadow?: boolean }
+interface BoxOpt { ghost?: boolean; ry?: number; lod?: 0 | 1 | 2; collide?: boolean | [number, number]; support?: AssetBox['support']; tag?: string; group?: string; noShadow?: boolean }
 
 function planarUV(g: THREE.BufferGeometry, tile: number) {
   const p = g.attributes.position, n = g.attributes.normal, uv = g.attributes.uv;
@@ -55,7 +57,7 @@ export function buildStation(quality: 'high' | 'medium' | 'low' = 'high'): Stati
     const g = new THREE.BoxGeometry(sx, sy, sz); const ry = o.ry ?? 0;
     const m4 = new THREE.Matrix4().makeRotationY(ry).setPosition(cx, cy, cz); g.applyMatrix4(m4);
     const md = M(mat); if (md.tile) planarUV(g, md.tile);
-    push(mat, o.lod ?? 0, g); boxCount++;
+    if (!o.ghost) { push(mat, o.lod ?? 0, g); boxCount++; }
     const hx = (Math.abs(Math.cos(ry)) * sx + Math.abs(Math.sin(ry)) * sz) / 2, hz = (Math.abs(Math.sin(ry)) * sx + Math.abs(Math.cos(ry)) * sz) / 2;
     reg(name, o, [cx - hx, cy - sy / 2, cz - hz], [cx + hx, cy + sy / 2, cz + hz]);
     if (o.collide) { const [y0, y1] = Array.isArray(o.collide) ? o.collide : [cy - sy / 2, cy + sy / 2]; colliders.push({ name, x0: cx - hx, x1: cx + hx, z0: cz - hz, z1: cz + hz, y0, y1 }); }
@@ -66,6 +68,12 @@ export function buildStation(quality: 'high' | 'medium' | 'low' = 'high'): Stati
     push(mat, o.lod ?? 0, g); boxCount++;
     reg(name, o, [cx - r, cy - h / 2, cz - r], [cx + r, cy + h / 2, cz + r]);
     if (o.collide) { const [y0, y1] = Array.isArray(o.collide) ? o.collide : [cy - h / 2, cy + h / 2]; colliders.push({ name, x0: cx - r, x1: cx + r, z0: cz - r, z1: cz + r, y0, y1 }); }
+  }
+  /** 任意回転の直方体（傾斜面・斜め部品用）。衝突は作らず、レジストリには外接AABBを登録する */
+  function boxR(mat: string, name: string, cx: number, cy: number, cz: number, sx: number, sy: number, sz: number, rx: number, ry: number, rz: number, o: BoxOpt = {}) {
+    const g = new THREE.BoxGeometry(sx, sy, sz); const m4 = new THREE.Matrix4().makeRotationFromEuler(new THREE.Euler(rx, ry, rz)).setPosition(cx, cy, cz); g.applyMatrix4(m4);
+    const md = M(mat); if (md.tile) planarUV(g, md.tile); push(mat, o.lod ?? 0, g); boxCount++;
+    g.computeBoundingBox(); const bb = g.boundingBox!; reg(name, o, [bb.min.x, bb.min.y, bb.min.z], [bb.max.x, bb.max.y, bb.max.z]);
   }
   /** 看板（平面・片面） */
   const loose: THREE.Object3D[] = [];
@@ -203,15 +211,10 @@ export function buildStation(quality: 'high' | 'medium' | 'low' = 'high'): Stati
   box('wall', '窓口上部壁', 7, D + 2.9, -9.6, 0.2, 1.4, 2.8, { tag: 'wall', support: 'none' });
 
   // ======= 券売機・運賃表 =======
-  [-10.5, -8.5, -6.5].forEach((z, i) => {
-    box(i === 1 ? 'vendRed' : 'vendBlue', `券売機${i + 1}号機`, -13.45, D + 0.95, z, 0.8, 1.9, 1.1, { collide: true, tag: 'vending', support: 'deck', group: 'vend' + i });
-    const scr = new THREE.Mesh(new THREE.PlaneGeometry(0.5, 0.36), (i === 1 ? M('errScreen') : M('screen')).mat); scr.position.set(-13.04, D + 1.35, z); scr.rotation.y = Math.PI / 2; scr.name = `券売機${i + 1}画面`; root.add(scr);
-    box('ticket', `券売機${i + 1} 投入口`, -13.03, D + 0.95, z, 0.04, 0.12, 0.5, { lod: 1, tag: 'prop', support: 'none', group: 'vend' + i });
-    box('ticket', `券売機${i + 1} 発券口`, -13.03, D + 0.6, z, 0.04, 0.2, 0.3, { lod: 1, tag: 'prop', support: 'none', group: 'vend' + i });
-  });
+  /* 券売機は stationDetail.buildVending で細部まで作成 */
   sign(canvasTex(640, 256, (g, w, h) => { g.fillStyle = '#f5f3ea'; g.fillRect(0, 0, w, h); g.fillStyle = '#14325c'; g.font = 'bold 34px "Noto Sans JP","WenQuanYi Zen Hei",sans-serif'; g.fillText('路線図・運賃表', 20, 48); g.strokeStyle = '#2b6b50'; g.lineWidth = 8; g.beginPath(); g.moveTo(60, 160); g.lineTo(580, 160); g.stroke(); ['海浜口', '青嶺中央', '翠川', '星峰', '空港'].forEach((n, i) => { const x = 80 + i * 120; g.fillStyle = i === 1 ? '#c0302b' : '#fff'; g.beginPath(); g.arc(x, 160, 12, 0, 7); g.fill(); g.strokeStyle = '#2b6b50'; g.lineWidth = 4; g.stroke(); g.fillStyle = '#222'; g.font = '22px "Noto Sans JP","WenQuanYi Zen Hei",sans-serif'; g.fillText(n, x - 28, 205); }); g.fillStyle = '#a04'; g.font = '20px sans-serif'; g.fillText('※架空の路線図', 440, 40); }, { repeat: false }), '路線図・運賃表', -13.88, D + 2.8, -8.5, 4.4, 1.5, Math.PI / 2);
   // 自動販売機・ベンチ・AED
-  [2.6, 4.0].forEach((z, i) => box(i ? 'vendBlue' : 'vendRed', '自動販売機', -13.4, D + 0.9, z, 0.8, 1.8, 1.1, { collide: true, tag: 'vending', support: 'deck' }));
+  [2.6, 4.0].forEach((z, i) => box(i ? 'vendBlue' : 'vendRed', '自動販売機', -13.4, D + 0.9, z, 0.8, 1.8, 1.1, { collide: true, tag: 'vending', support: 'deck', group: 'vm' + i }));
   for (const [x, z] of [[-6, 8], [-2, 8], [3, 8]] as [number, number][]) { box('woodMat', 'コンコースベンチ', x, D + 0.42, z, 2.0, 0.08, 0.5, { collide: [D, D + 0.5], tag: 'bench', support: 'none', group: `cb${x}` }); for (const dx of [-0.85, 0.85]) box('steelDark', 'ベンチ脚', x + dx, D + 0.2, z, 0.06, 0.4, 0.4, { tag: 'bench', support: 'deck', group: `cb${x}` }); }
   box('green', 'AED収納箱', -13.78, D + 1.4, 6.5, 0.2, 0.5, 0.4, { tag: 'aed', support: 'mounted' });
   box('white', 'AED白十字', -13.67, D + 1.4, 6.5, 0.02, 0.28, 0.08, { lod: 1, tag: 'aed', support: 'mounted' });
@@ -219,16 +222,10 @@ export function buildStation(quality: 'high' | 'medium' | 'low' = 'high'): Stati
   sign(labelTexture('改札口', 'Ticket Gates', 384, 110, '#1d2a44'), '改札口サイン', 0, D + 3.4, -4.2, 2.6, 0.75, Math.PI);
   sign(labelTexture('エレベーター ↑', '', 384, 110, '#1f6f4a'), 'エレベーターサイン', 4.2, D + 3.2, -11.95, 2.4, 0.7, 0);
 
-  // ======= 改札機（自動改札機 8台＋幅広通路） =======
-  const gx = [-3.85, -2.75, -1.65, -0.55, 0.55, 1.65, 2.75, 4.25];
-  gx.forEach((x, i) => {
-    box('ticket', `自動改札機${i + 1}`, x, D + 0.5, -4.0, 0.36, 1.0, 1.3, { collide: true, tag: 'gate', support: 'deck', group: `gate${i}` });
-    box('steelDark', `改札機${i + 1} 天板`, x, D + 1.03, -4.0, 0.4, 0.06, 1.34, { tag: 'gate', support: 'none', group: `gate${i}` });
-    box(i === 7 ? 'blue' : 'green', `改札機${i + 1} 通行表示`, x, D + 1.08, -3.4, 0.14, 0.04, 0.2, { lod: 1, tag: 'gate', support: 'none', group: `gate${i}` });
-    box('emissiveWhite', `改札機${i + 1} ICタッチ部`, x + (i < 4 ? 0.12 : -0.12), D + 1.07, -4.5, 0.12, 0.03, 0.18, { lod: 2, tag: 'gate', support: 'none', group: `gate${i}` });
-  });
-  box('steel', '改札柵（西）', -9.1, D + 0.5, -4.0, 9.6, 1.0, 0.08, { collide: [D, D + 1.0], tag: 'fence', support: 'deck' });
-  box('steel', '改札柵（東）', 5.6, D + 0.5, -4.0, 1.9, 1.0, 0.08, { collide: [D, D + 1.0], tag: 'fence', support: 'deck' });
+  // ======= 改札まわり・券売機・精算機・誘導ブロックなど（stationDetail） =======
+  const gates: GateUnit[] = []; const placements: StationData['placements'] = [];
+  const dctx: DetailCtx = { D, root, gates, place: (model, x, y, z, ry, name) => placements.push({ model, x, y, z, ry, name }), box, boxR, cyl, sign, mat: k => M(k).mat, tex: (w, h, d) => canvasTex(w, h, d, { repeat: false }), label: (t, sub, w, h, bg, fg) => labelTexture(t, sub, w, h, bg, fg) };
+  buildGateLine(dctx); buildVending(dctx); buildGuidance(dctx); buildConcourseExtras(dctx);
   sign(canvasTex(512, 256, (g, w, h) => { g.fillStyle = '#fafaf5'; g.fillRect(0, 0, w, h); g.fillStyle = '#14325c'; g.font = 'bold 28px "Noto Sans JP","WenQuanYi Zen Hei",sans-serif'; g.fillText('時刻表（平日）', 16, 38); g.font = '20px "Noto Sans JP","WenQuanYi Zen Hei",sans-serif'; g.fillText('1番線 方面 海浜口', 16, 72); g.fillText('2番線 方面 空港連絡', 270, 72); ['8 41 53', '9 05 17 29 41 53', '10 05 17 29 41 53', '11 05 17 29 41 53'].forEach((t, i) => { g.fillText(t, 16, 110 + i * 32); g.fillText(['8 36 48', '9 00 12 24 36 48', '10 00 12 24 36 48', '11 00 12 24 36 48'][i], 270, 110 + i * 32); }); g.fillStyle = '#b33'; g.font = '18px sans-serif'; g.fillText('※旧版（改正前）', 340, 240); }, { repeat: false }), '時刻表掲示', 6.88, D + 1.75, -2.6, 1.6, 0.8, -Math.PI / 2);
 
   // ======= 発車標（コンコース／ホーム） =======
@@ -270,7 +267,7 @@ export function buildStation(quality: 'high' | 'medium' | 'low' = 'high'): Stati
   [[-10, -24], [10, -24], [-6, -40], [6, -40]].forEach(([x, z], i) => { box('concrete', '植栽枡', x, 0.3, z, 2.4, 0.6, 1.0, { collide: true, tag: 'planter', support: 'ground', group: `pl${i}` }); box('leaf', '植栽', x, 0.8, z, 2.1, 0.5, 0.8, { tag: 'planter', support: 'none', group: `pl${i}` }); });
   for (const [bx, gi] of [[12, 'plb1'], [-12, 'plb2']] as [number, string][]) { box('woodMat', '広場ベンチ', bx, 0.45, -30, 1.8, 0.08, 0.5, { collide: [0, 0.6], tag: 'bench', support: 'none', group: gi }); for (const dx of [-0.75, 0.75]) box('steelDark', '広場ベンチ脚', bx + dx, 0.2, -30, 0.06, 0.4, 0.4, { tag: 'bench', support: 'ground', group: gi }); }
   // エレベーター棟（バリアフリー）
-  box('glass', 'エレベーター棟ガラス', 6.0, D / 2 + 0.2, -14.0, 2.6, D + 0.4, 2.4, { collide: [0, D + 0.7], tag: 'elevator', support: 'ground' }); for (const [dx, dz] of [[-1.3, -1.2], [1.3, -1.2], [-1.3, 1.2], [1.3, 1.2]]) box('steel', 'エレベーター棟フレーム', 6.0 + dx, D / 2 + 0.2, -14.0 + dz, 0.12, D + 0.4, 0.12, { tag: 'elevator', support: 'ground' }); box('steel', 'エレベーター棟屋根', 6.0, D + 0.55, -14.0, 2.8, 0.12, 2.6, { tag: 'elevator', support: 'none' }); box('steelDark', 'エレベーターかご', 6.0, 1.0, -14.4, 1.4, 2.0, 1.2, { tag: 'elevator', support: 'ground' });
+  box('glass', 'エレベーター棟ガラス', 6.0, D / 2 + 0.2, -14.0, 2.6, D + 0.4, 2.4, { collide: [0, D + 0.7], tag: 'elevator', support: 'ground', group: 'elev' }); for (const [dx, dz] of [[-1.3, -1.2], [1.3, -1.2], [-1.3, 1.2], [1.3, 1.2]]) box('steel', 'エレベーター棟フレーム', 6.0 + dx, D / 2 + 0.2, -14.0 + dz, 0.12, D + 0.4, 0.12, { tag: 'elevator', support: 'ground', group: 'elev' }); box('steel', 'エレベーター棟屋根', 6.0, D + 0.55, -14.0, 2.8, 0.12, 2.6, { tag: 'elevator', support: 'none', group: 'elev' }); box('steelDark', 'エレベーターかご', 6.0, 1.0, -14.4, 1.4, 2.0, 1.2, { tag: 'elevator', support: 'ground', group: 'elev' });
 
   // ======= 遠景：街並み・山 =======
   let seed = 7; const R = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
@@ -309,18 +306,19 @@ export function buildStation(quality: 'high' | 'medium' | 'low' = 'high'): Stati
     plaza: { pos: [-16, 3.2, -42], target: [0, 5, -12], fov: 55 }, overview: { pos: [-62, 42, -62], target: [0, 2, 0], fov: 45 }, top: { pos: [0.1, 120, 0.1], target: [0, 0, 0], fov: 40 },
     front: { pos: [0, 12, -62], target: [0, 5, -10], fov: 45 }, back: { pos: [0, 14, 62], target: [0, 5, 0], fov: 45 }, side: { pos: [-70, 8, 0], target: [0, 4, 0], fov: 45 },
     gate: { pos: [0, D + 1.7, -9], target: [0, D + 1.2, -2], fov: 62 }, concourse: { pos: [12.5, D + 2.6, 10.5], target: [-8, D + 1.2, -6], fov: 60 }, office: { pos: [8.2, D + 2.2, -2.2], target: [11.5, D + 1.0, -8], fov: 60 },
-    platform: { pos: [-30, P + 1.7, 0], target: [20, P + 1.5, 0], fov: 62 }, platform_high: { pos: [-20, 14, 14], target: [0, 3, 0], fov: 50 }, rail: { pos: [-48, 2.4, -9], target: [0, 1.8, -6], fov: 50 },
+    platform: { pos: [-8, P + 1.65, 2.6], target: [-34, P + 1.5, -0.5], fov: 62 }, platform_east: { pos: [8, P + 1.65, -2.6], target: [34, P + 1.5, 0.5], fov: 62 }, train: { pos: [-12, P + 1.55, 2.6], target: [6, P + 1.9, -5], fov: 58 }, train_front: { pos: [-46, 2.2, -5.2], target: [-20, 2.0, -6.05], fov: 50 }, train_side: { pos: [0, 2.2, -14], target: [0, 2.0, -6.05], fov: 55 }, platform_high: { pos: [-20, 14, 14], target: [0, 3, 0], fov: 50 }, rail: { pos: [-48, 2.4, -9], target: [0, 1.8, -6], fov: 50 },
+    gate_close: { pos: [-2.2, D + 1.55, -7.3], target: [-2.75, D + 0.9, -4.3], fov: 42 }, gate_side: { pos: [-9, D + 1.3, -1.6], target: [-1, D + 0.9, -4.0], fov: 50 }, gate_back: { pos: [0.5, D + 1.6, -0.6], target: [0, D + 0.9, -4.2], fov: 52 }, gate_wide: { pos: [5.5, D + 1.5, -7.2], target: [4.3, D + 0.9, -4.0], fov: 48 }, vend_close: { pos: [-10.9, D + 1.45, -8.1], target: [-13.1, D + 1.25, -8.5], fov: 38 }, seisan: { pos: [-10.9, D + 1.4, -1.2], target: [-13.1, D + 1.2, -1.6], fov: 40 },
     vend: { pos: [-9.6, D + 1.7, -8.5], target: [-13.4, D + 1.2, -8.5], fov: 50 }, board: { pos: [0, D + 2.6, 2.5], target: [0, D + 3.0, -3], fov: 45 }, tactile: { pos: [-6, P + 1.6, 0.5], target: [-8, P, 3.6], fov: 55 }
   };
   // 通路ルート（モブ用）
   const routes: StationData['routes'] = {
     inbound: [[0, 0, -34], [0, 0, -27], [0, D, -12], [-3.3, D, -6], [-3.3, D, -2.8], [-3.3, D, -1], [-8, D, 0], [-14.5, D, 0], [-24.5, P, 0], [-28, P, 1.5], [-18, P, 2.8]],
-    outbound: [[-18, P, 2.8], [-24.5, P, 0], [-14.5, D, 0], [-8, D, 0.5], [-1.6, D, -2.8], [-1.6, D, -5.5], [0, D, -9], [0, D, -12], [0, 0, -27], [4, 0, -38], [-14, 0, -44]],
-    eastIn: [[14, 0, -44], [0, 0, -27], [0, D, -12], [2.75, D, -6], [2.75, D, -2.8], [2.75, D, 0], [14.5, D, 0], [24.5, P, 0], [30, P, -2.5], [20, P, -2.8]],
-    eastOut: [[20, P, -2.8], [24.5, P, 0], [14.5, D, 0], [2.75, D, 0.5], [2.75, D, -5.5], [0, D, -12], [0, 0, -27], [-6, 0, -38], [22, 0, -44]],
+    outbound: [[-18, P, 2.8], [-24.5, P, 0], [-14.5, D, 0], [-8, D, 0.5], [-2.2, D, -2.8], [-2.2, D, -5.5], [0, D, -9], [0, D, -12], [0, 0, -27], [4, 0, -38], [-14, 0, -44]],
+    eastIn: [[14, 0, -44], [0, 0, -27], [0, D, -12], [2.2, D, -6], [2.2, D, -2.8], [2.2, D, 0], [14.5, D, 0], [24.5, P, 0], [30, P, -2.5], [20, P, -2.8]],
+    eastOut: [[20, P, -2.8], [24.5, P, 0], [14.5, D, 0], [3.5, D, 0.5], [3.5, D, -5.5], [0, D, -12], [0, 0, -27], [-6, 0, -38], [22, 0, -44]],
     paced: [[-2, D, 6], [6, D, 8], [10, D, 3], [-2, D, 4]]
   };
 
   const stats = { boxes: boxCount, meshes, triangles: Math.round(triangles) };
-  return { root, colliders, zones, anchors, registry, lodObjects, presets, boards: { departure: depTex, platformBoards: platBoards }, dynamic: { cars: [], lamps: [], sun, hemi, sky }, stats, routes };
+  return { root, colliders, zones, anchors, registry, lodObjects, presets, placements, boards: { departure: depTex, platformBoards: platBoards }, dynamic: { cars: [], lamps: [], sun, hemi, sky, gates }, stats, routes };
 }
