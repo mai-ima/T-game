@@ -206,11 +206,11 @@ describe('時間経過で仕事（依頼）が増える', () => {
     const hub = S.nodes['ch1.hub'] as any; const timed = hub.interactions.filter((i: any) => (JSON.stringify(i.requires) ?? '').includes('"time"'));
     expect(timed.length).toBeGreaterThanOrEqual(13); expect(new Set(timed.map((i: any) => i.goto)).size).toBe(timed.length);
   });
-  it('午後の持ち場で、できる仕事が大きく分かれる（接客／ホーム／事務室）', () => {
+  it('午後の持ち場で専用の事件が分かれ、通常業務はどこでも自由に選べる', () => {
     const ids = (route: string) => { const { w, run } = setup(route); w.flags['ch1.delay_done'] = true; return new Set(at(w, run, 15 * 60).interactions.map(i => i.id)); };
     const s = ids('route.service'), p = ids('route.platform'), o = ids('route.office');
     expect(s.has('angry') && !p.has('angry') && !o.has('angry')).toBe(true); expect(p.has('cable') && !s.has('cable') && !o.has('cable')).toBe(true); expect(o.has('board') && !s.has('board') && !p.has('board')).toBe(true);
-    expect(s.has('gatecheck') && !p.has('gatecheck')).toBe(true); expect(p.has('stroller') && !o.has('stroller')).toBe(true); expect(o.has('phone') && !s.has('phone')).toBe(true);
+    for (const set of [s, p, o]) for (const id of ['gatecheck', 'stroller']) expect(set.has(id)).toBe(true); // 通常業務はどの持ち場でも自由に選べる
   });
   it('梶原さんに付き添った接客ルートでだけ、午後に再会の依頼が出る', () => {
     const { w, run } = setup('route.service'); w.clock.minute = 13 * 60 + 40; const has = () => { const v = run.view(); return v.kind === 'hub' && v.interactions.some(i => i.id === 'kaji2'); };

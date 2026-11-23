@@ -92,6 +92,7 @@ export interface StoryData {
   characters: Record<string, CharacterDef>;
   chapters: ChapterMeta[];
   nodes: Record<string, StoryNode>;
+  maps?: Record<string, StoryMapData>;
   endings?: Record<string, { title: string; text: string }>;
 }
 
@@ -130,4 +131,11 @@ export interface ChapterResult {
   chapter: string; rating: string; scores: Record<EvalKey, number>;
   flags: string[]; relDelta: Record<string, { trust: number; rapport: number }>;
   nextVariants: string[];
+}
+
+/** あらすじ分岐図（UI用）。node.reveal のいずれかに到達済みなら「通った」表示になる */
+export interface StoryMapData {
+  lanes: { id: string; label: string; color: string }[];
+  nodes: { id: string; lane: number; x: number; label: string; sub?: string; star?: boolean; reveal: string[]; choice?: string }[];
+  edges: [string, string][];
 }

@@ -15,7 +15,7 @@ export function MainMenu({ c, onStart }: { c: GameController; onStart: () => voi
   const impl = MODES.filter(m => m.status === 'playable').length;
   const open = (m: ModeDef) => { c.audio.ui('click'); setSel(m); };
   return (
-    <div className="menu">
+    <div className="menu" onPointerDown={() => { if (!c.audio.started) c.audio.start().then(() => c.audio.playMusic('menu')); else c.audio.playMusic('menu'); }}>
       <div className="menu-in">
         <div className="hero" style={{ backgroundImage: `url(${heroUrl})` }} role="img" aria-label="青嶺中央駅（架空）に停車する313系参考の電車">
           <div className="hero-tools"><button className="btn sm" onClick={() => { c.audio.ui('click'); setStatus(true); }}>検証状況</button><button className="btn sm" onClick={() => setSettings(true)}><span style={{ display: 'inline-flex', gap: 6, alignItems: 'center' }}><Icon.gear />設定</span></button></div>

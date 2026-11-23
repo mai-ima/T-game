@@ -140,7 +140,7 @@ N['ch1.hub'] = {
     { id: 'yama_ask', at: hm(14, 0), goto: 'ch1.yama_ask' },
     { id: 'close', at: hm(17, 0), goto: 'ch1.closing' }
   ],
-  exit: { label: '勤務を終えて面談へ（16:00以降）', requires: ALL(F('ch1.tenko'), F('ch1.roster'), F('ch1.vend'), F('ch1.platform'), F('ch1.opinfo'), F('ch1.delay_done'), F('ch1.lunch_done'), T('>=', hm(16, 0))), goto: 'ch1.closing' }
+  exit: { label: '勤務を終えて面談へ（16:00以降）', requires: ALL(F('ch1.tenko'), F('ch1.delay_done'), F('ch1.lunch_done'), T('>=', hm(16, 0))), goto: 'ch1.closing' }
 };
 
 // ---- 点呼 ----
@@ -718,7 +718,8 @@ const chapters = [
 
 const IT = id => N['ch1.hub'].interactions.find(i => i.id === id); const GL = id => N['ch1.hub'].goals.find(g => g.id === id);
 const gate = (ids, route) => { for (const id of ids) { const it = IT(id); it.requires = ALL(it.requires, F(route)); const g = GL('g_' + (id === 'shopnote' ? 'shop' : id === 'toilet' ? 'wc' : id)); if (g) g.showWhen = ALL(g.showWhen, F(route)); } };
-gate(['phone', 'announce2'], 'route.office'); gate(['guide', 'kaji2', 'gatecheck', 'refill'], 'route.service'); gate(['patrol2', 'stroller'], 'route.platform');
+// 持ち場（route.*）は専用イベントと第2章の展開を決めるだけで、通常業務はどの持ち場でも自由に選べる。
+void gate;
 N['ch1.hub'].interactions.push(
   { id: 'angry', object: 'ogawa', label: '怒っているお客様に対応する（遅延証明書）', goto: 'ch1.angry_1', requires: ALL(F('route.service'), T('>=', hm(14, 0)), T('<', hm(15, 30))), once: true },
   { id: 'cable', object: 'riku', label: '線路にスマートフォンを落とした高校生', goto: 'ch1.cable_1', requires: ALL(F('route.platform'), T('>=', hm(14, 0)), T('<', hm(15, 30))), once: true },
@@ -727,7 +728,34 @@ N['ch1.hub'].goals.push(
   { id: 'g_angry', label: '（専用）怒っているお客様への対応', when: F('ch1.angry_done'), optional: true, showWhen: ALL(F('route.service'), T('>=', hm(14, 0))) },
   { id: 'g_cable', label: '（専用）線路に落ちた物への対応', when: F('ch1.cable_done'), optional: true, showWhen: ALL(F('route.platform'), T('>=', hm(14, 0))) },
   { id: 'g_board', label: '（専用）発車標の誤表示の訂正', when: F('ch1.board_done'), optional: true, showWhen: ALL(F('route.office'), T('>=', hm(14, 10))) });
-const story = { storyId: 'r7', mode: 'R7', title: '配属先は、明日変わる', subtitle: '超リアル社員異動・長編キャリア', startYear: 2027, characters, chapters, nodes: N };
+
+// ============ あらすじ分岐図（UI用の地図データ）============
+const maps = { ch1: {
+  lanes: [{ id: 'common', label: '共通の一日', color: '#1a2f55' }, { id: 'service', label: '接客ルート', color: '#1b6f45' }, { id: 'platform', label: 'ホームルート', color: '#a35c00' }, { id: 'office', label: '事務ルート', color: '#6a3aa8' }, { id: 'w1', label: '週末：久保田と練習', color: '#c8281e' }, { id: 'w2', label: '週末：基地見学', color: '#1a6a8a' }, { id: 'w3', label: '週末：休養', color: '#6b6f73' }],
+  nodes: [
+    { id: 'm0', lane: 0, x: 0, label: '配属面談', sub: '将来の希望を伝える', star: true, reveal: ['ch1.p_wish'], choice: 'ch1.p_wish' },
+    { id: 'm1', lane: 0, x: 1, label: '勤務初日', sub: '点呼・勤務表', reveal: ['ch1.tenko'] },
+    { id: 'm2', lane: 0, x: 2, label: '午前の依頼', sub: '券詰まり・迷子ほか', reveal: ['ch1.vend_intro', 'ch1.jam_1', 'ch1.assist_1', 'ch1.child_1', 'ch1.plat_intro'] },
+    { id: 'm3', lane: 0, x: 3, label: '遅延と案内', sub: '10:40 旅行客への答え', star: true, reveal: ['ch1.delay_gate'], choice: 'ch1.delay_choice' },
+    { id: 'm4', lane: 0, x: 4, label: '昼休憩', sub: '誰と過ごすか', reveal: ['ch1.lunch'], choice: 'ch1.lunch_choice' },
+    { id: 'm5', lane: 0, x: 5, label: '午後の持ち場', sub: '大きな分かれ道', star: true, reveal: ['ch1.route_intro'], choice: 'ch1.route_choice' },
+    { id: 's1', lane: 1, x: 6, label: '怒るお客様', sub: '遅延証明書', reveal: ['ch1.angry_1'], choice: 'ch1.angry_c1' },
+    { id: 's2', lane: 1, x: 7, label: '再会・改札点検', sub: '梶原さん／券紙補充', reveal: ['ch1.kaji2_1', 'ch1.gate_1', 'ch1.refill_1', 'ch1.guide_1'] },
+    { id: 'p1', lane: 2, x: 6, label: '線路の落とし物', sub: '安全の線を守る', reveal: ['ch1.cable_1'], choice: 'ch1.cable_c1' },
+    { id: 'p2', lane: 2, x: 7, label: 'ベビーカー・巡回', sub: '乗降の見守り', reveal: ['ch1.stroller_1', 'ch1.patrol2_1'] },
+    { id: 'o1', lane: 3, x: 6, label: '発車標の誤表示', sub: '確認・訂正・記録', reveal: ['ch1.board_1'], choice: 'ch1.board_c1' },
+    { id: 'o2', lane: 3, x: 7, label: '古い引継ぎ帳', sub: '切り取られた頁', reveal: ['ch1.board_book', 'ch1.phone_1', 'ch1.ann2_task'] },
+    { id: 'm6', lane: 0, x: 8, label: '終業面談', sub: '評価・講評', reveal: ['ch1.closing'] },
+    { id: 'm7', lane: 0, x: 9, label: '週末の選択', sub: '誰と過ごすか', star: true, reveal: ['ch1.closing_choice'], choice: 'ch1.closing_choice' },
+    { id: 'w1', lane: 4, x: 10, label: '久保田の失敗談', sub: '自主練習', reveal: ['ch1.epi_mentor'], choice: 'ch1.epi_mentor_c' },
+    { id: 'w2', lane: 5, x: 10, label: '橘との出会い', sub: '車両基地', reveal: ['ch1.epi_depot'], choice: 'ch1.epi_depot_c' },
+    { id: 'w3', lane: 6, x: 10, label: '静かな週末', sub: '同期とのチャット', reveal: ['ch1.epi_rest'], choice: 'ch1.epi_rest_c' },
+    { id: 'm8', lane: 0, x: 11, label: '第2章 冒頭', sub: '選択が月曜を変える', reveal: ['ch2.open'] }
+  ],
+  edges: [['m0', 'm1'], ['m1', 'm2'], ['m2', 'm3'], ['m3', 'm4'], ['m4', 'm5'], ['m5', 's1'], ['m5', 'p1'], ['m5', 'o1'], ['s1', 's2'], ['p1', 'p2'], ['o1', 'o2'], ['s2', 'm6'], ['p2', 'm6'], ['o2', 'm6'], ['m6', 'm7'], ['m7', 'w1'], ['m7', 'w2'], ['m7', 'w3'], ['w1', 'm8'], ['w2', 'm8'], ['w3', 'm8']]
+} };
+
+const story = { storyId: 'r7', mode: 'R7', title: '配属先は、明日変わる', subtitle: '超リアル社員異動・長編キャリア', startYear: 2027, characters, chapters, nodes: N, maps };
 mkdirSync('src/data/r7', { recursive: true });
 writeFileSync('src/data/r7/story.json', JSON.stringify(story, null, 1));
 console.log('nodes:', Object.keys(N).length);

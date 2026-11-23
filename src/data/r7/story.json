@@ -1103,23 +1103,16 @@
      "requires": {
       "all": [
        {
-        "all": [
-         {
-          "flag": "ch1.tenko"
-         },
-         {
-          "time": {
-           "op": ">=",
-           "val": 780
-          }
-         },
-         {
-          "flag": "ch1.delay_done"
-         }
-        ]
+        "flag": "ch1.tenko"
        },
        {
-        "flag": "route.office"
+        "time": {
+         "op": ">=",
+         "val": 780
+        }
+       },
+       {
+        "flag": "ch1.delay_done"
        }
       ]
      },
@@ -1133,26 +1126,19 @@
      "requires": {
       "all": [
        {
-        "all": [
-         {
-          "flag": "ch1.tenko"
-         },
-         {
-          "time": {
-           "op": ">=",
-           "val": 800
-          }
-         },
-         {
-          "time": {
-           "op": "<",
-           "val": 860
-          }
-         }
-        ]
+        "flag": "ch1.tenko"
        },
        {
-        "flag": "route.service"
+        "time": {
+         "op": ">=",
+         "val": 800
+        }
+       },
+       {
+        "time": {
+         "op": "<",
+         "val": 860
+        }
        }
       ]
      },
@@ -1166,29 +1152,22 @@
      "requires": {
       "all": [
        {
-        "all": [
-         {
-          "flag": "ch1.tenko"
-         },
-         {
-          "flag": "legacy.helped_kajiwara"
-         },
-         {
-          "time": {
-           "op": ">=",
-           "val": 810
-          }
-         },
-         {
-          "time": {
-           "op": "<",
-           "val": 900
-          }
-         }
-        ]
+        "flag": "ch1.tenko"
        },
        {
-        "flag": "route.service"
+        "flag": "legacy.helped_kajiwara"
+       },
+       {
+        "time": {
+         "op": ">=",
+         "val": 810
+        }
+       },
+       {
+        "time": {
+         "op": "<",
+         "val": 900
+        }
        }
       ]
      },
@@ -1202,20 +1181,13 @@
      "requires": {
       "all": [
        {
-        "all": [
-         {
-          "flag": "ch1.platform"
-         },
-         {
-          "time": {
-           "op": ">=",
-           "val": 810
-          }
-         }
-        ]
+        "flag": "ch1.platform"
        },
        {
-        "flag": "route.platform"
+        "time": {
+         "op": ">=",
+         "val": 810
+        }
        }
       ]
      },
@@ -1229,26 +1201,19 @@
      "requires": {
       "all": [
        {
-        "all": [
-         {
-          "flag": "ch1.tenko"
-         },
-         {
-          "time": {
-           "op": ">=",
-           "val": 860
-          }
-         },
-         {
-          "time": {
-           "op": "<",
-           "val": 920
-          }
-         }
-        ]
+        "flag": "ch1.tenko"
        },
        {
-        "flag": "route.platform"
+        "time": {
+         "op": ">=",
+         "val": 860
+        }
+       },
+       {
+        "time": {
+         "op": "<",
+         "val": 920
+        }
        }
       ]
      },
@@ -1262,20 +1227,13 @@
      "requires": {
       "all": [
        {
-        "all": [
-         {
-          "flag": "ch1.tenko"
-         },
-         {
-          "time": {
-           "op": ">=",
-           "val": 885
-          }
-         }
-        ]
+        "flag": "ch1.tenko"
        },
        {
-        "flag": "route.service"
+        "time": {
+         "op": ">=",
+         "val": 885
+        }
        }
       ]
      },
@@ -1289,20 +1247,13 @@
      "requires": {
       "all": [
        {
-        "all": [
-         {
-          "flag": "ch1.tenko"
-         },
-         {
-          "time": {
-           "op": ">=",
-           "val": 910
-          }
-         }
-        ]
+        "flag": "ch1.tenko"
        },
        {
-        "flag": "route.office"
+        "time": {
+         "op": ">=",
+         "val": 910
+        }
        }
       ]
      },
@@ -1316,20 +1267,13 @@
      "requires": {
       "all": [
        {
-        "all": [
-         {
-          "flag": "ch1.tenko"
-         },
-         {
-          "time": {
-           "op": ">=",
-           "val": 930
-          }
-         }
-        ]
+        "flag": "ch1.tenko"
        },
        {
-        "flag": "route.service"
+        "time": {
+         "op": ">=",
+         "val": 930
+        }
        }
       ]
      },
@@ -1586,17 +1530,10 @@
      },
      "optional": true,
      "showWhen": {
-      "all": [
-       {
-        "time": {
-         "op": ">=",
-         "val": 780
-        }
-       },
-       {
-        "flag": "route.office"
-       }
-      ]
+      "time": {
+       "op": ">=",
+       "val": 780
+      }
      }
     },
     {
@@ -1607,17 +1544,10 @@
      },
      "optional": true,
      "showWhen": {
-      "all": [
-       {
-        "time": {
-         "op": ">=",
-         "val": 800
-        }
-       },
-       {
-        "flag": "route.service"
-       }
-      ]
+      "time": {
+       "op": ">=",
+       "val": 800
+      }
      }
     },
     {
@@ -1628,17 +1558,10 @@
      },
      "optional": true,
      "showWhen": {
-      "all": [
-       {
-        "time": {
-         "op": ">=",
-         "val": 810
-        }
-       },
-       {
-        "flag": "route.platform"
-       }
-      ]
+      "time": {
+       "op": ">=",
+       "val": 810
+      }
      }
     },
     {
@@ -1649,17 +1572,10 @@
      },
      "optional": true,
      "showWhen": {
-      "all": [
-       {
-        "time": {
-         "op": ">=",
-         "val": 860
-        }
-       },
-       {
-        "flag": "route.platform"
-       }
-      ]
+      "time": {
+       "op": ">=",
+       "val": 860
+      }
      }
     },
     {
@@ -1698,17 +1614,10 @@
      },
      "optional": true,
      "showWhen": {
-      "all": [
-       {
-        "time": {
-         "op": ">=",
-         "val": 930
-        }
-       },
-       {
-        "flag": "route.service"
-       }
-      ]
+      "time": {
+       "op": ">=",
+       "val": 930
+      }
      }
     },
     {
@@ -1817,18 +1726,6 @@
      "all": [
       {
        "flag": "ch1.tenko"
-      },
-      {
-       "flag": "ch1.roster"
-      },
-      {
-       "flag": "ch1.vend"
-      },
-      {
-       "flag": "ch1.platform"
-      },
-      {
-       "flag": "ch1.opinfo"
       },
       {
        "flag": "ch1.delay_done"
@@ -9064,6 +8961,340 @@
     ],
     "caption": "月曜 9:00"
    }
+  }
+ },
+ "maps": {
+  "ch1": {
+   "lanes": [
+    {
+     "id": "common",
+     "label": "共通の一日",
+     "color": "#1a2f55"
+    },
+    {
+     "id": "service",
+     "label": "接客ルート",
+     "color": "#1b6f45"
+    },
+    {
+     "id": "platform",
+     "label": "ホームルート",
+     "color": "#a35c00"
+    },
+    {
+     "id": "office",
+     "label": "事務ルート",
+     "color": "#6a3aa8"
+    },
+    {
+     "id": "w1",
+     "label": "週末：久保田と練習",
+     "color": "#c8281e"
+    },
+    {
+     "id": "w2",
+     "label": "週末：基地見学",
+     "color": "#1a6a8a"
+    },
+    {
+     "id": "w3",
+     "label": "週末：休養",
+     "color": "#6b6f73"
+    }
+   ],
+   "nodes": [
+    {
+     "id": "m0",
+     "lane": 0,
+     "x": 0,
+     "label": "配属面談",
+     "sub": "将来の希望を伝える",
+     "star": true,
+     "reveal": [
+      "ch1.p_wish"
+     ],
+     "choice": "ch1.p_wish"
+    },
+    {
+     "id": "m1",
+     "lane": 0,
+     "x": 1,
+     "label": "勤務初日",
+     "sub": "点呼・勤務表",
+     "reveal": [
+      "ch1.tenko"
+     ]
+    },
+    {
+     "id": "m2",
+     "lane": 0,
+     "x": 2,
+     "label": "午前の依頼",
+     "sub": "券詰まり・迷子ほか",
+     "reveal": [
+      "ch1.vend_intro",
+      "ch1.jam_1",
+      "ch1.assist_1",
+      "ch1.child_1",
+      "ch1.plat_intro"
+     ]
+    },
+    {
+     "id": "m3",
+     "lane": 0,
+     "x": 3,
+     "label": "遅延と案内",
+     "sub": "10:40 旅行客への答え",
+     "star": true,
+     "reveal": [
+      "ch1.delay_gate"
+     ],
+     "choice": "ch1.delay_choice"
+    },
+    {
+     "id": "m4",
+     "lane": 0,
+     "x": 4,
+     "label": "昼休憩",
+     "sub": "誰と過ごすか",
+     "reveal": [
+      "ch1.lunch"
+     ],
+     "choice": "ch1.lunch_choice"
+    },
+    {
+     "id": "m5",
+     "lane": 0,
+     "x": 5,
+     "label": "午後の持ち場",
+     "sub": "大きな分かれ道",
+     "star": true,
+     "reveal": [
+      "ch1.route_intro"
+     ],
+     "choice": "ch1.route_choice"
+    },
+    {
+     "id": "s1",
+     "lane": 1,
+     "x": 6,
+     "label": "怒るお客様",
+     "sub": "遅延証明書",
+     "reveal": [
+      "ch1.angry_1"
+     ],
+     "choice": "ch1.angry_c1"
+    },
+    {
+     "id": "s2",
+     "lane": 1,
+     "x": 7,
+     "label": "再会・改札点検",
+     "sub": "梶原さん／券紙補充",
+     "reveal": [
+      "ch1.kaji2_1",
+      "ch1.gate_1",
+      "ch1.refill_1",
+      "ch1.guide_1"
+     ]
+    },
+    {
+     "id": "p1",
+     "lane": 2,
+     "x": 6,
+     "label": "線路の落とし物",
+     "sub": "安全の線を守る",
+     "reveal": [
+      "ch1.cable_1"
+     ],
+     "choice": "ch1.cable_c1"
+    },
+    {
+     "id": "p2",
+     "lane": 2,
+     "x": 7,
+     "label": "ベビーカー・巡回",
+     "sub": "乗降の見守り",
+     "reveal": [
+      "ch1.stroller_1",
+      "ch1.patrol2_1"
+     ]
+    },
+    {
+     "id": "o1",
+     "lane": 3,
+     "x": 6,
+     "label": "発車標の誤表示",
+     "sub": "確認・訂正・記録",
+     "reveal": [
+      "ch1.board_1"
+     ],
+     "choice": "ch1.board_c1"
+    },
+    {
+     "id": "o2",
+     "lane": 3,
+     "x": 7,
+     "label": "古い引継ぎ帳",
+     "sub": "切り取られた頁",
+     "reveal": [
+      "ch1.board_book",
+      "ch1.phone_1",
+      "ch1.ann2_task"
+     ]
+    },
+    {
+     "id": "m6",
+     "lane": 0,
+     "x": 8,
+     "label": "終業面談",
+     "sub": "評価・講評",
+     "reveal": [
+      "ch1.closing"
+     ]
+    },
+    {
+     "id": "m7",
+     "lane": 0,
+     "x": 9,
+     "label": "週末の選択",
+     "sub": "誰と過ごすか",
+     "star": true,
+     "reveal": [
+      "ch1.closing_choice"
+     ],
+     "choice": "ch1.closing_choice"
+    },
+    {
+     "id": "w1",
+     "lane": 4,
+     "x": 10,
+     "label": "久保田の失敗談",
+     "sub": "自主練習",
+     "reveal": [
+      "ch1.epi_mentor"
+     ],
+     "choice": "ch1.epi_mentor_c"
+    },
+    {
+     "id": "w2",
+     "lane": 5,
+     "x": 10,
+     "label": "橘との出会い",
+     "sub": "車両基地",
+     "reveal": [
+      "ch1.epi_depot"
+     ],
+     "choice": "ch1.epi_depot_c"
+    },
+    {
+     "id": "w3",
+     "lane": 6,
+     "x": 10,
+     "label": "静かな週末",
+     "sub": "同期とのチャット",
+     "reveal": [
+      "ch1.epi_rest"
+     ],
+     "choice": "ch1.epi_rest_c"
+    },
+    {
+     "id": "m8",
+     "lane": 0,
+     "x": 11,
+     "label": "第2章 冒頭",
+     "sub": "選択が月曜を変える",
+     "reveal": [
+      "ch2.open"
+     ]
+    }
+   ],
+   "edges": [
+    [
+     "m0",
+     "m1"
+    ],
+    [
+     "m1",
+     "m2"
+    ],
+    [
+     "m2",
+     "m3"
+    ],
+    [
+     "m3",
+     "m4"
+    ],
+    [
+     "m4",
+     "m5"
+    ],
+    [
+     "m5",
+     "s1"
+    ],
+    [
+     "m5",
+     "p1"
+    ],
+    [
+     "m5",
+     "o1"
+    ],
+    [
+     "s1",
+     "s2"
+    ],
+    [
+     "p1",
+     "p2"
+    ],
+    [
+     "o1",
+     "o2"
+    ],
+    [
+     "s2",
+     "m6"
+    ],
+    [
+     "p2",
+     "m6"
+    ],
+    [
+     "o2",
+     "m6"
+    ],
+    [
+     "m6",
+     "m7"
+    ],
+    [
+     "m7",
+     "w1"
+    ],
+    [
+     "m7",
+     "w2"
+    ],
+    [
+     "m7",
+     "w3"
+    ],
+    [
+     "w1",
+     "m8"
+    ],
+    [
+     "w2",
+     "m8"
+    ],
+    [
+     "w3",
+     "m8"
+    ]
+   ]
   }
  }
 }

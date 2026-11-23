@@ -81,7 +81,7 @@ export function TimelinePanel({ c }: { c: GameController }) {
 }
 
 /** 章別の分岐フローチャート：未到達ノードは章終了までネタバレ防止のため「？」表示 */
-export function FlowPanel({ c }: { c: GameController }) {
+export function GraphPanel({ c }: { c: GameController }) {
   const w = c.world; const chap = c.story.chapters.find(x => x.id === w.story.chapter)!; const prefix = chap.id + '.'; const reveal = w.story.completedChapters.includes(chap.id);
   const layout = useMemo(() => {
     const nodes = Object.values(c.story.nodes).filter(n => n.id.startsWith(prefix)); const byId = new Map(nodes.map(n => [n.id, n])); const depth = new Map<string, number>(); const q: string[] = [chap.start]; depth.set(chap.start, 0);
@@ -93,7 +93,7 @@ export function FlowPanel({ c }: { c: GameController }) {
   }, [c.story, prefix, chap.start]);
   const vis = new Set(w.story.visited); const chosen = new Set(w.story.choices.map(x => x.node + '>' + x.option));
   return (
-    <Sheet title={`分岐図：${chap.title}`} onClose={() => (c.panel = null, c.notify())} wide>
+    <Sheet title={`詳細グラフ：${chap.title}`} onClose={() => (c.panel = null, c.notify())} wide>
       <p className="small" style={{ marginTop: 0 }}>● 到達済み　○ 未到達（{reveal ? '章を終えたため表示' : 'ネタバレ防止のため伏せています'}）　◆ 選択肢　★ 重要な選択　■ 場面（ハブ）</p>
       <div className="flow-wrap"><svg width={layout.width} height={layout.height} role="img" aria-label="分岐フローチャート">
         {layout.nodes.flatMap(n => successors(n).filter(s => layout.pos.has(s) && s !== n.id).map(s => { const a = layout.pos.get(n.id)!, b = layout.pos.get(s)!; const walked = vis.has(n.id) && vis.has(s); const show = walked || reveal; return show ? <line key={n.id + s} x1={a.x} y1={a.y} x2={b.x} y2={b.y} stroke={walked ? '#c8281e' : '#a9a595'} strokeWidth={walked ? 1.8 : 1} opacity={b.x < a.x ? 0.25 : 0.9} /> : null; }))}
@@ -141,6 +141,7 @@ export function SettingsPanel({ c, onClose }: { c: GameController; onClose: () =
       <Row l="業務時計"><label><input type="checkbox" checked={s.clockRunning} onChange={e => set({ clockRunning: e.target.checked })} /> 歩行中も時間が進む（1ゲーム内分＝6秒）</label></Row>
       <Row l="字幕"><label><input type="checkbox" checked={s.subtitles} onChange={e => set({ subtitles: e.target.checked })} /> 構内放送・通知音を字幕表示</label></Row>
       <Row l="音量（全体）"><input type="range" min="0" max="1" step="0.05" value={s.master} onChange={e => set({ master: +e.target.value })} aria-label="全体音量" /></Row>
+      <Row l="音楽"><input type="range" min="0" max="1" step="0.05" value={s.music} onChange={e => set({ music: +e.target.value })} aria-label="音楽の音量" /></Row>
       <Row l="効果音"><input type="range" min="0" max="1" step="0.05" value={s.sfx} onChange={e => set({ sfx: +e.target.value })} aria-label="効果音量" /></Row>
       <Row l="環境音"><input type="range" min="0" max="1" step="0.05" value={s.ambient} onChange={e => set({ ambient: +e.target.value })} aria-label="環境音量" /></Row>
       <Row l="消音"><label><input type="checkbox" checked={s.muted} onChange={e => set({ muted: e.target.checked })} /> すべての音を消す</label></Row>

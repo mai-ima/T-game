@@ -4,28 +4,15 @@ import { RenderManager } from '../render/renderManager';
 import { loadAssets } from '../render/assets';
 import { Joystick, Portrait, Stage25D, useTypewriter } from './parts';
 import { ChecklistTask, ComposeTask, RosterTask, TerminalTask } from './Tasks';
-import { CareerPanel, FlowPanel, RelationsPanel, RosterPanel, SavePanel, SettingsPanel, TimelinePanel } from './Panels';
+import { FlowPanel } from './StoryMap';
+import { INFLUENCE } from './influence';
+import { CareerPanel, GraphPanel, RelationsPanel, RosterPanel, SavePanel, SettingsPanel, TimelinePanel } from './Panels';
 import { EVAL_LABEL } from '../engine/worldState';
 import { Icon, FlapClock } from './icons';
 import type { EvalKey } from '../engine/types';
 
 export function useCtl(c: GameController) { const [, f] = useReducer((x: number) => x + 1, 0); useEffect(() => c.subscribe(f), [c]); return c.version; }
 
-const INFLUENCE: Record<string, string> = {
-  'legacy.wish_station': '配属面談で「駅の接客を極めたい」と申告 → 異動面談での説明に反映',
-  'legacy.wish_depot': '配属面談で「車両・設備への関心」を申告 → 基地への異動条件の説明に反映',
-  'legacy.wish_planning': '配属面談で「輸送計画への関心」を申告 → 企画系部署の条件の説明に反映',
-  'legacy.wish_open': '配属面談で希望を決めずに経験を優先 → 駅長の助言に反映',
-  'legacy.helped_kajiwara': '梶原さんに窓口まで付き添った → 第2章冒頭に梶原さんが再訪する',
-  'legacy.concealed': '案内の誤りに正面から触れなかった → 第2章で記録の食い違いを確認される',
-  'legacy.depot_tour': '山科さんと車両基地の見学会へ → 第2章冒頭が見学会の場面になる',
-  'legacy.mentor_line': '久保田さんの自主練習に参加 → 第2章冒頭が練習の場面になる',
-  'legacy.rested': '公休はしっかり休んだ → 第2章は静かな月曜から始まる',
-  'ch1.admitted_error': '案内の誤りを自分から報告した → 久保田・駅長からの信頼が上がる',
-  'ch1.delay_verified': '遅延時に確認してから案内した → 指令・旅客からの信頼が上がる',
-  'ch1.delay_late': '遅延対応に出遅れた → 久保田が先に対応した',
-  'ch1.guessed_info': '見込みを断定的に案内した → 旅客が乗り継ぎに失敗した'
-};
 
 export function GameScreen({ c, onExit }: { c: GameController; onExit: () => void }) {
   useCtl(c);
@@ -78,7 +65,7 @@ export function GameScreen({ c, onExit }: { c: GameController; onExit: () => voi
       {v?.kind === 'choice' && <ChoiceBox c={c} />}
       {v?.kind === 'task' && <TaskHost c={c} />}
       {c.endResult && v?.kind === 'end' && <ChapterEnd c={c} onExit={onExit} />}
-      {c.panel === 'roster' && <RosterPanel c={c} />}{c.panel === 'career' && <CareerPanel c={c} />}{c.panel === 'relations' && <RelationsPanel c={c} />}{c.panel === 'timeline' && <TimelinePanel c={c} />}{c.panel === 'flow' && <FlowPanel c={c} />}{c.panel === 'save' && <SavePanel c={c} />}{c.panel === 'settings' && <SettingsPanel c={c} onClose={() => { c.panel = null; c.notify(); }} />}
+      {c.panel === 'roster' && <RosterPanel c={c} />}{c.panel === 'career' && <CareerPanel c={c} />}{c.panel === 'relations' && <RelationsPanel c={c} />}{c.panel === 'timeline' && <TimelinePanel c={c} />}{c.panel === 'flow' && <FlowPanel c={c} />}{c.panel === 'graph' && <GraphPanel c={c} />}{c.panel === 'save' && <SavePanel c={c} />}{c.panel === 'settings' && <SettingsPanel c={c} onClose={() => { c.panel = null; c.notify(); }} />}
       {c.toast && <div className="toast" role="status" data-ui>{c.toast.text}</div>}
       {c.caption && <div className="caption" role="status" aria-live="polite">［放送］{c.caption.text}</div>}
       {webglFail && <div className="toast" style={{ top: 120 }}>この端末では3D描画（WebGL）を開始できなかったため、2D表示で動作しています。</div>}
@@ -135,6 +122,8 @@ function StageView({ c }: { c: GameController }) {
 function DialogueBox({ c }: { c: GameController }) {
   const v = c.view; if (v?.kind !== 'line') return null; const l = v.node.lines[c.lineIndex]; const text = c.textWorld(l.text); const def = l.who && l.who !== 'player' ? c.story.characters[l.who] : undefined;
   const tw = useTypewriter(text, c.settings.textSpeed, v.node.id + ':' + c.lineIndex); const last = c.lineIndex === v.node.lines.length - 1; const [log, setLog] = useState(false);
+  const lastLen = useRef(0); useEffect(() => { const n = tw.shown.length; if (n > lastLen.current && n % 3 === 0 && /\S/.test(tw.shown[n - 1] ?? '')) c.audio.blip(c.voiceOf(l.who), l.narration ? 'narration' : 'voice'); lastLen.current = n; }, [tw.shown]); // eslint-disable-line
+  useEffect(() => { lastLen.current = 0; }, [v.node.id, c.lineIndex]);
   const click = () => { if (!tw.done) tw.skip(); else c.advanceLine(); };
   return (
     <div className="dlg" data-ui>

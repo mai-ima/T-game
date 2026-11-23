@@ -235,3 +235,6 @@ button, a, .dlg-box, .choice-opt { touch-action: manipulation; }
 .choice-opt:hover, .choice-opt:focus-visible { background: #254468; }
 .choice-q { background: #1a2f55; border-color: #fff; }
 @media (max-width: 640px) { .dlg-box { padding: 10px 12px 8px; } .dlg-box .av { width: 78px; } }
+
+.mapwrap { overflow: auto; border: 2px solid var(--ink); background: #fff; max-height: 66vh; -webkit-overflow-scrolling: touch; }
+.mapwrap svg { display: block; font-family: var(--font); }

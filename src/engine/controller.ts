@@ -11,8 +11,8 @@ import { buildStation, type StationData } from '../render/stationBuilder';
 import type { RenderManager, ViewMode, CamMode } from '../render/renderManager';
 import { QUALITY, type QualityId } from './quality';
 
-export interface Settings { quality: QualityId; autoQuality: boolean; view: ViewMode; textSpeed: 'fast' | 'normal' | 'slow'; timeLimits: boolean; subtitles: boolean; clockRunning: boolean; master: number; sfx: number; ambient: number; muted: boolean; fontScale: number }
-export const DEFAULT_SETTINGS: Settings = { quality: 'high', autoQuality: true, view: '3d', textSpeed: 'normal', timeLimits: true, subtitles: true, clockRunning: true, master: 0.8, sfx: 0.9, ambient: 0.7, muted: false, fontScale: 1 };
+export interface Settings { quality: QualityId; autoQuality: boolean; view: ViewMode; textSpeed: 'fast' | 'normal' | 'slow'; timeLimits: boolean; subtitles: boolean; clockRunning: boolean; master: number; sfx: number; ambient: number; music: number; muted: boolean; fontScale: number }
+export const DEFAULT_SETTINGS: Settings = { quality: 'high', autoQuality: true, view: '3d', textSpeed: 'normal', timeLimits: true, subtitles: true, clockRunning: true, master: 0.8, sfx: 0.6, ambient: 0.4, music: 0.5, muted: false, fontScale: 1 };
 
 export interface Prompt { object: string; label: string; interactionId: string; icon?: string }
 export const STORY = storyJson as unknown as StoryData;
@@ -45,7 +45,7 @@ export class GameController {
     if (p.quality) this.rm?.setQuality(p.quality); if (p.autoQuality !== undefined) this.rm?.setAuto(p.autoQuality); if (p.view) this.rm?.setViewMode(p.view);
     this.notify();
   }
-  applyAudioSettings() { this.audio.setSettings({ master: this.settings.master, sfx: this.settings.sfx, ambient: this.settings.ambient, muted: this.settings.muted }); }
+  applyAudioSettings() { this.audio.setSettings({ master: this.settings.master, sfx: this.settings.sfx, ambient: this.settings.ambient, music: this.settings.music, muted: this.settings.muted }); }
 
   // ===== 開始・保存 =====
   newGame(name: string) {
@@ -101,7 +101,7 @@ export class GameController {
   private afterView(autosave = true) {
     this.lineIndex = 0; this.recordLine(); const v = this.view!; const w = this.world;
     this.updateNpcVisibility();
-    this.applyCamera(); this.updateAudioZone();
+    this.applyCamera(); this.updateAudioZone(); this.updateMusic();
     // 時間制限つき選択
     clearTimeout(this.choiceTimerId); this.choiceDeadline = null;
     if (v.kind === 'choice' && v.node.timeLimit && this.settings.timeLimits) { this.choiceTotal = v.node.timeLimit; this.choiceDeadline = performance.now() + v.node.timeLimit * 1000; this.choiceTimerId = window.setTimeout(() => this.choose(v.node.defaultOption!, true), v.node.timeLimit * 1000); }
@@ -157,6 +157,16 @@ export class GameController {
     }
     const k = next ? next.interactionId : ''; if (k !== this.promptKey || force) { this.promptKey = k; this.prompt = next; this.notify(); }
   }
+  /** 場面に合わせてBGMを切り替える（緊張する場面・温かい場面・基地・事務室・昼の駅） */
+  musicFor(): string {
+    const v = this.view; const n = this.world.story.node; if (!v) return 'menu'; const bg = 'node' in v ? v.node.view?.bg : undefined;
+    if (/^ch1\.(delay|dq|angry|cable|cl_blame|cl_silent)|^ch2\.(warn|audit)/.test(n)) return 'tense';
+    if (/^ch1\.(kaji|epi_|child|assist|cc_|clr_)|^ch2\.(kaji|r_service)/.test(n)) return 'warm';
+    if (bg === 'depot') return 'depot'; if (bg === 'office' || /^ch1\.(board|phone|route|closing|cl_|clr_)/.test(n)) return 'office'; if (bg === 'hr') return 'talk_calm';
+    return v.kind === 'hub' ? 'hub' : 'talk_calm';
+  }
+  updateMusic() { this.audio.playMusic(this.musicFor()); this.audio.duck(this.view?.kind === 'line' || this.view?.kind === 'choice'); }
+  voiceOf(who?: string): number { if (!who || who === 'player') return 340; const d = this.story.characters[who]; if (!d) return 300; const base = d.height && d.height < 0.8 ? 760 : d.gender === 'f' ? 560 : 300; return base * (d.age >= 65 ? 0.9 : 1); }
   updateAudioZone() { const p = this.sim.player; const z = this.view?.kind !== 'hub' && this.view && 'node' in this.view && this.view.node.view?.mode === '25d' ? 'office' : p.y > 4 ? (p.x > 7 && p.z < -1 && p.z > -12 ? 'office' : 'concourse') : p.y > 1 ? 'platform' : 'plaza'; if (this.audio.zone !== z) this.audio.setZone(z); }
 
   // ===== 描画連携 =====
