@@ -32,9 +32,14 @@ const characters = {
   kubota: { id: 'kubota', name: '久保田 彩', kana: 'くぼた あや', role: '駅務係員（指導担当）', dept: 'station', age: 28, years: 5, uniform: '#1d2a44', hair: '#2b2118', skin: '#f0cfae', trait: '実務派。手順の理由まで教える。曖昧な返事が嫌い。', bio: '入社5年目。去年まで新人だった感覚を覚えている。', gender: 'f', accessory: 'cap' },
   yamashina: { id: 'yamashina', name: '山科 蓮', kana: 'やましな れん', role: '同期入社（駅務）', dept: 'station', age: 23, years: 0, uniform: '#1d2a44', hair: '#1c1c28', skin: '#efc9a6', trait: '車両と設備に強い関心。負けず嫌いだが面倒見は良い。', bio: '工業高専出身。いつかは車両基地の仕事をしたい。', gender: 'm', accessory: 'none' },
   morishita: { id: 'morishita', name: '森下 恵', kana: 'もりした めぐみ', role: '総務部 人事課', dept: 'hr', age: 35, years: 12, uniform: '#3a4a5e', hair: '#3a2a22', skin: '#f2d2b4', trait: '丁寧で率直。希望と会社の事情の両方を説明する。', bio: '新入社員の配属面談を担当。', gender: 'f', accessory: 'glasses' },
-  kajiwara: { id: 'kajiwara', name: '梶原 トミ', kana: 'かじわら とみ', role: '利用者（常連）', dept: 'none', age: 78, years: 0, uniform: '#7a5a78', hair: '#d8d8d8', skin: '#ecc8a8', trait: '週に二度、通院で海浜口へ。機械は少し苦手。', bio: '青嶺中央駅の古い常連。駅員の顔をよく覚えている。', gender: 'f', accessory: 'bag' },
+  kajiwara: { id: 'kajiwara', name: '梶原 トミ', kana: 'かじわら とみ', role: '利用者（常連）', dept: 'none', age: 78, years: 0, uniform: '#7a5a78', hair: '#d8d8d8', skin: '#ecc8a8', trait: '週に二度、通院で海浜口へ。機械は少し苦手。', bio: '青嶺中央駅の古い常連。駅員の顔をよく覚えている。', gender: 'f', accessory: 'cane', height: 0.94, visibleWhen: { any: [{ notFlag: 'ch1.kajiwara_done' }, { all: [{ time: { op: '>=', val: 810 } }, { time: { op: '<', val: 900 } }, { flag: 'legacy.helped_kajiwara' }, { notFlag: 'ch1.kaji2' }] }] } },
   hamaguchi: { id: 'hamaguchi', name: '浜口', kana: 'はまぐち', role: '輸送指令員（電話）', dept: 'dispatch', age: 41, years: 18, uniform: '#2a3d52', hair: '#222', skin: '#e9c7a2', trait: '電話口で簡潔。確定情報と見込みを必ず分けて伝える。', bio: '青海本線担当の輸送指令。', gender: 'm', accessory: 'none' },
-  traveler: { id: 'traveler', name: '旅行客', kana: 'りょこうきゃく', role: '利用者', dept: 'none', age: 34, years: 0, uniform: '#3a6a5a', hair: '#5a3a2a', skin: '#f0d0b0', trait: '空港連絡線への乗り換えを急いでいる。', bio: '大きなスーツケースを持つ旅行者。', gender: 'f', accessory: 'bag' }
+  sakai: { id: 'sakai', name: '坂井 陽子', kana: 'さかい ようこ', role: '売店（委託）店員', dept: 'none', age: 46, years: 0, uniform: '#b8352c', hair: '#3a2a22', skin: '#f0cfae', trait: '明るく世話好き。駅の変化をよく見ている。', bio: '改札内の売店を10年担当。常連の顔を覚えている。', gender: 'f' },
+  hinata: { id: 'hinata', name: 'ひなた', kana: 'ひなた', role: '迷子の小学生', dept: 'none', age: 8, years: 0, uniform: '#f2b134', hair: '#1c1c28', skin: '#f2d3b8', trait: '泣きそうなのを我慢している。', bio: '母親とはぐれた小学2年生。', gender: 'x', height: 0.66, visibleWhen: { all: [{ time: { op: '>=', val: 585 } }, { time: { op: '<', val: 650 } }, { notFlag: 'ch1.child_done' }] } },
+  nomura: { id: 'nomura', name: '野村 清次', kana: 'のむら せいじ', role: '利用者（杖をつく高齢の方）', dept: 'none', age: 76, years: 0, uniform: '#6a5a4a', hair: '#d8d8d8', skin: '#e8c4a0', trait: '遠慮がちで、頼るのが苦手。', bio: '週に一度、海浜口の友人宅へ通う。', gender: 'm', accessory: 'cane', height: 0.96, visibleWhen: { all: [{ time: { op: '>=', val: 560 } }, { time: { op: '<', val: 640 } }, { notFlag: 'ch1.assist_done' }] } },
+  haha: { id: 'haha', name: '母親（ベビーカー）', kana: 'ははおや', role: '利用者', dept: 'none', age: 31, years: 0, uniform: '#5c7a8a', hair: '#3a2a22', skin: '#f2d3b8', trait: '荷物が多く、時間に追われている。', bio: '生後半年の子を連れて通院する。', gender: 'f', accessory: 'bag', visibleWhen: { all: [{ time: { op: '>=', val: 860 } }, { time: { op: '<', val: 920 } }, { notFlag: 'ch1.stroller_done' }] } },
+  tourist2: { id: 'tourist2', name: '外国の旅行客', kana: 'がいこくのりょこうきゃく', role: '利用者', dept: 'none', age: 28, years: 0, uniform: '#3a5a8a', hair: '#8a6a3a', skin: '#f3d6bd', trait: '日本語は少し。地図を見ながら困っている。', bio: '星峰線の観光列車に乗りたい。', gender: 'm', accessory: 'suitcase', visibleWhen: { all: [{ time: { op: '>=', val: 800 } }, { time: { op: '<', val: 860 } }, { notFlag: 'ch1.guide_done' }] } },
+  traveler: { id: 'traveler', name: '旅行客', kana: 'りょこうきゃく', role: '利用者', dept: 'none', age: 34, years: 0, uniform: '#3a6a5a', hair: '#5a3a2a', skin: '#f0d0b0', trait: '空港連絡線への乗り換えを急いでいる。', bio: '大きなスーツケースを持つ旅行者。', gender: 'f', accessory: 'suitcase', visibleWhen: { all: [{ any: [{ nodePrefix: 'ch1.delay' }, { nodePrefix: 'ch1.dq' }, { nodePrefix: 'ch1.announce' }, { nodePrefix: 'ch1.ann_' }] }, { notFlag: 'ch1.delay_done' }] } }
 };
 
 // ============ 第1章 プロローグ：配属面談（2.5D） ============
@@ -84,7 +89,22 @@ N['ch1.hub'] = {
     { id: 'platform', object: 'tactile', label: 'ホームを巡回点検する', goto: 'ch1.plat_intro', requires: ALL(F('ch1.tenko'), F('ch1.roster')), once: true, icon: '🔍' },
     { id: 'kubota', object: 'kubota', label: '久保田さんに話しかける', goto: 'ch1.kubota_talk', requires: F('ch1.tenko'), once: true, icon: '💬' },
     { id: 'yamashina', object: 'yamashina', label: '山科さんに話しかける', goto: 'ch1.yama_talk', requires: F('ch1.tenko'), once: true, icon: '💬' },
-    { id: 'lost', object: 'lost_item', label: 'ベンチの忘れ物を確認する', goto: 'ch1.lost_1', requires: F('ch1.platform'), once: true, icon: '☂️' }
+    { id: 'lost', object: 'lost_item', label: 'ベンチの忘れ物を確認する', goto: 'ch1.lost_1', requires: F('ch1.platform'), once: true, icon: '☂️' },
+    { id: 'jam', object: 'vend3', label: '券売機3号機：券詰まりの対応', goto: 'ch1.jam_1', requires: ALL(F('ch1.tenko'), T('>=', hm(9, 0))), once: true },
+    { id: 'assist', object: 'nomura', label: '杖をついた野村さんの乗車を手伝う', goto: 'ch1.assist_1', requires: ALL(F('ch1.tenko'), T('>=', hm(9, 20)), T('<', hm(10, 40))), once: true },
+    { id: 'child', object: 'hinata', label: '泣いている子どもに声をかける', goto: 'ch1.child_1', requires: ALL(F('ch1.tenko'), T('>=', hm(9, 45)), T('<', hm(10, 50))), once: true },
+    { id: 'refund', object: 'ticket_office', label: 'きっぷうりば：払い戻しの受付', goto: 'ch1.refund_1', requires: ALL(F('ch1.tenko'), T('>=', hm(10, 10))), once: true },
+    { id: 'shopnote', object: 'sakai', label: '売店の坂井さんから届け物の相談', goto: 'ch1.shop_1', requires: ALL(F('ch1.tenko'), T('>=', hm(11, 20))), once: true },
+    { id: 'toilet', object: 'toilet', label: 'トイレの定期点検', goto: 'ch1.wc_1', requires: ALL(F('ch1.tenko'), T('>=', hm(11, 40))), once: true },
+    { id: 'phone', object: 'phone', label: '指令直通電話に応答する', goto: 'ch1.phone_1', requires: ALL(F('ch1.tenko'), T('>=', hm(13, 0)), F('ch1.delay_done')), once: true },
+    { id: 'guide', object: 'tourist2', label: '外国の旅行客を案内する', goto: 'ch1.guide_1', requires: ALL(F('ch1.tenko'), T('>=', hm(13, 20)), T('<', hm(14, 20))), once: true },
+    { id: 'kaji2', object: 'kajiwara', label: '梶原さんと再会する', goto: 'ch1.kaji2_1', requires: ALL(F('ch1.tenko'), F('legacy.helped_kajiwara'), T('>=', hm(13, 30)), T('<', hm(15, 0))), once: true },
+    { id: 'patrol2', object: 'emergency_btn', label: '午後のホーム巡回（非常停止ボタン等）', goto: 'ch1.patrol2_1', requires: ALL(F('ch1.platform'), T('>=', hm(13, 30))), once: true },
+    { id: 'stroller', object: 'haha', label: 'ベビーカーのお客様の乗降を見守る', goto: 'ch1.stroller_1', requires: ALL(F('ch1.tenko'), T('>=', hm(14, 20)), T('<', hm(15, 20))), once: true },
+    { id: 'gatecheck', object: 'gate_wide', label: '改札機の動作点検', goto: 'ch1.gate_1', requires: ALL(F('ch1.tenko'), T('>=', hm(14, 45))), once: true },
+    { id: 'announce2', object: 'mic', label: '定時のホーム安全放送を作る', goto: 'ch1.ann2_task', requires: ALL(F('ch1.tenko'), T('>=', hm(15, 10))), once: true },
+    { id: 'refill', object: 'vend1', label: '券売機1号機：券紙の補充', goto: 'ch1.refill_1', requires: ALL(F('ch1.tenko'), T('>=', hm(15, 30))), once: true },
+    { id: 'finalcheck', object: 'elevator', label: '終業前の施設点検（エレベーター・AED）', goto: 'ch1.final_1', requires: ALL(F('ch1.tenko'), T('>=', hm(15, 50))), once: true }
   ],
   goals: [
     { id: 'g_tenko', label: '駅長に挨拶し、点呼を受ける', when: F('ch1.tenko') },
@@ -95,7 +115,21 @@ N['ch1.hub'] = {
     { id: 'g_delay', label: '遅れが出たときの旅客対応（10:40ごろ）', when: F('ch1.delay_done') },
     { id: 'g_lunch', label: '昼休憩（12:00）', when: F('ch1.lunch_done') },
     { id: 'g_kaji', label: '（任意）困っているお客様に声をかける', when: F('ch1.kajiwara_done'), optional: true },
-    { id: 'g_lost', label: '（任意）忘れ物の取扱い', when: F('ch1.lost_done'), optional: true }
+    { id: 'g_lost', label: '（任意）忘れ物の取扱い', when: F('ch1.lost_done'), optional: true },
+    { id: 'g_jam', label: '（依頼）券売機3号機の券詰まり', when: F('ch1.jam_done'), optional: true, showWhen: T('>=', hm(9, 0)) },
+    { id: 'g_assist', label: '（依頼）杖のお客様の乗車の手伝い', when: F('ch1.assist_done'), optional: true, showWhen: T('>=', hm(9, 20)) },
+    { id: 'g_child', label: '（依頼）泣いている子どもへの対応', when: F('ch1.child_done'), optional: true, showWhen: T('>=', hm(9, 45)) },
+    { id: 'g_refund', label: '（依頼）払い戻しの受付', when: F('ch1.refund_done'), optional: true, showWhen: T('>=', hm(10, 10)) },
+    { id: 'g_shop', label: '（依頼）売店からの届け物', when: F('ch1.shop_done'), optional: true, showWhen: T('>=', hm(11, 20)) },
+    { id: 'g_wc', label: '（定期）トイレ点検', when: F('ch1.wc_done'), optional: true, showWhen: T('>=', hm(11, 40)) },
+    { id: 'g_phone', label: '（依頼）指令からの電話', when: F('ch1.phone_done'), optional: true, showWhen: T('>=', hm(13, 0)) },
+    { id: 'g_guide', label: '（依頼）外国の旅行客の案内', when: F('ch1.guide_done'), optional: true, showWhen: T('>=', hm(13, 20)) },
+    { id: 'g_patrol2', label: '（定期）午後のホーム巡回', when: F('ch1.patrol2_done'), optional: true, showWhen: T('>=', hm(13, 30)) },
+    { id: 'g_stroller', label: '（依頼）ベビーカーのお客様の見守り', when: F('ch1.stroller_done'), optional: true, showWhen: T('>=', hm(14, 20)) },
+    { id: 'g_gate', label: '（定期）改札機の動作点検', when: F('ch1.gate_done'), optional: true, showWhen: T('>=', hm(14, 45)) },
+    { id: 'g_ann2', label: '（定時）ホーム安全放送', when: F('ch1.ann2_done'), optional: true, showWhen: T('>=', hm(15, 10)) },
+    { id: 'g_refill', label: '（定期）券紙の補充', when: F('ch1.refill_done'), optional: true, showWhen: T('>=', hm(15, 30)) },
+    { id: 'g_final', label: '（終業前）施設の最終点検', when: F('ch1.final_done'), optional: true, showWhen: T('>=', hm(15, 50)) }
   ],
   timed: [
     { id: 'delay', at: hm(10, 40), goto: 'ch1.delay_gate' },
@@ -375,6 +409,193 @@ N['ch2.end'] = {
   id: 'ch2.end', type: 'end', chapter: 'ch2', title: '第2章 最初の週末（体験版・冒頭のみ）',
   summary: '第1章の選択が、週末の過ごし方・人物関係・駅長の最初の言葉に影響しました。第2章の続き以降は未実装です。'
 };
+
+
+// ============ 追加の依頼（時間経過で出現）============
+const done = (flag, minutes, text, extra = []) => [set(flag), { var: { key: 'ch1.extra', add: 1 } }, time(minutes), log(text, 'work'), ...extra];
+const chk = (id, title, intro, items, results, labels) => (N[id] = { id, type: 'task', kind: 'checklist', title, intro, items, results, config: { labels }, view: v3('follow', title) });
+const res3 = (goodNext, midNext, badNext, ge = [], me = [], be = []) => [{ min: 80, goto: goodNext, effects: ge }, { min: 50, goto: midNext, effects: me }, { min: 0, goto: badNext, effects: be }];
+
+// 1) 券売機の券詰まり
+line('ch1.jam_1', [['kubota', '3号機が「券詰まり」を出しています。お客様が少ない今のうちに復旧しましょう。手順を一つずつ確認します。']], 'ch1.jam_task', { view: v3('npc:vend3', '券売機3号機') });
+chk('ch1.jam_task', '券詰まり復旧の手順確認', '各項目が、手順として適切か不適切かを判断してください。', [
+  { id: 'a', label: '使用停止にして「調整中」の掲示を出してから作業する', truth: 'ok', why: '稼働中に作業すると、お客様の誤操作や接触事故につながります。' },
+  { id: 'b', label: 'お客様が並んでいるので、停止せずに券紙を引き抜く', truth: 'ng', why: '稼働中の機械内部に触れるのは危険です。' },
+  { id: 'c', label: '現金部の扉は、担当者の確認なしで開けて点検する', truth: 'ng', why: '現金部は管理が必要です。必ず担当者と一緒に確認します。' },
+  { id: 'd', label: '復旧後は試験発券を行い、正常に動作することを確認する', truth: 'ok', why: '復旧したつもりでも、実際に発券して確認しないと再発に気づけません。' },
+  { id: 'e', label: '復旧した内容を、時刻とともに端末へ記録する', truth: 'ok', why: '記録があれば、次の担当者や保守担当が状況を把握できます。' }
+], res3('ch1.jam_good', 'ch1.jam_mid', 'ch1.jam_bad', [ev('accuracy', 3), sk('ticket', 4), ev('safety', 2)], [ev('accuracy', 1), sk('ticket', 2)], [ev('safety', -2)]), ['適切', '不適切']);
+line('ch1.jam_good', [['kubota', 'その順番を守れば、安全に復旧できます。次は一人でやってみましょう。', 'smile']], 'ch1.jam_end'); line('ch1.jam_mid', [['kubota', '惜しいところがあります。危険な手順は理由と一緒に覚えましょう。']], 'ch1.jam_end'); line('ch1.jam_bad', [['kubota', '券詰まりの復旧では、安全が最優先です。もう一度、一緒に手順を確認しましょう。', 'serious']], 'ch1.jam_end');
+fx('ch1.jam_end', done('ch1.jam_done', 20, '券売機3号機の券詰まりを復旧'), 'ch1.hub');
+
+// 2) 杖をついたお客様の乗車の手伝い（2段階の選択）
+line('ch1.assist_1', [['nomura', 'すまんね、ホームまで階段が続くのは、膝に響いてね。エレベーターはどこにあるのかな。', 'worry']], 'ch1.assist_c1', { view: v3('npc:nomura', 'コンコース') });
+choice('ch1.assist_c1', '野村さんに、どう対応しますか？', [
+  opt('lead', '「エレベーターまでご案内し、ホームまでご一緒します」', 'ch1.assist_2', { tone: 'caring', effects: [time(12), ev('service', 4), rel('nomura', 2, 2)] }),
+  opt('say', '「エレベーターは、入口の右手にあります」と口頭で伝える', 'ch1.assist_2b', { tone: 'quick', effects: [time(3), ev('service', 1)] }),
+  opt('arm', '「階段の手すり側で、腕におつかまりください」', 'ch1.assist_2c', { tone: 'risky', effects: [time(8), ev('safety', -2), rel('nomura', 0, 1)] })
+], { view: v3('npc:nomura') });
+line('ch1.assist_2', [['nomura', 'ありがたいね。ホームでは、どこで待てばいいのかな。']], 'ch1.assist_c2', { effects: [set('ch1.assist_led')] });
+line('ch1.assist_2b', [['nomura', 'そうか、ありがとう。…でも、ホームまで一人で行けるか少し不安でね。']], 'ch1.assist_c2');
+line('ch1.assist_2c', [['kubota', '（そっと近づいて）階段の昇降はお客様の負担が大きいので、エレベーターの利用をおすすめするほうが安全です。']], 'ch1.assist_c2');
+choice('ch1.assist_c2', 'ホームでの乗車について、どうしますか？', [
+  opt('report', '「乗務員に連絡して、乗降の介助を依頼します」', 'ch1.assist_3a', { tone: 'honest', effects: [ev('reporting', 4), ev('safety', 2), rel('nomura', 1, 0)] }),
+  opt('self', '「私が手を貸して、お乗せします」', 'ch1.assist_3b', { tone: 'risky', effects: [ev('safety', -2), ev('service', 1)] }),
+  opt('see', '「ホームの安全な位置までお連れして、見送ります」', 'ch1.assist_3c', { tone: 'neutral', effects: [ev('service', 1), ev('reporting', -1)] })
+]);
+line('ch1.assist_3a', [['nomura', '乗務員さんも手伝ってくれるのかい。助かるよ。気をつけて行ってくるよ。', 'smile'], ['kubota', '乗務員への連絡は、ためらわずに早めに。介助の準備ができます。']], 'ch1.assist_end');
+line('ch1.assist_3b', [['kubota', '乗降のときは、ホームと列車の隙間や段差があります。介助は乗務員と連携して行います。次回は連絡を先に。', 'serious']], 'ch1.assist_end');
+line('ch1.assist_3c', [['nomura', 'ありがとう。ここなら、乗り降りも楽そうだ。'], ['kubota', '見送った後でも、次の駅への連絡があると、降りる駅で待ってもらえます。']], 'ch1.assist_end');
+fx('ch1.assist_end', done('ch1.assist_done', 5, '杖をついたお客様の乗車を手伝う', [{ skill: { key: 'service', add: 2 } }]), 'ch1.hub');
+
+// 3) 迷子（2段階）
+line('ch1.child_1', [['hinata', '（うつむいて）…お母さんが、いない。', 'worry'], ['kubota', '券売機の前で、一人でいたそうです。まず落ち着いて、お名前を聞きましょう。']], 'ch1.child_c1', { view: v3('npc:hinata', '券売機前') });
+choice('ch1.child_c1', 'ひなたさんに、どう対応しますか？', [
+  opt('stay', '目線を合わせて話を聞き、事務室で保護して保護者を待つ', 'ch1.child_2a', { tone: 'caring', effects: [time(10), ev('service', 3), ev('safety', 2), rel('hinata', 2, 2)] }),
+  opt('page', '放送で保護者を呼び出し、その場で一緒に待つ', 'ch1.child_2b', { tone: 'careful', effects: [time(8), ev('service', 2), ev('reporting', 1)] }),
+  opt('search', '一緒に構内を歩いて、保護者を探して回る', 'ch1.child_2c', { tone: 'risky', effects: [time(15), ev('safety', -2), rel('hinata', 1, 1)] })
+], { view: v3('npc:hinata') });
+line('ch1.child_2a', [['hinata', 'お兄ちゃん、あのね、お母さんとお買い物に行く約束だったの。'], ['kubota', '放送で保護者の方に事務室へお越しいただくよう案内します。']], 'ch1.child_3');
+line('ch1.child_2b', [['kubota', '放送の文面は、お子さんの特徴を伝えすぎず、事務室で保護していることを伝えます。']], 'ch1.child_3');
+line('ch1.child_2c', [['kubota', '駅の中を歩き回ると、すれ違いになりやすいです。保護者が探しに来る場所で待つのが基本です。', 'serious']], 'ch1.child_3');
+line('ch1.child_3', [['hinata', '（母親が駆け寄り）ひなた！ ごめんね、ごめんね。', 'worry'], ['hinata', 'お母さん！', 'smile'], ['kubota', '落ち着いて対応できましたね。こういうときは、保護者の方の気持ちも受け止めます。']], 'ch1.child_end', { effects: [set('legacy.child_helped')] });
+fx('ch1.child_end', done('ch1.child_done', 5, '迷子の対応（保護者へ引き渡し）'), 'ch1.hub');
+
+// 4) 払い戻しの受付（確認項目）
+line('ch1.refund_1', [['kubota', '窓口でお客様が、使わなかった乗車券の払い戻しを希望しています。取扱いの前に確認することを選んでください。']], 'ch1.refund_task', { view: v3('npc:shiraishi', 'きっぷうりば') });
+chk('ch1.refund_task', '払い戻しの確認項目', '払い戻しの取扱いで、確認が必要な項目を選んでください。', [
+  { id: 'a', label: '乗車券の有効期間と区間が、払い戻しの対象か', truth: 'ok', why: '期限切れ・使用済みは、払い戻せないことがあります。' },
+  { id: 'b', label: 'お客様が急いでいるので、券面は確認せず現金を渡す', truth: 'ng', why: '券面の確認は省けません。誤払いの原因です。' },
+  { id: 'c', label: '払い戻し手数料（架空：220円）を説明し、了承を得る', truth: 'ok', why: '手数料を説明せず差し引くと、トラブルになります。' },
+  { id: 'd', label: '払い戻した記録を、日時・券種・金額で台帳に残す', truth: 'ok', why: '記録は、後から確認するために必要です。' }
+], res3('ch1.refund_good', 'ch1.refund_mid', 'ch1.refund_bad', [ev('accuracy', 3), ev('service', 2)], [ev('accuracy', 1)], [ev('accuracy', -2)]), ['確認が必要', '不要・不適切']);
+line('ch1.refund_good', [['shiraishi', '窓口は、お金を預かる仕事だ。丁寧さが、そのまま信頼になる。']], 'ch1.refund_end'); line('ch1.refund_mid', [['shiraishi', '確認の抜けは、後で訂正になる。次は声に出して確認しよう。']], 'ch1.refund_end'); line('ch1.refund_bad', [['shiraishi', '現金の取扱いは、特に慎重に。私が確認し直そう。', 'serious']], 'ch1.refund_end');
+fx('ch1.refund_end', done('ch1.refund_done', 15, '払い戻しを受け付ける'), 'ch1.hub');
+
+// 5) 売店からの届け物
+line('ch1.shop_1', [['sakai', 'ごめんなさい、お客さんの忘れ物かしら。レジの下に、財布が置いてあったの。', 'worry'], ['sakai', '駅員さんに渡せば、持ち主に返せるのよね？']], 'ch1.shop_c', { view: v3('npc:sakai', '売店') });
+choice('ch1.shop_c', '財布を、どう取り扱いますか？', [
+  opt('book', '「預かって、遺失物台帳に記録し、事務室で保管します」', 'ch1.shop_r1', { tone: 'honest', effects: [ev('accuracy', 3), ev('reporting', 2), rel('sakai', 1, 1)] }),
+  opt('look', '「中を見て、持ち主の連絡先を探します」', 'ch1.shop_r2', { tone: 'risky', effects: [ev('accuracy', -2), ev('safety', -1)] }),
+  opt('wait', '「しばらく売店で預かってください」', 'ch1.shop_r3', { tone: 'neutral', effects: [ev('reporting', -2)] })
+], { view: v3('npc:sakai') });
+line('ch1.shop_r1', [['sakai', '台帳に書くのね。分かったわ。持ち主が来たら、駅に聞くよう伝えておく。', 'smile']], 'ch1.shop_end'); line('ch1.shop_r2', [['kubota', '財布の中身を勝手に見るのは、避けます。必ず二人以上で確認し、記録します。', 'serious']], 'ch1.shop_end'); line('ch1.shop_r3', [['kubota', '預かる場所が増えると、管理が曖昧になります。駅で一元管理しましょう。']], 'ch1.shop_end');
+fx('ch1.shop_end', done('ch1.shop_done', 10, '売店から届けられた財布の取扱い'), 'ch1.hub');
+
+// 6) トイレ点検
+line('ch1.wc_1', [['kubota', '定期点検の時間です。多目的トイレもあるので、見落とさないように。']], 'ch1.wc_task', { view: v3('follow', 'トイレ') });
+chk('ch1.wc_task', 'トイレ定期点検', '各項目を「正常」「異常」で判定してください。', [
+  { id: 'a', label: '多目的トイレの非常呼出ボタンを押すと、事務室に通知が届く', truth: 'ok', why: '正常です。' },
+  { id: 'b', label: '男性用の手洗い場のペーパーが切れている', truth: 'ng', why: '備品の補充が必要です。' },
+  { id: 'c', label: 'ベビーシートが、固定されて安全に使える', truth: 'ok', why: '正常です。' },
+  { id: 'd', label: '女性用の鏡に、大きなひびがある', truth: 'ng', why: 'けがの原因になります。使用を止めて修繕を依頼します。' },
+  { id: 'e', label: '床が濡れていて、滑りやすい箇所がある', truth: 'ng', why: '転倒の原因です。清掃と注意の掲示が必要です。' }
+], res3('ch1.wc_good', 'ch1.wc_mid', 'ch1.wc_bad', [ev('safety', 3), ev('accuracy', 2)], [ev('safety', 1)], [ev('safety', -3)]), ['正常', '異常']);
+line('ch1.wc_good', [['kubota', 'ひびや濡れ床は、見つけた人が止めるのが大事です。']], 'ch1.wc_end'); line('ch1.wc_mid', [['kubota', '見落としがあります。トイレは利用者の多い場所です。もう一度見てきましょう。']], 'ch1.wc_end'); line('ch1.wc_bad', [['kubota', 'けがにつながる箇所を見逃すと危険です。一緒に確認し直しましょう。', 'serious']], 'ch1.wc_end');
+fx('ch1.wc_end', done('ch1.wc_done', 15, 'トイレの定期点検'), 'ch1.hub');
+
+// 7) 指令からの電話
+line('ch1.phone_1', [['hamaguchi', '輸送指令の浜口です。先ほどの遅れの件、回復の状況を確認させてください。駅の様子はどうですか。']], 'ch1.phone_c', { view: v3('npc:shiraishi', '駅事務室 電話') });
+choice('ch1.phone_c', '指令への報告を、どうしますか？', [
+  opt('fact', '「確認できた事実だけを、時刻の順にお伝えします」', 'ch1.phone_r1', { tone: 'honest', effects: [ev('reporting', 4), rel('hamaguchi', 2, 0)] }),
+  opt('guess', '「たぶん、もう落ち着いていると思います」', 'ch1.phone_r2', { tone: 'risky', effects: [ev('reporting', -3), ev('accuracy', -2), rel('hamaguchi', -1, 0)] }),
+  opt('later', '「今は手が離せないので、あとで折り返します」', 'ch1.phone_r3', { tone: 'neutral', effects: [ev('reporting', -2)] })
+], { view: v3('npc:shiraishi') });
+line('ch1.phone_r1', [['hamaguchi', '助かります。事実と時刻が分かれば、次の判断ができます。'], ['shiraishi', '電話は短く、事実から。それが指令との信頼になる。', 'smile']], 'ch1.phone_end'); line('ch1.phone_r2', [['hamaguchi', '「たぶん」では判断できません。見たこと、確認したことを教えてください。', 'serious']], 'ch1.phone_end'); line('ch1.phone_r3', [['hamaguchi', '分かりました。ただ、5分以内に折り返してください。']], 'ch1.phone_end');
+fx('ch1.phone_end', done('ch1.phone_done', 5, '指令からの電話に応答'), 'ch1.hub');
+
+// 8) 外国の旅行客
+line('ch1.guide_1', [['tourist2', 'Excuse me... 星峰線の観光列車に、乗りたいです。どこから乗りますか？', 'worry']], 'ch1.guide_c', { view: v3('npc:tourist2', '観光案内所の前') });
+choice('ch1.guide_c', 'どう案内しますか？', [
+  opt('map', '路線図を指さしながら、ゆっくり・短い言葉で伝える', 'ch1.guide_r1', { tone: 'careful', effects: [ev('service', 4), sk('guide', 4), rel('tourist2', 1, 1)] }),
+  opt('phone', '翻訳アプリを使って、画面を見せながら伝える', 'ch1.guide_r2', { tone: 'quick', effects: [ev('service', 2), sk('guide', 2)] }),
+  opt('call', '駅員の久保田を呼んで、対応を代わってもらう', 'ch1.guide_r3', { tone: 'neutral', effects: [ev('service', -1), ev('teamwork', 1)] })
+], { view: v3('npc:tourist2') });
+line('ch1.guide_r1', [['tourist2', 'Oh, I see! Thank you. あの、乗り換えは、どこですか？'], ['kubota', 'ジェスチャーと短い言葉は、とても効果的です。']], 'ch1.guide_end'); line('ch1.guide_r2', [['tourist2', 'Ah, 分かりました。Thank you.'], ['kubota', 'アプリは便利ですが、誤訳も。路線図と合わせて確認しましょう。']], 'ch1.guide_end'); line('ch1.guide_r3', [['kubota', '呼んでくれてありがとうございます。次は、まず自分で試してみてください。']], 'ch1.guide_end');
+fx('ch1.guide_end', done('ch1.guide_done', 12, '外国の旅行客を案内'), 'ch1.hub');
+
+// 9) 梶原さんとの再会（第1章の選択が当日に影響）
+line('ch1.kaji2_1', [['kajiwara', 'あら、朝のお兄さん、いえ、あなたね。病院の帰りに寄ってみたのよ。', 'smile'], ['kajiwara', 'おかげさまで、予約に間に合ったわ。これ、お礼の飴だけど、受け取ってちょうだい。']], 'ch1.kaji2_c', { view: v3('npc:kajiwara', '改札前') });
+choice('ch1.kaji2_c', '梶原さんの申し出に、どう答えますか？', [
+  opt('decline', '「お気持ちだけ、ありがたく頂きます。業務中は受け取れない決まりです」', 'ch1.kaji2_r1', { tone: 'honest', effects: [ev('accuracy', 2), ev('service', 2), rel('kajiwara', 1, 1)] }),
+  opt('accept', '「ありがとうございます」と受け取る', 'ch1.kaji2_r2', { tone: 'risky', effects: [ev('accuracy', -2), rel('kajiwara', 1, 2)] }),
+  opt('office', '「駅長に確認してから、お返事してもいいですか」', 'ch1.kaji2_r3', { tone: 'careful', effects: [ev('reporting', 3), ev('service', 1)] })
+], { view: v3('npc:kajiwara') });
+line('ch1.kaji2_r1', [['kajiwara', 'そうなの。真面目ねえ。でも、また来週も来るから、顔を見せてちょうだいね。', 'smile']], 'ch1.kaji2_end', { effects: [set('legacy.kaji_friend')] }); line('ch1.kaji2_r2', [['kubota', '（後で）お客様からの物品は、規則で受け取れません。断り方も、覚えておきましょう。']], 'ch1.kaji2_end'); line('ch1.kaji2_r3', [['kajiwara', '駅長さんに？ ふふ、じゃあお願いするわ。']], 'ch1.kaji2_end', { effects: [set('legacy.kaji_friend')] });
+fx('ch1.kaji2_end', done('ch1.kaji2', 8, '梶原さんと再会'), 'ch1.hub');
+
+// 10) 午後のホーム巡回
+line('ch1.patrol2_1', [['yamashina', '午後の巡回、行こう。午前の指摘がちゃんと直っているか、確認しよう。']], 'ch1.patrol2_task', { view: v3('npc:yamashina', '島式ホーム') });
+chk('ch1.patrol2_task', '午後のホーム巡回', '各項目を「正常」「異常」で判定してください。', [
+  { id: 'a', label: '午前に指摘した点字ブロックの浮きが、修繕されている', truth: 'ok', why: '修繕済みであることを確認できました。' },
+  { id: 'b', label: 'ホームに、飲みかけの飲み物が置いたままになっている', truth: 'ng', why: 'こぼれると滑ります。回収が必要です。' },
+  { id: 'c', label: '列車非常停止ボタンのカバーが閉じている', truth: 'ok', why: '正常です。' },
+  { id: 'd', label: 'ホーム端の白線の内側で、お客様が列車を待っている', truth: 'ok', why: '正常です。' },
+  { id: 'e', label: '待合室の扉が半開きで、閉まらなくなっている', truth: 'ng', why: '故障の可能性があります。報告が必要です。' }
+], res3('ch1.patrol2_good', 'ch1.patrol2_mid', 'ch1.patrol2_bad', [ev('safety', 3), sk('patrol', 3)], [ev('safety', 1)], [ev('safety', -2)]), ['正常', '異常']);
+line('ch1.patrol2_good', [['yamashina', '二周目のほうが、気づけるものが多いな。', 'smile']], 'ch1.patrol2_end', { effects: [rel('yamashina', 1, 1)] }); line('ch1.patrol2_mid', [['yamashina', 'ちょっと見落としたな。もう一回、俺と見よう。']], 'ch1.patrol2_end'); line('ch1.patrol2_bad', [['yamashina', '大丈夫か。後で一緒に手順を確認するよ。']], 'ch1.patrol2_end');
+fx('ch1.patrol2_end', done('ch1.patrol2_done', 25, '午後のホーム巡回'), 'ch1.hub');
+
+// 11) ベビーカーのお客様
+line('ch1.stroller_1', [['haha', 'すみません、この電車に、ベビーカーのまま乗れますか？ 少し段差が気になって。', 'worry']], 'ch1.stroller_c', { view: v3('npc:haha', 'ホーム') });
+choice('ch1.stroller_c', 'どう対応しますか？', [
+  opt('conductor', '「車掌に声をかけ、ドアの位置と乗降を見守ります」', 'ch1.stroller_r1', { tone: 'careful', effects: [ev('safety', 3), ev('service', 2), ev('reporting', 1)] }),
+  opt('lift', '「お持ちします」と、ベビーカーを抱えて乗せる', 'ch1.stroller_r2', { tone: 'risky', effects: [ev('safety', -3), ev('service', 1)] }),
+  opt('guide', '「ドアの位置と、段差のあるところだけご案内します」', 'ch1.stroller_r3', { tone: 'neutral', effects: [ev('service', 2), ev('safety', 1)] })
+], { view: v3('npc:haha') });
+line('ch1.stroller_r1', [['haha', 'ありがとうございます。助かります。', 'smile'], ['kubota', 'ホームと列車の間は、思ったより危険です。見守りは大事な仕事です。']], 'ch1.stroller_end'); line('ch1.stroller_r2', [['kubota', 'ベビーカーを抱えると、足元が不安定になります。お客様の動きに合わせて、安全に見守る方法を選びましょう。', 'serious']], 'ch1.stroller_end'); line('ch1.stroller_r3', [['haha', '分かりやすいです。ありがとう。']], 'ch1.stroller_end');
+fx('ch1.stroller_end', done('ch1.stroller_done', 10, 'ベビーカーのお客様の乗降を見守る'), 'ch1.hub');
+
+// 12) 改札機の点検
+line('ch1.gate_1', [['kubota', '改札機の動作点検です。通行する人がいない時間に、一台ずつ確認します。']], 'ch1.gate_task', { view: v3('gate_back', '改札機') });
+chk('ch1.gate_task', '改札機の動作点検', '各項目を「正常」「異常」で判定してください。', [
+  { id: 'a', label: 'ICカードをかざすと、読取音が鳴り、扉が開く', truth: 'ok', why: '正常です。' },
+  { id: 'b', label: '5番通路の扉が、通行後も閉まらない', truth: 'ng', why: '通過センサーまたは扉機構の不具合です。使用停止と保守依頼が必要です。' },
+  { id: 'c', label: '幅広通路の幅は十分で、車いすが通れる', truth: 'ok', why: '正常です。' },
+  { id: 'd', label: '3番通路の進入可表示が、緑と赤で同時に点灯している', truth: 'ng', why: '表示灯の異常です。お客様が迷います。' }
+], res3('ch1.gate_good', 'ch1.gate_mid', 'ch1.gate_bad', [ev('accuracy', 3), ev('safety', 2)], [ev('accuracy', 1)], [ev('safety', -2)]), ['正常', '異常']);
+line('ch1.gate_good', [['kubota', '改札機は、毎日たくさんの人が通ります。小さな異常も、早く見つけるのが大事です。']], 'ch1.gate_end'); line('ch1.gate_mid', [['kubota', '見落としがあります。もう一度、通路ごとに確認しましょう。']], 'ch1.gate_end'); line('ch1.gate_bad', [['kubota', '改札機の異常は、混雑時に大きな影響が出ます。一緒に確認し直しましょう。', 'serious']], 'ch1.gate_end');
+fx('ch1.gate_end', done('ch1.gate_done', 20, '改札機の動作点検'), 'ch1.hub');
+
+// 13) 定時放送（ホーム安全）
+N['ch1.ann2_task'] = { id: 'ch1.ann2_task', type: 'task', kind: 'compose', title: 'ホーム安全放送の作成', intro: '帰宅時間帯の前に、ホームでの注意を呼びかける放送を作ります。',
+  slots: [
+    { id: 'hello', label: '呼びかけ', options: [{ id: 'h1', text: 'ご案内いたします。', good: true, why: '丁寧で簡潔です。' }, { id: 'h2', text: 'おい、そこの人たち。', good: false, why: '不適切な呼びかけです。' }, { id: 'h3', text: 'お急ぎください。', good: false, why: '急ぐように促すのは危険です。' }] },
+    { id: 'body', label: '内容', options: [{ id: 'b1', text: '黄色い線の内側で、列車をお待ちください。', good: true, why: '具体的で分かりやすい内容です。' }, { id: 'b2', text: 'ホームでは、走らないでください。', good: false, why: '大事な注意ですが、この放送の主題（線の内側）が抜けています。' }, { id: 'b3', text: '危ないので、あまり近づかないでください。', good: false, why: '「危ない」「あまり」では行動が分かりません。' }] },
+    { id: 'ask', label: 'お願い', options: [{ id: 'a1', text: '歩きスマホは、おやめください。ご協力をお願いいたします。', good: true, why: '行動と協力のお願いが入っています。' }, { id: 'a2', text: 'スマホを見ている人は、事故が起きても責任を負いかねます。', good: false, why: '責任を持ち出すのは不適切です。' }, { id: 'a3', text: 'どうぞご自由にお過ごしください。', good: false, why: '注意喚起になりません。' }] }
+  ],
+  results: [{ min: 66, goto: 'ch1.ann2_good', effects: [ev('service', 2), ev('safety', 3)] }, { min: 34, goto: 'ch1.ann2_mid', effects: [ev('safety', 1)] }, { min: 0, goto: 'ch1.ann2_bad', effects: [ev('safety', -1)] }], view: v3('npc:shiraishi', '駅事務室 放送設備') };
+line('ch1.ann2_good', [['shiraishi', '具体的な行動と、お願いの言葉。理想的な放送だ。', 'smile']], 'ch1.ann2_end'); line('ch1.ann2_mid', [['shiraishi', '悪くない。ただ、何をしてほしいのか、もう少し具体的に。']], 'ch1.ann2_end'); line('ch1.ann2_bad', [['shiraishi', '放送は多くの人に届く。言葉は慎重に選びなさい。', 'serious']], 'ch1.ann2_end');
+fx('ch1.ann2_end', done('ch1.ann2_done', 10, 'ホーム安全放送'), 'ch1.hub');
+
+// 14) 券紙の補充
+line('ch1.refill_1', [['kubota', '1号機の券紙が残り少なくなっています。補充の手順を確認しましょう。']], 'ch1.refill_task', { view: v3('npc:vend1', '券売機1号機') });
+chk('ch1.refill_task', '券紙補充の手順', '各項目が、手順として適切か不適切かを判断してください。', [
+  { id: 'a', label: '使用停止にしてから、前面の扉を開ける', truth: 'ok', why: '稼働中は開けません。' },
+  { id: 'b', label: '券紙の向きと、通し方を確認してから取り付ける', truth: 'ok', why: '逆向きだと詰まりの原因になります。' },
+  { id: 'c', label: '時間がないので、補充した後の試験発券は省略する', truth: 'ng', why: '試験発券で、正常に出ることを確認します。' },
+  { id: 'd', label: '使用済みの巻芯や紙くずは、その場に置いて帰る', truth: 'ng', why: '片付けまでが作業です。' }
+], res3('ch1.refill_good', 'ch1.refill_mid', 'ch1.refill_bad', [ev('accuracy', 3), sk('ticket', 3)], [ev('accuracy', 1)], [ev('accuracy', -2)]), ['適切', '不適切']);
+line('ch1.refill_good', [['kubota', '補充は一人でもできます。次回は任せますね。', 'smile']], 'ch1.refill_end'); line('ch1.refill_mid', [['kubota', '手順を一つずつ指差し確認しながら、もう一度。']], 'ch1.refill_end'); line('ch1.refill_bad', [['kubota', '手順を飛ばすと、お客様の前で止まります。手順は必ず守ります。', 'serious']], 'ch1.refill_end');
+fx('ch1.refill_end', done('ch1.refill_done', 15, '券紙の補充'), 'ch1.hub');
+
+// 15) 終業前の施設点検
+line('ch1.final_1', [['shiraishi', '終業前の施設点検だ。エレベーターとAEDを見てきなさい。']], 'ch1.final_task', { view: v3('follow', '終業前点検') });
+chk('ch1.final_task', '終業前の施設点検', '各項目を「正常」「異常」で判定してください。', [
+  { id: 'a', label: 'エレベーターの非常呼出ボタンが作動し、事務室につながる', truth: 'ok', why: '正常です。' },
+  { id: 'b', label: 'AEDの使用期限表示が、今月で切れる', truth: 'ng', why: '期限が近いものは、交換の手配が必要です。' },
+  { id: 'c', label: 'エレベーターの点検表の署名が、今日の分だけ空いている', truth: 'ng', why: '記録の漏れです。確認して記入します。' },
+  { id: 'd', label: '案内表示の電球が切れている箇所はない', truth: 'ok', why: '正常です。' }
+], res3('ch1.final_good', 'ch1.final_mid', 'ch1.final_bad', [ev('safety', 3), ev('reporting', 2)], [ev('safety', 1)], [ev('safety', -2)]), ['正常', '異常']);
+line('ch1.final_good', [['shiraishi', '記録と設備を、両方見る。それができれば、一人前の第一歩だ。', 'smile']], 'ch1.final_end'); line('ch1.final_mid', [['shiraishi', '見落としは、次の勤務の人の負担になる。もう一度。']], 'ch1.final_end'); line('ch1.final_bad', [['shiraishi', '点検は、次の人への引継ぎでもある。丁寧に。', 'serious']], 'ch1.final_end');
+fx('ch1.final_end', done('ch1.final_done', 15, '終業前の施設点検'), 'ch1.hub');
+
+// ---- 終業面談：今日の依頼件数に応じた講評 ----
+branch('ch1.cl_count', [[{ var: { key: 'ch1.extra', op: '>=', val: 9 } }, 'ch1.cl_busy'], [{ var: { key: 'ch1.extra', op: '>=', val: 4 } }, 'ch1.cl_mid']], 'ch1.cl_few');
+line('ch1.cl_busy', [['shiraishi', '今日はずいぶん、依頼をこなしたな。初日でこれだけ動ければ、周りの信頼も上がる。', 'smile'], ['kubota', '一つひとつ、記録も残してくれていました。']], 'ch1.closing2', { effects: [ev('teamwork', 3), ev('service', 2), set('legacy.busy_day')], view: v25('office', ['shiraishi', 'kubota']) });
+line('ch1.cl_mid', [['shiraishi', '依頼に応えながら、基本の業務も進められた。バランスは悪くない。']], 'ch1.closing2', { effects: [ev('teamwork', 1)], view: v25('office', ['shiraishi']) });
+line('ch1.cl_few', [['shiraishi', '依頼が出ていたのに、対応できなかったものがあったようだ。駅は、次々と仕事が生まれる場所だ。明日は、周りをもっと見てみよう。']], 'ch1.closing2', { effects: [ev('teamwork', -1)], view: v25('office', ['shiraishi']) });
+for (const id of ['ch1.cl_admit', 'ch1.cl_blame', 'ch1.cl_silent', 'ch1.cl_careful', 'ch1.cl_generic']) N[id].next = 'ch1.cl_count';
 
 const chapters = [
   { id: 'ch1', title: '新しい名札', season: 'S1 新しい名札', start: 'ch1.p1', status: 'playable', synopsis: '入社式の翌日、青嶺中央駅での勤務初日。配属面談から終業面談までを実装済み。' },

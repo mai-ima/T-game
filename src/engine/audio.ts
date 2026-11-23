@@ -79,6 +79,8 @@ export class AudioEngine {
   }
   /** 改札機（ピッ／ピンポーン） */
   gate(ok = true) { this.eventLog.push({ t: 0, kind: 'gate' }); if (ok) this.tone(2400, 0.07, 'square', 0.07); else { this.tone(900, 0.22, 'square', 0.08); this.tone(700, 0.22, 'square', 0.08, 0.2); } }
+  /** 自動ドア（モーター音）・開き戸（ラッチ音） */
+  door(kind: 'slide' | 'swing') { this.eventLog.push({ t: 0, kind: 'door' }); if (kind === 'slide') { this.burst(0.5, 700, 1.2, 0.05, 'bandpass'); this.tone(180, 0.4, 'sawtooth', 0.025, 0, undefined, 260); } else { this.burst(0.06, 1400, 2, 0.1, 'bandpass'); this.tone(240, 0.1, 'square', 0.04); } }
   footstep(surface: 'tile' | 'concrete' | 'stairs' = 'tile') { const f = surface === 'stairs' ? 520 : surface === 'tile' ? 900 : 650; this.burst(0.07, f + Math.random() * 120, 1.2, surface === 'stairs' ? 0.16 : 0.1); }
   /** 接近放送・発車メロディ風の独自ジングル（既存曲ではない）＋字幕 */
   chime(kind: 'approach' | 'depart' | 'info' = 'approach', caption?: string) {

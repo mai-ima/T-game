@@ -43,7 +43,7 @@ export class StoryRunner {
       case 'choice': return { kind: 'choice', node: n, options: n.options.filter(o => evalCond(o.requires, w)) };
       case 'hub': {
         const interactions = n.interactions.filter(i => evalCond(i.requires, w) && !(i.hideWhen && evalCond(i.hideWhen, w)) && !(i.once && w.story.once.includes(n.id + '/' + i.id)));
-        const goals = n.goals.map(g => ({ id: g.id, label: g.label, done: evalCond(g.when, w), optional: g.optional }));
+        const goals = n.goals.filter(g => !g.showWhen || evalCond(g.showWhen, w)).map(g => ({ id: g.id, label: g.label, done: evalCond(g.when, w), optional: g.optional }));
         return { kind: 'hub', node: n, interactions, goals, canExit: evalCond(n.exit.requires, w) };
       }
       case 'task': return { kind: 'task', node: n };

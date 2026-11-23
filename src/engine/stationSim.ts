@@ -38,6 +38,7 @@ export function canStandAt(d: StationData, x: number, z: number, y: number, r = 
   return h;
 }
 
+const HIDDEN = new Set(['traveler', 'hinata', 'nomura', 'haha', 'tourist2']);
 export class StationSim {
   player: Ent = { id: 'player', x: 0, y: 0, z: -36, yaw: Math.PI, visible: true, speed: 0, walking: false };
   npcs: Record<string, Npc> = {}; crowd: Crowd[] = [];
@@ -46,9 +47,9 @@ export class StationSim {
   /** 初期状態へ戻す（RenderManagerが同一インスタンスを参照し続けられるように作り直しはしない） */
   reset() {
     const data = this.data; this.time = 0; this.npcs = {}; this.crowd = []; Object.assign(this.player, { x: 0, y: 0, z: -36, yaw: Math.PI, speed: 0, walking: false });
-    for (const a of Object.values(data.anchors)) if (a.kind === 'npc') this.npcs[a.id] = { id: a.id, x: a.x, y: a.y, z: a.z, yaw: a.yaw, anchorYaw: a.yaw, label: a.label, visible: a.id !== 'traveler', speed: 0, walking: false };
+    for (const a of Object.values(data.anchors)) if (a.kind === 'npc') this.npcs[a.id] = { id: a.id, x: a.x, y: a.y, z: a.z, yaw: a.yaw, anchorYaw: a.yaw, label: a.label, visible: !HIDDEN.has(a.id), speed: 0, walking: false };
     const routes = Object.keys(data.routes).filter(k => k !== 'paced');
-    for (let i = 0; i < 9; i++) this.crowd.push({ id: 'pax' + i, route: routes[i % routes.length], s: i * 9, x: 0, y: 0, z: 0, yaw: 0, visible: false, speed: 0, walking: true, walkSpeed: 1.1 + (i % 3) * 0.2, look: i, wait: 0 });
+    for (let i = 0; i < 16; i++) this.crowd.push({ id: 'pax' + i, route: routes[i % routes.length], s: i * 9, x: 0, y: 0, z: 0, yaw: 0, visible: false, speed: 0, walking: true, walkSpeed: 1.1 + (i % 3) * 0.2, look: i, wait: 0 });
     for (const c of this.crowd) this.placeCrowd(c, 0);
   }
   spawn(name: string) { const a = this.data.anchors[name]; if (a) { this.player.x = a.x; this.player.y = a.y; this.player.z = a.z; this.player.yaw = a.yaw; } }

@@ -13,7 +13,7 @@ export type Cond =
   | { time: { op: Op; val: number } }
   | { visited: string } | { notVisited: string }
   | { chose: { node: string; option: string } }
-  | { done: string }
+  | { done: string } | { nodePrefix: string }
   | { all: Cond[] } | { any: Cond[] } | { not: Cond };
 
 export type EvalKey = 'service'|'accuracy'|'reporting'|'teamwork'|'safety';
@@ -62,7 +62,7 @@ export interface Interaction {
   id: string; object: string; label: string; goto: string;
   requires?: Cond; once?: boolean; minutes?: number; icon?: string; hideWhen?: Cond;
 }
-export interface Goal { id: string; label: string; when: Cond; optional?: boolean }
+export interface Goal { id: string; label: string; when: Cond; optional?: boolean; showWhen?: Cond }
 export interface TimedEvent { id: string; at: number; when?: Cond; goto: string; once?: boolean }
 export interface HubNode extends Base {
   type: 'hub'; scene: string; title: string; hint?: string;
@@ -85,7 +85,7 @@ export type StoryNode = LineNode | ChoiceNode | BranchNode | EffectNode | HubNod
 export interface ChapterMeta { id: string; title: string; season: string; start: string; status: 'playable'|'teaser'|'planned'; synopsis: string }
 export interface CharacterDef {
   id: string; name: string; kana?: string; role: string; dept: string; age: number; years: number;
-  uniform: string; hair: string; skin: string; trait: string; bio: string; gender?: 'm'|'f'|'x'; accessory?: 'cap'|'glasses'|'none'|'bag'|'cane';
+  uniform: string; hair: string; skin: string; trait: string; bio: string; gender?: 'm'|'f'|'x'; accessory?: 'cap'|'glasses'|'none'|'bag'|'cane'|'suitcase'; height?: number; visibleWhen?: Cond;
 }
 export interface StoryData {
   storyId: string; mode: ModeId; title: string; subtitle: string; startYear: number;

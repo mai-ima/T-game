@@ -21,7 +21,7 @@ export interface RMOptions {
   characters: Record<string, CharacterDef>; playerName: string; quality: QualityId; auto: boolean;
   onTap?: (id: string, near: boolean) => void; onFootstep?: (surface: 'tile' | 'concrete' | 'stairs') => void;
   onRailEvent?: (e: { type: 'approach' | 'arrive' | 'depart'; service: TrainState['service'] }) => void;
-  onGate?: (ok: boolean) => void; onQuality?: (q: QualityId) => void; onTrainAudio?: (speed01: number, gain: number, pan: number, dwell: boolean) => void;
+  onGate?: (ok: boolean) => void; onDoor?: (kind: 'slide' | 'swing') => void; onQuality?: (q: QualityId) => void; onTrainAudio?: (speed01: number, gain: number, pan: number, dwell: boolean) => void;
 }
 
 const MARK_H: Record<string, number> = { tactile: 1.3, lost_item: 1.4, elevator: 3.4, aed: 2.3, vend2: 2.5, roster_board: 2.5, terminal: 1.7, departure_board: 3.6, timetable: 2.3, emergency_btn: 1.7, fare_map: 3.2, gate_wide: 1.8, mic: 1.6, ticket_office: 2.4 };
@@ -205,7 +205,7 @@ export class RenderManager {
       this.acc -= 1 / 60; steps++;
     }
     if (this.sim.player.walking && this.o.onFootstep) { this.walkPhase += this.sim.player.speed * dt * 2.3; const sg = Math.sin(this.walkPhase) >= 0 ? 1 : -1; if (sg !== this.lastStepSign) { this.lastStepSign = sg; const y = this.sim.player.y; this.o.onFootstep(y > 0.1 && y < D - 0.1 && Math.abs(this.sim.player.x) > 14 || (y > 0.1 && this.sim.player.z < -12 && this.sim.player.z > -26) ? 'stairs' : y > 1 && y < 2 ? 'concrete' : 'tile'); } }
-    this.updateRail(dt); this.updateEntities(dt); this.updateGates(dt); this.updateMarkers(); this.updateCamera(dt); this.render();
+    this.updateRail(dt); this.updateEntities(dt); this.updateGates(dt); this.updateDoors(dt); this.updateMarkers(); this.updateCamera(dt); this.render();
     this.onUpdate?.({ t: this.time });
   }
 
@@ -250,6 +250,18 @@ export class RenderManager {
       const near = pts.some(q => Math.abs(q.y - D) < 1.2 && Math.abs(q.x - g.cx) < (g.wide ? 0.75 : 0.5) && Math.abs(q.z - GATE_Z) < 1.15);
       if (near && g.target === 0 && Math.hypot(g.cx - p.x, GATE_Z - p.z) < 14) this.o.onGate?.(true); g.target = near ? 1 : 0;
       g.open += (g.target - g.open) * Math.min(1, dt * 9); const a = g.open * Math.PI / 2 * 0.97; if (g.left && g.right) { g.left.rotation.y = -a; g.right.rotation.y = -a; }
+    }
+  }
+  /** 自動ドア・開き戸：近くに人がいれば開き、離れると閉じる */
+  private updateDoors(dt: number) {
+    const ds = this.data.dynamic.doors; if (!ds.length) return; const p = this.sim.player;
+    const pts: { x: number; y: number; z: number }[] = [{ x: p.x, y: p.y, z: p.z }]; for (const c of this.sim.crowd) if (c.visible) pts.push(c); for (const n of Object.values(this.sim.npcs)) if (n.visible) pts.push(n);
+    for (const d of ds) {
+      const near = pts.some(q => Math.abs(q.y - d.level) < 1.6 && Math.hypot(q.x - d.cx, q.z - d.cz) < d.radius);
+      if (near && d.target === 0 && Math.hypot(d.cx - p.x, d.cz - p.z) < 10) this.o.onDoor?.(d.kind);
+      d.target = near ? 1 : 0; d.open += (d.target - d.open) * Math.min(1, dt * (d.kind === 'slide' ? 5 : 6));
+      if (d.kind === 'slide') d.leaves.forEach((l, i) => { const off = d.closed[i] + d.dirs[i] * d.open * (d.width / 2 - 0.05); if (d.axis === 'x') l.position.x = d.cx + off; else l.position.z = d.cz - off; });
+      else d.leaves.forEach((l, i) => { l.rotation.y = d.closed[i] + d.dirs[i] * d.open * d.sweep; });
     }
   }
   private updateMarkers() {

@@ -12,7 +12,7 @@ const matCache = new Map<string, THREE.MeshStandardMaterial>();
 const Mt = (c: string, r = 0.8, m = 0) => { const k = c + r + m; return matCache.get(k) ?? (matCache.set(k, new THREE.MeshStandardMaterial({ color: c, roughness: r, metalness: m })), matCache.get(k)!); };
 
 export function lookFromDef(d: CharacterDef): HumanoidLook {
-  return { uniform: d.uniform, hair: d.hair, skin: d.skin, accessory: d.accessory, gender: d.gender, staff: d.dept === 'station' || d.dept === 'hr' || d.dept === 'dispatch', cap: d.accessory === 'cap' };
+  return { uniform: d.uniform, hair: d.hair, skin: d.skin, accessory: d.accessory, gender: d.gender, height: d.height, staff: d.dept === 'station' || d.dept === 'hr' || d.dept === 'dispatch', cap: d.accessory === 'cap' };
 }
 
 export function createHumanoid(look: HumanoidLook, name?: string): Humanoid {

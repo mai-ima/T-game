@@ -25,8 +25,8 @@ export function ChecklistTask({ node, onDone }: { node: TaskNode; onDone: Done }
       {items.map(i => (
         <div key={i.id} className={'item' + (fin ? (ans[i.id] === i.truth ? ' ok' : ' ng') : '')}>
           <div>{i.label}</div>
-          <div className="tgl">{(['ok', 'ng'] as const).map(v => <button key={v} disabled={fin} className={'btn sm' + (ans[i.id] === v ? ' on' : '')} onClick={() => setAns(a => ({ ...a, [i.id]: v }))}>{v === 'ok' ? '正常' : '異常'}</button>)}</div>
-          {fin && <div className="why">{ans[i.id] === i.truth ? '○ 正解。' : `× 正しくは「${i.truth === 'ok' ? '正常' : '異常'}」。`}{i.why}</div>}
+          <div className="tgl">{(['ok', 'ng'] as const).map(v => <button key={v} disabled={fin} className={'btn sm' + (ans[i.id] === v ? ' on' : '')} onClick={() => setAns(a => ({ ...a, [i.id]: v }))}>{v === 'ok' ? (node.config?.labels?.[0] ?? '正常') : (node.config?.labels?.[1] ?? '異常')}</button>)}</div>
+          {fin && <div className="why">{ans[i.id] === i.truth ? '○ 正解。' : `× 正しくは「${i.truth === 'ok' ? (node.config?.labels?.[0] ?? '正常') : (node.config?.labels?.[1] ?? '異常')}」。`}{i.why}</div>}
         </div>
       ))}
       {!fin ? <button className="btn primary" disabled={Object.keys(ans).length < items.length} onClick={() => setFin(true)}>判定する（{Object.keys(ans).length}/{items.length}）</button>

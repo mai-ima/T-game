@@ -30,7 +30,7 @@ export function lintStory(s: StoryData): LintIssue[] {
     const conds: (Cond | undefined)[] = [];
     if (n.type === 'choice') n.options.forEach(o => conds.push(o.requires));
     if (n.type === 'branch') n.cases.forEach(c => conds.push(c.when));
-    if (n.type === 'hub') { n.interactions.forEach(i => { conds.push(i.requires, i.hideWhen); }); n.goals.forEach(g => conds.push(g.when)); conds.push(n.exit.requires); n.timed?.forEach(t => conds.push(t.when)); }
+    if (n.type === 'hub') { n.interactions.forEach(i => { conds.push(i.requires, i.hideWhen); }); n.goals.forEach(g => conds.push(g.when, g.showWhen)); conds.push(n.exit.requires); n.timed?.forEach(t => conds.push(t.when)); }
     for (const c of conds) { const r = condRefs(c); r.flags.forEach(f => { if (!setFlags.has(f)) out.push({ level: 'error', node: id, msg: `どこでも設定されないフラグを参照: ${f}` }); }); r.chars.forEach(ch => { if (!s.characters[ch]) out.push({ level: 'error', node: id, msg: `未定義の人物: ${ch}` }); }); r.nodes.forEach(x => { if (!ids.has(x)) out.push({ level: 'error', node: id, msg: `未定義ノードを参照: ${x}` }); }); }
     if (n.type === 'line') n.lines.forEach(l => { if (l.who && l.who !== 'player' && !s.characters[l.who]) out.push({ level: 'error', node: id, msg: `未定義の話者: ${l.who}` }); if (!l.text.trim()) out.push({ level: 'error', node: id, msg: '空の台詞' }); });
     if (n.type === 'choice' && n.options.length < 2) out.push({ level: 'warn', node: id, msg: '選択肢が2未満' });

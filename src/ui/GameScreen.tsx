@@ -40,7 +40,7 @@ export function GameScreen({ c, onExit }: { c: GameController; onExit: () => voi
     if (dead || !cv3.current || !cv2.current) return; setLoading(false);
     const rm = new RenderManager({
       assets: assets ?? undefined, canvas: cv3.current, plan: cv2.current, sim: c.sim, rail: c.rail, data: c.data, characters: c.story.characters, playerName: c.world.playerName, quality: c.settings.quality, auto: c.settings.autoQuality,
-      onFootstep: s => c.audio.footstep(s), onGate: ok => c.audio.gate(ok), onQuality: q => { c.settings.quality = q; c.say(`描画品質を自動調整しました：${q === 'high' ? '最高' : q === 'medium' ? '標準' : '最低'}`); },
+      onFootstep: s => c.audio.footstep(s), onGate: ok => c.audio.gate(ok), onDoor: k => c.audio.door(k), onQuality: q => { c.settings.quality = q; c.say(`描画品質を自動調整しました：${q === 'high' ? '最高' : q === 'medium' ? '標準' : '最低'}`); },
       onRailEvent: e => { const dir = e.service.track === 'A' ? '1番線（海浜口方面）' : '2番線（空港連絡方面）'; if (e.type === 'approach') c.audio.chime('approach', `まもなく${dir}に${e.service.kind} ${e.service.dest}行きが到着します。黄色い線の内側でお待ちください。`); if (e.type === 'depart') c.audio.chime('depart', `${dir}の${e.service.kind}が発車します。`); },
       onTrainAudio: (v, g, p, d) => c.audio.trainUpdate(v, g, p, d)
     });
@@ -109,7 +109,7 @@ function Hud({ c, onExit }: { c: GameController; onExit: () => void }) {
     </>
   );
 }
-const PRESET_JA: Record<string, string> = { plaza: '駅前広場', overview: '全景（俯瞰）', top: '真上', front: '正面（北）', back: '背面（南）', side: '側面（西）', gate: '改札', gate_close: '改札機（IC読取部）', gate_side: '改札列（側面）', gate_back: '改札（内側から）', gate_wide: '幅広・有人通路', vend_close: '券売機（接写）', seisan: '精算機', concourse: 'コンコース', office: '駅事務室', platform: 'ホーム（西向き）', platform_east: 'ホーム（東向き）', train: '停車中の列車', train_front: '列車（前方）', train_side: '列車（側面・北から）', platform_high: 'ホーム俯瞰', rail: '線路沿い', vend: '券売機', board: '発車標', tactile: '点字ブロック' };
+const PRESET_JA: Record<string, string> = { plaza: '駅前広場', overview: '全景（俯瞰）', top: '真上', front: '正面（北）', back: '背面（南）', side: '側面（西）', gate: '改札', gate_close: '改札機（IC読取部）', gate_side: '改札列（側面）', gate_back: '改札（内側から）', gate_wide: '幅広・有人通路', vend_close: '券売機（接写）', seisan: '精算機', concourse: 'コンコース', office: '駅事務室', platform: 'ホーム（西向き）', platform_east: 'ホーム（東向き）', train: '停車中の列車', office_in: '駅事務室（内）', shop: '売店', toilet: 'トイレ', info: '観光案内所', waiting: 'ホーム待合室', entrance: '入口の自動ドア', bus: 'バスのりば', train_front: '列車（前方）', train_side: '列車（側面・北から）', platform_high: 'ホーム俯瞰', rail: '線路沿い', vend: '券売機', board: '発車標', tactile: '点字ブロック' };
 
 function HubControls({ c }: { c: GameController }) {
   const v = c.view; if (v?.kind !== 'hub') return null; const p = c.prompt; const [run, setRun] = useState(false); const [goals, setGoals] = useState(typeof window === 'undefined' || window.innerWidth >= 760);

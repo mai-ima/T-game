@@ -83,7 +83,37 @@
    "trait": "週に二度、通院で海浜口へ。機械は少し苦手。",
    "bio": "青嶺中央駅の古い常連。駅員の顔をよく覚えている。",
    "gender": "f",
-   "accessory": "bag"
+   "accessory": "cane",
+   "height": 0.94,
+   "visibleWhen": {
+    "any": [
+     {
+      "notFlag": "ch1.kajiwara_done"
+     },
+     {
+      "all": [
+       {
+        "time": {
+         "op": ">=",
+         "val": 810
+        }
+       },
+       {
+        "time": {
+         "op": "<",
+         "val": 900
+        }
+       },
+       {
+        "flag": "legacy.helped_kajiwara"
+       },
+       {
+        "notFlag": "ch1.kaji2"
+       }
+      ]
+     }
+    ]
+   }
   },
   "hamaguchi": {
    "id": "hamaguchi",
@@ -101,6 +131,162 @@
    "gender": "m",
    "accessory": "none"
   },
+  "sakai": {
+   "id": "sakai",
+   "name": "坂井 陽子",
+   "kana": "さかい ようこ",
+   "role": "売店（委託）店員",
+   "dept": "none",
+   "age": 46,
+   "years": 0,
+   "uniform": "#b8352c",
+   "hair": "#3a2a22",
+   "skin": "#f0cfae",
+   "trait": "明るく世話好き。駅の変化をよく見ている。",
+   "bio": "改札内の売店を10年担当。常連の顔を覚えている。",
+   "gender": "f"
+  },
+  "hinata": {
+   "id": "hinata",
+   "name": "ひなた",
+   "kana": "ひなた",
+   "role": "迷子の小学生",
+   "dept": "none",
+   "age": 8,
+   "years": 0,
+   "uniform": "#f2b134",
+   "hair": "#1c1c28",
+   "skin": "#f2d3b8",
+   "trait": "泣きそうなのを我慢している。",
+   "bio": "母親とはぐれた小学2年生。",
+   "gender": "x",
+   "height": 0.66,
+   "visibleWhen": {
+    "all": [
+     {
+      "time": {
+       "op": ">=",
+       "val": 585
+      }
+     },
+     {
+      "time": {
+       "op": "<",
+       "val": 650
+      }
+     },
+     {
+      "notFlag": "ch1.child_done"
+     }
+    ]
+   }
+  },
+  "nomura": {
+   "id": "nomura",
+   "name": "野村 清次",
+   "kana": "のむら せいじ",
+   "role": "利用者（杖をつく高齢の方）",
+   "dept": "none",
+   "age": 76,
+   "years": 0,
+   "uniform": "#6a5a4a",
+   "hair": "#d8d8d8",
+   "skin": "#e8c4a0",
+   "trait": "遠慮がちで、頼るのが苦手。",
+   "bio": "週に一度、海浜口の友人宅へ通う。",
+   "gender": "m",
+   "accessory": "cane",
+   "height": 0.96,
+   "visibleWhen": {
+    "all": [
+     {
+      "time": {
+       "op": ">=",
+       "val": 560
+      }
+     },
+     {
+      "time": {
+       "op": "<",
+       "val": 640
+      }
+     },
+     {
+      "notFlag": "ch1.assist_done"
+     }
+    ]
+   }
+  },
+  "haha": {
+   "id": "haha",
+   "name": "母親（ベビーカー）",
+   "kana": "ははおや",
+   "role": "利用者",
+   "dept": "none",
+   "age": 31,
+   "years": 0,
+   "uniform": "#5c7a8a",
+   "hair": "#3a2a22",
+   "skin": "#f2d3b8",
+   "trait": "荷物が多く、時間に追われている。",
+   "bio": "生後半年の子を連れて通院する。",
+   "gender": "f",
+   "accessory": "bag",
+   "visibleWhen": {
+    "all": [
+     {
+      "time": {
+       "op": ">=",
+       "val": 860
+      }
+     },
+     {
+      "time": {
+       "op": "<",
+       "val": 920
+      }
+     },
+     {
+      "notFlag": "ch1.stroller_done"
+     }
+    ]
+   }
+  },
+  "tourist2": {
+   "id": "tourist2",
+   "name": "外国の旅行客",
+   "kana": "がいこくのりょこうきゃく",
+   "role": "利用者",
+   "dept": "none",
+   "age": 28,
+   "years": 0,
+   "uniform": "#3a5a8a",
+   "hair": "#8a6a3a",
+   "skin": "#f3d6bd",
+   "trait": "日本語は少し。地図を見ながら困っている。",
+   "bio": "星峰線の観光列車に乗りたい。",
+   "gender": "m",
+   "accessory": "suitcase",
+   "visibleWhen": {
+    "all": [
+     {
+      "time": {
+       "op": ">=",
+       "val": 800
+      }
+     },
+     {
+      "time": {
+       "op": "<",
+       "val": 860
+      }
+     },
+     {
+      "notFlag": "ch1.guide_done"
+     }
+    ]
+   }
+  },
   "traveler": {
    "id": "traveler",
    "name": "旅行客",
@@ -115,7 +301,30 @@
    "trait": "空港連絡線への乗り換えを急いでいる。",
    "bio": "大きなスーツケースを持つ旅行者。",
    "gender": "f",
-   "accessory": "bag"
+   "accessory": "suitcase",
+   "visibleWhen": {
+    "all": [
+     {
+      "any": [
+       {
+        "nodePrefix": "ch1.delay"
+       },
+       {
+        "nodePrefix": "ch1.dq"
+       },
+       {
+        "nodePrefix": "ch1.announce"
+       },
+       {
+        "nodePrefix": "ch1.ann_"
+       }
+      ]
+     },
+     {
+      "notFlag": "ch1.delay_done"
+     }
+    ]
+   }
   }
  },
  "chapters": [
@@ -662,6 +871,342 @@
      },
      "once": true,
      "icon": "☂️"
+    },
+    {
+     "id": "jam",
+     "object": "vend3",
+     "label": "券売機3号機：券詰まりの対応",
+     "goto": "ch1.jam_1",
+     "requires": {
+      "all": [
+       {
+        "flag": "ch1.tenko"
+       },
+       {
+        "time": {
+         "op": ">=",
+         "val": 540
+        }
+       }
+      ]
+     },
+     "once": true
+    },
+    {
+     "id": "assist",
+     "object": "nomura",
+     "label": "杖をついた野村さんの乗車を手伝う",
+     "goto": "ch1.assist_1",
+     "requires": {
+      "all": [
+       {
+        "flag": "ch1.tenko"
+       },
+       {
+        "time": {
+         "op": ">=",
+         "val": 560
+        }
+       },
+       {
+        "time": {
+         "op": "<",
+         "val": 640
+        }
+       }
+      ]
+     },
+     "once": true
+    },
+    {
+     "id": "child",
+     "object": "hinata",
+     "label": "泣いている子どもに声をかける",
+     "goto": "ch1.child_1",
+     "requires": {
+      "all": [
+       {
+        "flag": "ch1.tenko"
+       },
+       {
+        "time": {
+         "op": ">=",
+         "val": 585
+        }
+       },
+       {
+        "time": {
+         "op": "<",
+         "val": 650
+        }
+       }
+      ]
+     },
+     "once": true
+    },
+    {
+     "id": "refund",
+     "object": "ticket_office",
+     "label": "きっぷうりば：払い戻しの受付",
+     "goto": "ch1.refund_1",
+     "requires": {
+      "all": [
+       {
+        "flag": "ch1.tenko"
+       },
+       {
+        "time": {
+         "op": ">=",
+         "val": 610
+        }
+       }
+      ]
+     },
+     "once": true
+    },
+    {
+     "id": "shopnote",
+     "object": "sakai",
+     "label": "売店の坂井さんから届け物の相談",
+     "goto": "ch1.shop_1",
+     "requires": {
+      "all": [
+       {
+        "flag": "ch1.tenko"
+       },
+       {
+        "time": {
+         "op": ">=",
+         "val": 680
+        }
+       }
+      ]
+     },
+     "once": true
+    },
+    {
+     "id": "toilet",
+     "object": "toilet",
+     "label": "トイレの定期点検",
+     "goto": "ch1.wc_1",
+     "requires": {
+      "all": [
+       {
+        "flag": "ch1.tenko"
+       },
+       {
+        "time": {
+         "op": ">=",
+         "val": 700
+        }
+       }
+      ]
+     },
+     "once": true
+    },
+    {
+     "id": "phone",
+     "object": "phone",
+     "label": "指令直通電話に応答する",
+     "goto": "ch1.phone_1",
+     "requires": {
+      "all": [
+       {
+        "flag": "ch1.tenko"
+       },
+       {
+        "time": {
+         "op": ">=",
+         "val": 780
+        }
+       },
+       {
+        "flag": "ch1.delay_done"
+       }
+      ]
+     },
+     "once": true
+    },
+    {
+     "id": "guide",
+     "object": "tourist2",
+     "label": "外国の旅行客を案内する",
+     "goto": "ch1.guide_1",
+     "requires": {
+      "all": [
+       {
+        "flag": "ch1.tenko"
+       },
+       {
+        "time": {
+         "op": ">=",
+         "val": 800
+        }
+       },
+       {
+        "time": {
+         "op": "<",
+         "val": 860
+        }
+       }
+      ]
+     },
+     "once": true
+    },
+    {
+     "id": "kaji2",
+     "object": "kajiwara",
+     "label": "梶原さんと再会する",
+     "goto": "ch1.kaji2_1",
+     "requires": {
+      "all": [
+       {
+        "flag": "ch1.tenko"
+       },
+       {
+        "flag": "legacy.helped_kajiwara"
+       },
+       {
+        "time": {
+         "op": ">=",
+         "val": 810
+        }
+       },
+       {
+        "time": {
+         "op": "<",
+         "val": 900
+        }
+       }
+      ]
+     },
+     "once": true
+    },
+    {
+     "id": "patrol2",
+     "object": "emergency_btn",
+     "label": "午後のホーム巡回（非常停止ボタン等）",
+     "goto": "ch1.patrol2_1",
+     "requires": {
+      "all": [
+       {
+        "flag": "ch1.platform"
+       },
+       {
+        "time": {
+         "op": ">=",
+         "val": 810
+        }
+       }
+      ]
+     },
+     "once": true
+    },
+    {
+     "id": "stroller",
+     "object": "haha",
+     "label": "ベビーカーのお客様の乗降を見守る",
+     "goto": "ch1.stroller_1",
+     "requires": {
+      "all": [
+       {
+        "flag": "ch1.tenko"
+       },
+       {
+        "time": {
+         "op": ">=",
+         "val": 860
+        }
+       },
+       {
+        "time": {
+         "op": "<",
+         "val": 920
+        }
+       }
+      ]
+     },
+     "once": true
+    },
+    {
+     "id": "gatecheck",
+     "object": "gate_wide",
+     "label": "改札機の動作点検",
+     "goto": "ch1.gate_1",
+     "requires": {
+      "all": [
+       {
+        "flag": "ch1.tenko"
+       },
+       {
+        "time": {
+         "op": ">=",
+         "val": 885
+        }
+       }
+      ]
+     },
+     "once": true
+    },
+    {
+     "id": "announce2",
+     "object": "mic",
+     "label": "定時のホーム安全放送を作る",
+     "goto": "ch1.ann2_task",
+     "requires": {
+      "all": [
+       {
+        "flag": "ch1.tenko"
+       },
+       {
+        "time": {
+         "op": ">=",
+         "val": 910
+        }
+       }
+      ]
+     },
+     "once": true
+    },
+    {
+     "id": "refill",
+     "object": "vend1",
+     "label": "券売機1号機：券紙の補充",
+     "goto": "ch1.refill_1",
+     "requires": {
+      "all": [
+       {
+        "flag": "ch1.tenko"
+       },
+       {
+        "time": {
+         "op": ">=",
+         "val": 930
+        }
+       }
+      ]
+     },
+     "once": true
+    },
+    {
+     "id": "finalcheck",
+     "object": "elevator",
+     "label": "終業前の施設点検（エレベーター・AED）",
+     "goto": "ch1.final_1",
+     "requires": {
+      "all": [
+       {
+        "flag": "ch1.tenko"
+       },
+       {
+        "time": {
+         "op": ">=",
+         "val": 950
+        }
+       }
+      ]
+     },
+     "once": true
     }
    ],
    "goals": [
@@ -729,6 +1274,202 @@
       "flag": "ch1.lost_done"
      },
      "optional": true
+    },
+    {
+     "id": "g_jam",
+     "label": "（依頼）券売機3号機の券詰まり",
+     "when": {
+      "flag": "ch1.jam_done"
+     },
+     "optional": true,
+     "showWhen": {
+      "time": {
+       "op": ">=",
+       "val": 540
+      }
+     }
+    },
+    {
+     "id": "g_assist",
+     "label": "（依頼）杖のお客様の乗車の手伝い",
+     "when": {
+      "flag": "ch1.assist_done"
+     },
+     "optional": true,
+     "showWhen": {
+      "time": {
+       "op": ">=",
+       "val": 560
+      }
+     }
+    },
+    {
+     "id": "g_child",
+     "label": "（依頼）泣いている子どもへの対応",
+     "when": {
+      "flag": "ch1.child_done"
+     },
+     "optional": true,
+     "showWhen": {
+      "time": {
+       "op": ">=",
+       "val": 585
+      }
+     }
+    },
+    {
+     "id": "g_refund",
+     "label": "（依頼）払い戻しの受付",
+     "when": {
+      "flag": "ch1.refund_done"
+     },
+     "optional": true,
+     "showWhen": {
+      "time": {
+       "op": ">=",
+       "val": 610
+      }
+     }
+    },
+    {
+     "id": "g_shop",
+     "label": "（依頼）売店からの届け物",
+     "when": {
+      "flag": "ch1.shop_done"
+     },
+     "optional": true,
+     "showWhen": {
+      "time": {
+       "op": ">=",
+       "val": 680
+      }
+     }
+    },
+    {
+     "id": "g_wc",
+     "label": "（定期）トイレ点検",
+     "when": {
+      "flag": "ch1.wc_done"
+     },
+     "optional": true,
+     "showWhen": {
+      "time": {
+       "op": ">=",
+       "val": 700
+      }
+     }
+    },
+    {
+     "id": "g_phone",
+     "label": "（依頼）指令からの電話",
+     "when": {
+      "flag": "ch1.phone_done"
+     },
+     "optional": true,
+     "showWhen": {
+      "time": {
+       "op": ">=",
+       "val": 780
+      }
+     }
+    },
+    {
+     "id": "g_guide",
+     "label": "（依頼）外国の旅行客の案内",
+     "when": {
+      "flag": "ch1.guide_done"
+     },
+     "optional": true,
+     "showWhen": {
+      "time": {
+       "op": ">=",
+       "val": 800
+      }
+     }
+    },
+    {
+     "id": "g_patrol2",
+     "label": "（定期）午後のホーム巡回",
+     "when": {
+      "flag": "ch1.patrol2_done"
+     },
+     "optional": true,
+     "showWhen": {
+      "time": {
+       "op": ">=",
+       "val": 810
+      }
+     }
+    },
+    {
+     "id": "g_stroller",
+     "label": "（依頼）ベビーカーのお客様の見守り",
+     "when": {
+      "flag": "ch1.stroller_done"
+     },
+     "optional": true,
+     "showWhen": {
+      "time": {
+       "op": ">=",
+       "val": 860
+      }
+     }
+    },
+    {
+     "id": "g_gate",
+     "label": "（定期）改札機の動作点検",
+     "when": {
+      "flag": "ch1.gate_done"
+     },
+     "optional": true,
+     "showWhen": {
+      "time": {
+       "op": ">=",
+       "val": 885
+      }
+     }
+    },
+    {
+     "id": "g_ann2",
+     "label": "（定時）ホーム安全放送",
+     "when": {
+      "flag": "ch1.ann2_done"
+     },
+     "optional": true,
+     "showWhen": {
+      "time": {
+       "op": ">=",
+       "val": 910
+      }
+     }
+    },
+    {
+     "id": "g_refill",
+     "label": "（定期）券紙の補充",
+     "when": {
+      "flag": "ch1.refill_done"
+     },
+     "optional": true,
+     "showWhen": {
+      "time": {
+       "op": ">=",
+       "val": 930
+      }
+     }
+    },
+    {
+     "id": "g_final",
+     "label": "（終業前）施設の最終点検",
+     "when": {
+      "flag": "ch1.final_done"
+     },
+     "optional": true,
+     "showWhen": {
+      "time": {
+       "op": ">=",
+       "val": 950
+      }
+     }
     }
    ],
    "timed": [
@@ -2989,7 +3730,7 @@
      "text": "見込みの案内は、次からは「確定ではありません」と一言添えましょう。"
     }
    ],
-   "next": "ch1.closing2",
+   "next": "ch1.cl_count",
    "view": {
     "mode": "25d",
     "bg": "office",
@@ -3017,7 +3758,7 @@
      "text": "誰かのせいにしたくなる気持ちは分かる。だが、現場では一度の言い訳が信頼を大きく削る。明日から、報告を意識しよう。"
     }
    ],
-   "next": "ch1.closing2",
+   "next": "ch1.cl_count",
    "view": {
     "mode": "25d",
     "bg": "office",
@@ -3041,7 +3782,7 @@
      "text": "責めるつもりはありません。ただ、記録と現場の様子が合わないと、次に同じ誤りを防げないんです。"
     }
    ],
-   "next": "ch1.closing2",
+   "next": "ch1.cl_count",
    "view": {
     "mode": "25d",
     "bg": "office",
@@ -3065,7 +3806,7 @@
      "text": "今日の判断、私は好きでしたよ。"
     }
    ],
-   "next": "ch1.closing2",
+   "next": "ch1.cl_count",
    "view": {
     "mode": "25d",
     "bg": "office",
@@ -3088,7 +3829,7 @@
      "text": "今日の記録は、私が確認しておきます。"
     }
    ],
-   "next": "ch1.closing2",
+   "next": "ch1.cl_count",
    "view": {
     "mode": "25d",
     "bg": "office",
@@ -3696,6 +4437,2770 @@
    "chapter": "ch2",
    "title": "第2章 最初の週末（体験版・冒頭のみ）",
    "summary": "第1章の選択が、週末の過ごし方・人物関係・駅長の最初の言葉に影響しました。第2章の続き以降は未実装です。"
+  },
+  "ch1.jam_1": {
+   "id": "ch1.jam_1",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "3号機が「券詰まり」を出しています。お客様が少ない今のうちに復旧しましょう。手順を一つずつ確認します。"
+    }
+   ],
+   "next": "ch1.jam_task",
+   "view": {
+    "mode": "3d",
+    "cam": "npc:vend3",
+    "caption": "券売機3号機"
+   }
+  },
+  "ch1.jam_task": {
+   "id": "ch1.jam_task",
+   "type": "task",
+   "kind": "checklist",
+   "title": "券詰まり復旧の手順確認",
+   "intro": "各項目が、手順として適切か不適切かを判断してください。",
+   "items": [
+    {
+     "id": "a",
+     "label": "使用停止にして「調整中」の掲示を出してから作業する",
+     "truth": "ok",
+     "why": "稼働中に作業すると、お客様の誤操作や接触事故につながります。"
+    },
+    {
+     "id": "b",
+     "label": "お客様が並んでいるので、停止せずに券紙を引き抜く",
+     "truth": "ng",
+     "why": "稼働中の機械内部に触れるのは危険です。"
+    },
+    {
+     "id": "c",
+     "label": "現金部の扉は、担当者の確認なしで開けて点検する",
+     "truth": "ng",
+     "why": "現金部は管理が必要です。必ず担当者と一緒に確認します。"
+    },
+    {
+     "id": "d",
+     "label": "復旧後は試験発券を行い、正常に動作することを確認する",
+     "truth": "ok",
+     "why": "復旧したつもりでも、実際に発券して確認しないと再発に気づけません。"
+    },
+    {
+     "id": "e",
+     "label": "復旧した内容を、時刻とともに端末へ記録する",
+     "truth": "ok",
+     "why": "記録があれば、次の担当者や保守担当が状況を把握できます。"
+    }
+   ],
+   "results": [
+    {
+     "min": 80,
+     "goto": "ch1.jam_good",
+     "effects": [
+      {
+       "eval": {
+        "key": "accuracy",
+        "add": 3
+       }
+      },
+      {
+       "skill": {
+        "key": "ticket",
+        "add": 4
+       }
+      },
+      {
+       "eval": {
+        "key": "safety",
+        "add": 2
+       }
+      }
+     ]
+    },
+    {
+     "min": 50,
+     "goto": "ch1.jam_mid",
+     "effects": [
+      {
+       "eval": {
+        "key": "accuracy",
+        "add": 1
+       }
+      },
+      {
+       "skill": {
+        "key": "ticket",
+        "add": 2
+       }
+      }
+     ]
+    },
+    {
+     "min": 0,
+     "goto": "ch1.jam_bad",
+     "effects": [
+      {
+       "eval": {
+        "key": "safety",
+        "add": -2
+       }
+      }
+     ]
+    }
+   ],
+   "config": {
+    "labels": [
+     "適切",
+     "不適切"
+    ]
+   },
+   "view": {
+    "mode": "3d",
+    "cam": "follow",
+    "caption": "券詰まり復旧の手順確認"
+   }
+  },
+  "ch1.jam_good": {
+   "id": "ch1.jam_good",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "その順番を守れば、安全に復旧できます。次は一人でやってみましょう。",
+     "mood": "smile"
+    }
+   ],
+   "next": "ch1.jam_end"
+  },
+  "ch1.jam_mid": {
+   "id": "ch1.jam_mid",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "惜しいところがあります。危険な手順は理由と一緒に覚えましょう。"
+    }
+   ],
+   "next": "ch1.jam_end"
+  },
+  "ch1.jam_bad": {
+   "id": "ch1.jam_bad",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "券詰まりの復旧では、安全が最優先です。もう一度、一緒に手順を確認しましょう。",
+     "mood": "serious"
+    }
+   ],
+   "next": "ch1.jam_end"
+  },
+  "ch1.jam_end": {
+   "id": "ch1.jam_end",
+   "type": "effect",
+   "effects": [
+    {
+     "set": "ch1.jam_done"
+    },
+    {
+     "var": {
+      "key": "ch1.extra",
+      "add": 1
+     }
+    },
+    {
+     "time": 20
+    },
+    {
+     "log": {
+      "text": "券売機3号機の券詰まりを復旧",
+      "tag": "work"
+     }
+    }
+   ],
+   "next": "ch1.hub"
+  },
+  "ch1.assist_1": {
+   "id": "ch1.assist_1",
+   "type": "line",
+   "lines": [
+    {
+     "who": "nomura",
+     "text": "すまんね、ホームまで階段が続くのは、膝に響いてね。エレベーターはどこにあるのかな。",
+     "mood": "worry"
+    }
+   ],
+   "next": "ch1.assist_c1",
+   "view": {
+    "mode": "3d",
+    "cam": "npc:nomura",
+    "caption": "コンコース"
+   }
+  },
+  "ch1.assist_c1": {
+   "id": "ch1.assist_c1",
+   "type": "choice",
+   "prompt": "野村さんに、どう対応しますか？",
+   "options": [
+    {
+     "id": "lead",
+     "label": "「エレベーターまでご案内し、ホームまでご一緒します」",
+     "goto": "ch1.assist_2",
+     "tone": "caring",
+     "effects": [
+      {
+       "time": 12
+      },
+      {
+       "eval": {
+        "key": "service",
+        "add": 4
+       }
+      },
+      {
+       "rel": {
+        "char": "nomura",
+        "trust": 2,
+        "rapport": 2
+       }
+      }
+     ]
+    },
+    {
+     "id": "say",
+     "label": "「エレベーターは、入口の右手にあります」と口頭で伝える",
+     "goto": "ch1.assist_2b",
+     "tone": "quick",
+     "effects": [
+      {
+       "time": 3
+      },
+      {
+       "eval": {
+        "key": "service",
+        "add": 1
+       }
+      }
+     ]
+    },
+    {
+     "id": "arm",
+     "label": "「階段の手すり側で、腕におつかまりください」",
+     "goto": "ch1.assist_2c",
+     "tone": "risky",
+     "effects": [
+      {
+       "time": 8
+      },
+      {
+       "eval": {
+        "key": "safety",
+        "add": -2
+       }
+      },
+      {
+       "rel": {
+        "char": "nomura",
+        "trust": 0,
+        "rapport": 1
+       }
+      }
+     ]
+    }
+   ],
+   "view": {
+    "mode": "3d",
+    "cam": "npc:nomura"
+   }
+  },
+  "ch1.assist_2": {
+   "id": "ch1.assist_2",
+   "type": "line",
+   "lines": [
+    {
+     "who": "nomura",
+     "text": "ありがたいね。ホームでは、どこで待てばいいのかな。"
+    }
+   ],
+   "next": "ch1.assist_c2",
+   "effects": [
+    {
+     "set": "ch1.assist_led"
+    }
+   ]
+  },
+  "ch1.assist_2b": {
+   "id": "ch1.assist_2b",
+   "type": "line",
+   "lines": [
+    {
+     "who": "nomura",
+     "text": "そうか、ありがとう。…でも、ホームまで一人で行けるか少し不安でね。"
+    }
+   ],
+   "next": "ch1.assist_c2"
+  },
+  "ch1.assist_2c": {
+   "id": "ch1.assist_2c",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "（そっと近づいて）階段の昇降はお客様の負担が大きいので、エレベーターの利用をおすすめするほうが安全です。"
+    }
+   ],
+   "next": "ch1.assist_c2"
+  },
+  "ch1.assist_c2": {
+   "id": "ch1.assist_c2",
+   "type": "choice",
+   "prompt": "ホームでの乗車について、どうしますか？",
+   "options": [
+    {
+     "id": "report",
+     "label": "「乗務員に連絡して、乗降の介助を依頼します」",
+     "goto": "ch1.assist_3a",
+     "tone": "honest",
+     "effects": [
+      {
+       "eval": {
+        "key": "reporting",
+        "add": 4
+       }
+      },
+      {
+       "eval": {
+        "key": "safety",
+        "add": 2
+       }
+      },
+      {
+       "rel": {
+        "char": "nomura",
+        "trust": 1,
+        "rapport": 0
+       }
+      }
+     ]
+    },
+    {
+     "id": "self",
+     "label": "「私が手を貸して、お乗せします」",
+     "goto": "ch1.assist_3b",
+     "tone": "risky",
+     "effects": [
+      {
+       "eval": {
+        "key": "safety",
+        "add": -2
+       }
+      },
+      {
+       "eval": {
+        "key": "service",
+        "add": 1
+       }
+      }
+     ]
+    },
+    {
+     "id": "see",
+     "label": "「ホームの安全な位置までお連れして、見送ります」",
+     "goto": "ch1.assist_3c",
+     "tone": "neutral",
+     "effects": [
+      {
+       "eval": {
+        "key": "service",
+        "add": 1
+       }
+      },
+      {
+       "eval": {
+        "key": "reporting",
+        "add": -1
+       }
+      }
+     ]
+    }
+   ]
+  },
+  "ch1.assist_3a": {
+   "id": "ch1.assist_3a",
+   "type": "line",
+   "lines": [
+    {
+     "who": "nomura",
+     "text": "乗務員さんも手伝ってくれるのかい。助かるよ。気をつけて行ってくるよ。",
+     "mood": "smile"
+    },
+    {
+     "who": "kubota",
+     "text": "乗務員への連絡は、ためらわずに早めに。介助の準備ができます。"
+    }
+   ],
+   "next": "ch1.assist_end"
+  },
+  "ch1.assist_3b": {
+   "id": "ch1.assist_3b",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "乗降のときは、ホームと列車の隙間や段差があります。介助は乗務員と連携して行います。次回は連絡を先に。",
+     "mood": "serious"
+    }
+   ],
+   "next": "ch1.assist_end"
+  },
+  "ch1.assist_3c": {
+   "id": "ch1.assist_3c",
+   "type": "line",
+   "lines": [
+    {
+     "who": "nomura",
+     "text": "ありがとう。ここなら、乗り降りも楽そうだ。"
+    },
+    {
+     "who": "kubota",
+     "text": "見送った後でも、次の駅への連絡があると、降りる駅で待ってもらえます。"
+    }
+   ],
+   "next": "ch1.assist_end"
+  },
+  "ch1.assist_end": {
+   "id": "ch1.assist_end",
+   "type": "effect",
+   "effects": [
+    {
+     "set": "ch1.assist_done"
+    },
+    {
+     "var": {
+      "key": "ch1.extra",
+      "add": 1
+     }
+    },
+    {
+     "time": 5
+    },
+    {
+     "log": {
+      "text": "杖をついたお客様の乗車を手伝う",
+      "tag": "work"
+     }
+    },
+    {
+     "skill": {
+      "key": "service",
+      "add": 2
+     }
+    }
+   ],
+   "next": "ch1.hub"
+  },
+  "ch1.child_1": {
+   "id": "ch1.child_1",
+   "type": "line",
+   "lines": [
+    {
+     "who": "hinata",
+     "text": "（うつむいて）…お母さんが、いない。",
+     "mood": "worry"
+    },
+    {
+     "who": "kubota",
+     "text": "券売機の前で、一人でいたそうです。まず落ち着いて、お名前を聞きましょう。"
+    }
+   ],
+   "next": "ch1.child_c1",
+   "view": {
+    "mode": "3d",
+    "cam": "npc:hinata",
+    "caption": "券売機前"
+   }
+  },
+  "ch1.child_c1": {
+   "id": "ch1.child_c1",
+   "type": "choice",
+   "prompt": "ひなたさんに、どう対応しますか？",
+   "options": [
+    {
+     "id": "stay",
+     "label": "目線を合わせて話を聞き、事務室で保護して保護者を待つ",
+     "goto": "ch1.child_2a",
+     "tone": "caring",
+     "effects": [
+      {
+       "time": 10
+      },
+      {
+       "eval": {
+        "key": "service",
+        "add": 3
+       }
+      },
+      {
+       "eval": {
+        "key": "safety",
+        "add": 2
+       }
+      },
+      {
+       "rel": {
+        "char": "hinata",
+        "trust": 2,
+        "rapport": 2
+       }
+      }
+     ]
+    },
+    {
+     "id": "page",
+     "label": "放送で保護者を呼び出し、その場で一緒に待つ",
+     "goto": "ch1.child_2b",
+     "tone": "careful",
+     "effects": [
+      {
+       "time": 8
+      },
+      {
+       "eval": {
+        "key": "service",
+        "add": 2
+       }
+      },
+      {
+       "eval": {
+        "key": "reporting",
+        "add": 1
+       }
+      }
+     ]
+    },
+    {
+     "id": "search",
+     "label": "一緒に構内を歩いて、保護者を探して回る",
+     "goto": "ch1.child_2c",
+     "tone": "risky",
+     "effects": [
+      {
+       "time": 15
+      },
+      {
+       "eval": {
+        "key": "safety",
+        "add": -2
+       }
+      },
+      {
+       "rel": {
+        "char": "hinata",
+        "trust": 1,
+        "rapport": 1
+       }
+      }
+     ]
+    }
+   ],
+   "view": {
+    "mode": "3d",
+    "cam": "npc:hinata"
+   }
+  },
+  "ch1.child_2a": {
+   "id": "ch1.child_2a",
+   "type": "line",
+   "lines": [
+    {
+     "who": "hinata",
+     "text": "お兄ちゃん、あのね、お母さんとお買い物に行く約束だったの。"
+    },
+    {
+     "who": "kubota",
+     "text": "放送で保護者の方に事務室へお越しいただくよう案内します。"
+    }
+   ],
+   "next": "ch1.child_3"
+  },
+  "ch1.child_2b": {
+   "id": "ch1.child_2b",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "放送の文面は、お子さんの特徴を伝えすぎず、事務室で保護していることを伝えます。"
+    }
+   ],
+   "next": "ch1.child_3"
+  },
+  "ch1.child_2c": {
+   "id": "ch1.child_2c",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "駅の中を歩き回ると、すれ違いになりやすいです。保護者が探しに来る場所で待つのが基本です。",
+     "mood": "serious"
+    }
+   ],
+   "next": "ch1.child_3"
+  },
+  "ch1.child_3": {
+   "id": "ch1.child_3",
+   "type": "line",
+   "lines": [
+    {
+     "who": "hinata",
+     "text": "（母親が駆け寄り）ひなた！ ごめんね、ごめんね。",
+     "mood": "worry"
+    },
+    {
+     "who": "hinata",
+     "text": "お母さん！",
+     "mood": "smile"
+    },
+    {
+     "who": "kubota",
+     "text": "落ち着いて対応できましたね。こういうときは、保護者の方の気持ちも受け止めます。"
+    }
+   ],
+   "next": "ch1.child_end",
+   "effects": [
+    {
+     "set": "legacy.child_helped"
+    }
+   ]
+  },
+  "ch1.child_end": {
+   "id": "ch1.child_end",
+   "type": "effect",
+   "effects": [
+    {
+     "set": "ch1.child_done"
+    },
+    {
+     "var": {
+      "key": "ch1.extra",
+      "add": 1
+     }
+    },
+    {
+     "time": 5
+    },
+    {
+     "log": {
+      "text": "迷子の対応（保護者へ引き渡し）",
+      "tag": "work"
+     }
+    }
+   ],
+   "next": "ch1.hub"
+  },
+  "ch1.refund_1": {
+   "id": "ch1.refund_1",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "窓口でお客様が、使わなかった乗車券の払い戻しを希望しています。取扱いの前に確認することを選んでください。"
+    }
+   ],
+   "next": "ch1.refund_task",
+   "view": {
+    "mode": "3d",
+    "cam": "npc:shiraishi",
+    "caption": "きっぷうりば"
+   }
+  },
+  "ch1.refund_task": {
+   "id": "ch1.refund_task",
+   "type": "task",
+   "kind": "checklist",
+   "title": "払い戻しの確認項目",
+   "intro": "払い戻しの取扱いで、確認が必要な項目を選んでください。",
+   "items": [
+    {
+     "id": "a",
+     "label": "乗車券の有効期間と区間が、払い戻しの対象か",
+     "truth": "ok",
+     "why": "期限切れ・使用済みは、払い戻せないことがあります。"
+    },
+    {
+     "id": "b",
+     "label": "お客様が急いでいるので、券面は確認せず現金を渡す",
+     "truth": "ng",
+     "why": "券面の確認は省けません。誤払いの原因です。"
+    },
+    {
+     "id": "c",
+     "label": "払い戻し手数料（架空：220円）を説明し、了承を得る",
+     "truth": "ok",
+     "why": "手数料を説明せず差し引くと、トラブルになります。"
+    },
+    {
+     "id": "d",
+     "label": "払い戻した記録を、日時・券種・金額で台帳に残す",
+     "truth": "ok",
+     "why": "記録は、後から確認するために必要です。"
+    }
+   ],
+   "results": [
+    {
+     "min": 80,
+     "goto": "ch1.refund_good",
+     "effects": [
+      {
+       "eval": {
+        "key": "accuracy",
+        "add": 3
+       }
+      },
+      {
+       "eval": {
+        "key": "service",
+        "add": 2
+       }
+      }
+     ]
+    },
+    {
+     "min": 50,
+     "goto": "ch1.refund_mid",
+     "effects": [
+      {
+       "eval": {
+        "key": "accuracy",
+        "add": 1
+       }
+      }
+     ]
+    },
+    {
+     "min": 0,
+     "goto": "ch1.refund_bad",
+     "effects": [
+      {
+       "eval": {
+        "key": "accuracy",
+        "add": -2
+       }
+      }
+     ]
+    }
+   ],
+   "config": {
+    "labels": [
+     "確認が必要",
+     "不要・不適切"
+    ]
+   },
+   "view": {
+    "mode": "3d",
+    "cam": "follow",
+    "caption": "払い戻しの確認項目"
+   }
+  },
+  "ch1.refund_good": {
+   "id": "ch1.refund_good",
+   "type": "line",
+   "lines": [
+    {
+     "who": "shiraishi",
+     "text": "窓口は、お金を預かる仕事だ。丁寧さが、そのまま信頼になる。"
+    }
+   ],
+   "next": "ch1.refund_end"
+  },
+  "ch1.refund_mid": {
+   "id": "ch1.refund_mid",
+   "type": "line",
+   "lines": [
+    {
+     "who": "shiraishi",
+     "text": "確認の抜けは、後で訂正になる。次は声に出して確認しよう。"
+    }
+   ],
+   "next": "ch1.refund_end"
+  },
+  "ch1.refund_bad": {
+   "id": "ch1.refund_bad",
+   "type": "line",
+   "lines": [
+    {
+     "who": "shiraishi",
+     "text": "現金の取扱いは、特に慎重に。私が確認し直そう。",
+     "mood": "serious"
+    }
+   ],
+   "next": "ch1.refund_end"
+  },
+  "ch1.refund_end": {
+   "id": "ch1.refund_end",
+   "type": "effect",
+   "effects": [
+    {
+     "set": "ch1.refund_done"
+    },
+    {
+     "var": {
+      "key": "ch1.extra",
+      "add": 1
+     }
+    },
+    {
+     "time": 15
+    },
+    {
+     "log": {
+      "text": "払い戻しを受け付ける",
+      "tag": "work"
+     }
+    }
+   ],
+   "next": "ch1.hub"
+  },
+  "ch1.shop_1": {
+   "id": "ch1.shop_1",
+   "type": "line",
+   "lines": [
+    {
+     "who": "sakai",
+     "text": "ごめんなさい、お客さんの忘れ物かしら。レジの下に、財布が置いてあったの。",
+     "mood": "worry"
+    },
+    {
+     "who": "sakai",
+     "text": "駅員さんに渡せば、持ち主に返せるのよね？"
+    }
+   ],
+   "next": "ch1.shop_c",
+   "view": {
+    "mode": "3d",
+    "cam": "npc:sakai",
+    "caption": "売店"
+   }
+  },
+  "ch1.shop_c": {
+   "id": "ch1.shop_c",
+   "type": "choice",
+   "prompt": "財布を、どう取り扱いますか？",
+   "options": [
+    {
+     "id": "book",
+     "label": "「預かって、遺失物台帳に記録し、事務室で保管します」",
+     "goto": "ch1.shop_r1",
+     "tone": "honest",
+     "effects": [
+      {
+       "eval": {
+        "key": "accuracy",
+        "add": 3
+       }
+      },
+      {
+       "eval": {
+        "key": "reporting",
+        "add": 2
+       }
+      },
+      {
+       "rel": {
+        "char": "sakai",
+        "trust": 1,
+        "rapport": 1
+       }
+      }
+     ]
+    },
+    {
+     "id": "look",
+     "label": "「中を見て、持ち主の連絡先を探します」",
+     "goto": "ch1.shop_r2",
+     "tone": "risky",
+     "effects": [
+      {
+       "eval": {
+        "key": "accuracy",
+        "add": -2
+       }
+      },
+      {
+       "eval": {
+        "key": "safety",
+        "add": -1
+       }
+      }
+     ]
+    },
+    {
+     "id": "wait",
+     "label": "「しばらく売店で預かってください」",
+     "goto": "ch1.shop_r3",
+     "tone": "neutral",
+     "effects": [
+      {
+       "eval": {
+        "key": "reporting",
+        "add": -2
+       }
+      }
+     ]
+    }
+   ],
+   "view": {
+    "mode": "3d",
+    "cam": "npc:sakai"
+   }
+  },
+  "ch1.shop_r1": {
+   "id": "ch1.shop_r1",
+   "type": "line",
+   "lines": [
+    {
+     "who": "sakai",
+     "text": "台帳に書くのね。分かったわ。持ち主が来たら、駅に聞くよう伝えておく。",
+     "mood": "smile"
+    }
+   ],
+   "next": "ch1.shop_end"
+  },
+  "ch1.shop_r2": {
+   "id": "ch1.shop_r2",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "財布の中身を勝手に見るのは、避けます。必ず二人以上で確認し、記録します。",
+     "mood": "serious"
+    }
+   ],
+   "next": "ch1.shop_end"
+  },
+  "ch1.shop_r3": {
+   "id": "ch1.shop_r3",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "預かる場所が増えると、管理が曖昧になります。駅で一元管理しましょう。"
+    }
+   ],
+   "next": "ch1.shop_end"
+  },
+  "ch1.shop_end": {
+   "id": "ch1.shop_end",
+   "type": "effect",
+   "effects": [
+    {
+     "set": "ch1.shop_done"
+    },
+    {
+     "var": {
+      "key": "ch1.extra",
+      "add": 1
+     }
+    },
+    {
+     "time": 10
+    },
+    {
+     "log": {
+      "text": "売店から届けられた財布の取扱い",
+      "tag": "work"
+     }
+    }
+   ],
+   "next": "ch1.hub"
+  },
+  "ch1.wc_1": {
+   "id": "ch1.wc_1",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "定期点検の時間です。多目的トイレもあるので、見落とさないように。"
+    }
+   ],
+   "next": "ch1.wc_task",
+   "view": {
+    "mode": "3d",
+    "cam": "follow",
+    "caption": "トイレ"
+   }
+  },
+  "ch1.wc_task": {
+   "id": "ch1.wc_task",
+   "type": "task",
+   "kind": "checklist",
+   "title": "トイレ定期点検",
+   "intro": "各項目を「正常」「異常」で判定してください。",
+   "items": [
+    {
+     "id": "a",
+     "label": "多目的トイレの非常呼出ボタンを押すと、事務室に通知が届く",
+     "truth": "ok",
+     "why": "正常です。"
+    },
+    {
+     "id": "b",
+     "label": "男性用の手洗い場のペーパーが切れている",
+     "truth": "ng",
+     "why": "備品の補充が必要です。"
+    },
+    {
+     "id": "c",
+     "label": "ベビーシートが、固定されて安全に使える",
+     "truth": "ok",
+     "why": "正常です。"
+    },
+    {
+     "id": "d",
+     "label": "女性用の鏡に、大きなひびがある",
+     "truth": "ng",
+     "why": "けがの原因になります。使用を止めて修繕を依頼します。"
+    },
+    {
+     "id": "e",
+     "label": "床が濡れていて、滑りやすい箇所がある",
+     "truth": "ng",
+     "why": "転倒の原因です。清掃と注意の掲示が必要です。"
+    }
+   ],
+   "results": [
+    {
+     "min": 80,
+     "goto": "ch1.wc_good",
+     "effects": [
+      {
+       "eval": {
+        "key": "safety",
+        "add": 3
+       }
+      },
+      {
+       "eval": {
+        "key": "accuracy",
+        "add": 2
+       }
+      }
+     ]
+    },
+    {
+     "min": 50,
+     "goto": "ch1.wc_mid",
+     "effects": [
+      {
+       "eval": {
+        "key": "safety",
+        "add": 1
+       }
+      }
+     ]
+    },
+    {
+     "min": 0,
+     "goto": "ch1.wc_bad",
+     "effects": [
+      {
+       "eval": {
+        "key": "safety",
+        "add": -3
+       }
+      }
+     ]
+    }
+   ],
+   "config": {
+    "labels": [
+     "正常",
+     "異常"
+    ]
+   },
+   "view": {
+    "mode": "3d",
+    "cam": "follow",
+    "caption": "トイレ定期点検"
+   }
+  },
+  "ch1.wc_good": {
+   "id": "ch1.wc_good",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "ひびや濡れ床は、見つけた人が止めるのが大事です。"
+    }
+   ],
+   "next": "ch1.wc_end"
+  },
+  "ch1.wc_mid": {
+   "id": "ch1.wc_mid",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "見落としがあります。トイレは利用者の多い場所です。もう一度見てきましょう。"
+    }
+   ],
+   "next": "ch1.wc_end"
+  },
+  "ch1.wc_bad": {
+   "id": "ch1.wc_bad",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "けがにつながる箇所を見逃すと危険です。一緒に確認し直しましょう。",
+     "mood": "serious"
+    }
+   ],
+   "next": "ch1.wc_end"
+  },
+  "ch1.wc_end": {
+   "id": "ch1.wc_end",
+   "type": "effect",
+   "effects": [
+    {
+     "set": "ch1.wc_done"
+    },
+    {
+     "var": {
+      "key": "ch1.extra",
+      "add": 1
+     }
+    },
+    {
+     "time": 15
+    },
+    {
+     "log": {
+      "text": "トイレの定期点検",
+      "tag": "work"
+     }
+    }
+   ],
+   "next": "ch1.hub"
+  },
+  "ch1.phone_1": {
+   "id": "ch1.phone_1",
+   "type": "line",
+   "lines": [
+    {
+     "who": "hamaguchi",
+     "text": "輸送指令の浜口です。先ほどの遅れの件、回復の状況を確認させてください。駅の様子はどうですか。"
+    }
+   ],
+   "next": "ch1.phone_c",
+   "view": {
+    "mode": "3d",
+    "cam": "npc:shiraishi",
+    "caption": "駅事務室 電話"
+   }
+  },
+  "ch1.phone_c": {
+   "id": "ch1.phone_c",
+   "type": "choice",
+   "prompt": "指令への報告を、どうしますか？",
+   "options": [
+    {
+     "id": "fact",
+     "label": "「確認できた事実だけを、時刻の順にお伝えします」",
+     "goto": "ch1.phone_r1",
+     "tone": "honest",
+     "effects": [
+      {
+       "eval": {
+        "key": "reporting",
+        "add": 4
+       }
+      },
+      {
+       "rel": {
+        "char": "hamaguchi",
+        "trust": 2,
+        "rapport": 0
+       }
+      }
+     ]
+    },
+    {
+     "id": "guess",
+     "label": "「たぶん、もう落ち着いていると思います」",
+     "goto": "ch1.phone_r2",
+     "tone": "risky",
+     "effects": [
+      {
+       "eval": {
+        "key": "reporting",
+        "add": -3
+       }
+      },
+      {
+       "eval": {
+        "key": "accuracy",
+        "add": -2
+       }
+      },
+      {
+       "rel": {
+        "char": "hamaguchi",
+        "trust": -1,
+        "rapport": 0
+       }
+      }
+     ]
+    },
+    {
+     "id": "later",
+     "label": "「今は手が離せないので、あとで折り返します」",
+     "goto": "ch1.phone_r3",
+     "tone": "neutral",
+     "effects": [
+      {
+       "eval": {
+        "key": "reporting",
+        "add": -2
+       }
+      }
+     ]
+    }
+   ],
+   "view": {
+    "mode": "3d",
+    "cam": "npc:shiraishi"
+   }
+  },
+  "ch1.phone_r1": {
+   "id": "ch1.phone_r1",
+   "type": "line",
+   "lines": [
+    {
+     "who": "hamaguchi",
+     "text": "助かります。事実と時刻が分かれば、次の判断ができます。"
+    },
+    {
+     "who": "shiraishi",
+     "text": "電話は短く、事実から。それが指令との信頼になる。",
+     "mood": "smile"
+    }
+   ],
+   "next": "ch1.phone_end"
+  },
+  "ch1.phone_r2": {
+   "id": "ch1.phone_r2",
+   "type": "line",
+   "lines": [
+    {
+     "who": "hamaguchi",
+     "text": "「たぶん」では判断できません。見たこと、確認したことを教えてください。",
+     "mood": "serious"
+    }
+   ],
+   "next": "ch1.phone_end"
+  },
+  "ch1.phone_r3": {
+   "id": "ch1.phone_r3",
+   "type": "line",
+   "lines": [
+    {
+     "who": "hamaguchi",
+     "text": "分かりました。ただ、5分以内に折り返してください。"
+    }
+   ],
+   "next": "ch1.phone_end"
+  },
+  "ch1.phone_end": {
+   "id": "ch1.phone_end",
+   "type": "effect",
+   "effects": [
+    {
+     "set": "ch1.phone_done"
+    },
+    {
+     "var": {
+      "key": "ch1.extra",
+      "add": 1
+     }
+    },
+    {
+     "time": 5
+    },
+    {
+     "log": {
+      "text": "指令からの電話に応答",
+      "tag": "work"
+     }
+    }
+   ],
+   "next": "ch1.hub"
+  },
+  "ch1.guide_1": {
+   "id": "ch1.guide_1",
+   "type": "line",
+   "lines": [
+    {
+     "who": "tourist2",
+     "text": "Excuse me... 星峰線の観光列車に、乗りたいです。どこから乗りますか？",
+     "mood": "worry"
+    }
+   ],
+   "next": "ch1.guide_c",
+   "view": {
+    "mode": "3d",
+    "cam": "npc:tourist2",
+    "caption": "観光案内所の前"
+   }
+  },
+  "ch1.guide_c": {
+   "id": "ch1.guide_c",
+   "type": "choice",
+   "prompt": "どう案内しますか？",
+   "options": [
+    {
+     "id": "map",
+     "label": "路線図を指さしながら、ゆっくり・短い言葉で伝える",
+     "goto": "ch1.guide_r1",
+     "tone": "careful",
+     "effects": [
+      {
+       "eval": {
+        "key": "service",
+        "add": 4
+       }
+      },
+      {
+       "skill": {
+        "key": "guide",
+        "add": 4
+       }
+      },
+      {
+       "rel": {
+        "char": "tourist2",
+        "trust": 1,
+        "rapport": 1
+       }
+      }
+     ]
+    },
+    {
+     "id": "phone",
+     "label": "翻訳アプリを使って、画面を見せながら伝える",
+     "goto": "ch1.guide_r2",
+     "tone": "quick",
+     "effects": [
+      {
+       "eval": {
+        "key": "service",
+        "add": 2
+       }
+      },
+      {
+       "skill": {
+        "key": "guide",
+        "add": 2
+       }
+      }
+     ]
+    },
+    {
+     "id": "call",
+     "label": "駅員の久保田を呼んで、対応を代わってもらう",
+     "goto": "ch1.guide_r3",
+     "tone": "neutral",
+     "effects": [
+      {
+       "eval": {
+        "key": "service",
+        "add": -1
+       }
+      },
+      {
+       "eval": {
+        "key": "teamwork",
+        "add": 1
+       }
+      }
+     ]
+    }
+   ],
+   "view": {
+    "mode": "3d",
+    "cam": "npc:tourist2"
+   }
+  },
+  "ch1.guide_r1": {
+   "id": "ch1.guide_r1",
+   "type": "line",
+   "lines": [
+    {
+     "who": "tourist2",
+     "text": "Oh, I see! Thank you. あの、乗り換えは、どこですか？"
+    },
+    {
+     "who": "kubota",
+     "text": "ジェスチャーと短い言葉は、とても効果的です。"
+    }
+   ],
+   "next": "ch1.guide_end"
+  },
+  "ch1.guide_r2": {
+   "id": "ch1.guide_r2",
+   "type": "line",
+   "lines": [
+    {
+     "who": "tourist2",
+     "text": "Ah, 分かりました。Thank you."
+    },
+    {
+     "who": "kubota",
+     "text": "アプリは便利ですが、誤訳も。路線図と合わせて確認しましょう。"
+    }
+   ],
+   "next": "ch1.guide_end"
+  },
+  "ch1.guide_r3": {
+   "id": "ch1.guide_r3",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "呼んでくれてありがとうございます。次は、まず自分で試してみてください。"
+    }
+   ],
+   "next": "ch1.guide_end"
+  },
+  "ch1.guide_end": {
+   "id": "ch1.guide_end",
+   "type": "effect",
+   "effects": [
+    {
+     "set": "ch1.guide_done"
+    },
+    {
+     "var": {
+      "key": "ch1.extra",
+      "add": 1
+     }
+    },
+    {
+     "time": 12
+    },
+    {
+     "log": {
+      "text": "外国の旅行客を案内",
+      "tag": "work"
+     }
+    }
+   ],
+   "next": "ch1.hub"
+  },
+  "ch1.kaji2_1": {
+   "id": "ch1.kaji2_1",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kajiwara",
+     "text": "あら、朝のお兄さん、いえ、あなたね。病院の帰りに寄ってみたのよ。",
+     "mood": "smile"
+    },
+    {
+     "who": "kajiwara",
+     "text": "おかげさまで、予約に間に合ったわ。これ、お礼の飴だけど、受け取ってちょうだい。"
+    }
+   ],
+   "next": "ch1.kaji2_c",
+   "view": {
+    "mode": "3d",
+    "cam": "npc:kajiwara",
+    "caption": "改札前"
+   }
+  },
+  "ch1.kaji2_c": {
+   "id": "ch1.kaji2_c",
+   "type": "choice",
+   "prompt": "梶原さんの申し出に、どう答えますか？",
+   "options": [
+    {
+     "id": "decline",
+     "label": "「お気持ちだけ、ありがたく頂きます。業務中は受け取れない決まりです」",
+     "goto": "ch1.kaji2_r1",
+     "tone": "honest",
+     "effects": [
+      {
+       "eval": {
+        "key": "accuracy",
+        "add": 2
+       }
+      },
+      {
+       "eval": {
+        "key": "service",
+        "add": 2
+       }
+      },
+      {
+       "rel": {
+        "char": "kajiwara",
+        "trust": 1,
+        "rapport": 1
+       }
+      }
+     ]
+    },
+    {
+     "id": "accept",
+     "label": "「ありがとうございます」と受け取る",
+     "goto": "ch1.kaji2_r2",
+     "tone": "risky",
+     "effects": [
+      {
+       "eval": {
+        "key": "accuracy",
+        "add": -2
+       }
+      },
+      {
+       "rel": {
+        "char": "kajiwara",
+        "trust": 1,
+        "rapport": 2
+       }
+      }
+     ]
+    },
+    {
+     "id": "office",
+     "label": "「駅長に確認してから、お返事してもいいですか」",
+     "goto": "ch1.kaji2_r3",
+     "tone": "careful",
+     "effects": [
+      {
+       "eval": {
+        "key": "reporting",
+        "add": 3
+       }
+      },
+      {
+       "eval": {
+        "key": "service",
+        "add": 1
+       }
+      }
+     ]
+    }
+   ],
+   "view": {
+    "mode": "3d",
+    "cam": "npc:kajiwara"
+   }
+  },
+  "ch1.kaji2_r1": {
+   "id": "ch1.kaji2_r1",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kajiwara",
+     "text": "そうなの。真面目ねえ。でも、また来週も来るから、顔を見せてちょうだいね。",
+     "mood": "smile"
+    }
+   ],
+   "next": "ch1.kaji2_end",
+   "effects": [
+    {
+     "set": "legacy.kaji_friend"
+    }
+   ]
+  },
+  "ch1.kaji2_r2": {
+   "id": "ch1.kaji2_r2",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "（後で）お客様からの物品は、規則で受け取れません。断り方も、覚えておきましょう。"
+    }
+   ],
+   "next": "ch1.kaji2_end"
+  },
+  "ch1.kaji2_r3": {
+   "id": "ch1.kaji2_r3",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kajiwara",
+     "text": "駅長さんに？ ふふ、じゃあお願いするわ。"
+    }
+   ],
+   "next": "ch1.kaji2_end",
+   "effects": [
+    {
+     "set": "legacy.kaji_friend"
+    }
+   ]
+  },
+  "ch1.kaji2_end": {
+   "id": "ch1.kaji2_end",
+   "type": "effect",
+   "effects": [
+    {
+     "set": "ch1.kaji2"
+    },
+    {
+     "var": {
+      "key": "ch1.extra",
+      "add": 1
+     }
+    },
+    {
+     "time": 8
+    },
+    {
+     "log": {
+      "text": "梶原さんと再会",
+      "tag": "work"
+     }
+    }
+   ],
+   "next": "ch1.hub"
+  },
+  "ch1.patrol2_1": {
+   "id": "ch1.patrol2_1",
+   "type": "line",
+   "lines": [
+    {
+     "who": "yamashina",
+     "text": "午後の巡回、行こう。午前の指摘がちゃんと直っているか、確認しよう。"
+    }
+   ],
+   "next": "ch1.patrol2_task",
+   "view": {
+    "mode": "3d",
+    "cam": "npc:yamashina",
+    "caption": "島式ホーム"
+   }
+  },
+  "ch1.patrol2_task": {
+   "id": "ch1.patrol2_task",
+   "type": "task",
+   "kind": "checklist",
+   "title": "午後のホーム巡回",
+   "intro": "各項目を「正常」「異常」で判定してください。",
+   "items": [
+    {
+     "id": "a",
+     "label": "午前に指摘した点字ブロックの浮きが、修繕されている",
+     "truth": "ok",
+     "why": "修繕済みであることを確認できました。"
+    },
+    {
+     "id": "b",
+     "label": "ホームに、飲みかけの飲み物が置いたままになっている",
+     "truth": "ng",
+     "why": "こぼれると滑ります。回収が必要です。"
+    },
+    {
+     "id": "c",
+     "label": "列車非常停止ボタンのカバーが閉じている",
+     "truth": "ok",
+     "why": "正常です。"
+    },
+    {
+     "id": "d",
+     "label": "ホーム端の白線の内側で、お客様が列車を待っている",
+     "truth": "ok",
+     "why": "正常です。"
+    },
+    {
+     "id": "e",
+     "label": "待合室の扉が半開きで、閉まらなくなっている",
+     "truth": "ng",
+     "why": "故障の可能性があります。報告が必要です。"
+    }
+   ],
+   "results": [
+    {
+     "min": 80,
+     "goto": "ch1.patrol2_good",
+     "effects": [
+      {
+       "eval": {
+        "key": "safety",
+        "add": 3
+       }
+      },
+      {
+       "skill": {
+        "key": "patrol",
+        "add": 3
+       }
+      }
+     ]
+    },
+    {
+     "min": 50,
+     "goto": "ch1.patrol2_mid",
+     "effects": [
+      {
+       "eval": {
+        "key": "safety",
+        "add": 1
+       }
+      }
+     ]
+    },
+    {
+     "min": 0,
+     "goto": "ch1.patrol2_bad",
+     "effects": [
+      {
+       "eval": {
+        "key": "safety",
+        "add": -2
+       }
+      }
+     ]
+    }
+   ],
+   "config": {
+    "labels": [
+     "正常",
+     "異常"
+    ]
+   },
+   "view": {
+    "mode": "3d",
+    "cam": "follow",
+    "caption": "午後のホーム巡回"
+   }
+  },
+  "ch1.patrol2_good": {
+   "id": "ch1.patrol2_good",
+   "type": "line",
+   "lines": [
+    {
+     "who": "yamashina",
+     "text": "二周目のほうが、気づけるものが多いな。",
+     "mood": "smile"
+    }
+   ],
+   "next": "ch1.patrol2_end",
+   "effects": [
+    {
+     "rel": {
+      "char": "yamashina",
+      "trust": 1,
+      "rapport": 1
+     }
+    }
+   ]
+  },
+  "ch1.patrol2_mid": {
+   "id": "ch1.patrol2_mid",
+   "type": "line",
+   "lines": [
+    {
+     "who": "yamashina",
+     "text": "ちょっと見落としたな。もう一回、俺と見よう。"
+    }
+   ],
+   "next": "ch1.patrol2_end"
+  },
+  "ch1.patrol2_bad": {
+   "id": "ch1.patrol2_bad",
+   "type": "line",
+   "lines": [
+    {
+     "who": "yamashina",
+     "text": "大丈夫か。後で一緒に手順を確認するよ。"
+    }
+   ],
+   "next": "ch1.patrol2_end"
+  },
+  "ch1.patrol2_end": {
+   "id": "ch1.patrol2_end",
+   "type": "effect",
+   "effects": [
+    {
+     "set": "ch1.patrol2_done"
+    },
+    {
+     "var": {
+      "key": "ch1.extra",
+      "add": 1
+     }
+    },
+    {
+     "time": 25
+    },
+    {
+     "log": {
+      "text": "午後のホーム巡回",
+      "tag": "work"
+     }
+    }
+   ],
+   "next": "ch1.hub"
+  },
+  "ch1.stroller_1": {
+   "id": "ch1.stroller_1",
+   "type": "line",
+   "lines": [
+    {
+     "who": "haha",
+     "text": "すみません、この電車に、ベビーカーのまま乗れますか？ 少し段差が気になって。",
+     "mood": "worry"
+    }
+   ],
+   "next": "ch1.stroller_c",
+   "view": {
+    "mode": "3d",
+    "cam": "npc:haha",
+    "caption": "ホーム"
+   }
+  },
+  "ch1.stroller_c": {
+   "id": "ch1.stroller_c",
+   "type": "choice",
+   "prompt": "どう対応しますか？",
+   "options": [
+    {
+     "id": "conductor",
+     "label": "「車掌に声をかけ、ドアの位置と乗降を見守ります」",
+     "goto": "ch1.stroller_r1",
+     "tone": "careful",
+     "effects": [
+      {
+       "eval": {
+        "key": "safety",
+        "add": 3
+       }
+      },
+      {
+       "eval": {
+        "key": "service",
+        "add": 2
+       }
+      },
+      {
+       "eval": {
+        "key": "reporting",
+        "add": 1
+       }
+      }
+     ]
+    },
+    {
+     "id": "lift",
+     "label": "「お持ちします」と、ベビーカーを抱えて乗せる",
+     "goto": "ch1.stroller_r2",
+     "tone": "risky",
+     "effects": [
+      {
+       "eval": {
+        "key": "safety",
+        "add": -3
+       }
+      },
+      {
+       "eval": {
+        "key": "service",
+        "add": 1
+       }
+      }
+     ]
+    },
+    {
+     "id": "guide",
+     "label": "「ドアの位置と、段差のあるところだけご案内します」",
+     "goto": "ch1.stroller_r3",
+     "tone": "neutral",
+     "effects": [
+      {
+       "eval": {
+        "key": "service",
+        "add": 2
+       }
+      },
+      {
+       "eval": {
+        "key": "safety",
+        "add": 1
+       }
+      }
+     ]
+    }
+   ],
+   "view": {
+    "mode": "3d",
+    "cam": "npc:haha"
+   }
+  },
+  "ch1.stroller_r1": {
+   "id": "ch1.stroller_r1",
+   "type": "line",
+   "lines": [
+    {
+     "who": "haha",
+     "text": "ありがとうございます。助かります。",
+     "mood": "smile"
+    },
+    {
+     "who": "kubota",
+     "text": "ホームと列車の間は、思ったより危険です。見守りは大事な仕事です。"
+    }
+   ],
+   "next": "ch1.stroller_end"
+  },
+  "ch1.stroller_r2": {
+   "id": "ch1.stroller_r2",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "ベビーカーを抱えると、足元が不安定になります。お客様の動きに合わせて、安全に見守る方法を選びましょう。",
+     "mood": "serious"
+    }
+   ],
+   "next": "ch1.stroller_end"
+  },
+  "ch1.stroller_r3": {
+   "id": "ch1.stroller_r3",
+   "type": "line",
+   "lines": [
+    {
+     "who": "haha",
+     "text": "分かりやすいです。ありがとう。"
+    }
+   ],
+   "next": "ch1.stroller_end"
+  },
+  "ch1.stroller_end": {
+   "id": "ch1.stroller_end",
+   "type": "effect",
+   "effects": [
+    {
+     "set": "ch1.stroller_done"
+    },
+    {
+     "var": {
+      "key": "ch1.extra",
+      "add": 1
+     }
+    },
+    {
+     "time": 10
+    },
+    {
+     "log": {
+      "text": "ベビーカーのお客様の乗降を見守る",
+      "tag": "work"
+     }
+    }
+   ],
+   "next": "ch1.hub"
+  },
+  "ch1.gate_1": {
+   "id": "ch1.gate_1",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "改札機の動作点検です。通行する人がいない時間に、一台ずつ確認します。"
+    }
+   ],
+   "next": "ch1.gate_task",
+   "view": {
+    "mode": "3d",
+    "cam": "gate_back",
+    "caption": "改札機"
+   }
+  },
+  "ch1.gate_task": {
+   "id": "ch1.gate_task",
+   "type": "task",
+   "kind": "checklist",
+   "title": "改札機の動作点検",
+   "intro": "各項目を「正常」「異常」で判定してください。",
+   "items": [
+    {
+     "id": "a",
+     "label": "ICカードをかざすと、読取音が鳴り、扉が開く",
+     "truth": "ok",
+     "why": "正常です。"
+    },
+    {
+     "id": "b",
+     "label": "5番通路の扉が、通行後も閉まらない",
+     "truth": "ng",
+     "why": "通過センサーまたは扉機構の不具合です。使用停止と保守依頼が必要です。"
+    },
+    {
+     "id": "c",
+     "label": "幅広通路の幅は十分で、車いすが通れる",
+     "truth": "ok",
+     "why": "正常です。"
+    },
+    {
+     "id": "d",
+     "label": "3番通路の進入可表示が、緑と赤で同時に点灯している",
+     "truth": "ng",
+     "why": "表示灯の異常です。お客様が迷います。"
+    }
+   ],
+   "results": [
+    {
+     "min": 80,
+     "goto": "ch1.gate_good",
+     "effects": [
+      {
+       "eval": {
+        "key": "accuracy",
+        "add": 3
+       }
+      },
+      {
+       "eval": {
+        "key": "safety",
+        "add": 2
+       }
+      }
+     ]
+    },
+    {
+     "min": 50,
+     "goto": "ch1.gate_mid",
+     "effects": [
+      {
+       "eval": {
+        "key": "accuracy",
+        "add": 1
+       }
+      }
+     ]
+    },
+    {
+     "min": 0,
+     "goto": "ch1.gate_bad",
+     "effects": [
+      {
+       "eval": {
+        "key": "safety",
+        "add": -2
+       }
+      }
+     ]
+    }
+   ],
+   "config": {
+    "labels": [
+     "正常",
+     "異常"
+    ]
+   },
+   "view": {
+    "mode": "3d",
+    "cam": "follow",
+    "caption": "改札機の動作点検"
+   }
+  },
+  "ch1.gate_good": {
+   "id": "ch1.gate_good",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "改札機は、毎日たくさんの人が通ります。小さな異常も、早く見つけるのが大事です。"
+    }
+   ],
+   "next": "ch1.gate_end"
+  },
+  "ch1.gate_mid": {
+   "id": "ch1.gate_mid",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "見落としがあります。もう一度、通路ごとに確認しましょう。"
+    }
+   ],
+   "next": "ch1.gate_end"
+  },
+  "ch1.gate_bad": {
+   "id": "ch1.gate_bad",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "改札機の異常は、混雑時に大きな影響が出ます。一緒に確認し直しましょう。",
+     "mood": "serious"
+    }
+   ],
+   "next": "ch1.gate_end"
+  },
+  "ch1.gate_end": {
+   "id": "ch1.gate_end",
+   "type": "effect",
+   "effects": [
+    {
+     "set": "ch1.gate_done"
+    },
+    {
+     "var": {
+      "key": "ch1.extra",
+      "add": 1
+     }
+    },
+    {
+     "time": 20
+    },
+    {
+     "log": {
+      "text": "改札機の動作点検",
+      "tag": "work"
+     }
+    }
+   ],
+   "next": "ch1.hub"
+  },
+  "ch1.ann2_task": {
+   "id": "ch1.ann2_task",
+   "type": "task",
+   "kind": "compose",
+   "title": "ホーム安全放送の作成",
+   "intro": "帰宅時間帯の前に、ホームでの注意を呼びかける放送を作ります。",
+   "slots": [
+    {
+     "id": "hello",
+     "label": "呼びかけ",
+     "options": [
+      {
+       "id": "h1",
+       "text": "ご案内いたします。",
+       "good": true,
+       "why": "丁寧で簡潔です。"
+      },
+      {
+       "id": "h2",
+       "text": "おい、そこの人たち。",
+       "good": false,
+       "why": "不適切な呼びかけです。"
+      },
+      {
+       "id": "h3",
+       "text": "お急ぎください。",
+       "good": false,
+       "why": "急ぐように促すのは危険です。"
+      }
+     ]
+    },
+    {
+     "id": "body",
+     "label": "内容",
+     "options": [
+      {
+       "id": "b1",
+       "text": "黄色い線の内側で、列車をお待ちください。",
+       "good": true,
+       "why": "具体的で分かりやすい内容です。"
+      },
+      {
+       "id": "b2",
+       "text": "ホームでは、走らないでください。",
+       "good": false,
+       "why": "大事な注意ですが、この放送の主題（線の内側）が抜けています。"
+      },
+      {
+       "id": "b3",
+       "text": "危ないので、あまり近づかないでください。",
+       "good": false,
+       "why": "「危ない」「あまり」では行動が分かりません。"
+      }
+     ]
+    },
+    {
+     "id": "ask",
+     "label": "お願い",
+     "options": [
+      {
+       "id": "a1",
+       "text": "歩きスマホは、おやめください。ご協力をお願いいたします。",
+       "good": true,
+       "why": "行動と協力のお願いが入っています。"
+      },
+      {
+       "id": "a2",
+       "text": "スマホを見ている人は、事故が起きても責任を負いかねます。",
+       "good": false,
+       "why": "責任を持ち出すのは不適切です。"
+      },
+      {
+       "id": "a3",
+       "text": "どうぞご自由にお過ごしください。",
+       "good": false,
+       "why": "注意喚起になりません。"
+      }
+     ]
+    }
+   ],
+   "results": [
+    {
+     "min": 66,
+     "goto": "ch1.ann2_good",
+     "effects": [
+      {
+       "eval": {
+        "key": "service",
+        "add": 2
+       }
+      },
+      {
+       "eval": {
+        "key": "safety",
+        "add": 3
+       }
+      }
+     ]
+    },
+    {
+     "min": 34,
+     "goto": "ch1.ann2_mid",
+     "effects": [
+      {
+       "eval": {
+        "key": "safety",
+        "add": 1
+       }
+      }
+     ]
+    },
+    {
+     "min": 0,
+     "goto": "ch1.ann2_bad",
+     "effects": [
+      {
+       "eval": {
+        "key": "safety",
+        "add": -1
+       }
+      }
+     ]
+    }
+   ],
+   "view": {
+    "mode": "3d",
+    "cam": "npc:shiraishi",
+    "caption": "駅事務室 放送設備"
+   }
+  },
+  "ch1.ann2_good": {
+   "id": "ch1.ann2_good",
+   "type": "line",
+   "lines": [
+    {
+     "who": "shiraishi",
+     "text": "具体的な行動と、お願いの言葉。理想的な放送だ。",
+     "mood": "smile"
+    }
+   ],
+   "next": "ch1.ann2_end"
+  },
+  "ch1.ann2_mid": {
+   "id": "ch1.ann2_mid",
+   "type": "line",
+   "lines": [
+    {
+     "who": "shiraishi",
+     "text": "悪くない。ただ、何をしてほしいのか、もう少し具体的に。"
+    }
+   ],
+   "next": "ch1.ann2_end"
+  },
+  "ch1.ann2_bad": {
+   "id": "ch1.ann2_bad",
+   "type": "line",
+   "lines": [
+    {
+     "who": "shiraishi",
+     "text": "放送は多くの人に届く。言葉は慎重に選びなさい。",
+     "mood": "serious"
+    }
+   ],
+   "next": "ch1.ann2_end"
+  },
+  "ch1.ann2_end": {
+   "id": "ch1.ann2_end",
+   "type": "effect",
+   "effects": [
+    {
+     "set": "ch1.ann2_done"
+    },
+    {
+     "var": {
+      "key": "ch1.extra",
+      "add": 1
+     }
+    },
+    {
+     "time": 10
+    },
+    {
+     "log": {
+      "text": "ホーム安全放送",
+      "tag": "work"
+     }
+    }
+   ],
+   "next": "ch1.hub"
+  },
+  "ch1.refill_1": {
+   "id": "ch1.refill_1",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "1号機の券紙が残り少なくなっています。補充の手順を確認しましょう。"
+    }
+   ],
+   "next": "ch1.refill_task",
+   "view": {
+    "mode": "3d",
+    "cam": "npc:vend1",
+    "caption": "券売機1号機"
+   }
+  },
+  "ch1.refill_task": {
+   "id": "ch1.refill_task",
+   "type": "task",
+   "kind": "checklist",
+   "title": "券紙補充の手順",
+   "intro": "各項目が、手順として適切か不適切かを判断してください。",
+   "items": [
+    {
+     "id": "a",
+     "label": "使用停止にしてから、前面の扉を開ける",
+     "truth": "ok",
+     "why": "稼働中は開けません。"
+    },
+    {
+     "id": "b",
+     "label": "券紙の向きと、通し方を確認してから取り付ける",
+     "truth": "ok",
+     "why": "逆向きだと詰まりの原因になります。"
+    },
+    {
+     "id": "c",
+     "label": "時間がないので、補充した後の試験発券は省略する",
+     "truth": "ng",
+     "why": "試験発券で、正常に出ることを確認します。"
+    },
+    {
+     "id": "d",
+     "label": "使用済みの巻芯や紙くずは、その場に置いて帰る",
+     "truth": "ng",
+     "why": "片付けまでが作業です。"
+    }
+   ],
+   "results": [
+    {
+     "min": 80,
+     "goto": "ch1.refill_good",
+     "effects": [
+      {
+       "eval": {
+        "key": "accuracy",
+        "add": 3
+       }
+      },
+      {
+       "skill": {
+        "key": "ticket",
+        "add": 3
+       }
+      }
+     ]
+    },
+    {
+     "min": 50,
+     "goto": "ch1.refill_mid",
+     "effects": [
+      {
+       "eval": {
+        "key": "accuracy",
+        "add": 1
+       }
+      }
+     ]
+    },
+    {
+     "min": 0,
+     "goto": "ch1.refill_bad",
+     "effects": [
+      {
+       "eval": {
+        "key": "accuracy",
+        "add": -2
+       }
+      }
+     ]
+    }
+   ],
+   "config": {
+    "labels": [
+     "適切",
+     "不適切"
+    ]
+   },
+   "view": {
+    "mode": "3d",
+    "cam": "follow",
+    "caption": "券紙補充の手順"
+   }
+  },
+  "ch1.refill_good": {
+   "id": "ch1.refill_good",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "補充は一人でもできます。次回は任せますね。",
+     "mood": "smile"
+    }
+   ],
+   "next": "ch1.refill_end"
+  },
+  "ch1.refill_mid": {
+   "id": "ch1.refill_mid",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "手順を一つずつ指差し確認しながら、もう一度。"
+    }
+   ],
+   "next": "ch1.refill_end"
+  },
+  "ch1.refill_bad": {
+   "id": "ch1.refill_bad",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "手順を飛ばすと、お客様の前で止まります。手順は必ず守ります。",
+     "mood": "serious"
+    }
+   ],
+   "next": "ch1.refill_end"
+  },
+  "ch1.refill_end": {
+   "id": "ch1.refill_end",
+   "type": "effect",
+   "effects": [
+    {
+     "set": "ch1.refill_done"
+    },
+    {
+     "var": {
+      "key": "ch1.extra",
+      "add": 1
+     }
+    },
+    {
+     "time": 15
+    },
+    {
+     "log": {
+      "text": "券紙の補充",
+      "tag": "work"
+     }
+    }
+   ],
+   "next": "ch1.hub"
+  },
+  "ch1.final_1": {
+   "id": "ch1.final_1",
+   "type": "line",
+   "lines": [
+    {
+     "who": "shiraishi",
+     "text": "終業前の施設点検だ。エレベーターとAEDを見てきなさい。"
+    }
+   ],
+   "next": "ch1.final_task",
+   "view": {
+    "mode": "3d",
+    "cam": "follow",
+    "caption": "終業前点検"
+   }
+  },
+  "ch1.final_task": {
+   "id": "ch1.final_task",
+   "type": "task",
+   "kind": "checklist",
+   "title": "終業前の施設点検",
+   "intro": "各項目を「正常」「異常」で判定してください。",
+   "items": [
+    {
+     "id": "a",
+     "label": "エレベーターの非常呼出ボタンが作動し、事務室につながる",
+     "truth": "ok",
+     "why": "正常です。"
+    },
+    {
+     "id": "b",
+     "label": "AEDの使用期限表示が、今月で切れる",
+     "truth": "ng",
+     "why": "期限が近いものは、交換の手配が必要です。"
+    },
+    {
+     "id": "c",
+     "label": "エレベーターの点検表の署名が、今日の分だけ空いている",
+     "truth": "ng",
+     "why": "記録の漏れです。確認して記入します。"
+    },
+    {
+     "id": "d",
+     "label": "案内表示の電球が切れている箇所はない",
+     "truth": "ok",
+     "why": "正常です。"
+    }
+   ],
+   "results": [
+    {
+     "min": 80,
+     "goto": "ch1.final_good",
+     "effects": [
+      {
+       "eval": {
+        "key": "safety",
+        "add": 3
+       }
+      },
+      {
+       "eval": {
+        "key": "reporting",
+        "add": 2
+       }
+      }
+     ]
+    },
+    {
+     "min": 50,
+     "goto": "ch1.final_mid",
+     "effects": [
+      {
+       "eval": {
+        "key": "safety",
+        "add": 1
+       }
+      }
+     ]
+    },
+    {
+     "min": 0,
+     "goto": "ch1.final_bad",
+     "effects": [
+      {
+       "eval": {
+        "key": "safety",
+        "add": -2
+       }
+      }
+     ]
+    }
+   ],
+   "config": {
+    "labels": [
+     "正常",
+     "異常"
+    ]
+   },
+   "view": {
+    "mode": "3d",
+    "cam": "follow",
+    "caption": "終業前の施設点検"
+   }
+  },
+  "ch1.final_good": {
+   "id": "ch1.final_good",
+   "type": "line",
+   "lines": [
+    {
+     "who": "shiraishi",
+     "text": "記録と設備を、両方見る。それができれば、一人前の第一歩だ。",
+     "mood": "smile"
+    }
+   ],
+   "next": "ch1.final_end"
+  },
+  "ch1.final_mid": {
+   "id": "ch1.final_mid",
+   "type": "line",
+   "lines": [
+    {
+     "who": "shiraishi",
+     "text": "見落としは、次の勤務の人の負担になる。もう一度。"
+    }
+   ],
+   "next": "ch1.final_end"
+  },
+  "ch1.final_bad": {
+   "id": "ch1.final_bad",
+   "type": "line",
+   "lines": [
+    {
+     "who": "shiraishi",
+     "text": "点検は、次の人への引継ぎでもある。丁寧に。",
+     "mood": "serious"
+    }
+   ],
+   "next": "ch1.final_end"
+  },
+  "ch1.final_end": {
+   "id": "ch1.final_end",
+   "type": "effect",
+   "effects": [
+    {
+     "set": "ch1.final_done"
+    },
+    {
+     "var": {
+      "key": "ch1.extra",
+      "add": 1
+     }
+    },
+    {
+     "time": 15
+    },
+    {
+     "log": {
+      "text": "終業前の施設点検",
+      "tag": "work"
+     }
+    }
+   ],
+   "next": "ch1.hub"
+  },
+  "ch1.cl_count": {
+   "id": "ch1.cl_count",
+   "type": "branch",
+   "cases": [
+    {
+     "when": {
+      "var": {
+       "key": "ch1.extra",
+       "op": ">=",
+       "val": 9
+      }
+     },
+     "goto": "ch1.cl_busy"
+    },
+    {
+     "when": {
+      "var": {
+       "key": "ch1.extra",
+       "op": ">=",
+       "val": 4
+      }
+     },
+     "goto": "ch1.cl_mid"
+    }
+   ],
+   "else": "ch1.cl_few"
+  },
+  "ch1.cl_busy": {
+   "id": "ch1.cl_busy",
+   "type": "line",
+   "lines": [
+    {
+     "who": "shiraishi",
+     "text": "今日はずいぶん、依頼をこなしたな。初日でこれだけ動ければ、周りの信頼も上がる。",
+     "mood": "smile"
+    },
+    {
+     "who": "kubota",
+     "text": "一つひとつ、記録も残してくれていました。"
+    }
+   ],
+   "next": "ch1.closing2",
+   "effects": [
+    {
+     "eval": {
+      "key": "teamwork",
+      "add": 3
+     }
+    },
+    {
+     "eval": {
+      "key": "service",
+      "add": 2
+     }
+    },
+    {
+     "set": "legacy.busy_day"
+    }
+   ],
+   "view": {
+    "mode": "25d",
+    "bg": "office",
+    "focus": [
+     "shiraishi",
+     "kubota"
+    ]
+   }
+  },
+  "ch1.cl_mid": {
+   "id": "ch1.cl_mid",
+   "type": "line",
+   "lines": [
+    {
+     "who": "shiraishi",
+     "text": "依頼に応えながら、基本の業務も進められた。バランスは悪くない。"
+    }
+   ],
+   "next": "ch1.closing2",
+   "effects": [
+    {
+     "eval": {
+      "key": "teamwork",
+      "add": 1
+     }
+    }
+   ],
+   "view": {
+    "mode": "25d",
+    "bg": "office",
+    "focus": [
+     "shiraishi"
+    ]
+   }
+  },
+  "ch1.cl_few": {
+   "id": "ch1.cl_few",
+   "type": "line",
+   "lines": [
+    {
+     "who": "shiraishi",
+     "text": "依頼が出ていたのに、対応できなかったものがあったようだ。駅は、次々と仕事が生まれる場所だ。明日は、周りをもっと見てみよう。"
+    }
+   ],
+   "next": "ch1.closing2",
+   "effects": [
+    {
+     "eval": {
+      "key": "teamwork",
+      "add": -1
+     }
+    }
+   ],
+   "view": {
+    "mode": "25d",
+    "bg": "office",
+    "focus": [
+     "shiraishi"
+    ]
+   }
   }
  }
 }

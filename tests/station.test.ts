@@ -36,7 +36,12 @@ describe('駅ジオメトリ・歩行', () => {
   });
   it('広場→コンコース（改札外）へ歩いて到達できる', () => { expect(reachable([0, 0, -34], [-10.8, -8.5])).toBe(true); });
   it('広場→改札→ホーム（階段経由）へ歩いて到達できる', () => { expect(reachable([0, 0, -34], [-18, 2.6])).toBe(true); expect(reachable([0, 0, -34], [20, -2.8])).toBe(true); });
-  it('事務室（勤務表・端末・駅長）へ到達できる', () => { expect(reachable([0, 0, -34], [10.2, -8.6])).toBe(true); expect(reachable([0, 0, -34], [9.9, -7.6])).toBe(true); });
+  it('主要な仕事場所（事務室・端末・売店・案内所・トイレ・待合室・券売機）へ歩いて到達できる', () => {
+    const sim = new StationSim(data);
+    for (const id of ['shiraishi', 'terminal', 'roster_board', 'phone', 'mic', 'shop', 'sakai', 'info_desk', 'toilet', 'waiting_room', 'vend1', 'vend2', 'vend3', 'seisan', 'kubota', 'yamashina', 'kajiwara']) {
+      const p = sim.standNear(id); expect(p, `${id} の立ち位置`).not.toBeNull(); expect(reachable([0, 0, -34], [p!.x, p!.z]), `${id} へ到達`).toBe(true);
+    }
+  });
   it('線路上は歩けない（ホームから軌道へ落ちない）', () => {
     expect(canStandAt(data, 0, TRACK_Z.A, P)).toBeNull(); expect(canStandAt(data, 0, TRACK_Z.B, P)).toBeNull(); expect(canStandAt(data, 0, 3.9, P)).toBeNull();
   });

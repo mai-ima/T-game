@@ -2,6 +2,7 @@ import storyJson from '../data/r7/story.json';
 import type { StoryData, WorldState, ModeId } from './types';
 import { StoryRunner, type RunnerView } from './storyRunner';
 import { createWorld, gameDate, fmtTime } from './worldState';
+import { evalCond } from './conditions';
 import { SaveManager, createAdapter, MemoryAdapter, type SaveFile } from './save';
 import { StationSim } from './stationSim';
 import { RailSim } from './railSim';
@@ -99,11 +100,7 @@ export class GameController {
   /** ノード遷移後の共通処理：表示対象・NPC・カメラ・音・選択タイマー・オートセーブ */
   private afterView(autosave = true) {
     this.lineIndex = 0; this.recordLine(); const v = this.view!; const w = this.world;
-    // 人物の出入り
-    const n = w.story.node; const inDelay = /^ch1\.(delay|dq|announce|ann_)/.test(n) && !w.flags['ch1.delay_done'];
-    if (this.sim.npcs.traveler) this.sim.npcs.traveler.visible = inDelay;
-    if (this.sim.npcs.kajiwara) this.sim.npcs.kajiwara.visible = !w.flags['ch1.kajiwara_done'] && !n.startsWith('ch2');
-    if (this.sim.npcs.shiraishi) this.sim.npcs.shiraishi.visible = true;
+    this.updateNpcVisibility();
     this.applyCamera(); this.updateAudioZone();
     // 時間制限つき選択
     clearTimeout(this.choiceTimerId); this.choiceDeadline = null;
@@ -124,7 +121,20 @@ export class GameController {
 
   private stepMinute() {
     const w = this.world; w.clock.minute += 1; if (w.clock.minute >= 1440) { w.clock.minute = 0; w.clock.day++; }
-    const t = this.runner.checkTimed(); if (t) { this.view = t; this.afterView(); }
+    const t = this.runner.checkTimed(); if (t) { this.view = t; this.afterView(); return; }
+    if (this.view?.kind === 'hub') this.refreshHub();
+  }
+
+  /** 人物の出入りは、人物データの visibleWhen（時刻・フラグ・場面）で決まる */
+  updateNpcVisibility() { for (const def of Object.values(this.story.characters)) { const n = this.sim.npcs[def.id]; if (n && def.visibleWhen) n.visible = evalCond(def.visibleWhen, this.world); } }
+  private knownReq = new Set<string>();
+  /** 時間経過で増える「依頼」を反映し、新しく出たものを知らせる */
+  refreshHub() {
+    if (this.view?.kind !== 'hub') return; const prev = this.view; this.view = this.runner.view(); if (this.view.kind !== 'hub') return;
+    const fresh = this.view.interactions.filter(i => !prev.interactions.some(p => p.id === i.id) && this.knownReq.has('init') && !this.knownReq.has(i.id));
+    for (const i of this.view.interactions) this.knownReq.add(i.id); this.knownReq.add('init');
+    if (fresh.length) { const g = this.view.goals.find(x => x.label.startsWith('（依頼）') || x.label.startsWith('（定期）') || x.label.startsWith('（定時）') || x.label.startsWith('（終業前）')); void g; this.say(`新しい仕事：${this.textWorld(fresh[0].label)}${fresh.length > 1 ? ` ほか${fresh.length - 1}件` : ''}`); this.audio.ui('notify'); }
+    this.updateNpcVisibility(); this.applyCamera(); this.notify();
   }
 
   /** 毎フレーム：時計の進行・近接プロンプト・音（描画ループから呼ぶ） */
@@ -135,7 +145,7 @@ export class GameController {
       if (this.world.clock.minute !== this.lastNotifyMin) { this.lastNotifyMin = this.world.clock.minute; this.notify(); }
     }
     this.rm?.setSimMinute(this.world.clock.minute + this.frac);
-    this.promptTimer -= dt; if (this.promptTimer <= 0) { this.promptTimer = 0.1; this.updatePrompt(); this.updateAudioZone(); }
+    this.promptTimer -= dt; if (this.promptTimer <= 0) { this.promptTimer = 0.1; this.updateNpcVisibility(); this.updatePrompt(); this.updateAudioZone(); }
     if (this.caption && performance.now() > this.caption.until) { this.caption = null; this.notify(); }
   }
 

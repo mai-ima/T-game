@@ -85,7 +85,7 @@ for (const q of ['high', 'low']) { await gc(p1, (q) => window.__GC.setSettings({
   await p1.mouse.move(jb.x, jb.y); await p1.mouse.down(); await p1.mouse.move(jb.x, jb.y - 40, { steps: 3 }); await p1.waitForTimeout(1200); await p1.mouse.up(); const q1 = await gc(p1, () => ({ ...window.__GC.sim.player }));
   add('仮想ジョイスティックで移動', Math.hypot(q1.x - q0.x, q1.z - q0.z) > 0.8 ? 'PASS' : 'FAIL', `移動 ${Math.hypot(q1.x - q0.x, q1.z - q0.z).toFixed(1)}m`);
   // 壁・線路・ホーム端への進入不可
-  const col = await gc(p1, () => { const c = window.__GC, s = c.sim; const out = {}; s.teleport(-12, 6.6, -2, 0); for (let i = 0; i < 300; i++) s.move(-1, 0, 1 / 60); out.westWall = s.player.x; s.teleport(0, 1.65, 2, 0); for (let i = 0; i < 300; i++) s.move(0, 1, 1 / 60); out.platEdge = s.player.z; s.teleport(0, 6.6, -6, 0); for (let i = 0; i < 300; i++) s.move(0, -1, 1 / 60); out.gate = s.player.z; s.teleport(0, 0, -30, 0); for (let i = 0; i < 1500; i++) s.move(0, 1, 1 / 60, true); out.climbY = s.player.y; out.climbZ = s.player.z; return out; });
+  const col = await gc(p1, () => { const c = window.__GC, s = c.sim; const out = {}; s.teleport(-12, 6.6, -2, 0); for (let i = 0; i < 300; i++) s.move(-1, 0, 1 / 60); out.westWall = s.player.x; s.teleport(0, 1.65, 2, 0); for (let i = 0; i < 300; i++) s.move(0, 1, 1 / 60); out.platEdge = s.player.z; s.teleport(-8, 6.6, -1, 0); for (let i = 0; i < 300; i++) s.move(0, -1, 1 / 60); out.gate = s.player.z; s.teleport(0, 0, -30, 0); for (let i = 0; i < 1500; i++) s.move(0, 1, 1 / 60, true); out.climbY = s.player.y; out.climbZ = s.player.z; return out; });
   add('衝突：壁・ホーム端・改札機を貫通しない', col.westWall > -14 && col.platEdge < 3.6 && col.gate >= -3.4 ? 'PASS' : 'FAIL', `西壁x=${col.westWall.toFixed(2)} ホーム端z=${col.platEdge.toFixed(2)} 改札手前z=${col.gate.toFixed(2)}`);
   add('入口階段で高さが連続して上がる', col.climbY > 6.0 ? 'PASS' : 'FAIL', `最終高さ y=${col.climbY.toFixed(2)}m（コンコース6.6m）`);
   // タップ移動（2D）
@@ -147,7 +147,7 @@ for (const [tag, strat] of [['good', stratGood], ['risky', stratRisky]]) {
     const saved = await gc(page, async () => { const c = window.__GC; const before = JSON.stringify(c.world); await c.saveSlot('2'); const f = await c.saves.load('R7', '2'); return { ok: JSON.stringify(f.world) === before, kind: c.storageKind, other: (await c.saves.load('R8', '2')) === undefined, auto: (await c.saves.load('R7', 'auto')) !== undefined }; });
     add('セーブ：保存→読込で世界状態が完全一致（人物関係・経歴・履歴を含む）', saved.ok ? 'PASS' : 'FAIL', `保存先=${saved.kind}`); add('セーブ：モード別の独立領域・オートセーブ', saved.other && saved.auto ? 'PASS' : 'FAIL', 'R7の保存がR8領域に混入しない／章遷移でオートセーブ');
     // ページ再読込後のロード（IndexedDB永続化）
-    if (saved.kind === 'indexeddb') { await page.reload(); await page.waitForSelector('.menu'); await page.click('button.card.playable'); const slotTxt = await page.textContent('.modal .slots'); add('セーブ：ページ再読込後も残る（IndexedDB）', /スロット2/.test(slotTxt) && !/スロット2空き/.test(slotTxt.replace(/\s/g, '')) ? 'PASS' : 'FAIL', slotTxt.replace(/\s+/g, ' ').slice(0, 90)); } else add('セーブ：再読込後の永続化', 'UNVERIFIED', 'この環境ではIndexedDBが使えずメモリ保存');
+    if (saved.kind === 'indexeddb') { await page.reload(); await page.waitForSelector('.menu'); await page.click('button.card.playable'); await page.waitForTimeout(1200); const slotTxt = await page.textContent('.modal .slots'); add('セーブ：ページ再読込後も残る（IndexedDB）', /スロット2/.test(slotTxt) && !/スロット2空き/.test(slotTxt.replace(/\s/g, '')) ? 'PASS' : 'FAIL', slotTxt.replace(/\s+/g, ' ').slice(0, 90)); } else add('セーブ：再読込後の永続化', 'UNVERIFIED', 'この環境ではIndexedDBが使えずメモリ保存');
   }
   await r.ctx.close();
 }

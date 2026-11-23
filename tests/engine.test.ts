@@ -193,3 +193,21 @@ describe('14モード定義', () => {
 
 // 型の使用確認
 export type _W = WorldState;
+
+describe('時間経過で仕事（依頼）が増える', () => {
+  it('朝・昼・午後で選べる仕事が増え、目標欄にも追加される', () => {
+    const w = createWorld(S, 'T'); const run = new StoryRunner(S, w); w.flags['ch1.tenko'] = true; w.flags['ch1.roster'] = true; w.flags['ch1.platform'] = true; run.enter('ch1.hub');
+    const count = (min: number) => { w.clock.minute = min; const v = run.view(); if (v.kind !== 'hub') throw new Error('hub'); return { ints: v.interactions.length, goals: v.goals.length }; };
+    const a = count(8 * 60 + 40), b = count(10 * 60 + 15), c = count(13 * 60 + 40), d = count(16 * 60);
+    expect(b.ints).toBeGreaterThan(a.ints); expect(c.ints).toBeGreaterThan(b.ints); expect(d.goals).toBeGreaterThan(a.goals + 8);
+  });
+  it('依頼は少なくとも13種類あり、各依頼に独自の場面がある', () => {
+    const hub = S.nodes['ch1.hub'] as any; const timed = hub.interactions.filter((i: any) => JSON.stringify(i.requires).includes('"time"'));
+    expect(timed.length).toBeGreaterThanOrEqual(13); expect(new Set(timed.map((i: any) => i.goto)).size).toBe(timed.length);
+  });
+  it('梶原さんに付き添った場合だけ、午後に再会の依頼が出る', () => {
+    const w = createWorld(S, 'T'); const run = new StoryRunner(S, w); w.flags['ch1.tenko'] = true; run.enter('ch1.hub'); w.clock.minute = 13 * 60 + 40;
+    const has = () => { const v = run.view(); return v.kind === 'hub' && v.interactions.some(i => i.id === 'kaji2'); };
+    expect(has()).toBe(false); w.flags['legacy.helped_kajiwara'] = true; expect(has()).toBe(true);
+  });
+});

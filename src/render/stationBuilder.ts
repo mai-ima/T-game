@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { createMaterials, canvasTex, labelTexture, type MatDef } from './materials';
 import { buildGateLine, buildGuidance, buildVending, buildConcourseExtras, type GateUnit, type DetailCtx } from './stationDetail';
+import { buildExtras, type DoorUnit, type ExtraCtx } from './stationExtras';
 
 /** ===== 青嶺中央駅（架空）: 橋上駅舎＋島式ホーム1面2線。データ（衝突・歩行面・アンカー）と見た目を同一ビルダーから生成する ===== */
 export const D = 6.6;          // 橋上コンコース床高
@@ -22,7 +23,7 @@ export interface StationData {
   lodObjects: { lod: 1 | 2; obj: THREE.Object3D }[]; presets: Record<string, CamPreset>;
   boards: { departure: THREE.CanvasTexture | null; platformBoards: THREE.CanvasTexture[] };
   placements: { model: string; x: number; y: number; z: number; ry: number; name: string }[];
-  dynamic: { cars: THREE.Group[]; lamps: THREE.Object3D[]; sun: THREE.DirectionalLight; hemi: THREE.HemisphereLight; sky: THREE.Mesh; gates: GateUnit[] };
+  dynamic: { cars: THREE.Group[]; lamps: THREE.Object3D[]; sun: THREE.DirectionalLight; hemi: THREE.HemisphereLight; sky: THREE.Mesh; gates: GateUnit[]; doors: DoorUnit[] };
   stats: { boxes: number; meshes: number; triangles: number };
   routes: Record<string, [number, number, number][]>;
 }
@@ -188,27 +189,7 @@ export function buildStation(quality: 'high' | 'medium' | 'low' = 'high'): Stati
     for (const dx of [-4.5, 0, 4.5]) box('steel', 'ホーム上屋柱', cx + dx, (P + 5.2) / 2, 0, 0.32, 5.2 - P, 0.32, { collide: [P, 5.2], tag: 'column', support: 'platform' });
   }
 
-  // ======= 駅事務室 =======
-  const oz0 = -12, oz1 = -1;
-  wallZ('wall', '事務室壁（西）', 7, oz0, oz1, D, 3.6, 0.2, [[-11, -8.2]], true, { support: 'deck' });
-  wallX('wall', '事務室壁（南）', oz1, 7, 14, D, 3.6, 0.2, [[8.0, 9.2]], true, { support: 'deck' });
-  box('glass', '窓口ガラス', 7, D + 1.6, -9.6, 0.05, 1.2, 2.8, { tag: 'glass', noShadow: true });
-  box('woodMat', 'きっぷうりば カウンター', 6.6, D + 0.5, -9.6, 0.7, 1.0, 3.2, { collide: true, tag: 'counter', support: 'deck' });
-  sign(labelTexture('きっぷうりば', 'Ticket Office', 512, 128, '#1f6f4a'), 'きっぷうりば看板', 6.9, D + 3.0, -9.6, 2.6, 0.65, -Math.PI / 2);
-  box('woodMat', '事務机（手前）', 11.3, D + 0.38, -4.6, 1.7, 0.76, 0.8, { collide: true, tag: 'desk', support: 'deck', group: 'desk1' });
-  box('woodMat', '事務机（奥）', 11.3, D + 0.38, -7.6, 1.7, 0.76, 0.8, { collide: true, tag: 'desk', support: 'deck', group: 'desk2' });
-  for (const z of [-4.6, -7.6]) { box('steelDark', '事務椅子', 10.2, D + 0.28, z, 0.5, 0.56, 0.5, { tag: 'chair', support: 'deck' }); box('steelDark', '椅子背', 9.95, D + 0.8, z, 0.08, 0.5, 0.5, { tag: 'chair', support: 'none' }); }
-  const termScreen = new THREE.Mesh(new THREE.PlaneGeometry(0.5, 0.32), M('screen').mat); termScreen.position.set(11.9, D + 1.08, -7.62); termScreen.rotation.y = -Math.PI / 2; root.add(termScreen);
-  box('steelDark', '業務端末（本体）', 11.95, D + 0.96, -7.6, 0.06, 0.4, 0.58, { tag: 'terminal', support: 'none', group: 'desk2' }); box('steelDark', '端末スタンド', 11.95, D + 0.8, -7.6, 0.1, 0.08, 0.2, { tag: 'terminal', support: 'none', group: 'desk2' }); box('ticket', 'キーボード', 11.5, D + 0.775, -7.6, 0.2, 0.03, 0.46, { lod: 1, tag: 'prop', support: 'none' });
-  box('white', '勤務表ホワイトボード', 7.14, D + 1.75, -5.0, 0.04, 1.2, 2.2, { tag: 'board', support: 'mounted' });
-  sign(canvasTex(512, 256, (g, w, h) => { g.fillStyle = '#fafaf5'; g.fillRect(0, 0, w, h); g.fillStyle = '#1d2a44'; g.font = 'bold 30px "Noto Sans JP","WenQuanYi Zen Hei",sans-serif'; g.fillText('4月 勤務表（新人）', 20, 40); g.font = '22px "Noto Sans JP","WenQuanYi Zen Hei",sans-serif'; ['4/2(金) 日勤 8:30-17:15  指導:久保田', '4/3(土) 公休', '4/5(月)〜 日勤 ／ 4/8(木) 研修', '4/15(木) 早番 5:30-14:15'].forEach((t, i) => g.fillText(t, 20, 88 + i * 36)); g.strokeStyle = '#b33'; g.lineWidth = 3; g.strokeRect(6, 6, w - 12, h - 12); }, { repeat: false }), '勤務表（掲示）', 7.18, D + 1.75, -5.0, 2.1, 1.05, Math.PI / 2);
-  box('steel', '書類棚', 11.0, D + 0.95, -11.6, 2.2, 1.9, 0.5, { collide: true, tag: 'shelf', support: 'deck' });
-  box('white', '遺失物保管ケース', 9.0, D + 0.4, -11.5, 0.9, 0.8, 0.5, { collide: true, tag: 'case', support: 'deck' });
-  box('steelDark', '放送卓', 13.3, D + 0.45, -10.5, 0.8, 0.9, 1.4, { collide: true, tag: 'desk', support: 'deck' });
-  box('steelDark', '放送マイク', 13.1, D + 1.0, -10.5, 0.1, 0.22, 0.1, { tag: 'prop', support: 'none' });
-  box('white', '事務室 天井灯', 10.5, D + 3.5, -6.5, 3, 0.05, 0.3, { lod: 1, tag: 'light', support: 'none' });
-  box('wall', '事務室 床（絨毯）', 10.5, D + 0.006, -6.5, 6.8, 0.012, 10.8, { tag: 'floor', support: 'deck' });
-  box('wall', '窓口上部壁', 7, D + 2.9, -9.6, 0.2, 1.4, 2.8, { tag: 'wall', support: 'none' });
+  /* 駅事務室・売店・トイレ・待合室・案内所は stationExtras.buildExtras で作成 */
 
   // ======= 券売機・運賃表 =======
   /* 券売機は stationDetail.buildVending で細部まで作成 */
@@ -225,7 +206,8 @@ export function buildStation(quality: 'high' | 'medium' | 'low' = 'high'): Stati
   // ======= 改札まわり・券売機・精算機・誘導ブロックなど（stationDetail） =======
   const gates: GateUnit[] = []; const placements: StationData['placements'] = [];
   const dctx: DetailCtx = { D, root, gates, place: (model, x, y, z, ry, name) => placements.push({ model, x, y, z, ry, name }), box, boxR, cyl, sign, mat: k => M(k).mat, tex: (w, h, d) => canvasTex(w, h, d, { repeat: false }), label: (t, sub, w, h, bg, fg) => labelTexture(t, sub, w, h, bg, fg) };
-  buildGateLine(dctx); buildVending(dctx); buildGuidance(dctx); buildConcourseExtras(dctx);
+  const doors: DoorUnit[] = []; const ectx: ExtraCtx = { ...dctx, doors, wallX, wallZ, P };
+  buildGateLine(dctx); buildVending(dctx); buildGuidance(dctx); buildConcourseExtras(dctx); buildExtras(ectx);
   sign(canvasTex(512, 256, (g, w, h) => { g.fillStyle = '#fafaf5'; g.fillRect(0, 0, w, h); g.fillStyle = '#14325c'; g.font = 'bold 28px "Noto Sans JP","WenQuanYi Zen Hei",sans-serif'; g.fillText('時刻表（平日）', 16, 38); g.font = '20px "Noto Sans JP","WenQuanYi Zen Hei",sans-serif'; g.fillText('1番線 方面 海浜口', 16, 72); g.fillText('2番線 方面 空港連絡', 270, 72); ['8 41 53', '9 05 17 29 41 53', '10 05 17 29 41 53', '11 05 17 29 41 53'].forEach((t, i) => { g.fillText(t, 16, 110 + i * 32); g.fillText(['8 36 48', '9 00 12 24 36 48', '10 00 12 24 36 48', '11 00 12 24 36 48'][i], 270, 110 + i * 32); }); g.fillStyle = '#b33'; g.font = '18px sans-serif'; g.fillText('※旧版（改正前）', 340, 240); }, { repeat: false }), '時刻表掲示', 6.88, D + 1.75, -2.6, 1.6, 0.8, -Math.PI / 2);
 
   // ======= 発車標（コンコース／ホーム） =======
@@ -296,10 +278,11 @@ export function buildStation(quality: 'high' | 'medium' | 'low' = 'high'): Stati
 
   // ======= アンカー（NPC・調べる対象） =======
   const A = (id: string, kind: Anchor['kind'], x: number, y: number, z: number, yaw: number, label: string, radius = 2.4) => { anchors[id] = { id, kind, x, y, z, yaw, label, radius }; };
-  A('shiraishi', 'npc', 10.2, D, -9.6, -Math.PI / 2 + 0.3, '白石 駅長'); A('kubota', 'npc', 3.4, D, -2.7, Math.PI, '久保田'); A('yamashina', 'npc', -7.2, P, 2.3, 0, '山科'); A('kajiwara', 'npc', -11.2, D, -8.5, -Math.PI / 2, '梶原さん'); A('traveler', 'npc', 0.2, D, -6.4, Math.PI, '旅行客');
-  A('roster_board', 'object', 7.6, D, -5.0, -Math.PI / 2, '勤務表（掲示板）'); A('terminal', 'object', 9.9, D, -7.6, Math.PI / 2, '業務端末'); A('vend2', 'object', -12.4, D, -8.5, -Math.PI / 2, '券売機2号機'); A('tactile', 'object', -8.0, P, 3.1, 0, 'ホーム縁端（点字ブロック）'); A('lost_item', 'object', 9.2, P, 2.0, 0, 'ベンチの傘', 2.2);
+  A('shiraishi', 'npc', 10.6, D, -9.4, Math.PI, '白石 駅長'); A('kubota', 'npc', 3.4, D, -2.7, Math.PI, '久保田'); A('yamashina', 'npc', -7.2, P, 2.3, 0, '山科'); A('kajiwara', 'npc', -11.2, D, -8.5, -Math.PI / 2, '梶原さん'); A('traveler', 'npc', 0.2, D, -6.4, Math.PI, '旅行客');
+  A('sakai', 'npc', 11.3, D, 6.9, -Math.PI / 2, '坂井（売店）'); A('hinata', 'npc', -10.3, D, -4.9, 0, 'ひなた'); A('nomura', 'npc', -21.8, P, 2.7, 0, '野村さん'); A('haha', 'npc', 21.8, P, -2.8, 0, '母親（ベビーカー）'); A('tourist2', 'npc', -6.6, D, -9.4, Math.PI / 2, '外国の旅行客');
+  A('roster_board', 'object', 8.2, D, -10.7, Math.PI, '勤務表（ホワイトボード）'); A('terminal', 'object', 10.1, D, -6.7, Math.PI, '業務端末'); A('phone', 'object', 9.3, D, -10.0, Math.PI, '指令直通電話'); A('vend1', 'object', -12.4, D, -10.5, -Math.PI / 2, '券売機1号機'); A('vend2', 'object', -12.4, D, -8.5, -Math.PI / 2, '券売機2号機'); A('vend3', 'object', -12.4, D, -6.5, -Math.PI / 2, '券売機3号機'); A('tactile', 'object', -8.0, P, 3.1, 0, 'ホーム縁端（点字ブロック）'); A('lost_item', 'object', 9.2, P, 2.0, 0, 'ベンチの傘', 2.2);
   A('departure_board', 'object', 0, D, -3.3, 0, '発車標'); A('timetable', 'object', 6.2, D, -2.6, Math.PI / 2, '時刻表'); A('emergency_btn', 'object', -21.8, P, 3.0, 0, '列車非常停止ボタン'); A('aed', 'object', -12.9, D, 6.5, -Math.PI / 2, 'AED'); A('elevator', 'object', 6.0, 0, -16.2, Math.PI, 'エレベーター');
-  A('fare_map', 'object', -12.6, D, -9.8, -Math.PI / 2, '路線図・運賃表'); A('gate_wide', 'object', 4.25, D, -2.8, 0, '幅広改札'); A('mic', 'object', 12.6, D, -10.2, Math.PI / 2, '放送設備'); A('ticket_office', 'object', 5.8, D, -9.6, Math.PI / 2, 'きっぷうりば');
+  A('fare_map', 'object', -12.6, D, -9.8, -Math.PI / 2, '路線図・運賃表'); A('gate_wide', 'object', 3.5, D, -2.6, 0, '幅広改札'); A('mic', 'object', 8.8, D, -5.1, -Math.PI / 2, '放送設備'); A('ticket_office', 'object', 5.8, D, -9.6, Math.PI / 2, 'きっぷうりば'); A('info_desk', 'object', -4.0, D, -9.4, Math.PI, '観光案内所'); A('shop', 'object', 9.3, D, 6.9, Math.PI / 2, '売店'); A('toilet', 'object', -8.85, D, 7.7, 0, 'トイレ', 2.6); A('waiting_room', 'object', 26.0, P, -1.95, Math.PI / 2, 'ホーム待合室'); A('seisan', 'object', -12.4, D, -1.6, -Math.PI / 2, '精算機');
   A('spawn_plaza', 'object', 0, 0, -36, 0, '駅前広場', 1);
 
   const presets: Record<string, CamPreset> = {
@@ -308,6 +291,7 @@ export function buildStation(quality: 'high' | 'medium' | 'low' = 'high'): Stati
     gate: { pos: [0, D + 1.7, -9], target: [0, D + 1.2, -2], fov: 62 }, concourse: { pos: [12.5, D + 2.6, 10.5], target: [-8, D + 1.2, -6], fov: 60 }, office: { pos: [8.2, D + 2.2, -2.2], target: [11.5, D + 1.0, -8], fov: 60 },
     platform: { pos: [-8, P + 1.65, 2.6], target: [-34, P + 1.5, -0.5], fov: 62 }, platform_east: { pos: [8, P + 1.65, -2.6], target: [34, P + 1.5, 0.5], fov: 62 }, train: { pos: [-12, P + 1.55, 2.6], target: [6, P + 1.9, -5], fov: 58 }, train_front: { pos: [-46, 2.2, -5.2], target: [-20, 2.0, -6.05], fov: 50 }, train_side: { pos: [0, 2.2, -14], target: [0, 2.0, -6.05], fov: 55 }, platform_high: { pos: [-20, 14, 14], target: [0, 3, 0], fov: 50 }, rail: { pos: [-48, 2.4, -9], target: [0, 1.8, -6], fov: 50 },
     gate_close: { pos: [-2.2, D + 1.55, -7.3], target: [-2.75, D + 0.9, -4.3], fov: 42 }, gate_side: { pos: [-9, D + 1.3, -1.6], target: [-1, D + 0.9, -4.0], fov: 50 }, gate_back: { pos: [0.5, D + 1.6, -0.6], target: [0, D + 0.9, -4.2], fov: 52 }, gate_wide: { pos: [5.5, D + 1.5, -7.2], target: [4.3, D + 0.9, -4.0], fov: 48 }, vend_close: { pos: [-10.9, D + 1.45, -8.1], target: [-13.1, D + 1.25, -8.5], fov: 38 }, seisan: { pos: [-10.9, D + 1.4, -1.2], target: [-13.1, D + 1.2, -1.6], fov: 40 },
+    office_in: { pos: [11.0, D + 2.4, -2.0], target: [9.0, D + 1.0, -9.0], fov: 60 }, shop: { pos: [9.2, D + 2.0, 3.2], target: [12.0, D + 1.0, 6.8], fov: 62 }, toilet: { pos: [-9.5, D + 1.8, 5.8], target: [-11.0, D + 1.3, 9.5], fov: 60 }, info: { pos: [-2.2, D + 1.8, -6.2], target: [-5.5, D + 1.2, -10.8], fov: 55 }, waiting: { pos: [24.5, P + 1.6, 2.5], target: [31, P + 1.2, -2.2], fov: 58 }, entrance: { pos: [0, D + 1.7, -8.0], target: [0, D + 1.7, -12.2], fov: 62 }, bus: { pos: [-8, 4.5, -30], target: [-18, 1.8, -44], fov: 55 },
     vend: { pos: [-9.6, D + 1.7, -8.5], target: [-13.4, D + 1.2, -8.5], fov: 50 }, board: { pos: [0, D + 2.6, 2.5], target: [0, D + 3.0, -3], fov: 45 }, tactile: { pos: [-6, P + 1.6, 0.5], target: [-8, P, 3.6], fov: 55 }
   };
   // 通路ルート（モブ用）
@@ -316,9 +300,13 @@ export function buildStation(quality: 'high' | 'medium' | 'low' = 'high'): Stati
     outbound: [[-18, P, 2.8], [-24.5, P, 0], [-14.5, D, 0], [-8, D, 0.5], [-2.2, D, -2.8], [-2.2, D, -5.5], [0, D, -9], [0, D, -12], [0, 0, -27], [4, 0, -38], [-14, 0, -44]],
     eastIn: [[14, 0, -44], [0, 0, -27], [0, D, -12], [2.2, D, -6], [2.2, D, -2.8], [2.2, D, 0], [14.5, D, 0], [24.5, P, 0], [30, P, -2.5], [20, P, -2.8]],
     eastOut: [[20, P, -2.8], [24.5, P, 0], [14.5, D, 0], [3.5, D, 0.5], [3.5, D, -5.5], [0, D, -12], [0, 0, -27], [-6, 0, -38], [22, 0, -44]],
+    shop: [[0, 0, -34], [0, 0, -27], [0, D, -12], [2.2, D, -6], [2.2, D, -2.8], [2.2, D, 1], [7.2, D, 4.3], [9.3, D, 6.0], [7.2, D, 4.3], [2.2, D, 1], [-2.2, D, -2.8], [0, D, -9], [0, D, -12], [0, 0, -27], [10, 0, -38]],
+    toilet: [[-3.3, D, -6], [-3.3, D, -2.8], [-3.3, D, 4], [-8.9, D, 7.6], [-8.9, D, 9.6], [-8.9, D, 7.6], [-3.3, D, 4], [-3.3, D, -2.8], [-3.3, D, -6], [0, D, -12], [0, 0, -27], [-10, 0, -38]],
+    info: [[0, 0, -34], [0, 0, -27], [0, D, -12], [-3.9, D, -10.2], [-4.0, D, -9.0], [-1, D, -9.5], [0, D, -12], [0, 0, -27], [12, 0, -40]],
+    bus: [[-26, 0, -38.5], [-14, 0, -32], [0, 0, -27], [0, D, -12], [-3.3, D, -6], [-3.3, D, -2.8], [-14.5, D, 0], [-24.5, P, 0], [-28, P, 1.6]],
     paced: [[-2, D, 6], [6, D, 8], [10, D, 3], [-2, D, 4]]
   };
 
   const stats = { boxes: boxCount, meshes, triangles: Math.round(triangles) };
-  return { root, colliders, zones, anchors, registry, lodObjects, presets, placements, boards: { departure: depTex, platformBoards: platBoards }, dynamic: { cars: [], lamps: [], sun, hemi, sky, gates }, stats, routes };
+  return { root, colliders, zones, anchors, registry, lodObjects, presets, placements, boards: { departure: depTex, platformBoards: platBoards }, dynamic: { cars: [], lamps: [], sun, hemi, sky, gates, doors }, stats, routes };
 }

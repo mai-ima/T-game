@@ -19,6 +19,7 @@ export function evalCond(c: Cond | undefined, w: WorldState): boolean {
   if ('notVisited' in c) return !w.story.visited.includes(c.notVisited);
   if ('chose' in c) return w.story.choices.some(x => x.node === c.chose.node && x.option === c.chose.option);
   if ('done' in c) return w.story.done.includes(c.done);
+  if ('nodePrefix' in c) return w.story.node.startsWith(c.nodePrefix);
   if ('all' in c) return c.all.every(x => evalCond(x, w));
   if ('any' in c) return c.any.some(x => evalCond(x, w));
   if ('not' in c) return !evalCond(c.not, w);

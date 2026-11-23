@@ -4,13 +4,34 @@
 [PASS] 14モードのメインメニュー — カード14枚／プレイ可能1（R7のみ）
 [PASS] 未実装モードをプレイ可能と偽らない — 13モードに「未実装」表示
 [PASS] 未実装モードの案内 — 開始ボタンなし・設計のみと明記
+[PASS] 3Dシーンの実描画（真っ黒/真っ白/単色の検出） — 26視点すべて有意な描画
+[PASS] 駅構内の設備・配置データ — メッシュ88／三角形10344／衝突体128／検査対象734／アンカー20
+[PASS] 最高／最低品質の比較画像（各4枚） — 画像差分 gate=52.4 overview=35.7／最高 draw585 tris251440 tex92／最低 draw479 tris120139（最低はpixelRatio0.8・影なし・小部品省略）
+[PASS] 最低品質でも操作情報・設備が消えない — 最低でも駅構造・改札・券売機・調べる対象マーカー・列車・HUDを表示（画像20_quality_low_*で確認）
+[PASS] 3D／擬似3D／2Dで同一の運行・人物状態を表示 — 列車=A0:dwell:0.0 時刻=505 プレイヤー=0,6.6,-2
+[PASS] 描画方式の切替でゲーム状態が保たれる — 物語ノード・フラグ・日付が不変
+[PASS] キーボード歩行（W） — 移動距離 3.3m
+[PASS] 仮想ジョイスティックで移動 — 移動 2.6m
+[FAIL] 衝突：壁・ホーム端・改札機を貫通しない — 西壁x=-12.70 ホーム端z=3.15 改札手前z=-21.00
+[PASS] 入口階段で高さが連続して上がる — 最終高さ y=6.60m（コンコース6.6m）
+[PASS] 2D画面のタップ移動 — 3.3m 移動
+[PASS] 音響：Web Audio起動・実際の出力レベル — ctx=running／最大RMS=0.0437（環境音・列車音・ジングル合成）
+[PASS] 音響：操作音・改札音・接近チャイム・字幕の発火 — イベント ui:click,ui:page,ui:choice,bird,chime:approach,ui:confirm,gate
+[PASS] 音響：消音設定 — 消音時RMS=0.00000
+[UNVERIFIED] 音響：聴感・実車との一致・iPhone実機の音声開始 — 独自合成音。耳での比較・実機再生・スペクトログラム比較は未実施（音は実録音ではない）
+[PASS] R7第1章→第2章冒頭を最後まで通しプレイ（UI操作・goodルート） — 完了章=ch1,ch2／評価=B／選択7件／タスク5／ループ75
+[PASS] セーブ：保存→読込で世界状態が完全一致（人物関係・経歴・履歴を含む） — 保存先=indexeddb
+[PASS] セーブ：モード別の独立領域・オートセーブ — R7の保存がR8領域に混入しない／章遷移でオートセーブ
+[FAIL] セーブ：ページ再読込後も残る（IndexedDB） — オートセーブ空き続きからスロット1空き続きからスロット2空き続きからスロット3空き続きから
+[PASS] R7第1章→第2章冒頭を最後まで通しプレイ（UI操作・riskyルート） — 完了章=ch1,ch2／評価=C／選択6件／タスク5／ループ71
+[PASS] 選択による分岐の差（人物関係・フラグ・評価） — フラグ差20件／評価 B vs C／信頼(久保田) 4 vs -2
 node:internal/modules/run_main:123
     triggerUncaughtException(
     ^
 
 page.evaluate: Target page, context or browser has been closed
     at gc (/home/user/T-game/scripts/audit.mjs:22:35)
-    at toHub (/home/user/T-game/scripts/audit.mjs:23:77)
-    at /home/user/T-game/async file:/home/user/T-game/scripts/audit.mjs:47:188
+    at playChapter (/home/user/T-game/scripts/audit.mjs:114:22)
+    at /home/user/T-game/async file:/home/user/T-game/scripts/audit.mjs:155:176
 
 Node.js v22.23.5

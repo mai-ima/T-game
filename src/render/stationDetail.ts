@@ -4,7 +4,7 @@ import * as THREE from 'three';
  *  寸法は日本の駅で一般的な値（改札機 長さ約1.3m・通路幅約0.8m／幅広通路1.2m）を参考にした概略で、実機の型番を再現したものではない。 */
 export interface GateUnit { id: number; cx: number; cz: number; wide: boolean; xl: number; xr: number; left?: THREE.Object3D; right?: THREE.Object3D; open: number; target: number }
 
-type Opt = { ghost?: boolean; ry?: number; lod?: 0 | 1 | 2; collide?: boolean | [number, number]; support?: 'ground' | 'platform' | 'deck' | 'mounted' | 'none'; tag?: string; group?: string };
+type Opt = { noShadow?: boolean; ghost?: boolean; ry?: number; lod?: 0 | 1 | 2; collide?: boolean | [number, number]; support?: 'ground' | 'platform' | 'deck' | 'mounted' | 'none'; tag?: string; group?: string };
 export interface DetailCtx {
   D: number; root: THREE.Group; gates: GateUnit[]; place(model: string, x: number, y: number, z: number, ry: number, name: string): void;
   box(mat: string, name: string, cx: number, cy: number, cz: number, sx: number, sy: number, sz: number, o?: Opt): void;
@@ -89,7 +89,7 @@ export function buildConcourseExtras(c: DetailCtx) {
   // 自動販売機（既存位置の細部）
   [2.6, 4.0].forEach((z, i) => { const O = (e: Opt = {}): Opt => ({ tag: 'vending', group: 'vm' + i, support: 'none', ...e }); box('white', '自販機 前面パネル', -12.99, D + 1.25, z, 0.02, 1.1, 0.95, O()); for (let r = 0; r < 4; r++) for (let k = 0; k < 4; k++) box(['red', 'blue', 'green', 'orange'][(r + k) % 4], '自販機 サンプル缶', -12.97, D + 1.7 - r * 0.22, z - 0.34 + k * 0.23, 0.02, 0.16, 0.1, O({ lod: 2 })); box('slot', '自販機 取出口', -12.98, D + 0.34, z, 0.03, 0.2, 0.5, O({ lod: 1 })); box('ledAmber', '自販機 投入口灯', -12.98, D + 0.78, z + 0.38, 0.02, 0.1, 0.05, O({ lod: 2 })); });
   // ゴミ箱（分別3口）
-  [[-13.2, 9.6, 0], [13.2, 9.6, Math.PI], [13.2, -0.0, Math.PI]].forEach(([x, z], i) => { const O = (e: Opt = {}): Opt => ({ tag: 'bench', group: 'bin' + i, support: 'none', ...e }); box('steel', 'ゴミ箱 本体', x, D + 0.45, z, 0.5, 0.9, 1.2, O({ collide: [D, D + 0.9], support: 'deck' })); (['blue', 'green', 'orange'] as const).forEach((m, k) => box(m, 'ゴミ箱 投入口', x + (x < 0 ? 0.26 : -0.26), D + 0.72, z - 0.4 + k * 0.4, 0.02, 0.22, 0.3, O({ lod: 1 }))); });
+  [[-13.2, 5.4, 0], [0.0, 11.0, Math.PI], [5.5, 11.0, Math.PI]].forEach(([x, z], i) => { const O = (e: Opt = {}): Opt => ({ tag: 'bench', group: 'bin' + i, support: 'none', ...e }); box('steel', 'ゴミ箱 本体', x, D + 0.45, z, 0.5, 0.9, 1.2, O({ collide: [D, D + 0.9], support: 'deck' })); (['blue', 'green', 'orange'] as const).forEach((m, k) => box(m, 'ゴミ箱 投入口', x + (x < 0 ? 0.26 : -0.26), D + 0.72, z - 0.4 + k * 0.4, 0.02, 0.22, 0.3, O({ lod: 1 }))); });
   // 防犯カメラ・スピーカー・火災報知器
   [[-10, -8], [10, -9], [-10, 9], [10, 9], [0, 0]].forEach(([x, z], i) => { const O = (e: Opt = {}): Opt => ({ tag: 'prop', group: 'cam' + i, support: 'none', lod: 1, ...e }); box('white', '防犯カメラ 台座', x, D + 4.28, z, 0.16, 0.06, 0.16, O()); box('steelDark', '防犯カメラ ドーム', x, D + 4.2, z, 0.13, 0.1, 0.13, O()); });
   for (const [x, z] of [[-7, -2], [7, -2], [-7, 6], [7, 6], [0, -9], [0, 8]]) cyl('white', '天井スピーカー', x, D + 4.3, z, 0.12, 0.08, { lod: 1, tag: 'prop', support: 'none', group: `spk${x}${z}` });
