@@ -29,7 +29,7 @@ function playthrough(seed: number, visitedAll: Set<string>) {
       if (v.canExit && r() < 0.5) { v = run.exitHub(); continue; }
       const ints = v.interactions;
       if (ints.length && r() < 0.85) v = run.interact(ints[Math.floor(r() * ints.length)].id);
-      else advanceClock(w, 30 + Math.floor(r() * 60));
+      else { advanceClock(w, 30 + Math.floor(r() * 60)); v = run.view(); } // 実ゲームでも時刻が進むと画面状態を更新する
     } else if (v.kind === 'end') {
       endNodes.push(v.node.id); run.finishChapter();
       if (v.node.nextChapter) v = run.startChapter(v.node.nextChapter); else break;

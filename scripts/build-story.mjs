@@ -442,7 +442,7 @@ N['ch1.end'] = {
 };
 
 // ============ 第2章 冒頭（体験版）：第1章の選択が後続に影響 ============
-branch('ch2.open', [[F('legacy.depot_tour'), 'ch2.depot'], [F('legacy.mentor_line'), 'ch2.mentor']], 'ch2.rest', { effects: [{ clock: { addDay: 2, minute: hm(8, 0) } }] });
+branch('ch2.open', [[F('legacy.mentor_line'), 'ch2.mentor']], 'ch2.rest', { effects: [{ clock: { addDay: 1, minute: hm(8, 0) } }] });
 line('ch2.depot', [
   '4月10日（土）。青浜総合車両センターの見学会。整然と並ぶ留置線の向こうで、検修庫のシャッターが開いている。',
   ['yamashina', 'この床下機器、図面で見るのと全然違うな…。', 'smile'],
@@ -762,7 +762,7 @@ line('ch2.r_service', [['kubota', '窓口の応対記録が、先週の分から
 
 const chapters = [
   { id: 'ch1', title: '新しい名札', season: 'S1 新しい名札', start: 'ch1.p1', status: 'playable', synopsis: '入社式の翌日、青嶺中央駅での勤務初日。配属面談から終業面談までを実装済み。' },
-  { id: 'ch2', title: '最初の週末', season: 'S1 新しい名札', start: 'ch2.open', status: 'teaser', synopsis: '第1章の選択が反映される冒頭のみ実装（体験版）。' },
+  { id: 'ch2', title: '最初の週末', season: 'S1 新しい名札', start: 'ch2.open', status: 'playable', synopsis: '第1章の選択が反映される冒頭のみ実装（体験版）。' },
   ...['はじめての早番', '同期の距離', '券売機のむこう側', '三か月目の面談', '夏の臨時列車', 'ホームの声', 'はじめての評価', '基地実習へ', '研修の最終日', '新しい名札'].map((t, i) => ({ id: 'ch' + (i + 3), title: t, season: 'S1 新しい名札', start: '', status: 'planned', synopsis: '企画のみ（未制作）。' }))
 ];
 
@@ -786,13 +786,13 @@ const bestRoute = (grid, must) => { const H = grid.length, W = grid[0].length; l
   return 20; };
 /** 1つの業務（きっかけの会話 → ミニゲーム → 結果の会話 → 記録）を生成して、ハブへ登録する */
 const mini = (o) => {
-  const id = 'ch1.' + o.key; const task = id + '_task';
-  line(id + '_1', o.intro.map(t => [o.who, t]), task, { view: v3(o.cam ?? 'follow', o.title) });
+  const ch = o.ch ?? 'ch1'; const id = ch + '.' + o.key; const task = id + '_task'; const hub = N[ch + '.hub'];
+  line(id + '_1', o.intro.map(t => (typeof t === 'string' ? [o.who, t] : t)), task, { view: v3(o.cam ?? 'follow', o.title) });
   N[task] = { id: task, type: 'task', kind: o.kind, title: o.title, intro: o.hint, config: o.config, results: res3(id + '_good', id + '_mid', id + '_bad', o.ge ?? [ev('accuracy', 3)], o.me ?? [ev('accuracy', 1)], o.be ?? [ev('accuracy', -1)]), view: v3(o.cam ?? 'follow', o.title) };
   line(id + '_good', [[o.who, o.good, 'smile']], id + '_end'); line(id + '_mid', [[o.who, o.mid]], id + '_end'); line(id + '_bad', [[o.who, o.bad, 'serious']], id + '_end');
-  fx(id + '_end', done('ch1.' + o.key + '_done', o.min ?? 15, o.log), 'ch1.hub');
-  N['ch1.hub'].interactions.push({ id: o.key, object: o.object, label: o.label, goto: id + '_1', requires: ALL(F('ch1.tenko'), T('>=', hm(...o.from)), ...(o.to ? [T('<', hm(...o.to))] : [])), once: true });
-  N['ch1.hub'].goals.push({ id: 'g_' + o.key, label: o.goal, when: F('ch1.' + o.key + '_done'), optional: true, showWhen: T('>=', hm(...o.from)) });
+  fx(id + '_end', [set(id + '_done'), { var: { key: ch + '.extra', add: 1 } }, time(o.min ?? 15), log(o.log, 'work')], ch + '.hub');
+  hub.interactions.push({ id: o.key, object: o.object, label: o.label, goto: id + '_1', requires: ALL(o.req ?? F('ch1.tenko'), T('>=', hm(...o.from)), ...(o.to ? [T('<', hm(...o.to))] : [])), once: true });
+  hub.goals.push({ id: 'g_' + o.key, label: o.goal, when: F(id + '_done'), optional: true, showWhen: T('>=', hm(...o.from)) });
 };
 const P = (x, y, w, h, c, t) => ({ x, y, w, h, c, t });
 
@@ -849,6 +849,19 @@ mini({ key: 'lockup', who: 'shiraishi', object: 'phone', from: hmm(16, 20), labe
   good: '無駄のない順路だ。これなら毎日続けられる。', mid: '回れてはいるが、少し遠回りだな。', bad: '見回る場所が抜けては、戸締まりの意味がない。', ge: [ev('safety', 3), ev('accuracy', 2)], log: '終業後の戸締まり巡回', min: 15 });
 for (const k of ['wheel', 'lockup']) { const c = N['ch1.' + k + '_task'].config; c.best = bestRoute(c.grid, c.must); }
 
+// ============ 第2章以降：章ごとのファイル（scripts/story/chN.mjs）を読み込む ============
+// 章ファイルは default export の関数で、共通キット（ヘルパー・mini・hub）を受け取り、N にノードを追加する。
+const kit = { N, characters, rel, ev, set, time, log, tl, tr, sk, F, NF, ALL, ANY, T, hm, L, line, choice, branch, fx, opt, v3, v25, mini, res3, P, chk,
+  /** 章のハブ（3D駅）を作る。mini() が依頼と目標欄を追加する。 */
+  hub: (ch, o) => (N[ch + '.hub'] = { id: ch + '.hub', type: 'hub', scene: 'station', title: o.title, hint: o.hint ?? '歩いて設備や人物に近づき、「調べる」で仕事を進めます。', view: v3('follow', o.title), interactions: [], goals: o.goals ?? [], timed: o.timed ?? [], exit: o.exit }) };
+import { readdirSync } from 'node:fs'; import { pathToFileURL } from 'node:url'; import { resolve } from 'node:path';
+const chapterFiles = readdirSync('scripts/story').filter(f => /^ch\d+\.mjs$/.test(f)).sort((a, b) => parseInt(a.slice(2)) - parseInt(b.slice(2)));
+const chapterExtras = {}; for (const f of chapterFiles) { const r = await (await import(pathToFileURL(resolve('scripts/story', f)).href)).default(kit); if (r) Object.assign(chapterExtras, { [f]: r }); }
+
+// 章の接続を自動化：chN.open があれば、その章は「プレイ可能」で、前章の終わりから続く。無ければ前章が最終章になる。
+const chapterIds = Array.from({ length: 12 }, (_, i) => 'ch' + (i + 1));
+for (let i = 1; i < chapterIds.length; i++) { const cur = chapterIds[i], prev = chapterIds[i - 1]; const endNode = N[prev + '.end']; if (!endNode) continue; if (N[cur + '.open']) endNode.nextChapter = cur; else delete endNode.nextChapter; }
+
 // ============ あらすじ分岐図（UI用の地図データ）============
 const maps = { ch1: {
   lanes: [{ id: 'common', label: '共通の一日', color: '#1a2f55' }, { id: 'service', label: '接客ルート', color: '#1b6f45' }, { id: 'platform', label: 'ホームルート', color: '#a35c00' }, { id: 'office', label: '事務ルート', color: '#6a3aa8' }, { id: 'w1', label: '週末：久保田と練習', color: '#c8281e' }, { id: 'w2', label: '週末：基地見学', color: '#1a6a8a' }, { id: 'w3', label: '週末：休養', color: '#6b6f73' }],
@@ -875,6 +888,7 @@ const maps = { ch1: {
   edges: [['m0', 'm1'], ['m1', 'm2'], ['m2', 'm3'], ['m3', 'm4'], ['m4', 'm5'], ['m5', 's1'], ['m5', 'p1'], ['m5', 'o1'], ['s1', 's2'], ['p1', 'p2'], ['o1', 'o2'], ['s2', 'm6'], ['p2', 'm6'], ['o2', 'm6'], ['m6', 'm7'], ['m7', 'w1'], ['m7', 'w2'], ['m7', 'w3'], ['w1', 'm8'], ['w2', 'm8'], ['w3', 'm8']]
 } };
 
+for (const c of (typeof chapters !== 'undefined' ? chapters : [])) { if (N[c.id + '.open']) { c.status = 'playable'; c.start = c.id + '.open'; } }
 const story = { storyId: 'r7', mode: 'R7', title: '配属先は、明日変わる', subtitle: '超リアル社員異動・長編キャリア', startYear: 2027, characters, chapters, nodes: N, maps };
 mkdirSync('src/data/r7', { recursive: true });
 writeFileSync('src/data/r7/story.json', JSON.stringify(story, null, 1));

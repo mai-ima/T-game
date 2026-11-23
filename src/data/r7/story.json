@@ -432,7 +432,7 @@
    "title": "最初の週末",
    "season": "S1 新しい名札",
    "start": "ch2.open",
-   "status": "teaser",
+   "status": "playable",
    "synopsis": "第1章の選択が反映される冒頭のみ実装（体験版）。"
   },
   {
@@ -5007,12 +5007,6 @@
    "cases": [
     {
      "when": {
-      "flag": "legacy.depot_tour"
-     },
-     "goto": "ch2.depot"
-    },
-    {
-     "when": {
       "flag": "legacy.mentor_line"
      },
      "goto": "ch2.mentor"
@@ -5022,7 +5016,7 @@
    "effects": [
     {
      "clock": {
-      "addDay": 2,
+      "addDay": 1,
       "minute": 480
      }
     }
@@ -5044,9 +5038,17 @@
     {
      "who": "yamashina",
      "text": "駅の仕事を覚えるのが先なのは分かってる。でも、ここで働きたい気持ちは、やっぱり本物だ。"
+    },
+    {
+     "who": "player",
+     "text": "来週の早番も、がんばろう。お互いに。"
+    },
+    {
+     "who": "yamashina",
+     "text": "ああ。二人で、見えない道を、歩いていこう。"
     }
    ],
-   "next": "ch2.mon",
+   "next": "ch2.end",
    "effects": [
     {
      "set": "next.depot_seed"
@@ -5059,6 +5061,11 @@
       "char": "yamashina",
       "trust": 1,
       "rapport": 1
+     }
+    },
+    {
+     "timeline": {
+      "text": "4月10日 青浜総合車両センターの見学会に参加"
      }
     }
    ],
@@ -5298,22 +5305,28 @@
   "ch2.tail": {
    "id": "ch2.tail",
    "type": "effect",
-   "effects": [
-    {
-     "log": {
-      "text": "第2章 冒頭を終了（体験版）",
-      "tag": "chapter"
-     }
-    }
-   ],
-   "next": "ch2.end"
+   "effects": [],
+   "next": "ch2.brief"
   },
   "ch2.end": {
    "id": "ch2.end",
    "type": "end",
    "chapter": "ch2",
-   "title": "第2章 最初の週末（体験版・冒頭のみ）",
-   "summary": "第1章の選択が、週末の過ごし方・人物関係・駅長の最初の言葉に影響しました。第2章の続き以降は未実装です。"
+   "title": "第2章 最初の週末",
+   "summary": "勤務2週目の月曜が終わった。気づいたことをどう扱ったか。誰と昼を過ごしたか。その積み重ねが、次の週の勤務表と、人との距離を少しずつ変えていく。",
+   "effects": [
+    {
+     "timeline": {
+      "text": "4月5日 勤務2週目の月曜を終える"
+     }
+    },
+    {
+     "log": {
+      "text": "第2章を終了",
+      "tag": "chapter"
+     }
+    }
+   ]
   },
   "ch1.jam_1": {
    "id": "ch1.jam_1",
@@ -11168,6 +11181,2432 @@
     }
    ],
    "next": "ch1.hub"
+  },
+  "ch2.brief": {
+   "id": "ch2.brief",
+   "type": "line",
+   "lines": [
+    {
+     "text": "4月5日（月）。春の雨上がりの朝。ホームの屋根から落ちる水滴が、規則正しい音を立てている。",
+     "narration": true
+    },
+    {
+     "who": "shiraishi",
+     "text": "朝礼を始める。今週のテーマは「駅の顔」だ。駅員の仕事は、改札に立っているだけではない。迷っている人に最初に気づくのが、私たちの仕事だ。"
+    },
+    {
+     "who": "kubota",
+     "text": "今日は、窓口と券売機の周りを中心に動いてもらいます。時間が空いたら、気づいたことをメモしてください。後で聞きます。"
+    },
+    {
+     "who": "yamashina",
+     "text": "俺は朝のラッシュのホーム見守りか。よし、任せてくれ。",
+     "mood": "smile"
+    },
+    {
+     "who": "shiraishi",
+     "text": "先週は、慌ただしかったと思う。今週は、慣れてきたところに落とし穴がある。「分かったつもり」を、一つずつ疑いなさい。"
+    }
+   ],
+   "next": "ch2.hub",
+   "effects": [
+    {
+     "clock": {
+      "addDay": 2,
+      "minute": 500
+     }
+    },
+    {
+     "set": "ch2.brief"
+    },
+    {
+     "timeline": {
+      "text": "4月5日 勤務2週目。窓口と券売機まわりを担当"
+     }
+    },
+    {
+     "log": {
+      "text": "第2週の朝礼。テーマは「駅の顔」",
+      "tag": "work"
+     }
+    }
+   ],
+   "view": {
+    "mode": "25d",
+    "bg": "office",
+    "focus": [
+     "shiraishi",
+     "kubota",
+     "yamashina"
+    ],
+    "caption": "4月5日（月） 8:20 駅事務室"
+   }
+  },
+  "ch2.hub": {
+   "id": "ch2.hub",
+   "type": "hub",
+   "scene": "station",
+   "title": "青嶺中央駅 勤務（2週目・月曜）",
+   "hint": "歩いて設備や人物に近づき、「調べる」で仕事を進めます。",
+   "view": {
+    "mode": "3d",
+    "cam": "follow",
+    "caption": "青嶺中央駅 勤務（2週目・月曜）"
+   },
+   "interactions": [
+    {
+     "id": "patrol",
+     "object": "tactile",
+     "label": "コンコースの朝の巡回をする",
+     "goto": "ch2.patrol_1",
+     "requires": {
+      "all": [
+       {
+        "flag": "ch2.brief"
+       },
+       {
+        "time": {
+         "op": ">=",
+         "val": 520
+        }
+       },
+       {
+        "time": {
+         "op": "<",
+         "val": 660
+        }
+       }
+      ]
+     },
+     "once": true
+    },
+    {
+     "id": "rush",
+     "object": "emergency_btn",
+     "label": "朝のラッシュでホームの安全を見守る",
+     "goto": "ch2.rush_1",
+     "requires": {
+      "all": [
+       {
+        "flag": "ch2.brief"
+       },
+       {
+        "time": {
+         "op": ">=",
+         "val": 520
+        }
+       },
+       {
+        "time": {
+         "op": "<",
+         "val": 615
+        }
+       }
+      ]
+     },
+     "once": true
+    },
+    {
+     "id": "window",
+     "object": "ticket_office",
+     "label": "窓口でお客様の用件をさばく",
+     "goto": "ch2.window_1",
+     "requires": {
+      "all": [
+       {
+        "flag": "ch2.brief"
+       },
+       {
+        "time": {
+         "op": ">=",
+         "val": 570
+        }
+       },
+       {
+        "time": {
+         "op": "<",
+         "val": 900
+        }
+       }
+      ]
+     },
+     "once": true
+    },
+    {
+     "id": "voice",
+     "object": "terminal",
+     "label": "「お客様の声ノート」を整理する",
+     "goto": "ch2.voice_1",
+     "requires": {
+      "all": [
+       {
+        "flag": "ch2.brief"
+       },
+       {
+        "time": {
+         "op": ">=",
+         "val": 630
+        }
+       },
+       {
+        "time": {
+         "op": "<",
+         "val": 930
+        }
+       }
+      ]
+     },
+     "once": true
+    },
+    {
+     "id": "guide",
+     "object": "elevator",
+     "label": "ベビーカーのお客様をホームまで案内する",
+     "goto": "ch2.guide_1",
+     "requires": {
+      "all": [
+       {
+        "flag": "ch2.brief"
+       },
+       {
+        "time": {
+         "op": ">=",
+         "val": 660
+        }
+       },
+       {
+        "time": {
+         "op": "<",
+         "val": 930
+        }
+       }
+      ]
+     },
+     "once": true
+    },
+    {
+     "id": "coins",
+     "object": "vend2",
+     "label": "両替用の釣銭を準備する",
+     "goto": "ch2.coins_1",
+     "requires": {
+      "all": [
+       {
+        "flag": "ch2.brief"
+       },
+       {
+        "time": {
+         "op": ">=",
+         "val": 810
+        }
+       },
+       {
+        "time": {
+         "op": "<",
+         "val": 960
+        }
+       }
+      ]
+     },
+     "once": true
+    },
+    {
+     "id": "idea",
+     "object": "vend2",
+     "label": "券売機の前で、迷っている方の様子を観察する",
+     "goto": "ch2.idea_1",
+     "requires": {
+      "all": [
+       {
+        "flag": "ch2.brief"
+       },
+       {
+        "time": {
+         "op": ">=",
+         "val": 590
+        }
+       }
+      ]
+     },
+     "once": true,
+     "icon": "👀"
+    }
+   ],
+   "goals": [
+    {
+     "id": "g_idea",
+     "label": "券売機の前で気づいたことを、どう扱うか決める",
+     "when": {
+      "flag": "ch2.idea_done"
+     }
+    },
+    {
+     "id": "g_lunch",
+     "label": "昼休憩（12:00）",
+     "when": {
+      "flag": "ch2.lunch_done"
+     }
+    },
+    {
+     "id": "g_patrol",
+     "label": "（業務）朝のコンコース巡回",
+     "when": {
+      "flag": "ch2.patrol_done"
+     },
+     "optional": true,
+     "showWhen": {
+      "time": {
+       "op": ">=",
+       "val": 520
+      }
+     }
+    },
+    {
+     "id": "g_rush",
+     "label": "（業務）朝のホーム見守り",
+     "when": {
+      "flag": "ch2.rush_done"
+     },
+     "optional": true,
+     "showWhen": {
+      "time": {
+       "op": ">=",
+       "val": 520
+      }
+     }
+    },
+    {
+     "id": "g_window",
+     "label": "（業務）窓口の対応",
+     "when": {
+      "flag": "ch2.window_done"
+     },
+     "optional": true,
+     "showWhen": {
+      "time": {
+       "op": ">=",
+       "val": 570
+      }
+     }
+    },
+    {
+     "id": "g_voice",
+     "label": "（業務）お客様の声の整理",
+     "when": {
+      "flag": "ch2.voice_done"
+     },
+     "optional": true,
+     "showWhen": {
+      "time": {
+       "op": ">=",
+       "val": 630
+      }
+     }
+    },
+    {
+     "id": "g_guide",
+     "label": "（依頼）ベビーカーのお客様の案内",
+     "when": {
+      "flag": "ch2.guide_done"
+     },
+     "optional": true,
+     "showWhen": {
+      "time": {
+       "op": ">=",
+       "val": 660
+      }
+     }
+    },
+    {
+     "id": "g_coins",
+     "label": "（業務）釣銭の準備",
+     "when": {
+      "flag": "ch2.coins_done"
+     },
+     "optional": true,
+     "showWhen": {
+      "time": {
+       "op": ">=",
+       "val": 810
+      }
+     }
+    }
+   ],
+   "timed": [
+    {
+     "id": "lunch",
+     "at": 720,
+     "goto": "ch2.lunch"
+    },
+    {
+     "id": "close",
+     "at": 1035,
+     "goto": "ch2.review"
+    }
+   ],
+   "exit": {
+    "label": "勤務を終えて面談へ（16:00以降）",
+    "requires": {
+     "all": [
+      {
+       "flag": "ch2.brief"
+      },
+      {
+       "flag": "ch2.idea_done"
+      },
+      {
+       "flag": "ch2.lunch_done"
+      },
+      {
+       "time": {
+        "op": ">=",
+        "val": 960
+       }
+      }
+     ]
+    },
+    "goto": "ch2.review"
+   }
+  },
+  "ch2.patrol_1": {
+   "id": "ch2.patrol_1",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "雨の日は、床が滑りやすくなります。始発から一番人が通る前に、一周見ておきましょう。"
+    },
+    {
+     "who": "kubota",
+     "text": "傘の水滴、足元の濡れ、案内板のずれ。目を使ってください。"
+    }
+   ],
+   "next": "ch2.patrol_task",
+   "view": {
+    "mode": "3d",
+    "cam": "follow",
+    "caption": "朝のコンコース巡回"
+   }
+  },
+  "ch2.patrol_task": {
+   "id": "ch2.patrol_task",
+   "type": "task",
+   "kind": "find",
+   "title": "朝のコンコース巡回",
+   "intro": "雨上がりの朝です。滑りやすい場所や、壊れている設備を探してタップします。",
+   "config": {
+    "scene": "concourse",
+    "seconds": 35,
+    "props": [
+     {
+      "x": 0.05,
+      "y": 0.1,
+      "w": 0.22,
+      "h": 0.3,
+      "c": "#2f5d8a",
+      "t": "時刻表"
+     },
+     {
+      "x": 0.4,
+      "y": 0.1,
+      "w": 0.2,
+      "h": 0.3,
+      "c": "#2f7a56",
+      "t": "案内板"
+     },
+     {
+      "x": 0.7,
+      "y": 0.1,
+      "w": 0.25,
+      "h": 0.3,
+      "c": "#a35c00",
+      "t": "お知らせ"
+     },
+     {
+      "x": 0.1,
+      "y": 0.7,
+      "w": 0.8,
+      "h": 0.12,
+      "c": "#8a8f96",
+      "t": "通路"
+     }
+    ],
+    "spots": [
+     {
+      "id": "wet",
+      "x": 0.3,
+      "y": 0.76,
+      "label": "入口近くの床が濡れて滑りやすい"
+     },
+     {
+      "id": "sign",
+      "x": 0.52,
+      "y": 0.22,
+      "label": "案内板が斜めに傾いている"
+     },
+     {
+      "id": "lamp",
+      "x": 0.82,
+      "y": 0.14,
+      "label": "蛍光灯が一本切れている"
+     },
+     {
+      "id": "ok",
+      "x": 0.15,
+      "y": 0.2,
+      "real": false,
+      "label": "時刻表は正常です"
+     }
+    ]
+   },
+   "results": [
+    {
+     "min": 80,
+     "goto": "ch2.patrol_good",
+     "effects": [
+      {
+       "eval": {
+        "key": "safety",
+        "add": 3
+       }
+      }
+     ]
+    },
+    {
+     "min": 50,
+     "goto": "ch2.patrol_mid",
+     "effects": [
+      {
+       "eval": {
+        "key": "accuracy",
+        "add": 1
+       }
+      }
+     ]
+    },
+    {
+     "min": 0,
+     "goto": "ch2.patrol_bad",
+     "effects": [
+      {
+       "eval": {
+        "key": "accuracy",
+        "add": -1
+       }
+      }
+     ]
+    }
+   ],
+   "view": {
+    "mode": "3d",
+    "cam": "follow",
+    "caption": "朝のコンコース巡回"
+   }
+  },
+  "ch2.patrol_good": {
+   "id": "ch2.patrol_good",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "雨の日の見回りは、これだけ見てもらえれば十分です。助かります。",
+     "mood": "smile"
+    }
+   ],
+   "next": "ch2.patrol_end"
+  },
+  "ch2.patrol_mid": {
+   "id": "ch2.patrol_mid",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "見落としが少しありました。入口付近は、朝に一番最初に見てください。"
+    }
+   ],
+   "next": "ch2.patrol_end"
+  },
+  "ch2.patrol_bad": {
+   "id": "ch2.patrol_bad",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "濡れた床は転倒につながります。見回りの順番を決めましょう。",
+     "mood": "serious"
+    }
+   ],
+   "next": "ch2.patrol_end"
+  },
+  "ch2.patrol_end": {
+   "id": "ch2.patrol_end",
+   "type": "effect",
+   "effects": [
+    {
+     "set": "ch2.patrol_done"
+    },
+    {
+     "var": {
+      "key": "ch2.extra",
+      "add": 1
+     }
+    },
+    {
+     "time": 15
+    },
+    {
+     "log": {
+      "text": "雨上がりのコンコースを巡回",
+      "tag": "work"
+     }
+    }
+   ],
+   "next": "ch2.hub"
+  },
+  "ch2.rush_1": {
+   "id": "ch2.rush_1",
+   "type": "line",
+   "lines": [
+    {
+     "who": "yamashina",
+     "text": "お、来たか。朝のホームは、スマホを見ながら歩く人が多い。線に近づいたら、すぐ声だ。"
+    },
+    {
+     "who": "yamashina",
+     "text": "怖がらせないように、短く、はっきり。「黄色い線の内側へ」だけでいい。"
+    }
+   ],
+   "next": "ch2.rush_task",
+   "view": {
+    "mode": "3d",
+    "cam": "follow",
+    "caption": "朝のホーム見守り"
+   }
+  },
+  "ch2.rush_task": {
+   "id": "ch2.rush_task",
+   "type": "task",
+   "kind": "watch",
+   "title": "朝のホーム見守り",
+   "intro": "黄色い線に近づく人をタップして声をかけます。",
+   "config": {
+    "total": 10
+   },
+   "results": [
+    {
+     "min": 80,
+     "goto": "ch2.rush_good",
+     "effects": [
+      {
+       "eval": {
+        "key": "safety",
+        "add": 4
+       }
+      }
+     ]
+    },
+    {
+     "min": 50,
+     "goto": "ch2.rush_mid",
+     "effects": [
+      {
+       "eval": {
+        "key": "accuracy",
+        "add": 1
+       }
+      }
+     ]
+    },
+    {
+     "min": 0,
+     "goto": "ch2.rush_bad",
+     "effects": [
+      {
+       "eval": {
+        "key": "safety",
+        "add": -2
+       }
+      }
+     ]
+    }
+   ],
+   "view": {
+    "mode": "3d",
+    "cam": "follow",
+    "caption": "朝のホーム見守り"
+   }
+  },
+  "ch2.rush_good": {
+   "id": "ch2.rush_good",
+   "type": "line",
+   "lines": [
+    {
+     "who": "yamashina",
+     "text": "いい声かけだった。あれなら、誰も嫌な顔をしない。",
+     "mood": "smile"
+    }
+   ],
+   "next": "ch2.rush_end"
+  },
+  "ch2.rush_mid": {
+   "id": "ch2.rush_mid",
+   "type": "line",
+   "lines": [
+    {
+     "who": "yamashina",
+     "text": "何人か線を越えさせてしまったな。視線を広く。"
+    }
+   ],
+   "next": "ch2.rush_end"
+  },
+  "ch2.rush_bad": {
+   "id": "ch2.rush_bad",
+   "type": "line",
+   "lines": [
+    {
+     "who": "yamashina",
+     "text": "朝は特に危ない時間だ。全体を見る練習をしよう。",
+     "mood": "serious"
+    }
+   ],
+   "next": "ch2.rush_end"
+  },
+  "ch2.rush_end": {
+   "id": "ch2.rush_end",
+   "type": "effect",
+   "effects": [
+    {
+     "set": "ch2.rush_done"
+    },
+    {
+     "var": {
+      "key": "ch2.extra",
+      "add": 1
+     }
+    },
+    {
+     "time": 20
+    },
+    {
+     "log": {
+      "text": "朝のラッシュのホームを見守り",
+      "tag": "work"
+     }
+    }
+   ],
+   "next": "ch2.hub"
+  },
+  "ch2.window_1": {
+   "id": "ch2.window_1",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "窓口は、きっぷ以外の相談も来ます。聞いてから分類する癖をつけてください。"
+    },
+    {
+     "who": "kubota",
+     "text": "迷ったら、「確認します」と言って私に聞くこと。勝手に判断しないのが鉄則です。"
+    }
+   ],
+   "next": "ch2.window_task",
+   "view": {
+    "mode": "3d",
+    "cam": "follow",
+    "caption": "窓口の対応"
+   }
+  },
+  "ch2.window_task": {
+   "id": "ch2.window_task",
+   "type": "task",
+   "kind": "sort",
+   "title": "窓口の対応",
+   "intro": "用件を聞いて、正しい取扱いを選びます。",
+   "config": {
+    "perItem": 7,
+    "bins": [
+     {
+      "id": "now",
+      "label": "その場で対応"
+     },
+     {
+      "id": "ask",
+      "label": "先輩・規程を確認"
+     },
+     {
+      "id": "other",
+      "label": "他の窓口へ案内"
+     }
+    ],
+    "items": [
+     {
+      "id": "a",
+      "label": "「定期券の有効期限を教えてください」",
+      "bin": "now",
+      "why": "券面と端末で確認できる内容は、その場で答えられます。"
+     },
+     {
+      "id": "b",
+      "label": "「去年の落とし物が出てきたか知りたい」",
+      "bin": "other",
+      "why": "落とし物は台帳を扱う担当の窓口です。"
+     },
+     {
+      "id": "c",
+      "label": "「障害者割引の証明書を忘れた。割引してほしい」",
+      "bin": "ask",
+      "why": "割引は規程の確認が必要です。勝手に判断しません。"
+     },
+     {
+      "id": "d",
+      "label": "「バスの時刻を教えて」",
+      "bin": "other",
+      "why": "バスはバス会社の案内になります。場所だけ案内します。"
+     },
+     {
+      "id": "e",
+      "label": "「ICカードのチャージはどこでできる？」",
+      "bin": "now",
+      "why": "券売機・窓口の場所を案内します。"
+     },
+     {
+      "id": "f",
+      "label": "「友人の定期券を払い戻したい」",
+      "bin": "ask",
+      "why": "本人以外の払い戻しは、確認が必要です。"
+     }
+    ]
+   },
+   "results": [
+    {
+     "min": 80,
+     "goto": "ch2.window_good",
+     "effects": [
+      {
+       "eval": {
+        "key": "service",
+        "add": 3
+       }
+      },
+      {
+       "eval": {
+        "key": "accuracy",
+        "add": 2
+       }
+      },
+      {
+       "skill": {
+        "key": "ticket",
+        "add": 3
+       }
+      }
+     ]
+    },
+    {
+     "min": 50,
+     "goto": "ch2.window_mid",
+     "effects": [
+      {
+       "eval": {
+        "key": "accuracy",
+        "add": 1
+       }
+      }
+     ]
+    },
+    {
+     "min": 0,
+     "goto": "ch2.window_bad",
+     "effects": [
+      {
+       "eval": {
+        "key": "accuracy",
+        "add": -1
+       }
+      }
+     ]
+    }
+   ],
+   "view": {
+    "mode": "3d",
+    "cam": "follow",
+    "caption": "窓口の対応"
+   }
+  },
+  "ch2.window_good": {
+   "id": "ch2.window_good",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "落ち着いて、迷ったものはちゃんと確認に回せました。それが正解です。",
+     "mood": "smile"
+    }
+   ],
+   "next": "ch2.window_end"
+  },
+  "ch2.window_mid": {
+   "id": "ch2.window_mid",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "数件、判断が違いました。迷ったら確認、を思い出してください。"
+    }
+   ],
+   "next": "ch2.window_end"
+  },
+  "ch2.window_bad": {
+   "id": "ch2.window_bad",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "自分で決めてしまうと、後で大きな問題になることがあります。必ず確認を。",
+     "mood": "serious"
+    }
+   ],
+   "next": "ch2.window_end"
+  },
+  "ch2.window_end": {
+   "id": "ch2.window_end",
+   "type": "effect",
+   "effects": [
+    {
+     "set": "ch2.window_done"
+    },
+    {
+     "var": {
+      "key": "ch2.extra",
+      "add": 1
+     }
+    },
+    {
+     "time": 25
+    },
+    {
+     "log": {
+      "text": "窓口で用件を振り分け",
+      "tag": "work"
+     }
+    }
+   ],
+   "next": "ch2.hub"
+  },
+  "ch2.voice_1": {
+   "id": "ch2.voice_1",
+   "type": "line",
+   "lines": [
+    {
+     "who": "shiraishi",
+     "text": "月に一度、お客様の声を整理して、本社に送る。内容は、改善の材料になる。"
+    },
+    {
+     "who": "shiraishi",
+     "text": "全部を覚える必要はない。ただ、要点は自分の言葉で言えるようにしなさい。"
+    }
+   ],
+   "next": "ch2.voice_task",
+   "view": {
+    "mode": "3d",
+    "cam": "npc:shiraishi",
+    "caption": "お客様の声ノート"
+   }
+  },
+  "ch2.voice_task": {
+   "id": "ch2.voice_task",
+   "type": "task",
+   "kind": "memory",
+   "title": "お客様の声ノート",
+   "intro": "先月届いた声を読んで覚え、同じ順に入力します。",
+   "config": {
+    "sequence": [
+     "券売機",
+     "文字が小さい",
+     "夕方",
+     "年配の方"
+    ],
+    "pool": [
+     "券売機",
+     "改札",
+     "文字が小さい",
+     "音が大きい",
+     "朝",
+     "夕方",
+     "年配の方",
+     "学生"
+    ],
+    "showMs": 4800,
+    "showLabel": "お客様の声（先月の最多）"
+   },
+   "results": [
+    {
+     "min": 80,
+     "goto": "ch2.voice_good",
+     "effects": [
+      {
+       "eval": {
+        "key": "accuracy",
+        "add": 3
+       }
+      }
+     ]
+    },
+    {
+     "min": 50,
+     "goto": "ch2.voice_mid",
+     "effects": [
+      {
+       "eval": {
+        "key": "accuracy",
+        "add": 1
+       }
+      }
+     ]
+    },
+    {
+     "min": 0,
+     "goto": "ch2.voice_bad",
+     "effects": [
+      {
+       "eval": {
+        "key": "accuracy",
+        "add": -1
+       }
+      }
+     ]
+    }
+   ],
+   "view": {
+    "mode": "3d",
+    "cam": "npc:shiraishi",
+    "caption": "お客様の声ノート"
+   }
+  },
+  "ch2.voice_good": {
+   "id": "ch2.voice_good",
+   "type": "line",
+   "lines": [
+    {
+     "who": "shiraishi",
+     "text": "そうだ。数だけでなく、「いつ」「誰が」まで拾えている。",
+     "mood": "smile"
+    }
+   ],
+   "next": "ch2.voice_end"
+  },
+  "ch2.voice_mid": {
+   "id": "ch2.voice_mid",
+   "type": "line",
+   "lines": [
+    {
+     "who": "shiraishi",
+     "text": "おおむね合っている。細かい点ほど、改善の鍵になる。"
+    }
+   ],
+   "next": "ch2.voice_end"
+  },
+  "ch2.voice_bad": {
+   "id": "ch2.voice_bad",
+   "type": "line",
+   "lines": [
+    {
+     "who": "shiraishi",
+     "text": "もう一度、原文を読み直しなさい。要点を取り違えると、改善が的外れになる。",
+     "mood": "serious"
+    }
+   ],
+   "next": "ch2.voice_end"
+  },
+  "ch2.voice_end": {
+   "id": "ch2.voice_end",
+   "type": "effect",
+   "effects": [
+    {
+     "set": "ch2.voice_done"
+    },
+    {
+     "var": {
+      "key": "ch2.extra",
+      "add": 1
+     }
+    },
+    {
+     "time": 20
+    },
+    {
+     "log": {
+      "text": "お客様の声ノートを整理",
+      "tag": "work"
+     }
+    }
+   ],
+   "next": "ch2.hub"
+  },
+  "ch2.guide_1": {
+   "id": "ch2.guide_1",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "ベビーカーの方が、ホームの先頭車両のあたりへ行きたいそうです。"
+    },
+    {
+     "who": "kubota",
+     "text": "まず案内所で、行き先の乗り場を確認してから、エレベーターへ向かいましょう。"
+    }
+   ],
+   "next": "ch2.guide_task",
+   "view": {
+    "mode": "3d",
+    "cam": "follow",
+    "caption": "ベビーカーの案内経路"
+   }
+  },
+  "ch2.guide_task": {
+   "id": "ch2.guide_task",
+   "type": "task",
+   "kind": "route",
+   "title": "ベビーカーの案内経路",
+   "intro": "起点から着点まで、階段（黒）を避け、案内所（I）に立ち寄って行き先を確認する経路をつなぎます。",
+   "config": {
+    "grid": [
+     "S...#....",
+     ".##.#.##.",
+     "..I...~.G",
+     ".#####.#.",
+     "........."
+    ],
+    "must": [
+     "I"
+    ],
+    "best": 0,
+    "legend": {
+     "#": "階段・壁（通れない）",
+     "~": "混雑した通路（遅い）",
+     "I": "案内所（立ち寄る）",
+     "S": "起点",
+     "G": "ホーム"
+    }
+   },
+   "results": [
+    {
+     "min": 80,
+     "goto": "ch2.guide_good",
+     "effects": [
+      {
+       "eval": {
+        "key": "service",
+        "add": 3
+       }
+      },
+      {
+       "eval": {
+        "key": "safety",
+        "add": 1
+       }
+      }
+     ]
+    },
+    {
+     "min": 50,
+     "goto": "ch2.guide_mid",
+     "effects": [
+      {
+       "eval": {
+        "key": "accuracy",
+        "add": 1
+       }
+      }
+     ]
+    },
+    {
+     "min": 0,
+     "goto": "ch2.guide_bad",
+     "effects": [
+      {
+       "eval": {
+        "key": "accuracy",
+        "add": -1
+       }
+      }
+     ]
+    }
+   ],
+   "view": {
+    "mode": "3d",
+    "cam": "follow",
+    "caption": "ベビーカーの案内経路"
+   }
+  },
+  "ch2.guide_good": {
+   "id": "ch2.guide_good",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "無理のない道でした。お客様も安心されたと思います。",
+     "mood": "smile"
+    }
+   ],
+   "next": "ch2.guide_end"
+  },
+  "ch2.guide_mid": {
+   "id": "ch2.guide_mid",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "着きましたが、少し遠回りでした。最短の道も覚えておきましょう。"
+    }
+   ],
+   "next": "ch2.guide_end"
+  },
+  "ch2.guide_bad": {
+   "id": "ch2.guide_bad",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "案内所に寄らないと、行き先を間違えることがあります。確認が先です。",
+     "mood": "serious"
+    }
+   ],
+   "next": "ch2.guide_end"
+  },
+  "ch2.guide_end": {
+   "id": "ch2.guide_end",
+   "type": "effect",
+   "effects": [
+    {
+     "set": "ch2.guide_done"
+    },
+    {
+     "var": {
+      "key": "ch2.extra",
+      "add": 1
+     }
+    },
+    {
+     "time": 20
+    },
+    {
+     "log": {
+      "text": "ベビーカーのお客様を案内",
+      "tag": "work"
+     }
+    }
+   ],
+   "next": "ch2.hub"
+  },
+  "ch2.coins_1": {
+   "id": "ch2.coins_1",
+   "type": "line",
+   "lines": [
+    {
+     "who": "sakai",
+     "text": "今日は雨だから、傘を買いに来て千円札を崩す人が多いんだ。"
+    },
+    {
+     "who": "sakai",
+     "text": "手伝ってくれる？ 機械のタイミングが、慣れないと難しくてね。"
+    }
+   ],
+   "next": "ch2.coins_task",
+   "view": {
+    "mode": "3d",
+    "cam": "follow",
+    "caption": "釣銭の準備"
+   }
+  },
+  "ch2.coins_task": {
+   "id": "ch2.coins_task",
+   "type": "task",
+   "kind": "timing",
+   "title": "釣銭の準備",
+   "intro": "動くゲージが緑の範囲に入った瞬間にボタンを押して、硬貨を巻きます。",
+   "config": {
+    "rounds": [
+     {
+      "label": "百円"
+     },
+     {
+      "label": "五十円"
+     },
+     {
+      "label": "十円"
+     }
+    ],
+    "width": 0.15,
+    "speed": 0.85,
+    "button": "巻く！"
+   },
+   "results": [
+    {
+     "min": 80,
+     "goto": "ch2.coins_good",
+     "effects": [
+      {
+       "eval": {
+        "key": "accuracy",
+        "add": 3
+       }
+      }
+     ]
+    },
+    {
+     "min": 50,
+     "goto": "ch2.coins_mid",
+     "effects": [
+      {
+       "eval": {
+        "key": "accuracy",
+        "add": 1
+       }
+      }
+     ]
+    },
+    {
+     "min": 0,
+     "goto": "ch2.coins_bad",
+     "effects": [
+      {
+       "eval": {
+        "key": "accuracy",
+        "add": -1
+       }
+      }
+     ]
+    }
+   ],
+   "view": {
+    "mode": "3d",
+    "cam": "follow",
+    "caption": "釣銭の準備"
+   }
+  },
+  "ch2.coins_good": {
+   "id": "ch2.coins_good",
+   "type": "line",
+   "lines": [
+    {
+     "who": "sakai",
+     "text": "すごいね、新人さんなのに。これで夕方まで持ちそう。",
+     "mood": "smile"
+    }
+   ],
+   "next": "ch2.coins_end"
+  },
+  "ch2.coins_mid": {
+   "id": "ch2.coins_mid",
+   "type": "line",
+   "lines": [
+    {
+     "who": "sakai",
+     "text": "ちょっと崩れたけど、使えるよ。"
+    }
+   ],
+   "next": "ch2.coins_end"
+  },
+  "ch2.coins_bad": {
+   "id": "ch2.coins_bad",
+   "type": "line",
+   "lines": [
+    {
+     "who": "sakai",
+     "text": "難しかったね。ゆっくりやり直せば大丈夫。",
+     "mood": "serious"
+    }
+   ],
+   "next": "ch2.coins_end"
+  },
+  "ch2.coins_end": {
+   "id": "ch2.coins_end",
+   "type": "effect",
+   "effects": [
+    {
+     "set": "ch2.coins_done"
+    },
+    {
+     "var": {
+      "key": "ch2.extra",
+      "add": 1
+     }
+    },
+    {
+     "time": 15
+    },
+    {
+     "log": {
+      "text": "釣銭の準備",
+      "tag": "work"
+     }
+    }
+   ],
+   "next": "ch2.hub"
+  },
+  "ch2.idea_1": {
+   "id": "ch2.idea_1",
+   "type": "line",
+   "lines": [
+    {
+     "text": "券売機の前に、年配の男性が立っている。画面を見つめたまま、数十秒が過ぎた。",
+     "narration": true
+    },
+    {
+     "who": "player",
+     "text": "（「ご案内」の表示を探している…。ボタンの位置が分かりにくいのかもしれない）"
+    },
+    {
+     "text": "同じ光景を見るのは、今日で三度目だった。そのたびに、誰かが後ろに並んで、ため息をついていた。",
+     "narration": true
+    },
+    {
+     "who": "kubota",
+     "text": "（通りかかって）…気づきましたか。実は、前から言われているんです。でも、券売機の設定は私たちの一存では変えられなくて。"
+    },
+    {
+     "who": "player",
+     "text": "何か、できることはないでしょうか。"
+    },
+    {
+     "who": "kubota",
+     "text": "私は、できることがあるなら、きちんとした形でやりたいと思っています。{player}さんは、どうしたいですか？"
+    }
+   ],
+   "next": "ch2.idea_choice",
+   "view": {
+    "mode": "3d",
+    "cam": "npc:vend2",
+    "caption": "券売機2号機"
+   }
+  },
+  "ch2.idea_choice": {
+   "id": "ch2.idea_choice",
+   "type": "choice",
+   "prompt": "気づいたことを、どう扱いますか？",
+   "options": [
+    {
+     "id": "consult",
+     "label": "久保田さんに相談して、改善提案書にまとめる",
+     "goto": "ch2.idea_c",
+     "tone": "careful",
+     "effects": [
+      {
+       "set": "ch2.idea_consult"
+      },
+      {
+       "rel": {
+        "char": "kubota",
+        "trust": 1,
+        "rapport": 1
+       }
+      }
+     ]
+    },
+    {
+     "id": "selfpost",
+     "label": "手書きの案内を作って、自分で券売機の横に貼る",
+     "goto": "ch2.idea_s",
+     "tone": "risky",
+     "effects": [
+      {
+       "set": "ch2.idea_selfpost"
+      }
+     ]
+    },
+    {
+     "id": "skip",
+     "label": "今は自分の仕事を覚えるのが先。見送る",
+     "goto": "ch2.idea_k",
+     "tone": "quick",
+     "effects": [
+      {
+       "set": "ch2.idea_skip"
+      }
+     ]
+    }
+   ],
+   "important": true,
+   "view": {
+    "mode": "3d",
+    "cam": "npc:vend2",
+    "caption": "券売機2号機"
+   }
+  },
+  "ch2.idea_c": {
+   "id": "ch2.idea_c",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "ありがとうございます。それが一番いい形です。ただ、提案書は「気持ち」ではなく「事実」から書きます。"
+    },
+    {
+     "who": "kubota",
+     "text": "「分かりにくい」だけでは、本社は動けません。何を見て、何回あって、どうなったか。そこから始めましょう。"
+    },
+    {
+     "who": "player",
+     "text": "事実、ですね。観察したことを、順番に書いてみます。"
+    },
+    {
+     "who": "kubota",
+     "text": "駅長は、現場の声を一番大事にしてくれる人です。でも、決まりを守る人でもあります。両方に届く書き方をしましょう。",
+     "mood": "smile"
+    }
+   ],
+   "next": "ch2.proposal_task",
+   "view": {
+    "mode": "25d",
+    "bg": "office",
+    "focus": [
+     "kubota"
+    ],
+    "caption": "駅事務室 改善提案"
+   }
+  },
+  "ch2.proposal_task": {
+   "id": "ch2.proposal_task",
+   "type": "task",
+   "kind": "compose",
+   "title": "改善提案書の作成",
+   "intro": "観察した事実と、小さく試せる提案、確認の方法を組み立てます。",
+   "slots": [
+    {
+     "id": "fact",
+     "label": "観察した事実",
+     "options": [
+      {
+       "id": "f1",
+       "text": "午前中に、年配のお客様が券売機の「ご案内」を探して迷う場面を3回見ました。",
+       "good": true,
+       "why": "回数と場面が書かれた事実です。"
+      },
+      {
+       "id": "f2",
+       "text": "お客様はみんな機械が苦手なようです。",
+       "good": false,
+       "why": "推測や決めつけで、根拠がありません。"
+      },
+      {
+       "id": "f3",
+       "text": "券売機の画面は、とても使いにくいです。",
+       "good": false,
+       "why": "感想であり、何が問題か分かりません。"
+      }
+     ]
+    },
+    {
+     "id": "plan",
+     "label": "提案",
+     "options": [
+      {
+       "id": "p1",
+       "text": "券売機の横に、大きな文字の案内表示を1週間だけ試しに掲示させてください。",
+       "good": true,
+       "why": "小さく、期間を区切って、許可を求めています。"
+      },
+      {
+       "id": "p2",
+       "text": "画面を全部作り直してください。",
+       "good": false,
+       "why": "現場だけでは決められず、現実的ではありません。"
+      },
+      {
+       "id": "p3",
+       "text": "私の判断で、すぐ貼ります。",
+       "good": false,
+       "why": "許可を取らずに掲示するのは、決まりに反します。"
+      }
+     ]
+    },
+    {
+     "id": "check",
+     "label": "効果の確かめ方",
+     "options": [
+      {
+       "id": "c1",
+       "text": "掲示の前後で、お客様が迷う場面の回数を数えて比べます。",
+       "good": true,
+       "why": "数字で効果を確認できます。"
+      },
+      {
+       "id": "c2",
+       "text": "雰囲気が良くなったか感じてみます。",
+       "good": false,
+       "why": "感覚だけでは確認になりません。"
+      },
+      {
+       "id": "c3",
+       "text": "特に確認はしません。",
+       "good": false,
+       "why": "確認しないと、改善か分かりません。"
+      }
+     ]
+    }
+   ],
+   "results": [
+    {
+     "min": 66,
+     "goto": "ch2.proposal_good",
+     "effects": [
+      {
+       "eval": {
+        "key": "service",
+        "add": 3
+       }
+      },
+      {
+       "eval": {
+        "key": "accuracy",
+        "add": 2
+       }
+      },
+      {
+       "set": "ch2.proposal_good"
+      }
+     ]
+    },
+    {
+     "min": 34,
+     "goto": "ch2.proposal_mid",
+     "effects": [
+      {
+       "eval": {
+        "key": "accuracy",
+        "add": 1
+       }
+      }
+     ]
+    },
+    {
+     "min": 0,
+     "goto": "ch2.proposal_bad",
+     "effects": [
+      {
+       "eval": {
+        "key": "accuracy",
+        "add": -1
+       }
+      }
+     ]
+    }
+   ],
+   "view": {
+    "mode": "25d",
+    "bg": "office",
+    "focus": [
+     "kubota"
+    ],
+    "caption": "駅事務室 改善提案"
+   }
+  },
+  "ch2.proposal_good": {
+   "id": "ch2.proposal_good",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "事実、小さな提案、確かめ方。これは、そのまま駅長に出せます。",
+     "mood": "smile"
+    },
+    {
+     "who": "kubota",
+     "text": "私も、前から思っていました。{player}さんが言葉にしてくれて、助かりました。"
+    }
+   ],
+   "next": "ch2.idea_done",
+   "effects": [
+    {
+     "rel": {
+      "char": "kubota",
+      "trust": 2,
+      "rapport": 2
+     }
+    },
+    {
+     "timeline": {
+      "text": "4月5日 券売機の案内表示について、改善提案書をまとめた"
+     }
+    }
+   ],
+   "view": {
+    "mode": "25d",
+    "bg": "office",
+    "focus": [
+     "kubota"
+    ]
+   }
+  },
+  "ch2.proposal_mid": {
+   "id": "ch2.proposal_mid",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "方向は合っています。ただ、根拠の書き方をもう少し丁寧に。私も一緒に直しましょう。"
+    }
+   ],
+   "next": "ch2.idea_done",
+   "effects": [
+    {
+     "rel": {
+      "char": "kubota",
+      "trust": 1,
+      "rapport": 1
+     }
+    }
+   ],
+   "view": {
+    "mode": "25d",
+    "bg": "office",
+    "focus": [
+     "kubota"
+    ]
+   }
+  },
+  "ch2.proposal_bad": {
+   "id": "ch2.proposal_bad",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "気持ちは伝わります。でも、このままでは出せません。まず、見たことを数えるところから、一緒にやり直しましょう。",
+     "mood": "serious"
+    }
+   ],
+   "next": "ch2.idea_done",
+   "view": {
+    "mode": "25d",
+    "bg": "office",
+    "focus": [
+     "kubota"
+    ]
+   }
+  },
+  "ch2.idea_s": {
+   "id": "ch2.idea_s",
+   "type": "line",
+   "lines": [
+    {
+     "text": "手元のコピー用紙に、大きな文字で「ご案内はここを押してください」と書いた。テープで券売機の横に貼る。",
+     "narration": true
+    },
+    {
+     "who": "player",
+     "text": "（これで、迷う人が減るはず）"
+    },
+    {
+     "text": "二十分後。巡回から戻った久保田が、足を止めた。",
+     "narration": true
+    },
+    {
+     "who": "kubota",
+     "text": "…これ、いつ貼りましたか。",
+     "mood": "serious"
+    },
+    {
+     "who": "player",
+     "text": "先ほどです。迷う方が多かったので、少しでも役に立てばと…。"
+    },
+    {
+     "who": "kubota",
+     "text": "気持ちは分かります。本当に。でも、券売機まわりの掲示は、本社の承認が必要です。理由は、二つあります。"
+    },
+    {
+     "who": "kubota",
+     "text": "一つは、案内の内容が間違っていた場合、駅全体の責任になること。もう一つは、貼り紙が機械の表示を隠して、かえって混乱を生む場合があること。"
+    },
+    {
+     "who": "player",
+     "text": "…すみません。確認せずに、自分で決めてしまいました。"
+    },
+    {
+     "who": "kubota",
+     "text": "謝ってほしいのではないんです。ただ、いい考えでも、手順を飛ばすと、周りの信頼を一つずつ減らしていきます。"
+    },
+    {
+     "who": "kubota",
+     "text": "貼り紙は、いったん外しましょう。そして、今日のうちに、きちんとした形にしませんか。私も手伝います。",
+     "mood": "smile"
+    },
+    {
+     "text": "剥がした紙は、少しだけ丸まっていた。手の中で、軽く、でも確かな重さを持っていた。",
+     "narration": true
+    }
+   ],
+   "next": "ch2.idea_done",
+   "effects": [
+    {
+     "rel": {
+      "char": "kubota",
+      "trust": -1,
+      "rapport": 1
+     }
+    },
+    {
+     "eval": {
+      "key": "safety",
+      "add": -2
+     }
+    },
+    {
+     "eval": {
+      "key": "teamwork",
+      "add": -1
+     }
+    },
+    {
+     "set": "legacy.rule_break"
+    },
+    {
+     "timeline": {
+      "text": "4月5日 許可なく券売機に掲示し、指導を受ける"
+     }
+    }
+   ],
+   "view": {
+    "mode": "25d",
+    "bg": "office",
+    "focus": [
+     "kubota"
+    ],
+    "caption": "駅事務室 指導"
+   }
+  },
+  "ch2.idea_k": {
+   "id": "ch2.idea_k",
+   "type": "line",
+   "lines": [
+    {
+     "who": "player",
+     "text": "（今は、自分の仕事を覚えるのが先だ…）"
+    },
+    {
+     "text": "券売機の前の男性は、結局、窓口まで歩いてきた。久保田が、笑顔で対応している。",
+     "narration": true
+    },
+    {
+     "who": "kubota",
+     "text": "（戻ってきて）…今の方、またいらっしゃいますよ、きっと。気づいたことがあれば、いつでも言ってくださいね。"
+    },
+    {
+     "who": "player",
+     "text": "はい。もう少し、観察してみます。"
+    }
+   ],
+   "next": "ch2.idea_done",
+   "effects": [
+    {
+     "eval": {
+      "key": "accuracy",
+      "add": 1
+     }
+    }
+   ],
+   "view": {
+    "mode": "3d",
+    "cam": "npc:kubota",
+    "caption": "窓口前"
+   }
+  },
+  "ch2.idea_done": {
+   "id": "ch2.idea_done",
+   "type": "effect",
+   "effects": [
+    {
+     "set": "ch2.idea_done"
+    },
+    {
+     "var": {
+      "key": "ch2.extra",
+      "add": 1
+     }
+    },
+    {
+     "time": 15
+    },
+    {
+     "log": {
+      "text": "券売機の案内について、対応を決める",
+      "tag": "work"
+     }
+    }
+   ],
+   "next": "ch2.hub"
+  },
+  "ch2.lunch": {
+   "id": "ch2.lunch",
+   "type": "line",
+   "lines": [
+    {
+     "text": "12時。雨は上がり、休憩室の窓から、薄い日が差し込んでいる。",
+     "narration": true
+    },
+    {
+     "who": "kubota",
+     "text": "お疲れさまです。午前は、よく動きましたね。お茶をどうぞ。",
+     "mood": "smile"
+    },
+    {
+     "text": "弁当を広げる人、仮眠をとる人。駅の昼は、静かで、少しだけ温かい。",
+     "narration": true
+    }
+   ],
+   "next": "ch2.lunch_choice",
+   "view": {
+    "mode": "25d",
+    "bg": "hr",
+    "focus": [
+     "kubota"
+    ],
+    "caption": "昼休憩 休憩室"
+   }
+  },
+  "ch2.lunch_choice": {
+   "id": "ch2.lunch_choice",
+   "type": "choice",
+   "prompt": "昼休憩を、誰と過ごしますか？",
+   "options": [
+    {
+     "id": "kubota",
+     "label": "久保田さんと、午前の振り返りをする",
+     "goto": "ch2.lunch_k",
+     "tone": "careful",
+     "effects": [
+      {
+       "rel": {
+        "char": "kubota",
+        "trust": 1,
+        "rapport": 1
+       }
+      },
+      {
+       "set": "ch2.lunch_kubota"
+      }
+     ]
+    },
+    {
+     "id": "yamashina",
+     "label": "山科さんと、お互いの近況を話す",
+     "goto": "ch2.lunch_y",
+     "tone": "caring",
+     "effects": [
+      {
+       "rel": {
+        "char": "yamashina",
+        "trust": 1,
+        "rapport": 2
+       }
+      },
+      {
+       "set": "ch2.lunch_yamashina"
+      }
+     ]
+    },
+    {
+     "id": "shiraishi",
+     "label": "駅長の隣に座って、駅の話を聞く",
+     "goto": "ch2.lunch_s",
+     "tone": "caring",
+     "effects": [
+      {
+       "rel": {
+        "char": "shiraishi",
+        "trust": 2,
+        "rapport": 1
+       }
+      },
+      {
+       "set": "ch2.lunch_shiraishi"
+      }
+     ]
+    }
+   ],
+   "view": {
+    "mode": "25d",
+    "bg": "hr",
+    "focus": [
+     "kubota",
+     "yamashina",
+     "shiraishi"
+    ],
+    "caption": "昼休憩 休憩室"
+   }
+  },
+  "ch2.lunch_k": {
+   "id": "ch2.lunch_k",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "朝のラッシュは、どうでしたか。ホームで声をかけるのは、勇気がいるでしょう。"
+    },
+    {
+     "who": "player",
+     "text": "最初の一人に声をかけるのが、一番緊張しました。でも、言ってみると、意外と普通に聞いてくれて。"
+    },
+    {
+     "who": "kubota",
+     "text": "そうなんです。こちらが思うほど、お客様は構えていません。構えているのは、いつも私たちのほう。",
+     "mood": "smile"
+    },
+    {
+     "who": "kubota",
+     "text": "私も新人の頃は、声をかけて怒られたらどうしよう、と考えてばかりでした。実際に怒られたのは、五年間で二回だけです。"
+    },
+    {
+     "who": "player",
+     "text": "二回もあったんですね。"
+    },
+    {
+     "who": "kubota",
+     "text": "ええ。一回目は本当に私が悪かった。二回目は、虫の居所が悪い方だった。どちらも、次の日には忘れました。"
+    },
+    {
+     "who": "kubota",
+     "text": "大事なのは、怒られた理由を一度だけ考えること。それ以上は、引きずらないこと。"
+    },
+    {
+     "who": "player",
+     "text": "一度だけ考える。…覚えておきます。"
+    },
+    {
+     "who": "kubota",
+     "text": "さて。午後は窓口が混みます。お茶、もう一杯飲んでいってください。"
+    }
+   ],
+   "next": "ch2.lunch_end",
+   "view": {
+    "mode": "25d",
+    "bg": "hr",
+    "focus": [
+     "kubota"
+    ],
+    "caption": "昼休憩 休憩室"
+   }
+  },
+  "ch2.lunch_y": {
+   "id": "ch2.lunch_y",
+   "type": "line",
+   "lines": [
+    {
+     "who": "yamashina",
+     "text": "朝のホーム、見ててくれたか？ 実は、最初の一人に声をかけるまで、五分も固まってた。",
+     "mood": "smile"
+    },
+    {
+     "who": "player",
+     "text": "全然そうは見えなかったよ。"
+    },
+    {
+     "who": "yamashina",
+     "text": "だろ？ 顔に出さないのだけは、得意なんだ。…正直に言うと、同期のなかで、自分が一番遅れてる気がしてる。"
+    },
+    {
+     "who": "player",
+     "text": "遅れてる、って？"
+    },
+    {
+     "who": "yamashina",
+     "text": "昨日、人事の森下さんに言われた。「評価は、半年ごとに見ます」って。半年の間に、何を積み上げられるかで、行ける場所が変わる。"
+    },
+    {
+     "who": "yamashina",
+     "text": "基地に行きたいのに、そこまでの道が、見えない道みたいで。"
+    },
+    {
+     "who": "player",
+     "text": "見えない道でも、一日ずつ歩けば、あとから道になるんじゃないかな。"
+    },
+    {
+     "who": "yamashina",
+     "text": "…お前、時々いいこと言うな。",
+     "mood": "smile"
+    },
+    {
+     "who": "yamashina",
+     "text": "今日の券売機の件、気づいてたのか。あれを提案書にしたいなら、俺も協力する。同期だからな。"
+    }
+   ],
+   "next": "ch2.lunch_end",
+   "effects": [
+    {
+     "set": "ch2.yama_help"
+    }
+   ],
+   "view": {
+    "mode": "25d",
+    "bg": "hr",
+    "focus": [
+     "yamashina"
+    ],
+    "caption": "昼休憩 休憩室"
+   }
+  },
+  "ch2.lunch_s": {
+   "id": "ch2.lunch_s",
+   "type": "line",
+   "lines": [
+    {
+     "who": "shiraishi",
+     "text": "珍しいね。若い人は、事務室のほうへは来ても、私の隣には座らないものだ。",
+     "mood": "smile"
+    },
+    {
+     "who": "player",
+     "text": "すみません。迷惑でしたか。"
+    },
+    {
+     "who": "shiraishi",
+     "text": "いや、嬉しいよ。…この駅は、開業して二十年になる。私は、ここで三代目の駅長だ。"
+    },
+    {
+     "who": "shiraishi",
+     "text": "初代の駅長は、毎朝、改札の外に立って、挨拶をしていた。「駅の顔は、立っている人の顔だ」と言ってね。"
+    },
+    {
+     "who": "player",
+     "text": "駅の顔は、立っている人の顔…。"
+    },
+    {
+     "who": "shiraishi",
+     "text": "そうだ。設備が新しくなっても、最後に人の印象を決めるのは、最初に声をかけた一人だ。"
+    },
+    {
+     "who": "shiraishi",
+     "text": "{player}、今日一日で、誰かの顔を覚えたか。"
+    },
+    {
+     "who": "player",
+     "text": "…券売機で迷っていた、年配の男性の顔を、覚えています。"
+    },
+    {
+     "who": "shiraishi",
+     "text": "十分だ。それが、仕事の始まりだよ。",
+     "mood": "smile"
+    }
+   ],
+   "next": "ch2.lunch_end",
+   "effects": [
+    {
+     "set": "ch2.shiraishi_motto"
+    }
+   ],
+   "view": {
+    "mode": "25d",
+    "bg": "hr",
+    "focus": [
+     "shiraishi"
+    ],
+    "caption": "昼休憩 休憩室"
+   }
+  },
+  "ch2.lunch_end": {
+   "id": "ch2.lunch_end",
+   "type": "effect",
+   "effects": [
+    {
+     "set": "ch2.lunch_done"
+    },
+    {
+     "time": 45
+    },
+    {
+     "log": {
+      "text": "昼休憩",
+      "tag": "work"
+     }
+    }
+   ],
+   "next": "ch2.hub"
+  },
+  "ch2.review": {
+   "id": "ch2.review",
+   "type": "line",
+   "lines": [
+    {
+     "text": "16時30分。駅事務室で、白石駅長と久保田が待っていた。机の上に、一枚の評価シートが置かれている。",
+     "narration": true
+    },
+    {
+     "who": "shiraishi",
+     "text": "今日は、初めての「週次の振り返り」だ。評価ではなく、成長のための面談だと思ってほしい。"
+    }
+   ],
+   "next": "ch2.review_b",
+   "view": {
+    "mode": "25d",
+    "bg": "office",
+    "focus": [
+     "shiraishi",
+     "kubota"
+    ],
+    "caption": "16:30 駅事務室 週次面談"
+   },
+   "effects": [
+    {
+     "clock": {
+      "minute": 990
+     }
+    }
+   ]
+  },
+  "ch2.review_b": {
+   "id": "ch2.review_b",
+   "type": "branch",
+   "cases": [
+    {
+     "when": {
+      "flag": "ch2.idea_selfpost"
+     },
+     "goto": "ch2.rv_s"
+    },
+    {
+     "when": {
+      "flag": "ch2.proposal_good"
+     },
+     "goto": "ch2.rv_good"
+    },
+    {
+     "when": {
+      "flag": "ch2.idea_consult"
+     },
+     "goto": "ch2.rv_try"
+    }
+   ],
+   "else": "ch2.rv_plain"
+  },
+  "ch2.rv_s": {
+   "id": "ch2.rv_s",
+   "type": "line",
+   "lines": [
+    {
+     "who": "shiraishi",
+     "text": "券売機の件は、久保田から聞いた。いい着眼だと思う。ただ、手順を飛ばした。",
+     "mood": "serious"
+    },
+    {
+     "who": "kubota",
+     "text": "責めているわけではありません。ただ、気づいたことは、先に相談してほしかった。"
+    },
+    {
+     "who": "shiraishi",
+     "text": "駅は、一人の判断で動くと、必ずどこかにひずみが出る。君の観察は、正しい。だから、正しい形で出し直しなさい。"
+    },
+    {
+     "who": "player",
+     "text": "はい。もう一度、手順を踏んでやり直します。"
+    },
+    {
+     "who": "shiraishi",
+     "text": "提案書を書く気があるなら、私も目を通す。出しなさい。"
+    }
+   ],
+   "next": "ch2.rv_choice",
+   "view": {
+    "mode": "25d",
+    "bg": "office",
+    "focus": [
+     "shiraishi",
+     "kubota"
+    ]
+   }
+  },
+  "ch2.rv_good": {
+   "id": "ch2.rv_good",
+   "type": "line",
+   "lines": [
+    {
+     "who": "shiraishi",
+     "text": "提案書を読んだ。事実と提案と確認方法が揃っていて、本社にそのまま出せる。",
+     "mood": "smile"
+    },
+    {
+     "who": "kubota",
+     "text": "一週間の試行で、許可を取る方向で進めましょう。"
+    },
+    {
+     "who": "shiraishi",
+     "text": "新人の提案が採用されることは、珍しい。だが、手順と根拠が揃えば、通る。覚えておきなさい。"
+    }
+   ],
+   "next": "ch2.rv_choice",
+   "effects": [
+    {
+     "set": "ch2.proposal_sent"
+    },
+    {
+     "timeline": {
+      "text": "4月5日 改善提案書が駅長に承認される"
+     }
+    }
+   ],
+   "view": {
+    "mode": "25d",
+    "bg": "office",
+    "focus": [
+     "shiraishi",
+     "kubota"
+    ]
+   }
+  },
+  "ch2.rv_try": {
+   "id": "ch2.rv_try",
+   "type": "line",
+   "lines": [
+    {
+     "who": "shiraishi",
+     "text": "相談してから動く、という選択をしてくれたこと自体が、今日の収穫だ。",
+     "mood": "smile"
+    },
+    {
+     "who": "kubota",
+     "text": "提案書は、まだ磨く余地があります。明日、もう一度一緒に見ましょう。"
+    }
+   ],
+   "next": "ch2.rv_choice",
+   "view": {
+    "mode": "25d",
+    "bg": "office",
+    "focus": [
+     "shiraishi",
+     "kubota"
+    ]
+   }
+  },
+  "ch2.rv_plain": {
+   "id": "ch2.rv_plain",
+   "type": "line",
+   "lines": [
+    {
+     "who": "shiraishi",
+     "text": "今日は、与えられた仕事を丁寧にこなしていたと聞いている。基本は、それでいい。"
+    },
+    {
+     "who": "kubota",
+     "text": "次の週は、「気づいたことを、形にする」ことも練習してみましょう。"
+    }
+   ],
+   "next": "ch2.rv_choice",
+   "view": {
+    "mode": "25d",
+    "bg": "office",
+    "focus": [
+     "shiraishi",
+     "kubota"
+    ]
+   }
+  },
+  "ch2.rv_choice": {
+   "id": "ch2.rv_choice",
+   "type": "choice",
+   "prompt": "来週、いちばん伸ばしたいことは？",
+   "options": [
+    {
+     "id": "service",
+     "label": "お客様への声かけと、接客",
+     "goto": "ch2.closing",
+     "tone": "caring",
+     "effects": [
+      {
+       "set": "next.focus_service"
+      },
+      {
+       "eval": {
+        "key": "service",
+        "add": 2
+       }
+      }
+     ]
+    },
+    {
+     "id": "accuracy",
+     "label": "正確さ。手順と確認の徹底",
+     "goto": "ch2.closing",
+     "tone": "careful",
+     "effects": [
+      {
+       "set": "next.focus_accuracy"
+      },
+      {
+       "eval": {
+        "key": "accuracy",
+        "add": 2
+       }
+      }
+     ]
+    },
+    {
+     "id": "teamwork",
+     "label": "同僚との連携と、相談のしかた",
+     "goto": "ch2.closing",
+     "tone": "caring",
+     "effects": [
+      {
+       "set": "next.focus_team"
+      },
+      {
+       "eval": {
+        "key": "teamwork",
+        "add": 2
+       }
+      }
+     ]
+    }
+   ],
+   "important": true,
+   "view": {
+    "mode": "25d",
+    "bg": "office",
+    "focus": [
+     "shiraishi",
+     "kubota"
+    ]
+   }
+  },
+  "ch2.closing": {
+   "id": "ch2.closing",
+   "type": "line",
+   "lines": [
+    {
+     "who": "shiraishi",
+     "text": "よし。来週の勤務表を、渡しておく。再来週には、初めての早番が入る。五時半の始業だ。体を、慣らしておきなさい。"
+    },
+    {
+     "who": "kubota",
+     "text": "早番の前の晩は、いつもより一時間早く寝てください。私は、それを三年かけて覚えました。",
+     "mood": "smile"
+    },
+    {
+     "text": "窓の外は、すっかり日が落ちていた。券売機の前の男性は、もういない。それでも、顔だけは、はっきり覚えていた。",
+     "narration": true
+    }
+   ],
+   "next": "ch2.after",
+   "view": {
+    "mode": "25d",
+    "bg": "office",
+    "focus": [
+     "shiraishi",
+     "kubota"
+    ],
+    "caption": "17:30 駅事務室"
+   }
+  },
+  "ch2.after": {
+   "id": "ch2.after",
+   "type": "branch",
+   "cases": [
+    {
+     "when": {
+      "flag": "legacy.depot_tour"
+     },
+     "goto": "ch2.depot"
+    }
+   ],
+   "else": "ch2.end"
   }
  },
  "maps": {
