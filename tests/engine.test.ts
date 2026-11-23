@@ -202,7 +202,7 @@ describe('時間経過で仕事（依頼）が増える', () => {
     expect(b.ints).toBeGreaterThan(a.ints); expect(c.ints).toBeGreaterThan(b.ints); expect(d.goals).toBeGreaterThan(a.goals + 8);
   });
   it('依頼は少なくとも13種類あり、各依頼に独自の場面がある', () => {
-    const hub = S.nodes['ch1.hub'] as any; const timed = hub.interactions.filter((i: any) => JSON.stringify(i.requires).includes('"time"'));
+    const hub = S.nodes['ch1.hub'] as any; const timed = hub.interactions.filter((i: any) => (JSON.stringify(i.requires) ?? '').includes('"time"'));
     expect(timed.length).toBeGreaterThanOrEqual(13); expect(new Set(timed.map((i: any) => i.goto)).size).toBe(timed.length);
   });
   it('梶原さんに付き添った場合だけ、午後に再会の依頼が出る', () => {
