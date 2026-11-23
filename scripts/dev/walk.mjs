@@ -5,12 +5,12 @@ const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium', a
 await pg.goto('http://localhost:5196/?audit'); await pg.click('.card.playable'); await pg.click('text=最初から（第1章）'); await pg.waitForTimeout(2500);
 const r = await pg.evaluate(async mode => {
   const c = window.__GC; c.setSettings({ clockRunning: false }); const trace = []; let guard = 0; let last = '';
-  while (guard++ < 2000) {
+  while (guard++ < 6000) {
     const v = c.view; const n = c.world.story.node; if (n !== last) { trace.push(n); last = n; }
     if (v.kind === 'line') c.advanceLine(); else if (v.kind === 'choice') { const o = v.options; c.choose(o[mode === 'good' ? 0 : o.length - 1].id); }
     else if (v.kind === 'task') c.resolveTask(mode === 'good' ? 100 : 20);
     else if (v.kind === 'hub') { const it = v.interactions[0]; if (v.canExit) { c.exitHub(); } else if (it) c.interact(it.id); else c.waitMinutes(30); }
-    else if (v.kind === 'end') { if (v.node.nextChapter) { c.startNextChapter(); if (c.world.story.chapter === 'ch2') return { ok: true, trace: trace.length, ch: 'ch2', guard, flags: Object.keys(c.world.flags).length }; } else return { ok: true, ch: c.world.story.chapter, guard }; }
+    else if (v.kind === 'end') { if (v.node.nextChapter) c.startNextChapter(); else return { ok: true, lastChapter: c.world.story.chapter, completed: c.world.story.completedChapters, guard, flags: Object.keys(c.world.flags).length }; }
     else return { stuck: v.kind, n };
   }
   return { stuck: 'guard', n: c.world.story.node, tail: trace.slice(-12), view: c.view.kind, clock: c.world.clock.minute };

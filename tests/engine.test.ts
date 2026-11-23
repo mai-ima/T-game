@@ -71,7 +71,7 @@ describe('分岐到達性（ランダム・プレイスルー 600回）', () => 
     const reachable = Object.keys(S.nodes).filter(id => !visited.has(id));
     expect(reachable).toEqual([]);
   });
-  it('第1章・第2章の終端に到達できる', () => { expect([...endIds].sort()).toEqual(['ch1.end', 'ch2.end']); });
+  it('プレイ可能な全章の終端に到達できる', () => { const want = (S.chapters as any[]).filter(c => c.status === 'playable').map(c => c.id + '.end').sort(); expect([...endIds].sort()).toEqual(want); });
   it('第1章の選択が第2章の導入を変える（4種以上）', () => { expect(ch2variants.size).toBeGreaterThanOrEqual(4); });
   it('評価ランクが複数種類に分岐する', () => { expect(ratings.size).toBeGreaterThanOrEqual(2); });
 });
