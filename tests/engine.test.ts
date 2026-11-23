@@ -221,3 +221,15 @@ describe('時間経過で仕事（依頼）が増える', () => {
     expect(new Set(starts).size).toBe(3);
   });
 });
+
+describe('業務の形式が多様である', () => {
+  const tasks = Object.values(S.nodes).filter((n: any) => n.type === 'task' && n.id.startsWith('ch1.')) as any[];
+  it('クイズ以外の形式（6種類）が使われ、各形式が複数回は登場する', () => {
+    const kinds = tasks.map(t => t.kind); for (const k of ['timing', 'find', 'sort', 'memory', 'route', 'watch']) expect(kinds.includes(k)).toBe(true);
+    expect(new Set(kinds).size).toBeGreaterThanOrEqual(8); expect(kinds.filter(k => !['checklist', 'compose'].includes(k)).length).toBeGreaterThanOrEqual(10);
+  });
+  it('どの業務も結果の分岐が存在する場所に続き、経路課題には最短が設定されている', () => {
+    for (const t of tasks) { for (const r of t.results) expect(S.nodes[r.goto], t.id).toBeTruthy(); if (t.kind === 'route') expect(t.config.best).toBeGreaterThan(5); }
+  });
+  it('1日の仕事が増えた（ハブの依頼が30件以上）', () => { expect((S.nodes['ch1.hub'] as any).interactions.length).toBeGreaterThanOrEqual(30); });
+});

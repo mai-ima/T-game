@@ -729,6 +729,78 @@ N['ch1.hub'].goals.push(
   { id: 'g_cable', label: '（専用）線路に落ちた物への対応', when: F('ch1.cable_done'), optional: true, showWhen: ALL(F('route.platform'), T('>=', hm(14, 0))) },
   { id: 'g_board', label: '（専用）発車標の誤表示の訂正', when: F('ch1.board_done'), optional: true, showWhen: ALL(F('route.office'), T('>=', hm(14, 10))) });
 
+// ============ 多様な形式の業務（クイズ以外）============
+// 最短経路コスト（必須地点つき）を探索して、経路課題の「最短」を自動算出する。
+const bestRoute = (grid, must) => { const H = grid.length, W = grid[0].length; let s; for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) if (grid[y][x] === 'S') s = [x, y];
+  const mk = [...new Set(must)]; const key = (x, y, m) => `${x},${y},${m}`; const dist = new Map([[key(s[0], s[1], 0), 1]]); const q = [[s[0], s[1], 0, 1]];
+  while (q.length) { q.sort((a, b) => a[3] - b[3]); const [x, y, m, d] = q.shift(); if (d > dist.get(key(x, y, m))) continue; if (grid[y][x] === 'G' && m === (1 << mk.length) - 1) return d;
+    for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) { const nx = x + dx, ny = y + dy; const c = grid[ny]?.[nx]; if (!c || c === '#') continue; let nm = m; const mi = mk.indexOf(c); if (mi >= 0) nm |= 1 << mi; const nd = d + (c === '~' ? 3 : 1); const k = key(nx, ny, nm); if (nd < (dist.get(k) ?? 1e9)) { dist.set(k, nd); q.push([nx, ny, nm, nd]); } } }
+  return 20; };
+/** 1つの業務（きっかけの会話 → ミニゲーム → 結果の会話 → 記録）を生成して、ハブへ登録する */
+const mini = (o) => {
+  const id = 'ch1.' + o.key; const task = id + '_task';
+  line(id + '_1', o.intro.map(t => [o.who, t]), task, { view: v3(o.cam ?? 'follow', o.title) });
+  N[task] = { id: task, type: 'task', kind: o.kind, title: o.title, intro: o.hint, config: o.config, results: res3(id + '_good', id + '_mid', id + '_bad', o.ge ?? [ev('accuracy', 3)], o.me ?? [ev('accuracy', 1)], o.be ?? [ev('accuracy', -1)]), view: v3(o.cam ?? 'follow', o.title) };
+  line(id + '_good', [[o.who, o.good, 'smile']], id + '_end'); line(id + '_mid', [[o.who, o.mid]], id + '_end'); line(id + '_bad', [[o.who, o.bad, 'serious']], id + '_end');
+  fx(id + '_end', done('ch1.' + o.key + '_done', o.min ?? 15, o.log), 'ch1.hub');
+  N['ch1.hub'].interactions.push({ id: o.key, object: o.object, label: o.label, goto: id + '_1', requires: ALL(F('ch1.tenko'), T('>=', hm(...o.from)), ...(o.to ? [T('<', hm(...o.to))] : [])), once: true });
+  N['ch1.hub'].goals.push({ id: 'g_' + o.key, label: o.goal, when: F('ch1.' + o.key + '_done'), optional: true, showWhen: T('>=', hm(...o.from)) });
+};
+const P = (x, y, w, h, c, t) => ({ x, y, w, h, c, t });
+
+// 既存の確認作業のうち3つを、別の形式に置き換える
+const swap = (nid, kind, config, hint) => { const n = N[nid]; n.kind = kind; n.config = config; n.intro = hint; delete n.items; };
+swap('ch1.jam_task', 'timing', { rounds: [{ label: 'ローラーを清掃' }, { label: '券紙を整列' }, { label: '試験発券' }], width: 0.18, speed: 0.75, button: '今！' }, '動くゲージが緑の範囲に入った瞬間に、ボタンを押して作業します（3工程）。');
+swap('ch1.gate_task', 'find', { scene: 'gate', seconds: 40, props: [P(0.04, 0.3, 0.18, 0.5, '#4b5563', '改札1'), P(0.27, 0.3, 0.18, 0.5, '#4b5563', '改札2'), P(0.5, 0.3, 0.18, 0.5, '#4b5563', '改札3'), P(0.73, 0.3, 0.22, 0.5, '#2f5d8a', '広幅')], spots: [
+  { id: 'flap', x: 0.31, y: 0.62, label: '2番のフラップが半開きのまま止まっている' }, { id: 'led', x: 0.59, y: 0.4, label: '3番の進行表示が消えている' }, { id: 'ticket', x: 0.83, y: 0.7, label: '広幅通路の読取部に異物が挟まっている' },
+  { id: 'ok1', x: 0.13, y: 0.55, real: false, label: '1番は正常に動作しています' }] }, '改札機のどこかに3つの異常があります。制限時間内に見つけてタップしてください。');
+swap('ch1.wc_task', 'find', { scene: 'toilet', seconds: 40, props: [P(0.05, 0.1, 0.2, 0.7, '#6f8d92', '個室'), P(0.3, 0.1, 0.2, 0.7, '#6f8d92', '個室'), P(0.62, 0.35, 0.12, 0.2, '#c9d7da', '洗面'), P(0.78, 0.15, 0.17, 0.65, '#8aa6aa', '多目的')], spots: [
+  { id: 'paper', x: 0.67, y: 0.5, label: '手洗い場のペーパーが切れている' }, { id: 'mirror', x: 0.7, y: 0.28, label: '鏡に大きなひびがある' }, { id: 'wet', x: 0.45, y: 0.9, label: '床が濡れて滑りやすい' },
+  { id: 'btn', x: 0.88, y: 0.5, real: false, label: '非常呼出ボタンは正常です' }] }, '定期点検です。危険や不備のある場所を3か所見つけてください。');
+
+const hmm = (h, m) => [h, m];
+mini({ key: 'timetable', who: 'shiraishi', object: 'departure_board', from: hmm(8, 50), to: hmm(11, 0), label: '発車標の臨時変更を入力する', goal: '（業務）発車標の臨時表示の入力', title: '発車標の臨時表示入力', cam: 'npc:shiraishi', hint: '示された順に覚え、同じ順に入力します（見返しはできません）。',
+  intro: ['臨時の行先変更が届いた。指令からのメモを見て、発車標に入力してほしい。', '表示は見たら戻せない。メモを覚えて、落ち着いて入力すること。'], kind: 'memory', config: { sequence: ['2番線', '9:52', '普通', '南河原'], pool: ['1番線', '2番線', '9:25', '9:52', '快速', '普通', '南河原', '北嶺'], showMs: 4500 },
+  good: '一字一句、間違いがない。確認の習慣がついてきたな。', mid: '惜しい。数字や番線の取り違いは、乗り間違いにつながる。', bad: '発車標は多くの人が見る。入力前の復唱を習慣にしなさい。', ge: [ev('accuracy', 3), sk('ops', 3)], log: '発車標の臨時表示を入力', min: 10 });
+mini({ key: 'tactile', who: 'kubota', object: 'tactile', from: hmm(9, 30), to: hmm(12, 0), label: '点字ブロック上の障害物を探して片付ける', goal: '（業務）点字ブロック上の障害物の撤去', title: '点字ブロック上の障害物', cam: 'follow', hint: 'ホームの絵の中で、点字ブロックの上や近くにある障害を探してタップします。', kind: 'find',
+  intro: ['点字ブロックの上に物が置かれると、目の不自由な方にとっては大きな危険です。', 'ホームを見渡して、支障になっているものを探してください。'],
+  config: { scene: 'platform', seconds: 35, props: [P(0, 0.62, 1, 0.07, '#e5b800'), P(0.05, 0.4, 0.14, 0.2, '#6b7280', 'ベンチ'), P(0.7, 0.35, 0.12, 0.25, '#7a8aa0', '柱')], spots: [
+    { id: 'bike', x: 0.3, y: 0.66, label: '点字ブロックの上に置かれた自転車の荷物' }, { id: 'box', x: 0.55, y: 0.6, label: 'ブロックをふさぐ段ボール箱' }, { id: 'cane', x: 0.86, y: 0.7, label: 'ブロック上に落ちている傘' }, { id: 'bench', x: 0.12, y: 0.5, real: false, label: 'ベンチは通行の妨げになっていません' }] },
+  good: 'ブロックの上は、何も置かない。これは全員の約束だ。', mid: '見落としがあった。もう一度、端から端まで歩いて見ましょう。', bad: '安全のための設備でも、使えなければ意味がない。重点的に巡回しよう。', ge: [ev('safety', 3), ev('accuracy', 1)], log: '点字ブロック上の障害物を撤去', min: 15 });
+mini({ key: 'watch1', who: 'yamashina', object: 'emergency_btn', from: hmm(10, 0), to: hmm(14, 0), label: '発車前のホームで安全を見守る', goal: '（業務）ホームの安全見守り', title: 'ホーム安全見守り', cam: 'follow', hint: '黄色い線へ近づく人をタップして声をかけます。立ち止まっている人は見守るだけです。', kind: 'watch',
+  intro: ['列車が入ってくる前は、一番事故が起きやすい時間帯だ。', '黄色い線に近づく人を見つけたら、すぐに声をかける。やってみよう。'], config: { total: 8 },
+  good: '落ち着いて、全員に声をかけられたね。いい目をしている。', mid: '何人か、線を越えてしまった。視線を広く持つといい。', bad: '安全が脅かされた場面だ。まず全体を見て、近い人から順に声をかけよう。', ge: [ev('safety', 4), sk('patrol', 3)], me: [ev('safety', 1)], be: [ev('safety', -3)], log: '発車前のホームを見守り', min: 20 });
+mini({ key: 'wheel', who: 'kubota', object: 'elevator', from: hmm(11, 0), to: hmm(15, 30), label: '車いすのお客様をホームまで案内する', goal: '（依頼）車いすのお客様の経路案内', title: '車いすのお客様の案内経路', cam: 'follow', hint: '起点から着点まで、段差（黒）を避け、エレベーター（E）を通る道をつなぎます。人の多い通路（しま模様）は時間がかかります。', kind: 'route',
+  intro: ['車いすのお客様が、普通列車に乗りたいそうです。段差のない道を選んで案内します。', 'エレベーターは必ず通ります。混雑する通路は避けると早く着きますよ。'],
+  config: { grid: ['S...#....', '.##.#.##.', '.#.E...~G', '.#####.#.', '.........'].map(r => r), must: ['E'], best: 0, legend: { '#': '階段・壁（通れない）', '~': '混雑した通路（遅い）', E: 'エレベーター（必ず通る）', S: '起点', G: 'ホーム' } },
+  good: '無理のない道で、お待たせしませんでした。ご利用のお客様にも安心していただけます。', mid: '行き着けましたが、もう少し短い道がありました。', bad: '段差やエレベーターの確認が足りませんでした。経路は最初に確認しましょう。', ge: [ev('service', 4), ev('safety', 2)], me: [ev('service', 1)], be: [ev('service', -2)], log: '車いすのお客様を案内', min: 20 });
+mini({ key: 'fare', who: 'kubota', object: 'gate_wide', from: hmm(10, 30), to: hmm(14, 30), label: '有人改札でお客様の用件をさばく', goal: '（業務）有人改札の対応', title: '有人改札の対応', cam: 'gate_back', hint: '次々に来るお客様の用件を、正しい窓口へ振り分けます。制限時間があります。', kind: 'sort',
+  intro: ['有人改札には、いろいろな用件のお客様が来ます。', '用件を聞いたら、すぐに最適な対応を判断してください。'],
+  config: { perItem: 6, bins: [{ id: 'fix', label: '精算機で処理' }, { id: 'refund', label: '払い戻しの窓口へ' }, { id: 'guide', label: '口頭で案内' }], items: [
+    { id: 'a', label: '「ICカードの残額が足りなくて出られません」', bin: 'fix', why: '残額不足は精算機で処理します。' }, { id: 'b', label: '「特急券を間違えて買ってしまった（未使用）」', bin: 'refund', why: '未使用のきっぷは払い戻しの窓口です。' },
+    { id: 'c', label: '「バスターミナルはどちらですか」', bin: 'guide', why: '場所の案内は口頭で足ります。' }, { id: 'd', label: '「定期券の区間より先まで乗ってしまった」', bin: 'fix', why: '乗り越しは精算します。' },
+    { id: 'e', label: '「電車が遅れて予定が変わった。きっぷは未使用です」', bin: 'refund', why: '未使用ならば払い戻しの対象です。' }, { id: 'f', label: '「トイレはどこですか」', bin: 'guide', why: '案内だけで解決します。' }] },
+  good: '手際がいい。窓口が混まなくて助かる。', mid: '数件、案内先を間違えました。お客様を行き来させないようにしましょう。', bad: '用件の振り分けが合っていませんでした。窓口の役割を覚え直しましょう。', ge: [ev('service', 3), ev('accuracy', 2), sk('ticket', 3)], log: '有人改札で用件を振り分け', min: 20 });
+mini({ key: 'lostsort', who: 'yamashina', object: 'lost_item', from: hmm(12, 40), to: hmm(16, 30), label: '預かった落とし物を仕分ける', goal: '（業務）落とし物の仕分け', title: '落とし物の仕分け', cam: 'follow', hint: '品物ごとに、決められた扱いを素早く選びます。', kind: 'sort',
+  intro: ['午前中に預かった落とし物が溜まってきた。種類ごとに扱いが違う。', '迷ったら、取扱いの決まりに戻ること。急いでやってみよう。'],
+  config: { perItem: 7, bins: [{ id: 'reg', label: '台帳に登録して保管' }, { id: 'val', label: '貴重品（二人で確認）' }, { id: 'rep', label: '不審物は指令へ連絡' }, { id: 'per', label: '生鮮品は早めに処理' }], items: [
+    { id: 'a', label: '折りたたみ傘', bin: 'reg', why: '一般の落とし物は台帳に登録して保管します。' }, { id: 'b', label: '現金の入った財布', bin: 'val', why: '現金は必ず二人で確認します。' }, { id: 'c', label: '持ち主不明で、中から音がする黒いバッグ', bin: 'rep', why: '不審物には触れず、指令へ連絡します。' },
+    { id: 'd', label: '冷蔵が必要な弁当', bin: 'per', why: '生鮮品は傷む前に所定の手続きを行います。' }, { id: 'e', label: '定期入れ（ICカード入り）', bin: 'val', why: '個人情報のある物は慎重に扱います。' }, { id: 'f', label: '水筒', bin: 'reg', why: '台帳に登録して保管します。' }] },
+  good: '迷わず分けられたね。取扱いの決まりが身についている。', mid: '少し取り違いがあった。特に貴重品と不審物は慎重に。', bad: '品物ごとの扱いが混ざっていた。もう一度、決まりを見直そう。', ge: [ev('accuracy', 3), ev('safety', 2)], log: '落とし物を仕分け', min: 20 });
+mini({ key: 'coins', who: 'sakai', object: 'ticket_office', from: hmm(13, 40), to: hmm(16, 30), label: '両替用の釣銭を準備する', goal: '（業務）釣銭の準備', title: '釣銭の準備', cam: 'follow', hint: '動くゲージが緑の範囲に入った瞬間にボタンを押して、硬貨を巻きます。', kind: 'timing',
+  intro: ['夕方は両替の依頼が増えるから、今のうちに釣銭を作っておくといいよ。', '硬貨の包装は、機械のタイミングに合わせるのがコツなんだ。'], config: { rounds: [{ label: '百円' }, { label: '五十円' }, { label: '十円' }, { label: '五円' }], width: 0.14, speed: 0.9, button: '巻く！' },
+  good: '見事なものだ。これで夕方も慌てないね。', mid: 'ちょっと崩れたのもあるね。でも、使えるよ。', bad: 'うまく巻けなかったね。落ち着いてやり直そう。', log: '釣銭の準備', min: 15 });
+mini({ key: 'poster', who: 'kubota', object: 'departure_board', from: hmm(14, 30), to: hmm(17, 0), label: '掲示物の誤りを探す', goal: '（業務）掲示物の点検', title: '掲示物の点検', cam: 'follow', hint: 'コンコースの掲示や案内の中から、誤りのあるものを見つけてタップします。', kind: 'find',
+  intro: ['ダイヤ改正の直後は、古い掲示が残っていることがあります。', 'コンコースを見渡して、誤りのある掲示を探してください。'],
+  config: { scene: 'concourse', seconds: 40, props: [P(0.05, 0.08, 0.22, 0.3, '#2f5d8a', '時刻表'), P(0.34, 0.08, 0.22, 0.3, '#2f7a56', '運賃表'), P(0.63, 0.08, 0.3, 0.3, '#a35c00', '工事のお知らせ'), P(0.08, 0.62, 0.2, 0.25, '#7a8aa0', '案内'), P(0.62, 0.62, 0.3, 0.25, '#555', '掲示板')], spots: [
+    { id: 'old', x: 0.16, y: 0.25, label: '時刻表が改正前の古い版のまま' }, { id: 'fare', x: 0.45, y: 0.3, label: '運賃表の一部の金額が違う' }, { id: 'work', x: 0.8, y: 0.2, label: '終了済みの工事案内がそのまま' }, { id: 'ok', x: 0.18, y: 0.74, real: false, label: '案内図は最新です' }] },
+  good: '古い掲示を見逃さなかった。お客様の誤乗を防げる。', mid: '見落としがあります。ダイヤ改正の後は、掲示を全部見直しましょう。', bad: '誤りが残ると、お客様の誤乗につながります。すぐに全体を見直しましょう。', ge: [ev('accuracy', 3), ev('service', 1)], log: '掲示物を点検', min: 15 });
+mini({ key: 'lockup', who: 'shiraishi', object: 'phone', from: hmm(16, 20), label: '終業後の戸締まり巡回の経路を組む', goal: '（終業）戸締まり巡回', title: '戸締まり巡回の経路', cam: 'npc:shiraishi', hint: '起点から着点まで、A・B・Cの3か所（A:事務室 B:倉庫 C:トイレ）を必ず通ります。できるだけ短い道を。', kind: 'route',
+  intro: ['最後に、駅の中を見回って戸締まりを確認する。', '三か所を必ず通る。遠回りにならない順路を考えなさい。'],
+  config: { grid: ['S..#.....', '.#.A.#.#.', '.#...#.B.', '.##.##.#.', 'C.......G'], must: ['A', 'B', 'C'], best: 0, legend: { '#': '壁・施錠済みの扉', A: '事務室', B: '倉庫', C: 'トイレ', S: '起点', G: '出口' } },
+  good: '無駄のない順路だ。これなら毎日続けられる。', mid: '回れてはいるが、少し遠回りだな。', bad: '見回る場所が抜けては、戸締まりの意味がない。', ge: [ev('safety', 3), ev('accuracy', 2)], log: '終業後の戸締まり巡回', min: 15 });
+for (const k of ['wheel', 'lockup']) { const c = N['ch1.' + k + '_task'].config; c.best = bestRoute(c.grid, c.must); }
+
 // ============ あらすじ分岐図（UI用の地図データ）============
 const maps = { ch1: {
   lanes: [{ id: 'common', label: '共通の一日', color: '#1a2f55' }, { id: 'service', label: '接客ルート', color: '#1b6f45' }, { id: 'platform', label: 'ホームルート', color: '#a35c00' }, { id: 'office', label: '事務ルート', color: '#6a3aa8' }, { id: 'w1', label: '週末：久保田と練習', color: '#c8281e' }, { id: 'w2', label: '週末：基地見学', color: '#1a6a8a' }, { id: 'w3', label: '週末：休養', color: '#6b6f73' }],

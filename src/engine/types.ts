@@ -73,7 +73,7 @@ export interface HubNode extends Base {
 export interface ChecklistItem { id: string; label: string; truth: 'ok'|'ng'; why: string }
 export interface ComposeSlot { id: string; label: string; options: { id: string; text: string; good: boolean; why: string }[] }
 export interface TaskNode extends Base {
-  type: 'task'; kind: 'checklist'|'compose'|'terminal'|'roster'; config?: any;
+  type: 'task'; kind: 'checklist'|'compose'|'terminal'|'roster'|'timing'|'find'|'watch'|'route'|'sort'|'memory'; config?: any;
   title: string; intro?: string;
   items?: ChecklistItem[]; slots?: ComposeSlot[]; terminal?: string;
   results: { min: number; goto: string; effects?: Effect[]; label?: string }[];

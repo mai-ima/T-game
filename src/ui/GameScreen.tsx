@@ -4,6 +4,7 @@ import { RenderManager } from '../render/renderManager';
 import { loadAssets } from '../render/assets';
 import { Joystick, Portrait, Stage25D, useTypewriter } from './parts';
 import { ChecklistTask, ComposeTask, RosterTask, TerminalTask } from './Tasks';
+import { TimingTask, FindTask, WatchTask, RouteTask, SortTask, MemoryTask } from './Minigames';
 import { FlowPanel } from './StoryMap';
 import { INFLUENCE } from './influence';
 import { CareerPanel, GraphPanel, RelationsPanel, RosterPanel, SavePanel, SettingsPanel, TimelinePanel } from './Panels';
@@ -154,6 +155,8 @@ function ChoiceBox({ c }: { c: GameController }) {
 
 function TaskHost({ c }: { c: GameController }) {
   const v = c.view; if (v?.kind !== 'task') return null; const n = v.node; const done = (s: number) => c.resolveTask(s);
+  if (n.kind === 'timing') return <TimingTask key={n.id} node={n} onDone={done} />; if (n.kind === 'find') return <FindTask key={n.id} node={n} onDone={done} />; if (n.kind === 'watch') return <WatchTask key={n.id} node={n} onDone={done} />;
+  if (n.kind === 'route') return <RouteTask key={n.id} node={n} onDone={done} />; if (n.kind === 'sort') return <SortTask key={n.id} node={n} onDone={done} />; if (n.kind === 'memory') return <MemoryTask key={n.id} node={n} onDone={done} />;
   if (n.kind === 'checklist') return <ChecklistTask key={n.id} node={n} onDone={done} />; if (n.kind === 'compose') return <ComposeTask key={n.id} node={n} onDone={done} />;
   if (n.kind === 'terminal') return <TerminalTask key={n.id} node={n} onDone={done} rail={c.rail} minute={c.world.clock.minute} />; return <RosterTask key={n.id} node={n} onDone={done} world={c.world} startYear={c.story.startYear} />;
 }

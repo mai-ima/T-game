@@ -1370,6 +1370,234 @@
       ]
      },
      "once": true
+    },
+    {
+     "id": "timetable",
+     "object": "departure_board",
+     "label": "発車標の臨時変更を入力する",
+     "goto": "ch1.timetable_1",
+     "requires": {
+      "all": [
+       {
+        "flag": "ch1.tenko"
+       },
+       {
+        "time": {
+         "op": ">=",
+         "val": 530
+        }
+       },
+       {
+        "time": {
+         "op": "<",
+         "val": 660
+        }
+       }
+      ]
+     },
+     "once": true
+    },
+    {
+     "id": "tactile",
+     "object": "tactile",
+     "label": "点字ブロック上の障害物を探して片付ける",
+     "goto": "ch1.tactile_1",
+     "requires": {
+      "all": [
+       {
+        "flag": "ch1.tenko"
+       },
+       {
+        "time": {
+         "op": ">=",
+         "val": 570
+        }
+       },
+       {
+        "time": {
+         "op": "<",
+         "val": 720
+        }
+       }
+      ]
+     },
+     "once": true
+    },
+    {
+     "id": "watch1",
+     "object": "emergency_btn",
+     "label": "発車前のホームで安全を見守る",
+     "goto": "ch1.watch1_1",
+     "requires": {
+      "all": [
+       {
+        "flag": "ch1.tenko"
+       },
+       {
+        "time": {
+         "op": ">=",
+         "val": 600
+        }
+       },
+       {
+        "time": {
+         "op": "<",
+         "val": 840
+        }
+       }
+      ]
+     },
+     "once": true
+    },
+    {
+     "id": "wheel",
+     "object": "elevator",
+     "label": "車いすのお客様をホームまで案内する",
+     "goto": "ch1.wheel_1",
+     "requires": {
+      "all": [
+       {
+        "flag": "ch1.tenko"
+       },
+       {
+        "time": {
+         "op": ">=",
+         "val": 660
+        }
+       },
+       {
+        "time": {
+         "op": "<",
+         "val": 930
+        }
+       }
+      ]
+     },
+     "once": true
+    },
+    {
+     "id": "fare",
+     "object": "gate_wide",
+     "label": "有人改札でお客様の用件をさばく",
+     "goto": "ch1.fare_1",
+     "requires": {
+      "all": [
+       {
+        "flag": "ch1.tenko"
+       },
+       {
+        "time": {
+         "op": ">=",
+         "val": 630
+        }
+       },
+       {
+        "time": {
+         "op": "<",
+         "val": 870
+        }
+       }
+      ]
+     },
+     "once": true
+    },
+    {
+     "id": "lostsort",
+     "object": "lost_item",
+     "label": "預かった落とし物を仕分ける",
+     "goto": "ch1.lostsort_1",
+     "requires": {
+      "all": [
+       {
+        "flag": "ch1.tenko"
+       },
+       {
+        "time": {
+         "op": ">=",
+         "val": 760
+        }
+       },
+       {
+        "time": {
+         "op": "<",
+         "val": 990
+        }
+       }
+      ]
+     },
+     "once": true
+    },
+    {
+     "id": "coins",
+     "object": "ticket_office",
+     "label": "両替用の釣銭を準備する",
+     "goto": "ch1.coins_1",
+     "requires": {
+      "all": [
+       {
+        "flag": "ch1.tenko"
+       },
+       {
+        "time": {
+         "op": ">=",
+         "val": 820
+        }
+       },
+       {
+        "time": {
+         "op": "<",
+         "val": 990
+        }
+       }
+      ]
+     },
+     "once": true
+    },
+    {
+     "id": "poster",
+     "object": "departure_board",
+     "label": "掲示物の誤りを探す",
+     "goto": "ch1.poster_1",
+     "requires": {
+      "all": [
+       {
+        "flag": "ch1.tenko"
+       },
+       {
+        "time": {
+         "op": ">=",
+         "val": 870
+        }
+       },
+       {
+        "time": {
+         "op": "<",
+         "val": 1020
+        }
+       }
+      ]
+     },
+     "once": true
+    },
+    {
+     "id": "lockup",
+     "object": "phone",
+     "label": "終業後の戸締まり巡回の経路を組む",
+     "goto": "ch1.lockup_1",
+     "requires": {
+      "all": [
+       {
+        "flag": "ch1.tenko"
+       },
+       {
+        "time": {
+         "op": ">=",
+         "val": 980
+        }
+       }
+      ]
+     },
+     "once": true
     }
    ],
    "goals": [
@@ -1695,6 +1923,132 @@
         }
        }
       ]
+     }
+    },
+    {
+     "id": "g_timetable",
+     "label": "（業務）発車標の臨時表示の入力",
+     "when": {
+      "flag": "ch1.timetable_done"
+     },
+     "optional": true,
+     "showWhen": {
+      "time": {
+       "op": ">=",
+       "val": 530
+      }
+     }
+    },
+    {
+     "id": "g_tactile",
+     "label": "（業務）点字ブロック上の障害物の撤去",
+     "when": {
+      "flag": "ch1.tactile_done"
+     },
+     "optional": true,
+     "showWhen": {
+      "time": {
+       "op": ">=",
+       "val": 570
+      }
+     }
+    },
+    {
+     "id": "g_watch1",
+     "label": "（業務）ホームの安全見守り",
+     "when": {
+      "flag": "ch1.watch1_done"
+     },
+     "optional": true,
+     "showWhen": {
+      "time": {
+       "op": ">=",
+       "val": 600
+      }
+     }
+    },
+    {
+     "id": "g_wheel",
+     "label": "（依頼）車いすのお客様の経路案内",
+     "when": {
+      "flag": "ch1.wheel_done"
+     },
+     "optional": true,
+     "showWhen": {
+      "time": {
+       "op": ">=",
+       "val": 660
+      }
+     }
+    },
+    {
+     "id": "g_fare",
+     "label": "（業務）有人改札の対応",
+     "when": {
+      "flag": "ch1.fare_done"
+     },
+     "optional": true,
+     "showWhen": {
+      "time": {
+       "op": ">=",
+       "val": 630
+      }
+     }
+    },
+    {
+     "id": "g_lostsort",
+     "label": "（業務）落とし物の仕分け",
+     "when": {
+      "flag": "ch1.lostsort_done"
+     },
+     "optional": true,
+     "showWhen": {
+      "time": {
+       "op": ">=",
+       "val": 760
+      }
+     }
+    },
+    {
+     "id": "g_coins",
+     "label": "（業務）釣銭の準備",
+     "when": {
+      "flag": "ch1.coins_done"
+     },
+     "optional": true,
+     "showWhen": {
+      "time": {
+       "op": ">=",
+       "val": 820
+      }
+     }
+    },
+    {
+     "id": "g_poster",
+     "label": "（業務）掲示物の点検",
+     "when": {
+      "flag": "ch1.poster_done"
+     },
+     "optional": true,
+     "showWhen": {
+      "time": {
+       "op": ">=",
+       "val": 870
+      }
+     }
+    },
+    {
+     "id": "g_lockup",
+     "label": "（終業）戸締まり巡回",
+     "when": {
+      "flag": "ch1.lockup_done"
+     },
+     "optional": true,
+     "showWhen": {
+      "time": {
+       "op": ">=",
+       "val": 980
+      }
      }
     }
    ],
@@ -4716,41 +5070,9 @@
   "ch1.jam_task": {
    "id": "ch1.jam_task",
    "type": "task",
-   "kind": "checklist",
+   "kind": "timing",
    "title": "券詰まり復旧の手順確認",
-   "intro": "各項目が、手順として適切か不適切かを判断してください。",
-   "items": [
-    {
-     "id": "a",
-     "label": "使用停止にして「調整中」の掲示を出してから作業する",
-     "truth": "ok",
-     "why": "稼働中に作業すると、お客様の誤操作や接触事故につながります。"
-    },
-    {
-     "id": "b",
-     "label": "お客様が並んでいるので、停止せずに券紙を引き抜く",
-     "truth": "ng",
-     "why": "稼働中の機械内部に触れるのは危険です。"
-    },
-    {
-     "id": "c",
-     "label": "現金部の扉は、担当者の確認なしで開けて点検する",
-     "truth": "ng",
-     "why": "現金部は管理が必要です。必ず担当者と一緒に確認します。"
-    },
-    {
-     "id": "d",
-     "label": "復旧後は試験発券を行い、正常に動作することを確認する",
-     "truth": "ok",
-     "why": "復旧したつもりでも、実際に発券して確認しないと再発に気づけません。"
-    },
-    {
-     "id": "e",
-     "label": "復旧した内容を、時刻とともに端末へ記録する",
-     "truth": "ok",
-     "why": "記録があれば、次の担当者や保守担当が状況を把握できます。"
-    }
-   ],
+   "intro": "動くゲージが緑の範囲に入った瞬間に、ボタンを押して作業します（3工程）。",
    "results": [
     {
      "min": 80,
@@ -4808,10 +5130,20 @@
     }
    ],
    "config": {
-    "labels": [
-     "適切",
-     "不適切"
-    ]
+    "rounds": [
+     {
+      "label": "ローラーを清掃"
+     },
+     {
+      "label": "券紙を整列"
+     },
+     {
+      "label": "試験発券"
+     }
+    ],
+    "width": 0.18,
+    "speed": 0.75,
+    "button": "今！"
    },
    "view": {
     "mode": "3d",
@@ -5691,41 +6023,9 @@
   "ch1.wc_task": {
    "id": "ch1.wc_task",
    "type": "task",
-   "kind": "checklist",
+   "kind": "find",
    "title": "トイレ定期点検",
-   "intro": "各項目を「正常」「異常」で判定してください。",
-   "items": [
-    {
-     "id": "a",
-     "label": "多目的トイレの非常呼出ボタンを押すと、事務室に通知が届く",
-     "truth": "ok",
-     "why": "正常です。"
-    },
-    {
-     "id": "b",
-     "label": "男性用の手洗い場のペーパーが切れている",
-     "truth": "ng",
-     "why": "備品の補充が必要です。"
-    },
-    {
-     "id": "c",
-     "label": "ベビーシートが、固定されて安全に使える",
-     "truth": "ok",
-     "why": "正常です。"
-    },
-    {
-     "id": "d",
-     "label": "女性用の鏡に、大きなひびがある",
-     "truth": "ng",
-     "why": "けがの原因になります。使用を止めて修繕を依頼します。"
-    },
-    {
-     "id": "e",
-     "label": "床が濡れていて、滑りやすい箇所がある",
-     "truth": "ng",
-     "why": "転倒の原因です。清掃と注意の掲示が必要です。"
-    }
-   ],
+   "intro": "定期点検です。危険や不備のある場所を3か所見つけてください。",
    "results": [
     {
      "min": 80,
@@ -5771,9 +6071,68 @@
     }
    ],
    "config": {
-    "labels": [
-     "正常",
-     "異常"
+    "scene": "toilet",
+    "seconds": 40,
+    "props": [
+     {
+      "x": 0.05,
+      "y": 0.1,
+      "w": 0.2,
+      "h": 0.7,
+      "c": "#6f8d92",
+      "t": "個室"
+     },
+     {
+      "x": 0.3,
+      "y": 0.1,
+      "w": 0.2,
+      "h": 0.7,
+      "c": "#6f8d92",
+      "t": "個室"
+     },
+     {
+      "x": 0.62,
+      "y": 0.35,
+      "w": 0.12,
+      "h": 0.2,
+      "c": "#c9d7da",
+      "t": "洗面"
+     },
+     {
+      "x": 0.78,
+      "y": 0.15,
+      "w": 0.17,
+      "h": 0.65,
+      "c": "#8aa6aa",
+      "t": "多目的"
+     }
+    ],
+    "spots": [
+     {
+      "id": "paper",
+      "x": 0.67,
+      "y": 0.5,
+      "label": "手洗い場のペーパーが切れている"
+     },
+     {
+      "id": "mirror",
+      "x": 0.7,
+      "y": 0.28,
+      "label": "鏡に大きなひびがある"
+     },
+     {
+      "id": "wet",
+      "x": 0.45,
+      "y": 0.9,
+      "label": "床が濡れて滑りやすい"
+     },
+     {
+      "id": "btn",
+      "x": 0.88,
+      "y": 0.5,
+      "real": false,
+      "label": "非常呼出ボタンは正常です"
+     }
     ]
    },
    "view": {
@@ -6679,35 +7038,9 @@
   "ch1.gate_task": {
    "id": "ch1.gate_task",
    "type": "task",
-   "kind": "checklist",
+   "kind": "find",
    "title": "改札機の動作点検",
-   "intro": "各項目を「正常」「異常」で判定してください。",
-   "items": [
-    {
-     "id": "a",
-     "label": "ICカードをかざすと、読取音が鳴り、扉が開く",
-     "truth": "ok",
-     "why": "正常です。"
-    },
-    {
-     "id": "b",
-     "label": "5番通路の扉が、通行後も閉まらない",
-     "truth": "ng",
-     "why": "通過センサーまたは扉機構の不具合です。使用停止と保守依頼が必要です。"
-    },
-    {
-     "id": "c",
-     "label": "幅広通路の幅は十分で、車いすが通れる",
-     "truth": "ok",
-     "why": "正常です。"
-    },
-    {
-     "id": "d",
-     "label": "3番通路の進入可表示が、緑と赤で同時に点灯している",
-     "truth": "ng",
-     "why": "表示灯の異常です。お客様が迷います。"
-    }
-   ],
+   "intro": "改札機のどこかに3つの異常があります。制限時間内に見つけてタップしてください。",
    "results": [
     {
      "min": 80,
@@ -6753,9 +7086,68 @@
     }
    ],
    "config": {
-    "labels": [
-     "正常",
-     "異常"
+    "scene": "gate",
+    "seconds": 40,
+    "props": [
+     {
+      "x": 0.04,
+      "y": 0.3,
+      "w": 0.18,
+      "h": 0.5,
+      "c": "#4b5563",
+      "t": "改札1"
+     },
+     {
+      "x": 0.27,
+      "y": 0.3,
+      "w": 0.18,
+      "h": 0.5,
+      "c": "#4b5563",
+      "t": "改札2"
+     },
+     {
+      "x": 0.5,
+      "y": 0.3,
+      "w": 0.18,
+      "h": 0.5,
+      "c": "#4b5563",
+      "t": "改札3"
+     },
+     {
+      "x": 0.73,
+      "y": 0.3,
+      "w": 0.22,
+      "h": 0.5,
+      "c": "#2f5d8a",
+      "t": "広幅"
+     }
+    ],
+    "spots": [
+     {
+      "id": "flap",
+      "x": 0.31,
+      "y": 0.62,
+      "label": "2番のフラップが半開きのまま止まっている"
+     },
+     {
+      "id": "led",
+      "x": 0.59,
+      "y": 0.4,
+      "label": "3番の進行表示が消えている"
+     },
+     {
+      "id": "ticket",
+      "x": 0.83,
+      "y": 0.7,
+      "label": "広幅通路の読取部に異物が挟まっている"
+     },
+     {
+      "id": "ok1",
+      "x": 0.13,
+      "y": 0.55,
+      "real": false,
+      "label": "1番は正常に動作しています"
+     }
     ]
    },
    "view": {
@@ -8961,6 +9353,1557 @@
     ],
     "caption": "月曜 9:00"
    }
+  },
+  "ch1.timetable_1": {
+   "id": "ch1.timetable_1",
+   "type": "line",
+   "lines": [
+    {
+     "who": "shiraishi",
+     "text": "臨時の行先変更が届いた。指令からのメモを見て、発車標に入力してほしい。"
+    },
+    {
+     "who": "shiraishi",
+     "text": "表示は見たら戻せない。メモを覚えて、落ち着いて入力すること。"
+    }
+   ],
+   "next": "ch1.timetable_task",
+   "view": {
+    "mode": "3d",
+    "cam": "npc:shiraishi",
+    "caption": "発車標の臨時表示入力"
+   }
+  },
+  "ch1.timetable_task": {
+   "id": "ch1.timetable_task",
+   "type": "task",
+   "kind": "memory",
+   "title": "発車標の臨時表示入力",
+   "intro": "示された順に覚え、同じ順に入力します（見返しはできません）。",
+   "config": {
+    "sequence": [
+     "2番線",
+     "9:52",
+     "普通",
+     "南河原"
+    ],
+    "pool": [
+     "1番線",
+     "2番線",
+     "9:25",
+     "9:52",
+     "快速",
+     "普通",
+     "南河原",
+     "北嶺"
+    ],
+    "showMs": 4500
+   },
+   "results": [
+    {
+     "min": 80,
+     "goto": "ch1.timetable_good",
+     "effects": [
+      {
+       "eval": {
+        "key": "accuracy",
+        "add": 3
+       }
+      },
+      {
+       "skill": {
+        "key": "ops",
+        "add": 3
+       }
+      }
+     ]
+    },
+    {
+     "min": 50,
+     "goto": "ch1.timetable_mid",
+     "effects": [
+      {
+       "eval": {
+        "key": "accuracy",
+        "add": 1
+       }
+      }
+     ]
+    },
+    {
+     "min": 0,
+     "goto": "ch1.timetable_bad",
+     "effects": [
+      {
+       "eval": {
+        "key": "accuracy",
+        "add": -1
+       }
+      }
+     ]
+    }
+   ],
+   "view": {
+    "mode": "3d",
+    "cam": "npc:shiraishi",
+    "caption": "発車標の臨時表示入力"
+   }
+  },
+  "ch1.timetable_good": {
+   "id": "ch1.timetable_good",
+   "type": "line",
+   "lines": [
+    {
+     "who": "shiraishi",
+     "text": "一字一句、間違いがない。確認の習慣がついてきたな。",
+     "mood": "smile"
+    }
+   ],
+   "next": "ch1.timetable_end"
+  },
+  "ch1.timetable_mid": {
+   "id": "ch1.timetable_mid",
+   "type": "line",
+   "lines": [
+    {
+     "who": "shiraishi",
+     "text": "惜しい。数字や番線の取り違いは、乗り間違いにつながる。"
+    }
+   ],
+   "next": "ch1.timetable_end"
+  },
+  "ch1.timetable_bad": {
+   "id": "ch1.timetable_bad",
+   "type": "line",
+   "lines": [
+    {
+     "who": "shiraishi",
+     "text": "発車標は多くの人が見る。入力前の復唱を習慣にしなさい。",
+     "mood": "serious"
+    }
+   ],
+   "next": "ch1.timetable_end"
+  },
+  "ch1.timetable_end": {
+   "id": "ch1.timetable_end",
+   "type": "effect",
+   "effects": [
+    {
+     "set": "ch1.timetable_done"
+    },
+    {
+     "var": {
+      "key": "ch1.extra",
+      "add": 1
+     }
+    },
+    {
+     "time": 10
+    },
+    {
+     "log": {
+      "text": "発車標の臨時表示を入力",
+      "tag": "work"
+     }
+    }
+   ],
+   "next": "ch1.hub"
+  },
+  "ch1.tactile_1": {
+   "id": "ch1.tactile_1",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "点字ブロックの上に物が置かれると、目の不自由な方にとっては大きな危険です。"
+    },
+    {
+     "who": "kubota",
+     "text": "ホームを見渡して、支障になっているものを探してください。"
+    }
+   ],
+   "next": "ch1.tactile_task",
+   "view": {
+    "mode": "3d",
+    "cam": "follow",
+    "caption": "点字ブロック上の障害物"
+   }
+  },
+  "ch1.tactile_task": {
+   "id": "ch1.tactile_task",
+   "type": "task",
+   "kind": "find",
+   "title": "点字ブロック上の障害物",
+   "intro": "ホームの絵の中で、点字ブロックの上や近くにある障害を探してタップします。",
+   "config": {
+    "scene": "platform",
+    "seconds": 35,
+    "props": [
+     {
+      "x": 0,
+      "y": 0.62,
+      "w": 1,
+      "h": 0.07,
+      "c": "#e5b800"
+     },
+     {
+      "x": 0.05,
+      "y": 0.4,
+      "w": 0.14,
+      "h": 0.2,
+      "c": "#6b7280",
+      "t": "ベンチ"
+     },
+     {
+      "x": 0.7,
+      "y": 0.35,
+      "w": 0.12,
+      "h": 0.25,
+      "c": "#7a8aa0",
+      "t": "柱"
+     }
+    ],
+    "spots": [
+     {
+      "id": "bike",
+      "x": 0.3,
+      "y": 0.66,
+      "label": "点字ブロックの上に置かれた自転車の荷物"
+     },
+     {
+      "id": "box",
+      "x": 0.55,
+      "y": 0.6,
+      "label": "ブロックをふさぐ段ボール箱"
+     },
+     {
+      "id": "cane",
+      "x": 0.86,
+      "y": 0.7,
+      "label": "ブロック上に落ちている傘"
+     },
+     {
+      "id": "bench",
+      "x": 0.12,
+      "y": 0.5,
+      "real": false,
+      "label": "ベンチは通行の妨げになっていません"
+     }
+    ]
+   },
+   "results": [
+    {
+     "min": 80,
+     "goto": "ch1.tactile_good",
+     "effects": [
+      {
+       "eval": {
+        "key": "safety",
+        "add": 3
+       }
+      },
+      {
+       "eval": {
+        "key": "accuracy",
+        "add": 1
+       }
+      }
+     ]
+    },
+    {
+     "min": 50,
+     "goto": "ch1.tactile_mid",
+     "effects": [
+      {
+       "eval": {
+        "key": "accuracy",
+        "add": 1
+       }
+      }
+     ]
+    },
+    {
+     "min": 0,
+     "goto": "ch1.tactile_bad",
+     "effects": [
+      {
+       "eval": {
+        "key": "accuracy",
+        "add": -1
+       }
+      }
+     ]
+    }
+   ],
+   "view": {
+    "mode": "3d",
+    "cam": "follow",
+    "caption": "点字ブロック上の障害物"
+   }
+  },
+  "ch1.tactile_good": {
+   "id": "ch1.tactile_good",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "ブロックの上は、何も置かない。これは全員の約束だ。",
+     "mood": "smile"
+    }
+   ],
+   "next": "ch1.tactile_end"
+  },
+  "ch1.tactile_mid": {
+   "id": "ch1.tactile_mid",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "見落としがあった。もう一度、端から端まで歩いて見ましょう。"
+    }
+   ],
+   "next": "ch1.tactile_end"
+  },
+  "ch1.tactile_bad": {
+   "id": "ch1.tactile_bad",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "安全のための設備でも、使えなければ意味がない。重点的に巡回しよう。",
+     "mood": "serious"
+    }
+   ],
+   "next": "ch1.tactile_end"
+  },
+  "ch1.tactile_end": {
+   "id": "ch1.tactile_end",
+   "type": "effect",
+   "effects": [
+    {
+     "set": "ch1.tactile_done"
+    },
+    {
+     "var": {
+      "key": "ch1.extra",
+      "add": 1
+     }
+    },
+    {
+     "time": 15
+    },
+    {
+     "log": {
+      "text": "点字ブロック上の障害物を撤去",
+      "tag": "work"
+     }
+    }
+   ],
+   "next": "ch1.hub"
+  },
+  "ch1.watch1_1": {
+   "id": "ch1.watch1_1",
+   "type": "line",
+   "lines": [
+    {
+     "who": "yamashina",
+     "text": "列車が入ってくる前は、一番事故が起きやすい時間帯だ。"
+    },
+    {
+     "who": "yamashina",
+     "text": "黄色い線に近づく人を見つけたら、すぐに声をかける。やってみよう。"
+    }
+   ],
+   "next": "ch1.watch1_task",
+   "view": {
+    "mode": "3d",
+    "cam": "follow",
+    "caption": "ホーム安全見守り"
+   }
+  },
+  "ch1.watch1_task": {
+   "id": "ch1.watch1_task",
+   "type": "task",
+   "kind": "watch",
+   "title": "ホーム安全見守り",
+   "intro": "黄色い線へ近づく人をタップして声をかけます。立ち止まっている人は見守るだけです。",
+   "config": {
+    "total": 8
+   },
+   "results": [
+    {
+     "min": 80,
+     "goto": "ch1.watch1_good",
+     "effects": [
+      {
+       "eval": {
+        "key": "safety",
+        "add": 4
+       }
+      },
+      {
+       "skill": {
+        "key": "patrol",
+        "add": 3
+       }
+      }
+     ]
+    },
+    {
+     "min": 50,
+     "goto": "ch1.watch1_mid",
+     "effects": [
+      {
+       "eval": {
+        "key": "safety",
+        "add": 1
+       }
+      }
+     ]
+    },
+    {
+     "min": 0,
+     "goto": "ch1.watch1_bad",
+     "effects": [
+      {
+       "eval": {
+        "key": "safety",
+        "add": -3
+       }
+      }
+     ]
+    }
+   ],
+   "view": {
+    "mode": "3d",
+    "cam": "follow",
+    "caption": "ホーム安全見守り"
+   }
+  },
+  "ch1.watch1_good": {
+   "id": "ch1.watch1_good",
+   "type": "line",
+   "lines": [
+    {
+     "who": "yamashina",
+     "text": "落ち着いて、全員に声をかけられたね。いい目をしている。",
+     "mood": "smile"
+    }
+   ],
+   "next": "ch1.watch1_end"
+  },
+  "ch1.watch1_mid": {
+   "id": "ch1.watch1_mid",
+   "type": "line",
+   "lines": [
+    {
+     "who": "yamashina",
+     "text": "何人か、線を越えてしまった。視線を広く持つといい。"
+    }
+   ],
+   "next": "ch1.watch1_end"
+  },
+  "ch1.watch1_bad": {
+   "id": "ch1.watch1_bad",
+   "type": "line",
+   "lines": [
+    {
+     "who": "yamashina",
+     "text": "安全が脅かされた場面だ。まず全体を見て、近い人から順に声をかけよう。",
+     "mood": "serious"
+    }
+   ],
+   "next": "ch1.watch1_end"
+  },
+  "ch1.watch1_end": {
+   "id": "ch1.watch1_end",
+   "type": "effect",
+   "effects": [
+    {
+     "set": "ch1.watch1_done"
+    },
+    {
+     "var": {
+      "key": "ch1.extra",
+      "add": 1
+     }
+    },
+    {
+     "time": 20
+    },
+    {
+     "log": {
+      "text": "発車前のホームを見守り",
+      "tag": "work"
+     }
+    }
+   ],
+   "next": "ch1.hub"
+  },
+  "ch1.wheel_1": {
+   "id": "ch1.wheel_1",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "車いすのお客様が、普通列車に乗りたいそうです。段差のない道を選んで案内します。"
+    },
+    {
+     "who": "kubota",
+     "text": "エレベーターは必ず通ります。混雑する通路は避けると早く着きますよ。"
+    }
+   ],
+   "next": "ch1.wheel_task",
+   "view": {
+    "mode": "3d",
+    "cam": "follow",
+    "caption": "車いすのお客様の案内経路"
+   }
+  },
+  "ch1.wheel_task": {
+   "id": "ch1.wheel_task",
+   "type": "task",
+   "kind": "route",
+   "title": "車いすのお客様の案内経路",
+   "intro": "起点から着点まで、段差（黒）を避け、エレベーター（E）を通る道をつなぎます。人の多い通路（しま模様）は時間がかかります。",
+   "config": {
+    "grid": [
+     "S...#....",
+     ".##.#.##.",
+     ".#.E...~G",
+     ".#####.#.",
+     "........."
+    ],
+    "must": [
+     "E"
+    ],
+    "best": 13,
+    "legend": {
+     "#": "階段・壁（通れない）",
+     "~": "混雑した通路（遅い）",
+     "E": "エレベーター（必ず通る）",
+     "S": "起点",
+     "G": "ホーム"
+    }
+   },
+   "results": [
+    {
+     "min": 80,
+     "goto": "ch1.wheel_good",
+     "effects": [
+      {
+       "eval": {
+        "key": "service",
+        "add": 4
+       }
+      },
+      {
+       "eval": {
+        "key": "safety",
+        "add": 2
+       }
+      }
+     ]
+    },
+    {
+     "min": 50,
+     "goto": "ch1.wheel_mid",
+     "effects": [
+      {
+       "eval": {
+        "key": "service",
+        "add": 1
+       }
+      }
+     ]
+    },
+    {
+     "min": 0,
+     "goto": "ch1.wheel_bad",
+     "effects": [
+      {
+       "eval": {
+        "key": "service",
+        "add": -2
+       }
+      }
+     ]
+    }
+   ],
+   "view": {
+    "mode": "3d",
+    "cam": "follow",
+    "caption": "車いすのお客様の案内経路"
+   }
+  },
+  "ch1.wheel_good": {
+   "id": "ch1.wheel_good",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "無理のない道で、お待たせしませんでした。ご利用のお客様にも安心していただけます。",
+     "mood": "smile"
+    }
+   ],
+   "next": "ch1.wheel_end"
+  },
+  "ch1.wheel_mid": {
+   "id": "ch1.wheel_mid",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "行き着けましたが、もう少し短い道がありました。"
+    }
+   ],
+   "next": "ch1.wheel_end"
+  },
+  "ch1.wheel_bad": {
+   "id": "ch1.wheel_bad",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "段差やエレベーターの確認が足りませんでした。経路は最初に確認しましょう。",
+     "mood": "serious"
+    }
+   ],
+   "next": "ch1.wheel_end"
+  },
+  "ch1.wheel_end": {
+   "id": "ch1.wheel_end",
+   "type": "effect",
+   "effects": [
+    {
+     "set": "ch1.wheel_done"
+    },
+    {
+     "var": {
+      "key": "ch1.extra",
+      "add": 1
+     }
+    },
+    {
+     "time": 20
+    },
+    {
+     "log": {
+      "text": "車いすのお客様を案内",
+      "tag": "work"
+     }
+    }
+   ],
+   "next": "ch1.hub"
+  },
+  "ch1.fare_1": {
+   "id": "ch1.fare_1",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "有人改札には、いろいろな用件のお客様が来ます。"
+    },
+    {
+     "who": "kubota",
+     "text": "用件を聞いたら、すぐに最適な対応を判断してください。"
+    }
+   ],
+   "next": "ch1.fare_task",
+   "view": {
+    "mode": "3d",
+    "cam": "gate_back",
+    "caption": "有人改札の対応"
+   }
+  },
+  "ch1.fare_task": {
+   "id": "ch1.fare_task",
+   "type": "task",
+   "kind": "sort",
+   "title": "有人改札の対応",
+   "intro": "次々に来るお客様の用件を、正しい窓口へ振り分けます。制限時間があります。",
+   "config": {
+    "perItem": 6,
+    "bins": [
+     {
+      "id": "fix",
+      "label": "精算機で処理"
+     },
+     {
+      "id": "refund",
+      "label": "払い戻しの窓口へ"
+     },
+     {
+      "id": "guide",
+      "label": "口頭で案内"
+     }
+    ],
+    "items": [
+     {
+      "id": "a",
+      "label": "「ICカードの残額が足りなくて出られません」",
+      "bin": "fix",
+      "why": "残額不足は精算機で処理します。"
+     },
+     {
+      "id": "b",
+      "label": "「特急券を間違えて買ってしまった（未使用）」",
+      "bin": "refund",
+      "why": "未使用のきっぷは払い戻しの窓口です。"
+     },
+     {
+      "id": "c",
+      "label": "「バスターミナルはどちらですか」",
+      "bin": "guide",
+      "why": "場所の案内は口頭で足ります。"
+     },
+     {
+      "id": "d",
+      "label": "「定期券の区間より先まで乗ってしまった」",
+      "bin": "fix",
+      "why": "乗り越しは精算します。"
+     },
+     {
+      "id": "e",
+      "label": "「電車が遅れて予定が変わった。きっぷは未使用です」",
+      "bin": "refund",
+      "why": "未使用ならば払い戻しの対象です。"
+     },
+     {
+      "id": "f",
+      "label": "「トイレはどこですか」",
+      "bin": "guide",
+      "why": "案内だけで解決します。"
+     }
+    ]
+   },
+   "results": [
+    {
+     "min": 80,
+     "goto": "ch1.fare_good",
+     "effects": [
+      {
+       "eval": {
+        "key": "service",
+        "add": 3
+       }
+      },
+      {
+       "eval": {
+        "key": "accuracy",
+        "add": 2
+       }
+      },
+      {
+       "skill": {
+        "key": "ticket",
+        "add": 3
+       }
+      }
+     ]
+    },
+    {
+     "min": 50,
+     "goto": "ch1.fare_mid",
+     "effects": [
+      {
+       "eval": {
+        "key": "accuracy",
+        "add": 1
+       }
+      }
+     ]
+    },
+    {
+     "min": 0,
+     "goto": "ch1.fare_bad",
+     "effects": [
+      {
+       "eval": {
+        "key": "accuracy",
+        "add": -1
+       }
+      }
+     ]
+    }
+   ],
+   "view": {
+    "mode": "3d",
+    "cam": "gate_back",
+    "caption": "有人改札の対応"
+   }
+  },
+  "ch1.fare_good": {
+   "id": "ch1.fare_good",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "手際がいい。窓口が混まなくて助かる。",
+     "mood": "smile"
+    }
+   ],
+   "next": "ch1.fare_end"
+  },
+  "ch1.fare_mid": {
+   "id": "ch1.fare_mid",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "数件、案内先を間違えました。お客様を行き来させないようにしましょう。"
+    }
+   ],
+   "next": "ch1.fare_end"
+  },
+  "ch1.fare_bad": {
+   "id": "ch1.fare_bad",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "用件の振り分けが合っていませんでした。窓口の役割を覚え直しましょう。",
+     "mood": "serious"
+    }
+   ],
+   "next": "ch1.fare_end"
+  },
+  "ch1.fare_end": {
+   "id": "ch1.fare_end",
+   "type": "effect",
+   "effects": [
+    {
+     "set": "ch1.fare_done"
+    },
+    {
+     "var": {
+      "key": "ch1.extra",
+      "add": 1
+     }
+    },
+    {
+     "time": 20
+    },
+    {
+     "log": {
+      "text": "有人改札で用件を振り分け",
+      "tag": "work"
+     }
+    }
+   ],
+   "next": "ch1.hub"
+  },
+  "ch1.lostsort_1": {
+   "id": "ch1.lostsort_1",
+   "type": "line",
+   "lines": [
+    {
+     "who": "yamashina",
+     "text": "午前中に預かった落とし物が溜まってきた。種類ごとに扱いが違う。"
+    },
+    {
+     "who": "yamashina",
+     "text": "迷ったら、取扱いの決まりに戻ること。急いでやってみよう。"
+    }
+   ],
+   "next": "ch1.lostsort_task",
+   "view": {
+    "mode": "3d",
+    "cam": "follow",
+    "caption": "落とし物の仕分け"
+   }
+  },
+  "ch1.lostsort_task": {
+   "id": "ch1.lostsort_task",
+   "type": "task",
+   "kind": "sort",
+   "title": "落とし物の仕分け",
+   "intro": "品物ごとに、決められた扱いを素早く選びます。",
+   "config": {
+    "perItem": 7,
+    "bins": [
+     {
+      "id": "reg",
+      "label": "台帳に登録して保管"
+     },
+     {
+      "id": "val",
+      "label": "貴重品（二人で確認）"
+     },
+     {
+      "id": "rep",
+      "label": "不審物は指令へ連絡"
+     },
+     {
+      "id": "per",
+      "label": "生鮮品は早めに処理"
+     }
+    ],
+    "items": [
+     {
+      "id": "a",
+      "label": "折りたたみ傘",
+      "bin": "reg",
+      "why": "一般の落とし物は台帳に登録して保管します。"
+     },
+     {
+      "id": "b",
+      "label": "現金の入った財布",
+      "bin": "val",
+      "why": "現金は必ず二人で確認します。"
+     },
+     {
+      "id": "c",
+      "label": "持ち主不明で、中から音がする黒いバッグ",
+      "bin": "rep",
+      "why": "不審物には触れず、指令へ連絡します。"
+     },
+     {
+      "id": "d",
+      "label": "冷蔵が必要な弁当",
+      "bin": "per",
+      "why": "生鮮品は傷む前に所定の手続きを行います。"
+     },
+     {
+      "id": "e",
+      "label": "定期入れ（ICカード入り）",
+      "bin": "val",
+      "why": "個人情報のある物は慎重に扱います。"
+     },
+     {
+      "id": "f",
+      "label": "水筒",
+      "bin": "reg",
+      "why": "台帳に登録して保管します。"
+     }
+    ]
+   },
+   "results": [
+    {
+     "min": 80,
+     "goto": "ch1.lostsort_good",
+     "effects": [
+      {
+       "eval": {
+        "key": "accuracy",
+        "add": 3
+       }
+      },
+      {
+       "eval": {
+        "key": "safety",
+        "add": 2
+       }
+      }
+     ]
+    },
+    {
+     "min": 50,
+     "goto": "ch1.lostsort_mid",
+     "effects": [
+      {
+       "eval": {
+        "key": "accuracy",
+        "add": 1
+       }
+      }
+     ]
+    },
+    {
+     "min": 0,
+     "goto": "ch1.lostsort_bad",
+     "effects": [
+      {
+       "eval": {
+        "key": "accuracy",
+        "add": -1
+       }
+      }
+     ]
+    }
+   ],
+   "view": {
+    "mode": "3d",
+    "cam": "follow",
+    "caption": "落とし物の仕分け"
+   }
+  },
+  "ch1.lostsort_good": {
+   "id": "ch1.lostsort_good",
+   "type": "line",
+   "lines": [
+    {
+     "who": "yamashina",
+     "text": "迷わず分けられたね。取扱いの決まりが身についている。",
+     "mood": "smile"
+    }
+   ],
+   "next": "ch1.lostsort_end"
+  },
+  "ch1.lostsort_mid": {
+   "id": "ch1.lostsort_mid",
+   "type": "line",
+   "lines": [
+    {
+     "who": "yamashina",
+     "text": "少し取り違いがあった。特に貴重品と不審物は慎重に。"
+    }
+   ],
+   "next": "ch1.lostsort_end"
+  },
+  "ch1.lostsort_bad": {
+   "id": "ch1.lostsort_bad",
+   "type": "line",
+   "lines": [
+    {
+     "who": "yamashina",
+     "text": "品物ごとの扱いが混ざっていた。もう一度、決まりを見直そう。",
+     "mood": "serious"
+    }
+   ],
+   "next": "ch1.lostsort_end"
+  },
+  "ch1.lostsort_end": {
+   "id": "ch1.lostsort_end",
+   "type": "effect",
+   "effects": [
+    {
+     "set": "ch1.lostsort_done"
+    },
+    {
+     "var": {
+      "key": "ch1.extra",
+      "add": 1
+     }
+    },
+    {
+     "time": 20
+    },
+    {
+     "log": {
+      "text": "落とし物を仕分け",
+      "tag": "work"
+     }
+    }
+   ],
+   "next": "ch1.hub"
+  },
+  "ch1.coins_1": {
+   "id": "ch1.coins_1",
+   "type": "line",
+   "lines": [
+    {
+     "who": "sakai",
+     "text": "夕方は両替の依頼が増えるから、今のうちに釣銭を作っておくといいよ。"
+    },
+    {
+     "who": "sakai",
+     "text": "硬貨の包装は、機械のタイミングに合わせるのがコツなんだ。"
+    }
+   ],
+   "next": "ch1.coins_task",
+   "view": {
+    "mode": "3d",
+    "cam": "follow",
+    "caption": "釣銭の準備"
+   }
+  },
+  "ch1.coins_task": {
+   "id": "ch1.coins_task",
+   "type": "task",
+   "kind": "timing",
+   "title": "釣銭の準備",
+   "intro": "動くゲージが緑の範囲に入った瞬間にボタンを押して、硬貨を巻きます。",
+   "config": {
+    "rounds": [
+     {
+      "label": "百円"
+     },
+     {
+      "label": "五十円"
+     },
+     {
+      "label": "十円"
+     },
+     {
+      "label": "五円"
+     }
+    ],
+    "width": 0.14,
+    "speed": 0.9,
+    "button": "巻く！"
+   },
+   "results": [
+    {
+     "min": 80,
+     "goto": "ch1.coins_good",
+     "effects": [
+      {
+       "eval": {
+        "key": "accuracy",
+        "add": 3
+       }
+      }
+     ]
+    },
+    {
+     "min": 50,
+     "goto": "ch1.coins_mid",
+     "effects": [
+      {
+       "eval": {
+        "key": "accuracy",
+        "add": 1
+       }
+      }
+     ]
+    },
+    {
+     "min": 0,
+     "goto": "ch1.coins_bad",
+     "effects": [
+      {
+       "eval": {
+        "key": "accuracy",
+        "add": -1
+       }
+      }
+     ]
+    }
+   ],
+   "view": {
+    "mode": "3d",
+    "cam": "follow",
+    "caption": "釣銭の準備"
+   }
+  },
+  "ch1.coins_good": {
+   "id": "ch1.coins_good",
+   "type": "line",
+   "lines": [
+    {
+     "who": "sakai",
+     "text": "見事なものだ。これで夕方も慌てないね。",
+     "mood": "smile"
+    }
+   ],
+   "next": "ch1.coins_end"
+  },
+  "ch1.coins_mid": {
+   "id": "ch1.coins_mid",
+   "type": "line",
+   "lines": [
+    {
+     "who": "sakai",
+     "text": "ちょっと崩れたのもあるね。でも、使えるよ。"
+    }
+   ],
+   "next": "ch1.coins_end"
+  },
+  "ch1.coins_bad": {
+   "id": "ch1.coins_bad",
+   "type": "line",
+   "lines": [
+    {
+     "who": "sakai",
+     "text": "うまく巻けなかったね。落ち着いてやり直そう。",
+     "mood": "serious"
+    }
+   ],
+   "next": "ch1.coins_end"
+  },
+  "ch1.coins_end": {
+   "id": "ch1.coins_end",
+   "type": "effect",
+   "effects": [
+    {
+     "set": "ch1.coins_done"
+    },
+    {
+     "var": {
+      "key": "ch1.extra",
+      "add": 1
+     }
+    },
+    {
+     "time": 15
+    },
+    {
+     "log": {
+      "text": "釣銭の準備",
+      "tag": "work"
+     }
+    }
+   ],
+   "next": "ch1.hub"
+  },
+  "ch1.poster_1": {
+   "id": "ch1.poster_1",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "ダイヤ改正の直後は、古い掲示が残っていることがあります。"
+    },
+    {
+     "who": "kubota",
+     "text": "コンコースを見渡して、誤りのある掲示を探してください。"
+    }
+   ],
+   "next": "ch1.poster_task",
+   "view": {
+    "mode": "3d",
+    "cam": "follow",
+    "caption": "掲示物の点検"
+   }
+  },
+  "ch1.poster_task": {
+   "id": "ch1.poster_task",
+   "type": "task",
+   "kind": "find",
+   "title": "掲示物の点検",
+   "intro": "コンコースの掲示や案内の中から、誤りのあるものを見つけてタップします。",
+   "config": {
+    "scene": "concourse",
+    "seconds": 40,
+    "props": [
+     {
+      "x": 0.05,
+      "y": 0.08,
+      "w": 0.22,
+      "h": 0.3,
+      "c": "#2f5d8a",
+      "t": "時刻表"
+     },
+     {
+      "x": 0.34,
+      "y": 0.08,
+      "w": 0.22,
+      "h": 0.3,
+      "c": "#2f7a56",
+      "t": "運賃表"
+     },
+     {
+      "x": 0.63,
+      "y": 0.08,
+      "w": 0.3,
+      "h": 0.3,
+      "c": "#a35c00",
+      "t": "工事のお知らせ"
+     },
+     {
+      "x": 0.08,
+      "y": 0.62,
+      "w": 0.2,
+      "h": 0.25,
+      "c": "#7a8aa0",
+      "t": "案内"
+     },
+     {
+      "x": 0.62,
+      "y": 0.62,
+      "w": 0.3,
+      "h": 0.25,
+      "c": "#555",
+      "t": "掲示板"
+     }
+    ],
+    "spots": [
+     {
+      "id": "old",
+      "x": 0.16,
+      "y": 0.25,
+      "label": "時刻表が改正前の古い版のまま"
+     },
+     {
+      "id": "fare",
+      "x": 0.45,
+      "y": 0.3,
+      "label": "運賃表の一部の金額が違う"
+     },
+     {
+      "id": "work",
+      "x": 0.8,
+      "y": 0.2,
+      "label": "終了済みの工事案内がそのまま"
+     },
+     {
+      "id": "ok",
+      "x": 0.18,
+      "y": 0.74,
+      "real": false,
+      "label": "案内図は最新です"
+     }
+    ]
+   },
+   "results": [
+    {
+     "min": 80,
+     "goto": "ch1.poster_good",
+     "effects": [
+      {
+       "eval": {
+        "key": "accuracy",
+        "add": 3
+       }
+      },
+      {
+       "eval": {
+        "key": "service",
+        "add": 1
+       }
+      }
+     ]
+    },
+    {
+     "min": 50,
+     "goto": "ch1.poster_mid",
+     "effects": [
+      {
+       "eval": {
+        "key": "accuracy",
+        "add": 1
+       }
+      }
+     ]
+    },
+    {
+     "min": 0,
+     "goto": "ch1.poster_bad",
+     "effects": [
+      {
+       "eval": {
+        "key": "accuracy",
+        "add": -1
+       }
+      }
+     ]
+    }
+   ],
+   "view": {
+    "mode": "3d",
+    "cam": "follow",
+    "caption": "掲示物の点検"
+   }
+  },
+  "ch1.poster_good": {
+   "id": "ch1.poster_good",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "古い掲示を見逃さなかった。お客様の誤乗を防げる。",
+     "mood": "smile"
+    }
+   ],
+   "next": "ch1.poster_end"
+  },
+  "ch1.poster_mid": {
+   "id": "ch1.poster_mid",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "見落としがあります。ダイヤ改正の後は、掲示を全部見直しましょう。"
+    }
+   ],
+   "next": "ch1.poster_end"
+  },
+  "ch1.poster_bad": {
+   "id": "ch1.poster_bad",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "誤りが残ると、お客様の誤乗につながります。すぐに全体を見直しましょう。",
+     "mood": "serious"
+    }
+   ],
+   "next": "ch1.poster_end"
+  },
+  "ch1.poster_end": {
+   "id": "ch1.poster_end",
+   "type": "effect",
+   "effects": [
+    {
+     "set": "ch1.poster_done"
+    },
+    {
+     "var": {
+      "key": "ch1.extra",
+      "add": 1
+     }
+    },
+    {
+     "time": 15
+    },
+    {
+     "log": {
+      "text": "掲示物を点検",
+      "tag": "work"
+     }
+    }
+   ],
+   "next": "ch1.hub"
+  },
+  "ch1.lockup_1": {
+   "id": "ch1.lockup_1",
+   "type": "line",
+   "lines": [
+    {
+     "who": "shiraishi",
+     "text": "最後に、駅の中を見回って戸締まりを確認する。"
+    },
+    {
+     "who": "shiraishi",
+     "text": "三か所を必ず通る。遠回りにならない順路を考えなさい。"
+    }
+   ],
+   "next": "ch1.lockup_task",
+   "view": {
+    "mode": "3d",
+    "cam": "npc:shiraishi",
+    "caption": "戸締まり巡回の経路"
+   }
+  },
+  "ch1.lockup_task": {
+   "id": "ch1.lockup_task",
+   "type": "task",
+   "kind": "route",
+   "title": "戸締まり巡回の経路",
+   "intro": "起点から着点まで、A・B・Cの3か所（A:事務室 B:倉庫 C:トイレ）を必ず通ります。できるだけ短い道を。",
+   "config": {
+    "grid": [
+     "S..#.....",
+     ".#.A.#.#.",
+     ".#...#.B.",
+     ".##.##.#.",
+     "C.......G"
+    ],
+    "must": [
+     "A",
+     "B",
+     "C"
+    ],
+    "best": 21,
+    "legend": {
+     "#": "壁・施錠済みの扉",
+     "A": "事務室",
+     "B": "倉庫",
+     "C": "トイレ",
+     "S": "起点",
+     "G": "出口"
+    }
+   },
+   "results": [
+    {
+     "min": 80,
+     "goto": "ch1.lockup_good",
+     "effects": [
+      {
+       "eval": {
+        "key": "safety",
+        "add": 3
+       }
+      },
+      {
+       "eval": {
+        "key": "accuracy",
+        "add": 2
+       }
+      }
+     ]
+    },
+    {
+     "min": 50,
+     "goto": "ch1.lockup_mid",
+     "effects": [
+      {
+       "eval": {
+        "key": "accuracy",
+        "add": 1
+       }
+      }
+     ]
+    },
+    {
+     "min": 0,
+     "goto": "ch1.lockup_bad",
+     "effects": [
+      {
+       "eval": {
+        "key": "accuracy",
+        "add": -1
+       }
+      }
+     ]
+    }
+   ],
+   "view": {
+    "mode": "3d",
+    "cam": "npc:shiraishi",
+    "caption": "戸締まり巡回の経路"
+   }
+  },
+  "ch1.lockup_good": {
+   "id": "ch1.lockup_good",
+   "type": "line",
+   "lines": [
+    {
+     "who": "shiraishi",
+     "text": "無駄のない順路だ。これなら毎日続けられる。",
+     "mood": "smile"
+    }
+   ],
+   "next": "ch1.lockup_end"
+  },
+  "ch1.lockup_mid": {
+   "id": "ch1.lockup_mid",
+   "type": "line",
+   "lines": [
+    {
+     "who": "shiraishi",
+     "text": "回れてはいるが、少し遠回りだな。"
+    }
+   ],
+   "next": "ch1.lockup_end"
+  },
+  "ch1.lockup_bad": {
+   "id": "ch1.lockup_bad",
+   "type": "line",
+   "lines": [
+    {
+     "who": "shiraishi",
+     "text": "見回る場所が抜けては、戸締まりの意味がない。",
+     "mood": "serious"
+    }
+   ],
+   "next": "ch1.lockup_end"
+  },
+  "ch1.lockup_end": {
+   "id": "ch1.lockup_end",
+   "type": "effect",
+   "effects": [
+    {
+     "set": "ch1.lockup_done"
+    },
+    {
+     "var": {
+      "key": "ch1.extra",
+      "add": 1
+     }
+    },
+    {
+     "time": 15
+    },
+    {
+     "log": {
+      "text": "終業後の戸締まり巡回",
+      "tag": "work"
+     }
+    }
+   ],
+   "next": "ch1.hub"
   }
  },
  "maps": {
