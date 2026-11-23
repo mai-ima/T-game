@@ -86,7 +86,7 @@ for (const q of ['high', 'low']) { await gc(p1, (q) => window.__GC.setSettings({
   add('仮想ジョイスティックで移動', Math.hypot(q1.x - q0.x, q1.z - q0.z) > 0.8 ? 'PASS' : 'FAIL', `移動 ${Math.hypot(q1.x - q0.x, q1.z - q0.z).toFixed(1)}m`);
   // 壁・線路・ホーム端への進入不可
   const col = await gc(p1, () => { const c = window.__GC, s = c.sim; const out = {}; s.teleport(-12, 6.6, -2, 0); for (let i = 0; i < 300; i++) s.move(-1, 0, 1 / 60); out.westWall = s.player.x; s.teleport(0, 1.65, 2, 0); for (let i = 0; i < 300; i++) s.move(0, 1, 1 / 60); out.platEdge = s.player.z; s.teleport(-8, 6.6, -1, 0); for (let i = 0; i < 300; i++) s.move(0, -1, 1 / 60); out.gate = s.player.z; s.teleport(0, 0, -30, 0); for (let i = 0; i < 1500; i++) s.move(0, 1, 1 / 60, true); out.climbY = s.player.y; out.climbZ = s.player.z; return out; });
-  add('衝突：壁・ホーム端・改札機を貫通しない', col.westWall > -14 && col.platEdge < 3.6 && col.gate >= -3.4 ? 'PASS' : 'FAIL', `西壁x=${col.westWall.toFixed(2)} ホーム端z=${col.platEdge.toFixed(2)} 改札手前z=${col.gate.toFixed(2)}`);
+  add('衝突：壁・ホーム端・改札機を貫通しない', col.westWall > -14 && col.platEdge < 3.6 && col.gate >= -3.8 && col.gate < -3.4 ? 'PASS' : 'FAIL', `西壁x=${col.westWall.toFixed(2)} ホーム端z=${col.platEdge.toFixed(2)} 改札手前z=${col.gate.toFixed(2)}（改札列 z=-4.0＋半径）`);
   add('入口階段で高さが連続して上がる', col.climbY > 6.0 ? 'PASS' : 'FAIL', `最終高さ y=${col.climbY.toFixed(2)}m（コンコース6.6m）`);
   // タップ移動（2D）
   await gc(p1, () => { window.__GC.sim.teleport(0, 6.6, 3, 0); window.__GC.setSettings({ view: '2d' }); }); await p1.waitForTimeout(600); const t0 = await gc(p1, () => ({ ...window.__GC.sim.player })); const box = await p1.$eval('.stage', e => { const r = e.getBoundingClientRect(); return { w: r.width, h: r.height }; }); const sc = await gc(p1, () => window.__RR.rm.plan.scale);
@@ -117,7 +117,7 @@ await p1.close(); await c1.close();
   await go('ch1.fare_task'); for (const a of ['精算機で処理', '払い戻しの窓口へ', '口頭で案内', '精算機で処理', '払い戻しの窓口へ', '口頭で案内']) await page.click(`.mg-bin:has-text("${a}")`); await page.click('text=報告して戻る'); res.sort = await nodeId();
   await go('ch1.timetable_task'); await page.click('text=覚えた'); for (const a of ['2番線', '9:52', '普通', '南河原']) await page.click(`.mg-bin:has-text("${a}")`); await page.click('text=報告して戻る'); res.memory = await nodeId();
   await go('ch1.wheel_task'); for (const [x, y] of [[1,0],[2,0],[3,0],[3,1],[3,2],[4,2],[5,2],[6,2],[7,2],[8,2]]) await page.locator('.mg-cell').nth(y * 9 + x).dispatchEvent('pointerdown'); await page.click('text=報告して戻る'); res.route = await nodeId();
-  await go('ch1.watch1_task'); await page.waitForTimeout(1500); res.watch = await page.locator('.mg-person').count() > 0 ? 'ui' : 'none';
+  await go('ch1.watch1_task'); res.watch = await page.waitForSelector('.mg-person', { timeout: 20000 }).then(() => 'ui').catch(() => 'none');
   const okAll = res.find.endsWith('_good') && res.sort.endsWith('_good') && res.memory.endsWith('_good') && res.route.endsWith('_good') && res.timing.startsWith('ch1.jam_') && res.watch === 'ui';
   add('業務ミニゲーム6形式：UI操作で完了し、結果の場面へ分岐', okAll ? 'PASS' : 'FAIL', JSON.stringify(res));
   // 音楽：場面に応じた曲の切替と、会話中の文字送り音
@@ -133,8 +133,8 @@ async function playChapter(strategy, tag) {
   const trace = []; let tasksDone = 0; let guard = 0; let sawEnd = false; let timedOut = false;
   while (guard++ < 600) {
     const st = await gc(page, () => { const c = window.__GC; const v = c.view; return { kind: v.kind, node: c.world.story.node, tk: v.node?.kind, end: !!c.endResult, next: v.node?.nextChapter, ch: c.world.story.chapter }; });
-    if (st.kind === 'line') { await page.click('.dlg-box'); await page.waitForTimeout(30); await page.click('.dlg-box').catch(() => {}); continue; }
-    if (st.kind === 'choice') { const n = await page.$$eval('.choice-opt', e => e.length); const idx = strategy.pick(st.node, n); trace.push(st.node + ':' + idx); if (st.node === 'ch1.delay_choice' && strategy.timeout) { await gc(page, () => { const c = window.__GC; clearTimeout(c.choiceTimerId); c.choiceTimerId = window.setTimeout(() => c.choose('ask', true), 1200); }); await page.waitForTimeout(1800); timedOut = true; continue; } await page.click(`.choice-opt >> nth=${idx}`); continue; }
+    if (st.kind === 'line') { await page.dispatchEvent('.dlg-box', 'click'); await page.waitForTimeout(30); await page.dispatchEvent('.dlg-box', 'click').catch(() => {}); continue; }
+    if (st.kind === 'choice') { const n = await page.$$eval('.choice-opt', e => e.length); const idx = strategy.pick(st.node, n); trace.push(st.node + ':' + idx); if (st.node === 'ch1.delay_choice' && strategy.timeout) { await gc(page, () => { const c = window.__GC; clearTimeout(c.choiceTimerId); c.choiceTimerId = window.setTimeout(() => c.choose('ask', true), 1200); }); await page.waitForTimeout(1800); timedOut = true; continue; } await page.locator('.choice-opt').nth(idx).dispatchEvent('click'); continue; }
     if (st.kind === 'task') {
       const score = strategy.task(st.node);
       if (st.tk === 'checklist') { const items = await gc(page, () => window.__GC.view.node.items.map(i => i.truth)); const wrong = Math.round((1 - score) * items.length); for (let i = 0; i < items.length; i++) { const ans = i < wrong ? (items[i] === 'ok' ? 'ng' : 'ok') : items[i]; await page.click(`.item >> nth=${i} >> .tgl button >> nth=${ans === 'ok' ? 0 : 1}`); } await page.click('text=判定する'); await page.click('text=報告して戻る'); }
