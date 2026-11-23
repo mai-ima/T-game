@@ -12,5 +12,6 @@
 | DEC-008 | 3Dモデルはlabで制作しGLB化（プロシージャルな箱を使わない） | ユーザー要望（高品質・写実） | accepted |
 | DEC-009 | 音はすべて独自合成。雑音系は低く、BGMは場面ごとに切替 | 実録を装わない／ユーザー要望 | accepted |
 | DEC-010 | 品質ツール（ESLint・madge・knip・vitest coverage）を導入。使用量削減ツールは制限が厳しいときのみ | ユーザー許可と指示 | accepted |
+| DEC-013 | ユーザー自身が、このリポジトリの開発ブランチからVercelへ試作を公開して動作確認する（2026-11-23）。AI側はVercelへ公開・デプロイしない。pushは `npm run check` が通った小さな単位で**定期的**に行い、ビルドが壊れた状態をpushしない | ユーザー指示 | accepted |
 | DEC-012 | Artifactsへの試作公開は行わない（ユーザー判断、2026-11-23）。Vercelへの試作公開は引き続き禁止。公開の代わりに、リポジトリのコードとビルド成果物（artifact/index.html）を維持する | ユーザー指示 | accepted |
 | DEC-011 | Artifacts公式ヘルプ（2026-11-23確認）：既定は非公開。保存機能は100MB/25,000件。単一HTMLの上限、WebGL・Web Audio・IndexedDB・外部リソースの可否は**記載なし（UNVERIFIED）**。Artifactツール仕様では、ブラウザストレージは動くが空になる・例外を投げる場合がある（try/catchと非依存の動作が必要）、単一ページ16MB以下、外部スクリプトは許可CDNのみ | 採用前の公式再確認（§0-9,§15）。セーブはIndexedDB→メモリへ退避、音は操作後に開始、フォントはGoogle Fonts（許可済み） | accepted |
