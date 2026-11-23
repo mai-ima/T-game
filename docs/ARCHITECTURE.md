@@ -26,6 +26,7 @@ lab/           3Dモデル制作所（GLB を書き出す。ゲーム本体に�
 | controller.ts | 上記をまとめ、UI に状態を公開する |
 
 ## ストーリーデータ
+複数ストーリーは `src/data/stories.ts` に登録（モードID→StoryData）。`GameController.newGame(name, mode)`／`restore(file)` がモードごとに story・runner・セーブ領域（`save:{modeId}:*`）を切り替える。R8は `scripts/build-story-r8.mjs` → `src/data/r8/story.json`（`persistentHud` で2D会話中もメニューを表示。業務形式 `docs`＝版比較・矛盾マーカー、`grade`＝確度仕分けを追加）。
 `scripts/build-story.mjs` が唯一の原本です。`src/data/r7/story.json` は生成物です。
 - ノード種別：`line` `choice` `branch` `effect` `hub` `task` `end`
 - 業務（`task`）の形式：`checklist`（○×）`compose`（文章組立）`terminal` `roster`、

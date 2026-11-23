@@ -30,7 +30,7 @@ RRR-R7-010 一日の業務拡充（34依頼・6種のミニゲーム）／R7-011
 | ID | 範囲 | 受入基準 | 担当 | 状態 |
 |---|---|---|---|---|
 | RRR-R7-006 | R7第3〜10章（永続ルート分岐・長い会話・章ごとに別の構造） | 各章が open→end で連結、到達性・非暴力・経営なし、`npm run check` PASS、通しプレイ（good/risky） | story-architect×4（ch3-4 / ch5-6 / ch7-8 / ch9-10） | in_progress |
-| RRR-ENGINE-010 / RRR-R8-001 | 複数ストーリー登録とR8第1章 | R8を最後まで通せる／R7とセーブ独立／到達性 | story-architect（worktree） | in_progress |
+| RRR-ENGINE-010 / RRR-R8-001 | 複数ストーリー登録とR8第1章「白紙の一頁」（src/data/stories.ts, scripts/build-story-r8.mjs, tests/r8.test.ts） | R8を最後まで通せる／R7とセーブ独立／到達性 | story-architect（worktree）→統合済み | completed（結末2/4の画面確認は未実施、実機UNVERIFIED） |
 
 ## 第2波（ローリング計画）
 | ID | 範囲 | 依存 | 受入基準 | 状態 |

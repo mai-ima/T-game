@@ -38,9 +38,9 @@ add('ESLint（コード全体の静的解析）', 'UNVERIFIED', 'ESLint未導入
 {
   const { ctx, page } = await boot({ tag: 'menu' }); await shot(page, '01_menu_desktop');
   const cards = await page.$$eval('.card', els => els.map(e => ({ t: e.getAttribute('aria-label'), playable: e.classList.contains('playable') })));
-  add('14モードのメインメニュー', cards.length === 14 ? 'PASS' : 'FAIL', `カード${cards.length}枚／プレイ可能${cards.filter(c => c.playable).length}（R7のみ）`);
-  const bad = cards.filter(c => !c.playable && !/未実装/.test(c.t)); add('未実装モードをプレイ可能と偽らない', bad.length === 0 && cards.filter(c => c.playable).length === 1 ? 'PASS' : 'FAIL', '13モードに「未実装」表示');
-  await page.click('button.card >> nth=0'); await shot(page, '02_unimplemented_modal'); const note = await page.textContent('.modal'); add('未実装モードの案内', /まだプレイできません/.test(note) && (await page.$('.modal button.primary')) === null ? 'PASS' : 'FAIL', '開始ボタンなし・設計のみと明記'); await ctx.close();
+  add('14モードのメインメニュー', cards.length === 14 ? 'PASS' : 'FAIL', `カード${cards.length}枚／プレイ可能${cards.filter(c => c.playable).length}（R7・R8）`);
+  const bad = cards.filter(c => !c.playable && !/未実装/.test(c.t)); add('未実装モードをプレイ可能と偽らない', bad.length === 0 && cards.filter(c => c.playable).length === 2 ? 'PASS' : 'FAIL', '12モードに「未実装」表示（プレイ可能はR7・R8のみ）');
+  await page.click('button.card.dim >> nth=0'); await shot(page, '02_unimplemented_modal'); const note = await page.textContent('.modal'); add('未実装モードの案内', /まだプレイできません/.test(note) && (await page.$('.modal button.primary')) === null ? 'PASS' : 'FAIL', '開始ボタンなし・設計のみと明記'); await ctx.close();
 }
 
 // ============ 2. 3D駅：多視点・設備・衝突・視覚 ============

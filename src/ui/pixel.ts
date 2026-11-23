@@ -20,7 +20,7 @@ function rng(seed: number) { let a = seed >>> 0; return () => { a = (a + 0x6d2b7
 type Hair = 'short' | 'side' | 'spiky' | 'bob' | 'ponytail' | 'long' | 'bun' | 'thin' | 'child';
 const STYLE: Record<string, { hair: Hair; eye?: string }> = {
   player: { hair: 'short' }, shiraishi: { hair: 'side' }, kubota: { hair: 'ponytail' }, yamashina: { hair: 'spiky' }, morishita: { hair: 'bob' }, kajiwara: { hair: 'bun' }, hamaguchi: { hair: 'short' }, traveler: { hair: 'long' },
-  sakai: { hair: 'ponytail' }, hinata: { hair: 'child' }, nomura: { hair: 'thin' }, haha: { hair: 'bob' }, tourist2: { hair: 'short', eye: '#3a6a9a' }
+  sakai: { hair: 'ponytail' }, kawai: { hair: 'bob' }, taniguchi: { hair: 'short' }, otsuki: { hair: 'thin' }, matsuoka: { hair: 'ponytail' }, segawa: { hair: 'side' }, hinata: { hair: 'child' }, nomura: { hair: 'thin' }, haha: { hair: 'bob' }, tourist2: { hair: 'short', eye: '#3a6a9a' }
 };
 const cache = new Map<string, string>();
 export const PW = 64, PH = 80;
@@ -109,6 +109,23 @@ export function pixelScene(kind: string): string {
     P.rect(6, 76, 70, 14, '#8a6a48'); P.rect(6, 76, 70, 2, '#a98560'); P.rect(8, 90, 4, 12, '#6a4a30'); P.rect(68, 90, 4, 12, '#6a4a30'); P.rect(20, 66, 22, 10, '#26384a'); P.rect(22, 68, 18, 6, '#4aa0d8'); P.rect(28, 76, 6, 2, '#26384a');
     P.rect(120, 74, 66, 16, '#8a6a48'); P.rect(120, 74, 66, 2, '#a98560'); P.rect(124, 90, 4, 12, '#6a4a30'); P.rect(178, 90, 4, 12, '#6a4a30'); P.rect(140, 64, 24, 10, '#26384a'); P.rect(142, 66, 20, 6, '#4aa0d8');
     P.rect(86, 66, 20, 34, '#7a8794'); for (let k = 0; k < 5; k++) P.rect(88, 70 + k * 6, 16, 1, '#5a6874');
+  } else if (kind === 'records') {
+    P.rect(0, 0, W, H, '#cfc8b4'); tile(0, 0, W, 4, '#c2baa4', '#cfc8b4', 2); P.rect(0, 78, W, 30, '#8a6a48'); tile(0, 78, W, 30, '#8a6a48', '#7e5f40', 6);
+    P.rect(70, 12, 52, 34, '#8a7f6c'); P.rect(73, 15, 46, 28, '#bddcf5'); P.rect(95, 15, 2, 28, '#8a7f6c'); cloud(86, 26);
+    const cols = ['#2a4a7a', '#7a2a2a', '#3a6a4a', '#6a5a2a', '#4a3a6a', '#2a2f35', '#8a5a2a'];
+    const shelf = (x0: number, w: number) => { P.rect(x0, 10, w, 70, '#6a5236'); for (let r = 0; r < 4; r++) { const y = 14 + r * 17; P.rect(x0 + 2, y + 14, w - 4, 2, '#4a3826'); let x = x0 + 3; let k = r * 3; while (x < x0 + w - 6) { const bw = 3 + ((k * 7) % 4); P.rect(x, y + 2 + ((k * 5) % 3), bw, 12 - ((k * 5) % 3), cols[k % cols.length]); P.rect(x, y + 5 + ((k * 5) % 3), bw, 1, '#e8e0c8'); x += bw + 1; k++; } } };
+    shelf(4, 56); shelf(132, 56);
+    P.rect(64, 70, 64, 4, '#a98560'); P.rect(64, 74, 64, 2, '#6a4a30'); P.rect(68, 76, 4, 22, '#6a4a30'); P.rect(120, 76, 4, 22, '#6a4a30');
+    P.rect(76, 62, 40, 8, '#e8e4d4'); P.rect(76, 62, 40, 1, '#8c8c8c'); P.rect(95, 62, 2, 8, '#8c8c8c'); for (let k = 0; k < 4; k++) { P.rect(79, 64 + (k % 2) * 3, 14, 1, '#6a7a8a'); P.rect(99, 64 + (k % 2) * 3, 14, 1, '#6a7a8a'); }
+    P.rect(116, 56, 2, 14, '#2a2f35'); P.ellipse(112, 55, 6, 3, '#f2c500'); P.rect(108, 58, 8, 2, 'rgba(255,240,160,.45)');
+  } else if (kind === 'shed') {
+    P.rect(0, 0, W, H, '#8a949e'); P.rect(0, 0, W, 22, '#3a4048'); for (let x = 0; x < W; x += 24) { P.line(x, 22, x + 12, 6, '#2a2f35'); P.line(x + 12, 6, x + 24, 22, '#2a2f35'); } for (let x = 8; x < W; x += 32) { P.rect(x, 20, 18, 2, '#fff7c8'); P.rect(x - 2, 22, 22, 3, 'rgba(255,247,200,.35)'); }
+    P.rect(0, 26, W, 2, '#6a737c'); P.rect(60, 30, 72, 34, '#b8c2cc'); P.rect(64, 34, 64, 26, '#cdd6de'); P.rect(60, 30, 72, 2, '#7a848e');
+    P.rect(0, 64, W, 44, '#59616a'); tile(0, 64, W, 44, '#59616a', '#535b64', 4);
+    P.rect(18, 50, 156, 20, '#d6dce2'); P.rect(18, 50, 156, 3, '#b8c0c8'); for (let k = 0; k < 8; k++) { P.rect(24 + k * 19, 55, 12, 8, '#2c4a6a'); P.rect(24 + k * 19, 55, 12, 1, '#4a6a8a'); } P.rect(18, 64, 156, 2, '#e8801f'); P.rect(18, 66, 156, 2, '#1b5fa8');
+    P.rect(18, 70, 156, 6, '#2a2f35'); for (const bx of [34, 76, 118, 152]) { P.ellipse(bx, 76, 7, 5, '#3a3f45'); P.ellipse(bx, 76, 3, 2, '#6a737c'); }
+    P.rect(0, 80, W, 28, '#2a2f35'); P.rect(0, 80, W, 3, '#f2c500'); P.rect(0, 98, W, 2, '#f2c500'); for (let x = 0; x < W; x += 12) P.rect(x, 84, 6, 12, '#3a4048');
+    P.rect(4, 36, 14, 28, '#6a7a86'); P.rect(4, 36, 14, 3, '#4a5560'); for (let k = 0; k < 3; k++) P.rect(6, 42 + k * 7, 10, 4, '#3a4854'); P.rect(176, 40, 12, 24, '#c8281e'); P.rect(178, 44, 8, 8, '#f6f6f0');
   } else {
     P.rect(0, 0, W, H, '#d9d4c8'); for (let y = 0; y < 66; y += 2) P.rect(0, y, W, 1, y % 4 ? '#d9d4c8' : '#d2cdbf'); P.rect(0, 66, W, 6, '#6a5a42'); P.rect(0, 72, W, 36, '#8a7658'); tile(0, 72, W, 36, '#8a7658', '#7f6c50', 6);
     P.rect(14, 12, 64, 42, '#8a7f6c'); P.rect(17, 15, 58, 36, '#9cc9f0'); sky(0); for (let y = 15; y < 51; y++) P.rect(17, y, 58, 1, y < 30 ? '#8dc0ee' : '#bddcf5'); P.rect(45, 15, 3, 36, '#8a7f6c'); P.rect(17, 31, 58, 3, '#8a7f6c'); P.ellipse(30, 48, 18, 7, '#6d9a62'); P.ellipse(60, 46, 16, 6, '#7fa86f'); cloud(34, 22); cloud(64, 26);

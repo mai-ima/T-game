@@ -179,11 +179,11 @@ describe('セーブ・ロード・モード独立性', () => {
 });
 
 describe('14モード定義', () => {
-  it('14モード・ストーリー12・自由2で、R7のみプレイ可能', () => {
+  it('14モード・ストーリー12・自由2で、プレイ可能なのはR7とR8のみ', () => {
     expect(MODES.length).toBe(14);
     expect(MODES.filter(m => m.kind === 'story').length).toBe(12);
     expect(MODES.filter(m => m.kind === 'free').length).toBe(2);
-    expect(MODES.filter(m => m.status === 'playable').map(m => m.id)).toEqual(['R7']);
+    expect(MODES.filter(m => m.status === 'playable').map(m => m.id)).toEqual(['R7', 'R8']);
     for (const m of MODES) if (m.status !== 'playable') expect(m.status).toBe('unimplemented');
   });
   it('R5〜R11に経営操作フラグがない／R2・C2のみ経営あり', () => {
