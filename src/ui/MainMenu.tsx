@@ -21,7 +21,7 @@ export function MainMenu({ c, onStart }: { c: GameController; onStart: () => voi
           <div className="hero-tools"><button className="btn sm" onClick={() => { c.audio.ui('click'); setStatus(true); }}>検証状況</button><button className="btn sm" onClick={() => setSettings(true)}><span style={{ display: 'inline-flex', gap: 6, alignItems: 'center' }}><Icon.gear />設定</span></button></div>
           <div className="nameplate"><div className="band" /><div className="in"><h1>REAL RAIL &amp; ROAD</h1><p>鉄道・自動車 統合シミュレーション　プロトタイプ（Claude Artifacts 版）</p></div></div>
         </div>
-        <div className="board-strip" aria-label="実装状況">プレイ可能 {impl}/14　R7 第1章 実装済み　R7 第2章 冒頭のみ（体験版）　<span className="d">そのほか13モード 未実装（設計のみ）</span>　{rows.slice(0, 3).map(r => `${r.line}番線 ${r.time} ${r.kind} ${r.dest}`).join('　')}</div>
+        <div className="board-strip" aria-label="実装状況">プレイ可能 {impl}/14　R7 第1章 実装済み・第2章 冒頭のみ（体験版）　R8 第1章 実装済み　<span className="d">そのほか{14 - impl}モード 未実装（設計のみ）</span>　{rows.slice(0, 3).map(r => `${r.line}番線 ${r.time} ${r.kind} ${r.dest}`).join('　')}</div>
 
         <div className="sect-h"><span>鉄道モード</span><small>R1〜R11（R4のみ自由モード）</small></div>
         <div className="grid">{rail.map(m => <ModeRow key={m.id} m={m} onClick={() => open(m)} />)}</div>
@@ -63,12 +63,12 @@ function ModeModal({ m, c, onClose, onStart }: { m: ModeDef; c: GameController; 
           <dl className="kv"><dt>核となるプレイ</dt><dd>{m.core}</dd><dt>経営操作</dt><dd>{m.management ? 'あり（このモードの中で独立）' : 'なし'}</dd><dt>独立セーブ領域</dt><dd>save:{m.id}:*（他モードとは共有しません）</dd>{m.seasons && <><dt>最終計画</dt><dd>{m.seasons}</dd></>}{m.playableScope && <><dt>実装範囲</dt><dd>{m.playableScope}</dd></>}</dl>
           {!playable ? <p className="item">このモードはまだプレイできません。仕様として保持されており、共通エンジン（ストーリーグラフ・世界状態・セーブ・描画）の上に順次追加していきます。</p> : <>
             <h3 style={{ margin: '14px 0 6px', borderBottom: '2px solid var(--ink)' }}>セーブスロット</h3>
-            <div className="slots">{['auto', '1', '2', '3'].map(s => { const f = slots[s]; return <div key={s} className="slot"><div className="meta"><b>{label(s)}</b><span>{f === 'corrupt' ? '破損データ' : f ? `${f.summary.chapterTitle}／${f.summary.dayLabel}／プレイ${Math.round(f.playtimeSec / 60)}分` : '空き'}</span></div><div className="acts"><button className="btn sm primary" disabled={!f || f === 'corrupt' || busy} onClick={async () => { setBusy(true); startAudio(); if (await c.loadSlot(s)) onStart(); setBusy(false); }}>続きから</button></div></div>; })}</div>
+            <div className="slots">{['auto', '1', '2', '3'].map(s => { const f = slots[s]; return <div key={s} className="slot"><div className="meta"><b>{label(s)}</b><span>{f === 'corrupt' ? '破損データ' : f ? `${f.summary.chapterTitle}／${f.summary.dayLabel}／プレイ${Math.round(f.playtimeSec / 60)}分` : '空き'}</span></div><div className="acts"><button className="btn sm primary" disabled={!f || f === 'corrupt' || busy} onClick={async () => { setBusy(true); startAudio(); if (await c.loadSlot(s, m.id)) onStart(); setBusy(false); }}>続きから</button></div></div>; })}</div>
             <div style={{ display: 'grid', gap: 8, margin: '14px 0 4px' }}>
               <label htmlFor="pname">あなたの名前（作中で使われます）</label><input id="pname" type="text" value={name} maxLength={12} onChange={e => setName(e.target.value)} />
               <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                {latest && <button className="btn primary" disabled={busy} onClick={async () => { setBusy(true); startAudio(); const slot = latest.slot; if (await c.loadSlot(slot)) onStart(); setBusy(false); }}>最新のセーブから続ける（{fmtMinSafe(latest.savedAt)}）</button>}
-                <button className={'btn' + (latest ? '' : ' primary')} disabled={busy} onClick={() => { startAudio(); c.newGame(name); onStart(); }}>最初から（第1章）</button>
+                {latest && <button className="btn primary" disabled={busy} onClick={async () => { setBusy(true); startAudio(); const slot = latest.slot; if (await c.loadSlot(slot, m.id)) onStart(); setBusy(false); }}>最新のセーブから続ける（{fmtMinSafe(latest.savedAt)}）</button>}
+                <button className={'btn' + (latest ? '' : ' primary')} disabled={busy} onClick={() => { startAudio(); c.newGame(name, m.id); onStart(); }}>最初から（第1章）</button>
               </div>
               <p className="small">表示方式は 3D／擬似3D／2D を切り替えられます。画面左下のスティックで歩き、画面のドラッグで視点を動かします。</p>
             </div></>}

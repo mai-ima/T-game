@@ -158,7 +158,7 @@ export function StatusPanel({ onClose }: { onClose: () => void }) {
     <Sheet title="検証状況（PASS／FAIL／UNVERIFIED）" onClose={onClose} wide>
       <p className="small" style={{ marginTop: 0 }}>{r.generatedAt ? `最終監査：${r.generatedAt}　環境：${r.env}` : '監査レポートはまだ生成されていません。'}　未検証・未実装を完成済みとして扱いません。</p>
       <table className="tbl"><thead><tr><th>項目</th><th>判定</th><th>根拠・備考</th></tr></thead><tbody>{(r.items ?? []).map((i: any, k: number) => <tr key={k}><td>{i.name}</td><td><span className={'pill ' + cls(i.status)}>{i.status}</span></td><td className="small">{i.note}</td></tr>)}</tbody></table>
-      <h3>実装範囲</h3><ul className="small"><li>プレイ可能：R7「配属先は、明日変わる」第1章（完成）／第2章冒頭（体験版）</li><li>共通エンジン：ストーリーグラフ・世界状態・キャリア・勤務表・セーブ・音響・品質・3D/2.5D/2D描画</li><li>未実装：{MODES.filter(m => m.status !== 'playable').map(m => m.id).join('、')}（設計のみ）／R7第3章以降／313系運転シミュレーター等</li></ul>
+      <h3>実装範囲</h3><ul className="small"><li>プレイ可能：R7「配属先は、明日変わる」第1章（完成）／第2章冒頭（体験版）、R8「消えた引継ぎ帳」第1章「白紙の一頁」（完成）</li><li>共通エンジン：ストーリーグラフ・世界状態・キャリア・勤務表・セーブ・音響・品質・3D/2.5D/2D描画</li><li>未実装：{MODES.filter(m => m.status !== 'playable').map(m => m.id).join('、')}（設計のみ）／R7第3章以降・R8第2章以降／313系運転シミュレーター等</li></ul>
     </Sheet>
   );
 }

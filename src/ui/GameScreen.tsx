@@ -5,6 +5,7 @@ import { loadAssets } from '../render/assets';
 import { Joystick, Portrait, Stage25D, useTypewriter } from './parts';
 import { ChecklistTask, ComposeTask, RosterTask, TerminalTask } from './Tasks';
 import { TimingTask, FindTask, WatchTask, RouteTask, SortTask, MemoryTask } from './Minigames';
+import { DocsTask, GradeTask } from './DocTasks';
 import { FlowPanel } from './StoryMap';
 import { INFLUENCE } from './influence';
 import { CareerPanel, GraphPanel, RelationsPanel, RosterPanel, SavePanel, SettingsPanel, TimelinePanel } from './Panels';
@@ -52,15 +53,15 @@ export function GameScreen({ c, onExit }: { c: GameController; onExit: () => voi
     window.addEventListener('keydown', k); return () => window.removeEventListener('keydown', k);
   }, [c]);
 
-  const v = c.view; const hint = v && 'node' in v ? v.node.view : undefined; const stage = !!v && (v.kind === 'line' || v.kind === 'choice') && hint?.mode === '25d'; const hub = v?.kind === 'hub';
+  const v = c.view; const hint = v && 'node' in v ? v.node.view : undefined; const stage = !!v && (v.kind === 'line' || v.kind === 'choice' || v.kind === 'task' || v.kind === 'end') && hint?.mode === '25d'; const hub = v?.kind === 'hub';
   const startAudio = () => { if (!c.audio.started) c.audio.start().then(() => { c.audio.setZone(c.audio.zone); c.notify(); }); };
 
   return (
     <div className="game" onPointerDown={startAudio}>
       <div className="stage" style={{ visibility: stage ? 'hidden' : 'visible' }}><canvas ref={cv3} aria-label="3D表示" /><canvas ref={cv2} aria-label="2D平面図" style={{ visibility: 'hidden' }} /></div>
       {loading && <div className="toast" style={{ top: '45%' }}>3Dモデルを読み込んでいます</div>}
-      {stage && v && (v.kind === 'line' || v.kind === 'choice') && <StageView c={c} />}
-      {!stage && <Hud c={c} onExit={onExit} />}
+      {stage && v && <StageView c={c} />}
+      {(!stage || c.story.persistentHud) && <Hud c={c} onExit={onExit} />}
       {hub && !c.panel && <HubControls c={c} />}
       {v?.kind === 'line' && <DialogueBox c={c} />}
       {v?.kind === 'choice' && <ChoiceBox c={c} />}
@@ -81,9 +82,9 @@ function Hud({ c, onExit }: { c: GameController; onExit: () => void }) {
   return (
     <>
       <div className="hud-top" data-ui>
-        <div className="clock"><div className="t"><FlapClock text={c.clockLabel} /></div><div className="d">{c.dateLabel}</div>{cap && <div className="d" style={{ color: '#ffa83a' }}>{cap}</div>}</div>
+        <div className="clock"><div className="t"><FlapClock text={c.clockLabel} /></div><div className="d">{c.dateLabel}</div>{cap && !c.story.persistentHud && <div className="d" style={{ color: '#ffa83a' }}>{cap}</div>}</div>
         <div className="hud-btns">
-          <div className="seg" role="group" aria-label="表示方式">{(['3d', '25d', '2d'] as const).map(m => <button key={m} className={s.view === m ? 'on' : ''} onClick={() => c.setView(m)} aria-pressed={s.view === m} aria-label={m === '3d' ? '3D表示' : m === '25d' ? '擬似3D表示' : '2D表示'}>{m === '3d' ? <Icon.view3d /> : m === '25d' ? <Icon.view25 /> : <Icon.view2 />}<span className="lbl">{m === '3d' ? '3D' : m === '25d' ? '擬似3D' : '2D'}</span></button>)}</div>
+          {!c.story.persistentHud && <div className="seg" role="group" aria-label="表示方式">{(['3d', '25d', '2d'] as const).map(m => <button key={m} className={s.view === m ? 'on' : ''} onClick={() => c.setView(m)} aria-pressed={s.view === m} aria-label={m === '3d' ? '3D表示' : m === '25d' ? '擬似3D表示' : '2D表示'}>{m === '3d' ? <Icon.view3d /> : m === '25d' ? <Icon.view25 /> : <Icon.view2 />}<span className="lbl">{m === '3d' ? '3D' : m === '25d' ? '擬似3D' : '2D'}</span></button>)}</div>}
           <button className="btn menu-btn" onClick={() => { c.audio.ui('click'); setOpen(o => !o); }} aria-expanded={open}><Icon.gear />メニュー</button>
         </div>
       </div>
@@ -91,7 +92,7 @@ function Hud({ c, onExit }: { c: GameController; onExit: () => void }) {
         <div className="sheet-h"><h2>メニュー</h2><button className="btn sm" onClick={() => setOpen(false)}>閉じる</button></div>
         <div className="msheet-b">
           <div className="tilegrid wide" onClick={() => setOpen(false)}>
-            <button className="tile" onClick={P('roster')}><Icon.roster />勤務表</button><button className="tile" onClick={P('career')}><Icon.career />経歴・評価</button><button className="tile" onClick={P('relations')}><Icon.people />人物関係</button><button className="tile" onClick={P('timeline')}><Icon.timeline />年表・日誌</button><button className="tile" onClick={P('flow')}><Icon.branch />分岐図</button><button className="tile" onClick={P('save')}><Icon.save />セーブ</button><button className="tile" onClick={P('settings')}><Icon.gear />設定</button><button className="tile danger" onClick={() => { c.saveSlot('auto', true); onExit(); }}><Icon.title />タイトルへ</button>
+            {!c.story.persistentHud && <button className="tile" onClick={P('roster')}><Icon.roster />勤務表</button>}<button className="tile" onClick={P('career')}><Icon.career />経歴・評価</button><button className="tile" onClick={P('relations')}><Icon.people />人物関係</button><button className="tile" onClick={P('timeline')}><Icon.timeline />年表・日誌</button><button className="tile" onClick={P('flow')}><Icon.branch />分岐図</button><button className="tile" onClick={P('save')}><Icon.save />セーブ</button><button className="tile" onClick={P('settings')}><Icon.gear />設定</button><button className="tile danger" onClick={() => { c.saveSlot('auto', true); onExit(); }}><Icon.title />タイトルへ</button>
           </div>
           {hub && s.view !== '2d' && <><h3 className="msh">カメラ</h3><div className="hud-btns" style={{ justifyContent: 'flex-start' }}><div className="seg" role="group" aria-label="カメラ">{([['follow', '追従'], ['free', '自由'], ['first', '一人称']] as const).map(([m, l]) => <button key={m} className={rm?.camMode === m ? 'on' : ''} onClick={() => c.setCam(m)}>{l}</button>)}</div>
             <select aria-label="カメラ位置" value={rm?.presetName ?? ''} onChange={e => { rm?.setPreset(e.target.value || null); c.notify(); }} style={{ width: 'auto', minHeight: 38, padding: '4px 8px' }}><option value="">視点プリセット</option>{rm && Object.keys(rm.data.presets).map(k => <option key={k} value={k}>{PRESET_JA[k] ?? k}</option>)}</select></div></>}
@@ -122,7 +123,7 @@ function HubControls({ c }: { c: GameController }) {
 }
 
 function StageView({ c }: { c: GameController }) {
-  const v = c.view!; if (v.kind !== 'line' && v.kind !== 'choice') return null; const h = v.node.view!; const line = v.kind === 'line' ? v.node.lines[c.lineIndex] : null;
+  const v = c.view!; if (v.kind === 'hub') return null; const h = v.node.view!; const line = v.kind === 'line' ? v.node.lines[c.lineIndex] : null;
   return <Stage25D bg={h.bg ?? 'office'} cast={h.focus ?? []} speaker={line?.who ?? (v.kind === 'choice' ? v.node.who : undefined)} characters={c.story.characters} caption={h.caption} mood={line?.mood} />;
 }
 
@@ -163,6 +164,7 @@ function ChoiceBox({ c }: { c: GameController }) {
 
 function TaskHost({ c }: { c: GameController }) {
   const v = c.view; if (v?.kind !== 'task') return null; const n = v.node; const done = (s: number) => c.resolveTask(s);
+  if (n.kind === 'docs') return <DocsTask key={n.id} node={n} onDone={done} />; if (n.kind === 'grade') return <GradeTask key={n.id} node={n} onDone={done} flags={c.world.flags} />;
   if (n.kind === 'timing') return <TimingTask key={n.id} node={n} onDone={done} />; if (n.kind === 'find') return <FindTask key={n.id} node={n} onDone={done} />; if (n.kind === 'watch') return <WatchTask key={n.id} node={n} onDone={done} />;
   if (n.kind === 'route') return <RouteTask key={n.id} node={n} onDone={done} />; if (n.kind === 'sort') return <SortTask key={n.id} node={n} onDone={done} />; if (n.kind === 'memory') return <MemoryTask key={n.id} node={n} onDone={done} />;
   if (n.kind === 'checklist') return <ChecklistTask key={n.id} node={n} onDone={done} />; if (n.kind === 'compose') return <ComposeTask key={n.id} node={n} onDone={done} />;
@@ -176,7 +178,7 @@ function ChapterEnd({ c, onExit }: { c: GameController; onExit: () => void }) {
     <div className="fullscreen" data-ui>
       <div className="in">
         <p className="small" style={{ margin: 0 }}>章の終了</p><h1 style={{ margin: '4px 0 6px', fontFamily: 'var(--display)' }}>{n?.title}</h1><p>{n?.summary}</p>
-        <div className="result-hero"><div className="rating" style={{ color: RC[r.rating], borderColor: RC[r.rating] }}>{r.rating}</div><div className="small">勤務評価（{n?.chapter === 'ch1' ? '勤務初日' : '導入'}の暫定評価）<br />{c.dateLabel} {c.clockLabel} 終了</div></div>
+        {c.mode !== 'R8' && <div className="result-hero"><div className="rating" style={{ color: RC[r.rating], borderColor: RC[r.rating] }}>{r.rating}</div><div className="small">勤務評価（{n?.chapter === 'ch1' ? '勤務初日' : '導入'}の暫定評価）<br />{c.dateLabel} {c.clockLabel} 終了</div></div>}
         <h3>評価の内訳</h3>{(Object.keys(EVAL_LABEL) as EvalKey[]).map(k => <div className="bar" key={k}><span>{EVAL_LABEL[k]}</span><i><b style={{ width: r.scores[k] + '%' }} /></i><span>{Math.round(r.scores[k])}</span></div>)}
         <h3>人物関係の変化</h3><table className="tbl"><tbody>{Object.entries(r.relDelta).filter(([, d]) => d.trust || d.rapport).map(([id, d]) => <tr key={id}><td>{c.story.characters[id]?.name ?? id}</td><td>信頼 {d.trust >= 0 ? '+' : ''}{d.trust}</td><td>親しさ {d.rapport >= 0 ? '+' : ''}{d.rapport}</td></tr>)}</tbody></table>
         <h3>{n?.nextChapter ? '次の章への影響' : '今回の判断の記録'}</h3>
@@ -185,7 +187,7 @@ function ChapterEnd({ c, onExit }: { c: GameController; onExit: () => void }) {
           {n?.nextChapter && <button className="btn primary" onClick={() => c.startNextChapter()}>第2章 冒頭（体験版）へ進む</button>}
           <button className="btn" onClick={() => { c.panel = 'flow'; c.notify(); }}>分岐図を見る</button><button className="btn" onClick={() => { c.panel = 'career'; c.notify(); }}>経歴・異動可否</button><button className="btn" onClick={() => { c.panel = 'save'; c.notify(); }}>セーブ</button><button className="btn ghost" onClick={onExit}>タイトルへ</button>
         </div>
-        {!n?.nextChapter && <p className="small" style={{ marginTop: 14 }}>実装済みの範囲はここまでです。第3章以降（全96章企画）は未実装です。</p>}
+        {!n?.nextChapter && <p className="small" style={{ marginTop: 14 }}>実装済みの範囲はここまでです。{c.mode === 'R8' ? '第2章以降（全96章企画）' : '第3章以降（全96章企画）'}は未実装です。</p>}
       </div>
     </div>
   );

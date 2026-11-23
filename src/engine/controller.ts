@@ -1,4 +1,4 @@
-import storyJson from '../data/r7/story.json';
+import { storyFor } from '../data/stories';
 import type { StoryData, WorldState, ModeId } from './types';
 import { StoryRunner, type RunnerView } from './storyRunner';
 import { createWorld, gameDate, fmtTime } from './worldState';
@@ -15,12 +15,11 @@ export interface Settings { quality: QualityId; autoQuality: boolean; view: View
 export const DEFAULT_SETTINGS: Settings = { quality: 'high', autoQuality: true, view: '3d', textSpeed: 'normal', timeLimits: true, subtitles: true, clockRunning: true, master: 0.8, sfx: 0.6, ambient: 0.4, music: 0.5, muted: false, fontScale: 1 };
 
 export interface Prompt { object: string; label: string; interactionId: string; icon?: string; others?: { id: string; label: string }[] }
-export const STORY = storyJson as unknown as StoryData;
 export const SECONDS_PER_GAME_MIN = 6;
 
 /** UIから独立したゲーム制御。ストーリー進行・世界状態・シミュレーション・保存・音を束ねるが、描画はRenderManagerに委譲する。 */
 export class GameController {
-  story = STORY; mode: ModeId = 'R7';
+  story: StoryData = storyFor('R7'); mode: ModeId = 'R7';
   world!: WorldState; runner!: StoryRunner; view: RunnerView | null = null; lineIndex = 0;
   data!: StationData; sim!: StationSim; rail = new RailSim(); rm?: RenderManager; audio = new AudioEngine();
   saves = new SaveManager(new MemoryAdapter()); storageKind = 'memory'; settings: Settings = { ...DEFAULT_SETTINGS };
@@ -48,13 +47,13 @@ export class GameController {
   applyAudioSettings() { this.audio.setSettings({ master: this.settings.master, sfx: this.settings.sfx, ambient: this.settings.ambient, music: this.settings.music, muted: this.settings.muted }); }
 
   // ===== 開始・保存 =====
-  newGame(name: string) {
-    this.mode = 'R7'; this.world = createWorld(this.story, name.trim() || '新入社員'); this.runner = new StoryRunner(this.story, this.world); this.backlog = []; this.endResult = null; this.panel = null;
+  newGame(name: string, mode: ModeId = 'R7') {
+    this.mode = mode; this.story = storyFor(mode); this.world = createWorld(this.story, name.trim() || '新入社員'); this.runner = new StoryRunner(this.story, this.world); this.backlog = []; this.endResult = null; this.panel = null;
     this.sim.reset(); this.sim.spawn("spawn_plaza"); this.sim.player.yaw = Math.PI; this.frac = 0; this.active = true;
     this.view = this.runner.enter(this.story.chapters[0].start); this.afterView(); this.notify();
   }
   restore(file: SaveFile) {
-    this.mode = file.mode; this.world = file.world; this.runner = new StoryRunner(this.story, this.world); this.backlog = []; this.endResult = null; this.panel = null;
+    this.mode = file.mode; this.story = storyFor(file.mode); this.world = file.world; this.runner = new StoryRunner(this.story, this.world); this.backlog = []; this.endResult = null; this.panel = null;
     this.sim.reset(); const p = this.world.playerPos; if (p) this.sim.teleport(p.x, p.y, p.z, p.yaw); else this.sim.spawn('spawn_plaza'); this.frac = 0; this.active = true;
     this.view = this.runner.view(); this.lineIndex = 0; this.afterView(false); this.notify();
   }
@@ -67,7 +66,7 @@ export class GameController {
     try { await this.saves.save(this.mode, slot, w, this.summary()); this.lastSaveAt = Date.now(); if (!quiet) { this.say(`スロット「${slot === 'auto' ? 'オートセーブ' : slot}」に保存しました`); this.audio.ui('save'); } } catch (e) { this.say('保存に失敗しました：' + (e as Error).message); this.audio.ui('error'); }
     this.notify();
   }
-  async loadSlot(slot: string) { try { const f = await this.saves.load(this.mode, slot); if (!f) { this.say('このスロットは空です'); return false; } this.restore(f); this.say('読み込みました'); this.audio.ui('confirm'); return true; } catch (e) { this.say('読み込めません：' + (e as Error).message); this.audio.ui('error'); return false; } }
+  async loadSlot(slot: string, mode: ModeId = this.mode) { try { const f = await this.saves.load(mode, slot); if (!f) { this.say('このスロットは空です'); return false; } this.restore(f); this.say('読み込みました'); this.audio.ui('confirm'); return true; } catch (e) { this.say('読み込めません：' + (e as Error).message); this.audio.ui('error'); return false; } }
   say(text: string) { this.toast = { text, id: ++this.toastId }; this.notify(); const id = this.toastId; setTimeout(() => { if (this.toast?.id === id) { this.toast = null; this.notify(); } }, 3200); }
 
   // ===== 進行 =====
@@ -162,6 +161,7 @@ export class GameController {
   /** 場面に合わせてBGMを切り替える（緊張する場面・温かい場面・基地・事務室・昼の駅） */
   musicFor(): string {
     const v = this.view; const n = this.world.story.node; if (!v) return 'menu'; const bg = 'node' in v ? v.node.view?.bg : undefined;
+    if (this.mode !== 'R7') return bg === 'shed' || bg === 'depot' ? 'depot' : bg === 'office' || bg === 'records' ? 'office' : 'talk_calm';
     if (/^ch1\.(delay|dq|angry|cable|cl_blame|cl_silent)|^ch2\.(warn|audit)/.test(n)) return 'tense';
     if (/^ch1\.(kaji|epi_|child|assist|cc_|clr_)|^ch2\.(kaji|r_service)/.test(n)) return 'warm';
     if (bg === 'depot') return 'depot'; if (bg === 'office' || /^ch1\.(board|phone|route|closing|cl_|clr_)/.test(n)) return 'office'; if (bg === 'hr') return 'talk_calm';
