@@ -79,6 +79,8 @@ export class GameController {
   private pushBacklog(who: string, text: string) { this.backlog.push({ who, text }); if (this.backlog.length > 80) this.backlog.shift(); }
   speakerName(who?: string) { if (!who) return ''; if (who === 'player') return this.world.playerName; return this.story.characters[who]?.name ?? who; }
 
+  /** 会話ボックスが登録する「タップ」処理（未表示なら全文表示、表示済みなら次へ）。キー操作も同じ動作にする */
+  tapLine?: () => void;
   advanceLine() {
     if (!this.view || this.view.kind !== 'line') return; const n = this.view.node; this.audio.ui('page');
     if (this.lineIndex < n.lines.length - 1) { this.lineIndex++; this.recordLine(); this.notify(); return; }

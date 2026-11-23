@@ -24,8 +24,14 @@ export function Joystick({ onMove }: { onMove: (x: number, y: number) => void })
 /** 文字送り表示 */
 export function useTypewriter(text: string, speed: 'fast' | 'normal' | 'slow', reset: unknown) {
   const cps = speed === 'fast' ? 90 : speed === 'slow' ? 24 : 48; const [n, setN] = useState(0);
-  useEffect(() => { setN(0); const t0 = performance.now(); const id = setInterval(() => { const k = Math.min(text.length, Math.floor(((performance.now() - t0) / 1000) * cps)); setN(k); if (k >= text.length) clearInterval(id); }, 30); return () => clearInterval(id); }, [text, cps, reset]);
-  return { shown: text.slice(0, n), done: n >= text.length, skip: () => setN(text.length) };
+  const timer = useRef<number | undefined>(undefined); const finished = useRef(false); // 全文表示後に、動いているタイマーが表示を巻き戻さないようにする
+  useEffect(() => {
+    finished.current = false; setN(0); const t0 = performance.now();
+    timer.current = window.setInterval(() => { if (finished.current) return; const k = Math.min(text.length, Math.floor(((performance.now() - t0) / 1000) * cps)); setN(k); if (k >= text.length) { finished.current = true; clearInterval(timer.current); } }, 30);
+    return () => clearInterval(timer.current);
+  }, [text, cps, reset]);
+  const skip = () => { finished.current = true; clearInterval(timer.current); setN(text.length); };
+  return { shown: text.slice(0, n), done: n >= text.length, skip };
 }
 
 /** 2D場面：ドット絵の背景に、話者を明るく・他の人物を暗くして並べる */

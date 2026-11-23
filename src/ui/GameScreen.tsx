@@ -44,7 +44,7 @@ export function GameScreen({ c, onExit }: { c: GameController; onExit: () => voi
   useEffect(() => {
     const k = (e: KeyboardEvent) => {
       if (/INPUT|TEXTAREA|SELECT/.test((e.target as HTMLElement).tagName)) return; const v = c.view;
-      if (e.code === 'Space' || e.code === 'Enter') { if (v?.kind === 'line' && !c.panel) { e.preventDefault(); c.advanceLine(); } else if (v?.kind === 'hub' && c.prompt && !c.panel) { e.preventDefault(); c.doPrompt(); } }
+      if (e.code === 'Space' || e.code === 'Enter') { if (v?.kind === 'line' && !c.panel) { e.preventDefault(); if (e.repeat) return; if (c.tapLine) c.tapLine(); else c.advanceLine(); } else if (v?.kind === 'hub' && c.prompt && !c.panel) { e.preventDefault(); c.doPrompt(); } }
       if (e.code === 'KeyE' && v?.kind === 'hub' && c.prompt && !c.panel) c.doPrompt();
       if (v?.kind === 'choice' && /^Digit[1-9]$/.test(e.code)) { const o = v.options[+e.code.slice(5) - 1]; if (o) c.choose(o.id); }
       if (e.code === 'Escape' && c.panel) { c.panel = null; c.notify(); }
@@ -132,11 +132,12 @@ function DialogueBox({ c }: { c: GameController }) {
   const tw = useTypewriter(text, c.settings.textSpeed, (ln?.id ?? '') + ':' + c.lineIndex); const [log, setLog] = useState(false);
   const lastLen = useRef(0); useEffect(() => { const n = tw.shown.length; if (l && n > lastLen.current && n % 3 === 0 && /\S/.test(tw.shown[n - 1] ?? '')) c.audio.blip(c.voiceOf(l.who), l.narration ? 'narration' : 'voice'); lastLen.current = n; }, [tw.shown]); // eslint-disable-line
   useEffect(() => { lastLen.current = 0; }, [ln?.id, c.lineIndex]);
-  if (v?.kind !== 'line' || !l) return null; const last = c.lineIndex === v.node.lines.length - 1;
   const click = () => { if (!tw.done) tw.skip(); else c.advanceLine(); };
+  useEffect(() => { c.tapLine = click; return () => { if (c.tapLine === click) c.tapLine = undefined; }; }); // キー操作もタップと同じ動作にする
+  if (v?.kind !== 'line' || !l) return null; const last = c.lineIndex === v.node.lines.length - 1;
   return (
     <div className="dlg" data-ui>
-      <div className={'dlg-box' + (def ? '' : ' noav')} onClick={click} role="button" tabIndex={0} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); click(); } }} aria-label="会話。タップで次へ">
+      <div className={'dlg-box' + (def ? '' : ' noav')} onClick={click} role="button" tabIndex={0} aria-label="会話。タップで次へ">
         {def && <div className="av"><div className="ph"><Portrait def={def} mood={l.mood} size={108} /></div><span className="nm">{def.name}</span></div>}
         <div><div className="dlg-name">{!l.narration && <b>{l.who === 'player' ? c.world.playerName : def?.name}</b>}{def && <small>{def.role}</small>}</div><div className={'dlg-text' + (l.narration ? ' nar' : '')} aria-live="polite">{tw.shown}</div></div>
         <div className="dlg-foot"><span>{c.lineIndex + 1}/{v.node.lines.length}</span><span><button className="btn sm ghost" onClick={e => { e.stopPropagation(); setLog(x => !x); }}>ログ</button> <span className="next">{tw.done ? (last ? '次へ' : '続く') : ''}</span></span></div>
