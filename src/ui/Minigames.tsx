@@ -147,7 +147,7 @@ export function MemoryTask({ node, onDone }: { node: TaskNode; onDone: Done }) {
   const right = ans.filter((a, k) => a === seq[k]).length; const score = clamp((right / Math.max(1, seq.length)) * 100);
   return (
     <TaskShell title={node.title} intro={node.intro}>
-      {phase === 'show' && <><div className="term" style={{ whiteSpace: 'normal' }}><p className="small" style={{ margin: 0 }}>{cfg.showLabel ?? '次の順に変更します。覚えてください'}（{left}秒）</p><ol className="mg-seq">{seq.map((s, k) => <li key={k}>{s}</li>)}</ol></div><button className="btn" onClick={() => setPhase('input')}>覚えた</button></>}
+      {phase === 'show' && <><div className="term" style={{ whiteSpace: 'normal' }}><p className="small" style={{ margin: 0 }}>{cfg.showLabel ?? '次の順に変更します。覚えてください'}（{left}秒）</p><ol className="mg-seq">{seq.map((s, k) => <li key={k}>{s}</li>)}</ol></div><button className="btn" onClick={() => setPhase('input')}>覚えた（入力へ）</button></>}
       {phase !== 'show' && <>
         <div className="term" style={{ whiteSpace: 'normal' }}><p className="small" style={{ margin: 0 }}>{cfg.inputLabel ?? '同じ順に選んでください'}</p><ol className="mg-seq">{seq.map((_, k) => <li key={k} className={phase === 'done' ? (ans[k] === seq[k] ? 'ok' : 'ng') : ''}>{ans[k] ?? '＿＿'}{phase === 'done' && ans[k] !== seq[k] && <small>（正：{seq[k]}）</small>}</li>)}</ol></div>
         {phase === 'input' && <div className="mg-bins">{pool.map(p => <button key={p} className="btn mg-bin" onClick={() => add(p)}>{p}</button>)}</div>}

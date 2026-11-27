@@ -120,8 +120,8 @@ export function SavePanel({ c, onRefresh }: { c: GameController; onRefresh?: () 
           <div className="acts">{s !== 'auto' && <button className="btn sm primary" onClick={async () => { await c.saveSlot(s); refresh(); }}>保存</button>}<button className="btn sm" disabled={!f || f === 'corrupt'} onClick={async () => { if (await c.loadSlot(s)) { c.panel = null; c.notify(); } }}>読込</button><button className="btn sm danger" disabled={!f} onClick={async () => { await c.saves.remove(c.mode, s); refresh(); }}>削除</button></div></div>); })}</div>
       <h3>バックアップ（書き出し／読み込み）</h3>
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 8 }}><select aria-label="対象スロット" value={slot} onChange={e => setSlot(e.target.value)} style={{ width: 'auto' }}>{['auto', '1', '2', '3'].map(s => <option key={s} value={s}>{label(s)}</option>)}</select>
-        <button className="btn sm" onClick={async () => { try { const t = await c.saves.exportText(c.mode, slot); setText(t); try { await navigator.clipboard.writeText(t); c.say('コピーしました'); } catch { c.say('テキストを選択してコピーしてください'); } } catch (e) { c.say((e as Error).message); } }}>書き出し</button>
-        <button className="btn sm" onClick={async () => { try { await c.saves.importText(c.mode, slot, text); c.say('読み込みました'); refresh(); } catch (e) { c.say('読み込めません：' + (e as Error).message); } }}>取り込み</button></div>
+        <button className="btn sm" onClick={async () => { try { const t = await c.saves.exportText(c.mode, slot); setText(t); try { await navigator.clipboard.writeText(t); c.say('コピーしました'); } catch { c.say('テキストを選択してコピーしてください'); } } catch (e) { c.say((e as Error).message); } }}>セーブを書き出す</button>
+        <button className="btn sm" onClick={async () => { try { await c.saves.importText(c.mode, slot, text); c.say('読み込みました'); refresh(); } catch (e) { c.say('読み込めません：' + (e as Error).message); } }}>セーブを取り込む</button></div>
       <textarea aria-label="セーブデータ文字列" value={text} onChange={e => setText(e.target.value)} placeholder="書き出した文字列をここに貼り付けて取り込みます" />
     </Sheet>
   );
@@ -155,7 +155,7 @@ export function StatusPanel({ onClose }: { onClose: () => void }) {
   const r = auditReport as any;
   const cls = (s: string) => s === 'PASS' ? 'ok' : s === 'FAIL' ? 'bad' : 'warn';
   return (
-    <Sheet title="検証状況（PASS／FAIL／UNVERIFIED）" onClose={onClose} wide>
+    <Sheet title="開発状況（検証結果：PASS／FAIL／UNVERIFIED）" onClose={onClose} wide>
       <p className="small" style={{ marginTop: 0 }}>{r.generatedAt ? `最終監査：${r.generatedAt}　環境：${r.env}` : '監査レポートはまだ生成されていません。'}　未検証・未実装を完成済みとして扱いません。</p>
       <table className="tbl"><thead><tr><th>項目</th><th>判定</th><th>根拠・備考</th></tr></thead><tbody>{(r.items ?? []).map((i: any, k: number) => <tr key={k}><td>{i.name}</td><td><span className={'pill ' + cls(i.status)}>{i.status}</span></td><td className="small">{i.note}</td></tr>)}</tbody></table>
       <h3>実装範囲</h3><ul className="small"><li>プレイ可能：R7「配属先は、明日変わる」第1章（完成）／第2章冒頭（体験版）、R8「消えた引継ぎ帳」第1章「白紙の一頁」（完成）</li><li>共通エンジン：ストーリーグラフ・世界状態・キャリア・勤務表・セーブ・音響・品質・3D/2.5D/2D描画</li><li>未実装：{MODES.filter(m => m.status !== 'playable').map(m => m.id).join('、')}（設計のみ）／R7第3章以降・R8第2章以降／313系運転シミュレーター等</li></ul>

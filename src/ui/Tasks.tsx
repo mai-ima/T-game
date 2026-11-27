@@ -66,7 +66,7 @@ export function TerminalTask({ node, onDone, rail, minute }: { node: TaskNode; o
       {tab === 'handover' && <div>{handover.map(h => <label key={h.id} className="item" style={{ display: 'flex', gap: 10 }}><input type="checkbox" checked={!!ack[h.id]} onChange={e => setAck(a => ({ ...a, [h.id]: e.target.checked }))} /><span>{h.t}</span></label>)}<p className="small">全項目を確認済みにしてください。</p></div>}
       {tab === 'equipment' && <div className="term"><table><tbody>{[['券売機1号機', '正常'], ['券売機2号機', '要確認（紙幣部）'], ['券売機3号機', '正常'], ['自動改札機 1〜8', '正常'], ['発車標', '正常'], ['エレベーター', '正常'], ['AED', '正常（期限 2027/07）']].map(([a, b]) => <tr key={a} className={b.startsWith('要') ? 'w' : ''}><td>{a}</td><td>{b}</td></tr>)}</tbody></table></div>}
       <p className="small">※ 架空の業務画面です。実在の運行管理・保安システムの操作手順は再現していません。</p>
-      <button className="btn primary" onClick={() => onDone(score)}>確認を完了する（{seen.size}/3画面確認）</button>
+      <button className="btn primary" onClick={() => onDone(score)}>確認を終える（{seen.size}/3）</button>
     </TaskShell>
   );
 }

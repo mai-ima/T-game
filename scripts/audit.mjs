@@ -115,13 +115,13 @@ await p1.close(); await c1.close();
   await go('ch1.gate_task'); const bx = await page.locator('.mg-scene').boundingBox(); for (const [x, y] of [[0.31, 0.62], [0.59, 0.4], [0.83, 0.7]]) await page.mouse.click(bx.x + bx.width * x, bx.y + bx.height * y); await page.click('text=報告して戻る'); res.find = await nodeId();
   await go('ch1.jam_task'); for (let i = 0; i < 3; i++) { await page.waitForTimeout(500); await page.click('.mg-big'); } await page.click('text=報告して戻る'); res.timing = await nodeId();
   await go('ch1.fare_task'); for (const a of ['精算機で処理', '払い戻しの窓口へ', '口頭で案内', '精算機で処理', '払い戻しの窓口へ', '口頭で案内']) await page.click(`.mg-bin:has-text("${a}")`); await page.click('text=報告して戻る'); res.sort = await nodeId();
-  await go('ch1.timetable_task'); await page.click('text=覚えた'); for (const a of ['2番線', '9:52', '普通', '南河原']) await page.click(`.mg-bin:has-text("${a}")`); await page.click('text=報告して戻る'); res.memory = await nodeId();
+  await go('ch1.timetable_task'); await page.click('text=覚えた（入力へ）'); for (const a of ['2番線', '9:52', '普通', '南河原']) await page.click(`.mg-bin:has-text("${a}")`); await page.click('text=報告して戻る'); res.memory = await nodeId();
   await go('ch1.wheel_task'); for (const [x, y] of [[1,0],[2,0],[3,0],[3,1],[3,2],[4,2],[5,2],[6,2],[7,2],[8,2]]) await page.locator('.mg-cell').nth(y * 9 + x).dispatchEvent('click'); await page.click('text=報告して戻る'); res.route = await nodeId();
   await go('ch1.watch1_task'); res.watch = await page.waitForSelector('.mg-person', { timeout: 20000 }).then(() => 'ui').catch(() => 'none');
   const okAll = res.find.endsWith('_good') && res.sort.endsWith('_good') && res.memory.endsWith('_good') && res.route.endsWith('_good') && res.timing.startsWith('ch1.jam_') && res.watch === 'ui';
   add('業務ミニゲーム6形式：UI操作で完了し、結果の場面へ分岐', okAll ? 'PASS' : 'FAIL', JSON.stringify(res));
   // 音楽：場面に応じた曲の切替と、会話中の文字送り音
-  const mus = await gc(page, async () => { const c = window.__GC; await c.audio.start(); const out = {}; for (const [id, k] of [['ch1.delay_gate', 'tense'], ['ch1.kaji_1', 'warm'], ['ch1.hub', 'hub']]) { c.view = c.runner.enter(id); c.updateMusic(); out[id] = [c.musicFor(), k]; } return { out, log: c.audio.musicLog.join('>'), running: c.audio.ctx?.state }; });
+  const mus = await gc(page, async () => { const c = window.__GC; await c.audio.start(); const out = {}; for (const [id, k] of [['ch1.delay_gate', 'tense'], ['ch1.kaji_1', 'warm'], ['ch1.hub', 'hub'], ['ch3.open', 'dawn'], ['ch4.open', 'friend']]) { c.view = c.runner.enter(id); c.updateMusic(); out[id] = [c.musicFor(), k]; } return { out, log: c.audio.musicLog.join('>'), running: c.audio.ctx?.state }; });
   const mOk = Object.values(mus.out).every(([a, b]) => a === b) && mus.running === 'running'; add('音楽：場面に応じてBGMが切り替わる', mOk ? 'PASS' : 'FAIL', JSON.stringify(mus));
   add('音楽：聴感・音量バランス・実機再生', 'UNVERIFIED', '耳での確認は未実施（独自合成のチップチューン）');
   await ctx.close();
@@ -140,7 +140,7 @@ async function playChapter(strategy, tag) {
       if (st.tk === 'checklist') { const items = await gc(page, () => window.__GC.view.node.items.map(i => i.truth)); const wrong = Math.round((1 - score) * items.length); for (let i = 0; i < items.length; i++) { const ans = i < wrong ? (items[i] === 'ok' ? 'ng' : 'ok') : items[i]; await page.click(`.item >> nth=${i} >> .tgl button >> nth=${ans === 'ok' ? 0 : 1}`); } await page.click('text=判定する'); await page.click('text=報告して戻る'); }
       else if (st.tk === 'compose') { const slots = await gc(page, () => window.__GC.view.node.slots.map(s => s.options.findIndex(o => o.good))); const wrong = Math.round((1 - score) * slots.length); for (let i = 0; i < slots.length; i++) { const gi = slots[i]; const idx = i < wrong ? (gi + 1) % 3 : gi; await page.click(`.item >> nth=${i} >> label >> nth=${idx}`); } await page.click('text=放送文を確定する'); await page.click('text=放送して戻る'); }
       else if (['timing', 'find', 'watch', 'route', 'sort', 'memory'].includes(st.tk)) { await gc(page, (sc) => { window.__GC.resolveTask(sc); }, Math.round(score * 100)); } // 新形式の個別UIは「業務ミニゲーム」節で操作検証
-      else if (st.tk === 'terminal') { for (const t of ['運行情報', '引継ぎ', '設備状態']) await page.click(`role=tab[name^="${t}"]`); await page.click('role=tab[name^="引継ぎ"]'); for (const cb of await page.$$('.sheet input[type=checkbox]')) await cb.check(); await page.click('text=確認を完了する'); }
+      else if (st.tk === 'terminal') { for (const t of ['運行情報', '引継ぎ', '設備状態']) await page.click(`role=tab[name^="${t}"]`); await page.click('role=tab[name^="引継ぎ"]'); for (const cb of await page.$$('.sheet input[type=checkbox]')) await cb.check(); await page.click('text=確認を終える'); }
       else if (st.tk === 'roster') { const targets = await gc(page, () => window.__GC.view.node.config.targets.map(t => t.day)); for (let i = 0; i < targets.length; i++) { await page.click(`.tabs button >> nth=${i}`); const d = score >= 1 ? targets[i] : (targets[i] + 1) % 28; const lab = await gc(page, (d) => { const s = window.__GC.story.startYear; const dt = new Date(Date.UTC(s, 3, 1 + d)); return `${dt.getUTCMonth() + 1}月${dt.getUTCDate()}日`; }, d); await page.click(`.cal button[aria-label^="${lab}"]`); } await page.click('text=確認結果を提出する'); await page.click('.sheet-b >> text=戻る'); }
       tasksDone++; continue;
     }
@@ -149,7 +149,7 @@ async function playChapter(strategy, tag) {
       if (h.canExit && strategy.exitEarly) { await page.click('.act .btn.primary'); continue; }
       let did = false;
       for (const it of h.ints) { if (strategy.skip?.includes(it.id)) continue; const pos = await gc(page, (o) => { const c = window.__GC; const p = c.sim.standNear(o); if (p) { c.sim.teleport(p.x, p.y, p.z, 0); } return p; }, it.obj); if (!pos) { trace.push('NOSTAND:' + it.id); continue; } await p_wait(page, () => window.__GC.prompt?.object, it.obj); await page.keyboard.press('KeyE'); did = true; break; }
-      if (did) continue; await page.click('text=30分進める'); await page.waitForTimeout(50); continue;
+      if (did) continue; await page.click('text=30分待つ'); await page.waitForTimeout(50); continue;
     }
     if (st.kind === 'end') { if (!sawEnd) { await page.waitForSelector('.fullscreen'); await page.screenshot({ path: `${SHOT}/40_chapter_end_${tag}.jpg`, type: 'jpeg', quality: 80 }); sawEnd = true; } if (st.next) { await page.click('text=第2章 冒頭'); continue; } break; }
   }

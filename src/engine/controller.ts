@@ -48,7 +48,7 @@ export class GameController {
 
   // ===== 開始・保存 =====
   newGame(name: string, mode: ModeId = 'R7') {
-    this.mode = mode; this.story = storyFor(mode); this.world = createWorld(this.story, name.trim() || '新入社員'); this.runner = new StoryRunner(this.story, this.world); this.backlog = []; this.endResult = null; this.fbSnap = null; this.feedbacks = []; this.panel = null;
+    this.mode = mode; this.story = storyFor(mode); this.world = createWorld(this.story, name.trim() || '新入社員'); this.runner = new StoryRunner(this.story, this.world); this.backlog = []; this.endResult = null; this.fbSnap = null; this.feedbacks = []; this.lastJingle = ''; this.panel = null;
     this.sim.reset(); this.sim.spawn("spawn_plaza"); this.sim.player.yaw = Math.PI; this.frac = 0; this.active = true;
     this.view = this.runner.enter(this.story.chapters[0].start); this.afterView(); this.notify();
   }
@@ -174,13 +174,18 @@ export class GameController {
   /** 場面に合わせてBGMを切り替える（緊張する場面・温かい場面・基地・事務室・昼の駅） */
   musicFor(): string {
     const v = this.view; const n = this.world.story.node; if (!v) return 'menu'; const bg = 'node' in v ? v.node.view?.bg : undefined;
-    if (this.mode !== 'R7') return bg === 'shed' || bg === 'depot' ? 'depot' : bg === 'office' || bg === 'records' ? 'office' : 'talk_calm';
+    if (this.mode !== 'R7') return bg === 'shed' || bg === 'depot' ? 'depot' : bg === 'records' ? 'mystery' : bg === 'office' ? 'office' : v.kind === 'end' ? 'night' : 'mystery';
     if (/^ch1\.(delay|dq|angry|cable|cl_blame|cl_silent)|^ch2\.(warn|audit)/.test(n)) return 'tense';
     if (/^ch1\.(kaji|epi_|child|assist|cc_|clr_)|^ch2\.(kaji|r_service)/.test(n)) return 'warm';
+    // 第3章以降：章ごとに曲の色を変える（事件・緊張の場面だけ別の曲にする）
+    if (/^ch4\.(learn|ln_|confess|cv_|tg_|al_)/.test(n)) return /_night$/.test(n) ? 'night' : 'tense';
+    const byChapter: Record<string, string> = { ch3: 'dawn', ch4: 'friend', ch5: 'mystery', ch6: 'night', ch7: 'festival', ch8: 'warm', ch9: 'pride', ch10: 'depot' };
+    const ch = n.split('.')[0]; if (byChapter[ch]) return byChapter[ch];
     if (bg === 'depot') return 'depot'; if (bg === 'office' || /^ch1\.(board|phone|route|closing|cl_|clr_)/.test(n)) return 'office'; if (bg === 'hr') return 'talk_calm';
     return v.kind === 'hub' ? 'hub' : 'talk_calm';
   }
-  updateMusic() { this.audio.playMusic(this.musicFor()); this.audio.duck(this.view?.kind === 'line' || this.view?.kind === 'choice'); }
+  private lastJingle = '';
+  updateMusic() { const v = this.view; const key = v?.kind === 'choice' && v.node.important ? 'c:' + v.node.id : v?.kind === 'end' ? 'e:' + v.node.id : ''; if (key && key !== this.lastJingle) this.audio.jingle(key[0] === 'c' ? 'choice' : 'end'); if (key) this.lastJingle = key; this.audio.playMusic(this.musicFor()); this.audio.duck(this.view?.kind === 'line' || this.view?.kind === 'choice'); }
   voiceOf(who?: string): number { if (!who || who === 'player') return 340; const d = this.story.characters[who]; if (!d) return 300; const base = d.height && d.height < 0.8 ? 760 : d.gender === 'f' ? 560 : 300; return base * (d.age >= 65 ? 0.9 : 1); }
   updateAudioZone() { const p = this.sim.player; const z = this.view?.kind !== 'hub' && this.view && 'node' in this.view && this.view.node.view?.mode === '25d' ? 'office' : p.y > 4 ? (p.x > 7 && p.z < -1 && p.z > -12 ? 'office' : 'concourse') : p.y > 1 ? 'platform' : 'plaza'; if (this.audio.zone !== z) this.audio.setZone(z); }
 

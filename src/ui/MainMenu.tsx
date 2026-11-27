@@ -20,7 +20,7 @@ export function MainMenu({ c, onStart }: { c: GameController; onStart: () => voi
     <div className="menu" onPointerDown={() => { if (!c.audio.started) c.audio.start().then(() => c.audio.playMusic('menu')); else c.audio.playMusic('menu'); }}>
       <div className="menu-in">
         <div className="hero" style={{ backgroundImage: `url(${heroUrl})` }} role="img" aria-label="青嶺中央駅（架空）に停車する313系参考の電車">
-          <div className="hero-tools"><button className="btn sm" onClick={() => { c.audio.ui('click'); setStatus(true); }}>検証状況</button><button className="btn sm" onClick={() => setSettings(true)}><span style={{ display: 'inline-flex', gap: 6, alignItems: 'center' }}><Icon.gear />設定</span></button></div>
+          <div className="hero-tools"><button className="btn sm" onClick={() => { c.audio.ui('click'); setStatus(true); }}>開発状況</button><button className="btn sm" onClick={() => setSettings(true)}><span style={{ display: 'inline-flex', gap: 6, alignItems: 'center' }}><Icon.gear />設定</span></button></div>
           <div className="nameplate"><div className="band" /><div className="in"><h1>REAL RAIL &amp; ROAD</h1><p>鉄道・自動車 統合シミュレーション　プロトタイプ（Claude Artifacts 版）</p></div></div>
         </div>
         <div className="board-strip" aria-label="実装状況">いま遊べる {impl}/14　{playable.map(m => `${m.id} 第${chapterCount(m)}章まで`).join('　')}　<span className="d">そのほか{MODES.length - impl}モードは準備中（設計のみ）</span></div>

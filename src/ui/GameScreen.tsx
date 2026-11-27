@@ -94,11 +94,11 @@ function Hud({ c, onExit }: { c: GameController; onExit: () => void }) {
         <div className="sheet-h"><h2>メニュー</h2><button className="btn sm" onClick={() => setOpen(false)}>閉じる</button></div>
         <div className="msheet-b">
           <div className="tilegrid wide" onClick={() => setOpen(false)}>
-            {!c.story.persistentHud && <button className="tile" onClick={P('roster')}><Icon.roster />勤務表</button>}<button className="tile" onClick={P('career')}><Icon.career />経歴・評価</button><button className="tile" onClick={P('relations')}><Icon.people />人物関係</button><button className="tile" onClick={P('timeline')}><Icon.timeline />年表・日誌</button><button className="tile" onClick={P('flow')}><Icon.branch />分岐図</button><button className="tile" onClick={P('save')}><Icon.save />セーブ</button><button className="tile" onClick={P('settings')}><Icon.gear />設定</button><button className="tile danger" onClick={() => { c.saveSlot('auto', true); onExit(); }}><Icon.title />タイトルへ</button>
+            {!c.story.persistentHud && <button className="tile" onClick={P('roster')}><Icon.roster />勤務表</button>}<button className="tile" onClick={P('career')}><Icon.career />経歴・評価</button><button className="tile" onClick={P('relations')}><Icon.people />人物関係</button><button className="tile" onClick={P('timeline')}><Icon.timeline />年表・日誌</button><button className="tile" onClick={P('flow')}><Icon.branch />分岐図</button><button className="tile" onClick={P('save')}><Icon.save />セーブ</button><button className="tile" onClick={P('settings')}><Icon.gear />設定</button><button className="tile danger" onClick={() => { c.saveSlot('auto', true); onExit(); }}><Icon.title />タイトルに戻る</button>
           </div>
           {hub && s.view !== '2d' && <><h3 className="msh">カメラ</h3><div className="hud-btns" style={{ justifyContent: 'flex-start' }}><div className="seg" role="group" aria-label="カメラ">{([['follow', '追従'], ['free', '自由'], ['first', '一人称']] as const).map(([m, l]) => <button key={m} className={rm?.camMode === m ? 'on' : ''} onClick={() => c.setCam(m)}>{l}</button>)}</div>
             <select aria-label="カメラ位置" value={rm?.presetName ?? ''} onChange={e => { rm?.setPreset(e.target.value || null); c.notify(); }} style={{ width: 'auto', minHeight: 38, padding: '4px 8px' }}><option value="">視点プリセット</option>{rm && Object.keys(rm.data.presets).map(k => <option key={k} value={k}>{PRESET_JA[k] ?? k}</option>)}</select></div></>}
-          <h3 className="msh">その他</h3><button className="btn" style={{ width: '100%' }} onClick={() => { setOpen(false); onExit(); }}>タイトルへ戻る</button>
+          <h3 className="msh">その他</h3><button className="btn" style={{ width: '100%' }} onClick={() => { setOpen(false); onExit(); }}>タイトルに戻る</button>
         </div>
       </div></div>}
     </>
@@ -118,7 +118,7 @@ function HubControls({ c }: { c: GameController }) {
         {p ? <button className="main" onClick={() => c.doPrompt()}>{p.label}<small>タップ／E／Enter</small></button> : tgt ? <button className="main nav" onClick={() => { c.audio.ui('click'); c.navigateTo(tgt.id, true); }} aria-label={'目的地へ自動で歩く：' + tgt.label}><span className="arrow" style={{ transform: `rotate(${tgt.bearing}rad)` }}>➤</span><span>目的地へ<small>{tgt.label}（約{Math.round(tgt.dist)}m）</small></span></button> : <div className="note">歩いて設備や人物に近づきます（黄色い標識が調べる対象）</div>}
         {p?.others?.map(o => <button key={o.id} className="btn sm" onClick={() => c.interact(o.id)}>{o.label}</button>)}
         {v.canExit && <button className="btn primary" onClick={() => c.exitHub()}>{v.node.exit.label}</button>}
-        <div style={{ display: 'flex', gap: 6 }}><button className={'tile' + (run ? ' on' : '')} onClick={() => { if (c.rm) { c.rm.run = !c.rm.run; setRun(c.rm.run); } }} aria-pressed={run}><Icon.run />走る</button><button className="tile" onClick={() => c.waitMinutes(30)} title="時間を進める"><Icon.wait />30分進める</button></div>
+        <div style={{ display: 'flex', gap: 6 }}><button className={'tile' + (run ? ' on' : '')} onClick={() => { if (c.rm) { c.rm.run = !c.rm.run; setRun(c.rm.run); } }} aria-pressed={run}><Icon.run />走る</button><button className="tile" onClick={() => c.waitMinutes(30)} title="時間を進める"><Icon.wait />30分待つ</button></div>
       </div>
     </>
   );
@@ -142,7 +142,7 @@ function DialogueBox({ c }: { c: GameController }) {
       <div className={'dlg-box' + (def ? '' : ' noav')} onClick={click} role="button" tabIndex={0} aria-label="会話。タップで次へ">
         {def && <div className="av"><div className="ph"><Portrait def={def} mood={l.mood} size={108} /></div><span className="nm">{def.name}</span></div>}
         <div><div className="dlg-name">{!l.narration && <b>{l.who === 'player' ? c.world.playerName : def?.name}</b>}{def && <small>{def.role}</small>}</div><div className={'dlg-text' + (l.narration ? ' nar' : '')} aria-live="polite">{tw.shown}</div></div>
-        <div className="dlg-foot"><span>{c.lineIndex + 1}/{v.node.lines.length}</span><span><button className="btn sm ghost" onClick={e => { e.stopPropagation(); setLog(x => !x); }}>ログ</button> <span className="next">{tw.done ? <><i className="nx" aria-hidden>▼</i>{last ? '次へ' : '続く'}</> : '　'}</span></span></div>
+        <div className="dlg-foot"><span>{c.lineIndex + 1}/{v.node.lines.length}</span><span><button className="btn sm ghost" onClick={e => { e.stopPropagation(); setLog(x => !x); }}>履歴</button> <span className="next">{tw.done ? <><i className="nx" aria-hidden>▼</i>{last ? '次へ' : '続く'}</> : '　'}</span></span></div>
       </div>
       {log && <div className="toast" style={{ top: 'auto', bottom: 170, maxHeight: '40vh', overflow: 'auto', width: 'min(640px, 92vw)', textAlign: 'left' }} onClick={() => setLog(false)}>{c.backlog.slice(-10).map((b, i) => <p key={i} style={{ margin: '4px 0' }}><b style={{ color: '#f2c500' }}>{b.who}</b> {b.text}</p>)}</div>}
     </div>
@@ -188,7 +188,7 @@ function ChapterEnd({ c, onExit }: { c: GameController; onExit: () => void }) {
         {flags.length ? <ul>{flags.map(f => <li key={f}>{INFLUENCE[f]}</li>)}</ul> : <p className="small">特筆すべき分岐はありません。</p>}
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 18 }}>
           {n?.nextChapter && <button className="btn primary" onClick={() => c.startNextChapter()}>第2章 冒頭（体験版）へ進む</button>}
-          <button className="btn" onClick={() => { c.panel = 'flow'; c.notify(); }}>分岐図を見る</button><button className="btn" onClick={() => { c.panel = 'career'; c.notify(); }}>経歴・異動可否</button><button className="btn" onClick={() => { c.panel = 'save'; c.notify(); }}>セーブ</button><button className="btn ghost" onClick={onExit}>タイトルへ</button>
+          <button className="btn" onClick={() => { c.panel = 'flow'; c.notify(); }}>分岐図を見る</button><button className="btn" onClick={() => { c.panel = 'career'; c.notify(); }}>経歴・異動可否</button><button className="btn" onClick={() => { c.panel = 'save'; c.notify(); }}>セーブ</button><button className="btn ghost" onClick={onExit}>タイトルに戻る</button>
         </div>
         {!n?.nextChapter && <p className="small" style={{ marginTop: 14 }}>実装済みの範囲はここまでです。{c.mode === 'R8' ? '第2章以降（全96章企画）' : '第3章以降（全96章企画）'}は未実装です。</p>}
       </div>

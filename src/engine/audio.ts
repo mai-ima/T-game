@@ -12,6 +12,12 @@ export const TRACKS: Record<string, Track> = {
   office: { bpm: 90, root: 53, scale: MIN, prog: [0, 3, -2, 5], minor: [true, false, false, true], bass: 'x..x..x.', lead: '2...0...|3...2...|0...3...|2.......|', leadWave: 'triangle', vol: 0.45, hat: true },
   tense: { bpm: 126, root: 52, scale: MIN, prog: [0, 0, -2, -4], minor: [true, true, false, false], bass: 'xxxxxxxx', lead: '0.0.3.0.|5.4.3.0.|0.0.3.5.|4.3.2.0.|', leadWave: 'square', vol: 0.5, hat: true, kick: true },
   warm: { bpm: 84, root: 60, scale: MAJ, prog: [0, 7, 9, 5], minor: [false, false, true, false], bass: 'x...x...', lead: '2.4.5.4.|2...0...|4.5.7.5.|4...2...|', leadWave: 'triangle', vol: 0.5 },
+  dawn: { bpm: 64, root: 57, scale: MAJ, prog: [0, 5, 9, 7], minor: [false, false, true, false], bass: 'x.......', lead: '4...5...|7...5...|4...2...|0.......|', leadWave: 'triangle', vol: 0.5 },
+  friend: { bpm: 100, root: 62, scale: MAJ, prog: [0, 7, 9, 5], minor: [false, false, true, false], bass: 'x.x.x.x.', lead: '4.5.7.5.|4.2.4...|5.7.9.7.|5.4.2...|', leadWave: 'square', vol: 0.4, hat: true },
+  mystery: { bpm: 78, root: 52, scale: MIN, prog: [0, 3, -2, -5], minor: [true, false, false, true], bass: 'x...x...', lead: '0...3...|2...0...|3...5...|4.......|', leadWave: 'triangle', vol: 0.45 },
+  night: { bpm: 68, root: 55, scale: MIN, prog: [0, -4, -2, -7], minor: [true, false, false, false], bass: 'x.......', lead: '2...4...|3...2...|0...2...|0.......|', leadWave: 'triangle', vol: 0.45 },
+  festival: { bpm: 122, root: 60, scale: MAJ, prog: [0, 5, 7, 5], minor: [false, false, false, false], bass: 'xxxxxxxx', lead: '4.5.7.9.|7.5.4.5.|4.5.7.9.|9.7.5.4.|', leadWave: 'square', vol: 0.45, hat: true, kick: true },
+  pride: { bpm: 86, root: 58, scale: MAJ, prog: [0, 9, 5, 7], minor: [false, true, false, false], bass: 'x...x...', lead: '4...5.7.|9...7...|5...7.9.|7.......|', leadWave: 'triangle', vol: 0.5 },
   depot: { bpm: 100, root: 50, scale: MIN, prog: [0, 0, 5, 3], minor: [true, true, false, false], bass: 'x.x.xx.x', lead: '0...2...|3...5...|4...3...|2...0...|', leadWave: 'square', vol: 0.45, kick: true, hat: true }
 };
 
@@ -96,6 +102,12 @@ export class AudioEngine {
     const lead = t.lead.replace(/\|/g, ''); const ch = lead[i % lead.length]; if (ch && ch !== '.') { const deg = t.scale[Number(ch)]; if (deg !== undefined) this.note(seq.gain, t.root + t.prog[bar] + deg + 12, when, d * 1.6, t.leadWave, 0.06); }
     if (t.kick && (pos === 0 || pos === 4)) this.note(seq.gain, 36, when, d * 0.8, 'sine', 0.16);
     if (t.hat && pos % 2 === 1) { const c = this.ctx!; const s = this.src(this.noiseBuf!, false); const f = c.createBiquadFilter(); f.type = 'highpass'; f.frequency.value = 7000; const g = c.createGain(); g.gain.setValueAtTime(0.03, when); g.gain.exponentialRampToValueAtTime(0.0005, when + 0.04); s.connect(f); f.connect(g); g.connect(seq.gain); s.start(when, Math.random()); s.stop(when + 0.06); }
+  }
+  /** 場面の節目の合図（重要な選択／章の終わり）。控えめな短い旋律 */
+  jingle(kind: 'choice' | 'end') {
+    if (!this.ctx) return; this.eventLog.push({ t: 0, kind: 'jingle:' + kind });
+    const seq = kind === 'choice' ? [[523, 0], [784, 0.11]] : [[523, 0], [659, 0.16], [784, 0.32], [1046, 0.5]];
+    for (const [f, w] of seq) { this.tone(f, kind === 'end' ? 0.5 : 0.2, 'triangle', 0.07, w); this.tone(f * 2, 0.3, 'sine', 0.018, w); }
   }
   /** UI操作音 */
   ui(kind: 'click' | 'confirm' | 'cancel' | 'notify' | 'choice' | 'page' | 'save' | 'error') {
