@@ -326,3 +326,9 @@ button, a, .dlg-box, .choice-opt { touch-action: manipulation; }
 .goals { animation: chIn .3s var(--ease) both; }
 @media (hover: none) { .card.playable:hover { transform: none; } .btn:not(:disabled):hover, .tile:hover { box-shadow: none; } }
 .board-strip { white-space: normal; line-height: 1.6; }
+
+/* 手応えの可視化：関係や評価が動いたときの小さな合図 */
+.fb-stack { position: absolute; z-index: 66; top: calc(112px + var(--safe-t)); left: 50%; transform: translateX(-50%); display: grid; gap: 4px; justify-items: center; pointer-events: none; width: max-content; max-width: calc(100% - 24px); }
+.fb { display: inline-flex; align-items: center; gap: 8px; padding: 5px 12px; background: rgba(12, 18, 28, .92); border: 2px solid #3a414b; color: #fff; font-size: .86em; font-weight: 700; animation: fbIn .3s var(--ease) both, fbOut .4s ease-in 2.4s forwards; }
+.fb i { font-style: normal; } .fb.up { border-left: 6px solid #3fbf7f; } .fb.up i { color: #6fe0a4; } .fb.down { border-left: 6px solid #e0554a; } .fb.down i { color: #ff8b82; }
+@keyframes fbIn { from { opacity: 0; transform: translateY(-8px) scale(.96); } to { opacity: 1; transform: none; } } @keyframes fbOut { to { opacity: 0; transform: translateY(-6px); } }

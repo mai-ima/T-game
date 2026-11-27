@@ -1,7 +1,7 @@
 import { storyFor } from '../data/stories';
 import type { StoryData, WorldState, ModeId } from './types';
 import { StoryRunner, type RunnerView } from './storyRunner';
-import { createWorld, gameDate, fmtTime } from './worldState';
+import { createWorld, gameDate, fmtTime, EVAL_LABEL } from './worldState';
 import { evalCond } from './conditions';
 import { SaveManager, createAdapter, MemoryAdapter, type SaveFile } from './save';
 import { StationSim } from './stationSim';
@@ -48,7 +48,7 @@ export class GameController {
 
   // ===== 開始・保存 =====
   newGame(name: string, mode: ModeId = 'R7') {
-    this.mode = mode; this.story = storyFor(mode); this.world = createWorld(this.story, name.trim() || '新入社員'); this.runner = new StoryRunner(this.story, this.world); this.backlog = []; this.endResult = null; this.panel = null;
+    this.mode = mode; this.story = storyFor(mode); this.world = createWorld(this.story, name.trim() || '新入社員'); this.runner = new StoryRunner(this.story, this.world); this.backlog = []; this.endResult = null; this.fbSnap = null; this.feedbacks = []; this.panel = null;
     this.sim.reset(); this.sim.spawn("spawn_plaza"); this.sim.player.yaw = Math.PI; this.frac = 0; this.active = true;
     this.view = this.runner.enter(this.story.chapters[0].start); this.afterView(); this.notify();
   }
@@ -67,6 +67,16 @@ export class GameController {
     this.notify();
   }
   async loadSlot(slot: string, mode: ModeId = this.mode) { try { const f = await this.saves.load(mode, slot); if (!f) { this.say('このスロットは空です'); return false; } this.restore(f); this.say('読み込みました'); this.audio.ui('confirm'); return true; } catch (e) { this.say('読み込めません：' + (e as Error).message); this.audio.ui('error'); return false; } }
+  /** 選択や業務の結果で、人物との関係や評価が動いたことを、画面の隅に小さく見せる（手応えの可視化） */
+  feedbacks: { id: number; text: string; kind: 'up' | 'down' }[] = []; private fbSnap: { rel: Record<string, [number, number]>; ev: Record<string, number> } | null = null; private fbId = 0;
+  private snapshotFeedback() { const w = this.world; this.fbSnap = { rel: Object.fromEntries(Object.entries(w.relationships).map(([k, r]) => [k, [r.trust, r.rapport] as [number, number]])), ev: { ...w.career.evaluations } }; }
+  private collectFeedback() {
+    const prev = this.fbSnap; this.snapshotFeedback(); if (!prev) return; const w = this.world; const out: { text: string; kind: 'up' | 'down' }[] = [];
+    for (const [id, r] of Object.entries(w.relationships)) { const [t0, p0] = prev.rel[id] ?? [0, 0]; const name = (this.story.characters[id]?.name ?? id).split(/[ 　]/)[0]; const dt = r.trust - t0, dp = r.rapport - p0; if (dt) out.push({ text: `${name}さんからの信頼`, kind: dt > 0 ? 'up' : 'down' }); if (dp) out.push({ text: dp > 0 ? `${name}さんとの距離が縮まった` : `${name}さんとの距離が開いた`, kind: dp > 0 ? 'up' : 'down' }); }
+    for (const [k, v] of Object.entries(w.career.evaluations)) { const d = v - (prev.ev[k] ?? 0); if (d) out.push({ text: `${EVAL_LABEL[k as keyof typeof EVAL_LABEL] ?? k}の評価`, kind: d > 0 ? 'up' : 'down' }); }
+    for (const f of out.slice(0, 3)) { const id = ++this.fbId; this.feedbacks.push({ id, ...f }); setTimeout(() => { this.feedbacks = this.feedbacks.filter(x => x.id !== id); this.notify(); }, 2800); }
+    if (out.length) { this.feedbacks = this.feedbacks.slice(-4); this.notify(); }
+  }
   say(text: string) { this.toast = { text, id: ++this.toastId }; this.notify(); const id = this.toastId; setTimeout(() => { if (this.toast?.id === id) { this.toast = null; this.notify(); } }, 3200); }
 
   // ===== 進行 =====
@@ -100,6 +110,7 @@ export class GameController {
 
   /** ノード遷移後の共通処理：表示対象・NPC・カメラ・音・選択タイマー・オートセーブ */
   private afterView(autosave = true) {
+    if (autosave) this.collectFeedback(); else this.snapshotFeedback();
     this.lineIndex = 0; this.recordLine(); const v = this.view!; const w = this.world;
     this.updateNpcVisibility();
     this.applyCamera(); this.updateAudioZone(); this.updateMusic();

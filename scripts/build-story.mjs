@@ -47,28 +47,32 @@ const characters = {
 
 // ============ 第1章 プロローグ：配属面談（2.5D） ============
 line('ch1.p1', [
-  '4月1日。入社式を終えた午後、{player}は人事課の面談室に呼ばれた。',
-  ['morishita', '入社おめでとうございます。人事課の森下です。今日は配属先のお話と、これからの希望をうかがいます。', 'smile'],
-  ['morishita', '最初の配属は、全員がまず現場からです。{player}さんは、青嶺中央駅の駅営業に決まりました。'],
-  ['morishita', 'ただ、将来どんな仕事に関心があるかは、先に聞いておきたいのです。希望がそのまま通るとは限りませんが、面談記録として大切に残します。']
+  '4月1日、午後一時。入社式で渡された名札は、まだ胸の上で少し浮いている。',
+  ['morishita', '{player}さんですね。人事の森下です。どうぞ。', 'smile'],
+  '机の上に、白い封筒が一通。',
+  ['morishita', '今日いちばん大事な話は、この中に入っています。'],
+  ['morishita', '青嶺中央駅。駅営業。明日の八時半からです。'],
+  ['morishita', '驚いた顔ですね。大丈夫、みんなそうです。', 'smile'],
+  ['morishita', 'ひとつだけ、先に聞かせてください。三年後、どんな仕事をしていたいですか。']
 ], 'ch1.p_wish', { view: v25('hr', ['morishita'], '4月1日（木） 13:00 本社 人事課') });
 
-choice('ch1.p_wish', 'これからの仕事で、いちばん関心のある分野は？', [
-  opt('station', '「まずは駅で、お客様と直接関わる仕事を極めたいです」', 'ch1.p_r_station', { tone: 'caring', effects: [set('legacy.wish_station'), ev('service', 3), rel('morishita', 1, 0), log('配属面談：駅の接客を極めたいと申告', 'career')] }),
-  opt('depot', '「車両や設備を支える現場にも興味があります」', 'ch1.p_r_depot', { tone: 'careful', effects: [set('legacy.wish_depot'), ev('safety', 3), sk('depot', 2), rel('morishita', 1, 0), log('配属面談：車両・設備への関心を申告', 'career')] }),
-  opt('planning', '「ダイヤや計画など、全体を考える仕事にも関心があります」', 'ch1.p_r_planning', { tone: 'quick', effects: [set('legacy.wish_planning'), ev('reporting', 3), rel('morishita', 1, 0), log('配属面談：輸送計画への関心を申告', 'career')] }),
-  opt('open', '「まだ決められません。いろいろ経験してから考えたいです」', 'ch1.p_r_open', { tone: 'neutral', effects: [set('legacy.wish_open'), ev('teamwork', 3), rel('morishita', 0, 1), log('配属面談：希望は経験を積んでから決めると申告', 'career')] })
+choice('ch1.p_wish', '三年後、どんな仕事をしていたい？', [
+  opt('station', '「駅で、お客様と向き合っていたいです」', 'ch1.p_r_station', { tone: 'caring', effects: [set('legacy.wish_station'), ev('service', 3), rel('morishita', 1, 0), log('配属面談：駅の接客を極めたいと申告', 'career')] }),
+  opt('depot', '「車両や設備を支える側に興味があります」', 'ch1.p_r_depot', { tone: 'careful', effects: [set('legacy.wish_depot'), ev('safety', 3), sk('depot', 2), rel('morishita', 1, 0), log('配属面談：車両・設備への関心を申告', 'career')] }),
+  opt('planning', '「ダイヤや計画の仕事に関心があります」', 'ch1.p_r_planning', { tone: 'quick', effects: [set('legacy.wish_planning'), ev('reporting', 3), rel('morishita', 1, 0), log('配属面談：輸送計画への関心を申告', 'career')] }),
+  opt('open', '「まだ分かりません。まず現場を見たいです」', 'ch1.p_r_open', { tone: 'neutral', effects: [set('legacy.wish_open'), ev('teamwork', 3), rel('morishita', 0, 1), log('配属面談：希望は経験を積んでから決めると申告', 'career')] })
 ], { important: true, who: 'morishita', view: v25('hr', ['morishita']) });
 
-line('ch1.p_r_station', [['morishita', '接客は、鉄道の顔になる仕事です。駅で得た経験は、どの部署に行っても生きますよ。', 'smile']], 'ch1.p2', { view: v25('hr', ['morishita']) });
-line('ch1.p_r_depot', [['morishita', '基地や設備の仕事は、現場を知っている人が強いです。ただ、異動には資格と研修が必要になります。それも後でご説明しますね。']], 'ch1.p2', { view: v25('hr', ['morishita']) });
-line('ch1.p_r_planning', [['morishita', '計画は、現場の事情を知らないと机上の空論になりがちです。まずは駅で、お客様の動きを肌で感じてください。']], 'ch1.p2', { view: v25('hr', ['morishita']) });
-line('ch1.p_r_open', [['morishita', 'それも誠実な答えです。迷うなら、たくさん見て、聞いて、記録してください。', 'smile']], 'ch1.p2', { view: v25('hr', ['morishita']) });
+line('ch1.p_r_station', [['morishita', 'いい答えです。駅は鉄道の顔。ここで得たものは、どこへ行っても腐りません。', 'smile']], 'ch1.p2', { view: v25('hr', ['morishita']) });
+line('ch1.p_r_depot', [['morishita', '基地は、資格と研修の壁が高いですよ。……高い壁ほど、越えた人は強い。']], 'ch1.p2', { view: v25('hr', ['morishita']) });
+line('ch1.p_r_planning', [['morishita', '机の上の計画は、現場を知らないと嘘をつきます。まず駅で、人の流れを見てください。']], 'ch1.p2', { view: v25('hr', ['morishita']) });
+line('ch1.p_r_open', [['morishita', '正直ですね。「分からない」と言える人は、よく見る人です。', 'smile']], 'ch1.p2', { view: v25('hr', ['morishita']) });
 
 line('ch1.p2', [
-  ['morishita', '異動は、希望だけでなく、資格・研修・評価・受け入れ側の事情で決まります。希望どおりにならない年もあります。'],
-  ['morishita', '勤務は交替制です。勤務表は毎月作られ、休みや勤務間のインターバルは社内規程で守られています。困ったら、遠慮なく相談してください。'],
-  ['morishita', '最初の一歩は駅務の基礎です。明日、青嶺中央駅で白石駅長に挨拶してください。']
+  ['morishita', '先に正直に言います。希望がそのまま通る年は、多くありません。'],
+  ['morishita', '異動は、資格・研修・評価、それに受け入れ側の事情で決まります。'],
+  ['morishita', '勤務は交替制。休みも、勤務の間隔も、規程で守られています。困ったら、遠慮せず私に。'],
+  ['morishita', '最初の一歩は駅務の基礎です。……名札、曲がっていますよ。', 'smile']
 ], 'ch1.arrive', {
   effects: [{ assign: { dept: 'station', role: '駅務係員（見習い）', site: '青嶺中央駅' } }, tr('new_hire', 100), tl('4月1日 入社。青嶺中央駅（駅営業）に配属'), log('入社式・配属面談を終える', 'career')],
   view: v25('hr', ['morishita'])
@@ -244,27 +248,22 @@ fx('ch1.plat_end', [set('ch1.platform'), time(25), log('ホーム巡回点検。
 // ---- 雑談（久保田／山科） ----
 branch('ch1.kubota_talk', [[F('ch1.vend_reported'), 'ch1.kubota_talk_a']], 'ch1.kubota_talk_b', { view: v25('office', ['kubota'], '駅事務室 久保田との会話') });
 const kubotaCommon = [
-  ['kubota', '駅の仕事って、実は「待つ仕事」なんです。列車を待つ、お客様の声を待つ、異常が起きないことを待つ。'],
-  ['player', '待つ…ですか。もっと動き回る仕事だと思っていました。'],
-  ['kubota', '動くのは、必要なときだけ。そのために、何もない時間に何を見ておくかが大事なんですよ。', 'smile'],
-  ['kubota', '例えば、改札の近くに立っていると、誰が迷っているかが分かってきます。立ち止まる、見上げる、振り返る。その三つが出たら、声をかけます。'],
-  ['player', '声をかけるタイミング、難しそうです。'],
-  ['kubota', '最初は外してもいいんです。「何かお探しですか」と言って、「大丈夫です」と返されたら、それで終わり。お客様の邪魔になっていなければ、失敗ではありません。'],
-  ['kubota', '私が新人の頃は、声をかけられなくて、半年悩みました。でも、先輩に「見ていた、というだけで半分は仕事だ」と言われて、少し楽になったんです。', 'smile']
+  ['kubota', '駅の仕事は、半分が「見ること」です。'],
+  ['player', '見る、ですか。'],
+  ['kubota', '立ち止まる。見上げる。振り返る。迷っている人は、だいたいこの三つをやります。', 'smile'],
+  ['kubota', '声をかけて「大丈夫です」と返されたら、それで終わり。邪魔になっていなければ、失敗じゃありません。'],
+  ['kubota', '私は半年、声をかけられませんでした。「見ていたなら、半分は仕事だ」と言われて、やっと動けた。']
 ];
-line('ch1.kubota_talk_a', [['kubota', '券売機の件、報告が早かったのが助かりました。技術的な判断より、まず「誰に何を伝えるか」が肝心です。', 'smile'], ...kubotaCommon, ['kubota', '異動の話も、実は同じなんです。希望を出すだけでなく、資格や研修で「準備」を示す人が信頼されます。'], ['player', '準備、ですか。今日のうちから意識しておきます。'], ['kubota', 'その姿勢なら大丈夫。さあ、午後も続けましょう。']], 'ch1.kubota_talk_end', { effects: [rel('kubota', 1, 1)], view: v25('office', ['kubota'], '駅事務室 久保田との会話') });
-line('ch1.kubota_talk_b', [['kubota', '最初は、何でも自分でやろうとしがちです。でも、現場は一人で守るものではありません。', 'normal'], ...kubotaCommon, ['kubota', '異動の話も同じで、希望を出すだけでは足りません。資格や研修、評価という「準備」を積んでおくと、話が早くなります。'], ['player', '準備を積む…。何から始めればいいでしょう。'], ['kubota', 'まずは今日の仕事を、理由まで説明できるようにすること。それが一番の近道です。']], 'ch1.kubota_talk_end', { effects: [rel('kubota', 0, 1)], view: v25('office', ['kubota'], '駅事務室 久保田との会話') });
+line('ch1.kubota_talk_a', [['kubota', '券売機の件、報告が早くて助かりました。', 'smile'], ...kubotaCommon, ['kubota', '異動の話も同じです。希望だけじゃなく、準備を見せる人が信頼される。']], 'ch1.kubota_talk_end', { effects: [rel('kubota', 1, 1)], view: v25('office', ['kubota'], '駅事務室 久保田との会話') });
+line('ch1.kubota_talk_b', [['kubota', '最初は、何でも自分でやろうとしがちです。', 'normal'], ...kubotaCommon, ['kubota', '異動の話も同じです。希望を出すだけでは足りません。準備を積んでおくと、話が早い。']], 'ch1.kubota_talk_end', { effects: [rel('kubota', 0, 1)], view: v25('office', ['kubota'], '駅事務室 久保田との会話') });
 fx('ch1.kubota_talk_end', [time(15)], 'ch1.hub');
 line('ch1.yama_talk', [
-  ['yamashina', '正直に言うと、俺は将来、車両基地で働きたいんだ。電車の床下を見るのが好きで。', 'smile'],
-  ['player', '床下、ですか。外から見える部分じゃなくて？'],
-  ['yamashina', '子どもの頃、父に連れられて工場の見学会に行ったんだ。電車が持ち上げられて、台車が外されて。あの光景が、頭から離れなくて。'],
-  ['yamashina', 'でも異動には資格と研修が要るって、さっき人事で聞いた。駅で評価を取らないと、そもそも土俵に乗れない。'],
-  ['player', '評価と資格…。思っていたより、道のりが長いんですね。'],
-  ['yamashina', '長いよ。でも、長いからこそ、ここで学ぶことに意味があると思うんだ。駅は、お客様と電車の両方が見える場所だからさ。'],
-  ['yamashina', '基地の人たちも、結局は「お客様が乗る電車」を整えている。駅で見たお客様の顔を覚えておけば、きっと仕事の意味が変わる。', 'smile'],
-  ['player', '…いい考え方ですね。僕も、そんなふうに考えてみます。'],
-  ['yamashina', 'だから今日は、負けないつもりでやる。同期だからこそ、な。', 'smile']
+  ['yamashina', '正直に言うと、俺は基地で働きたい。電車の床下が好きなんだ。', 'smile'],
+  ['player', '床下。外から見えるところじゃなくて？'],
+  ['yamashina', '子どもの頃、工場の見学会で、電車が持ち上げられて台車が外された。あの光景が、頭から離れない。'],
+  ['yamashina', 'でも異動には資格と研修が要る。駅で評価を取らないと、土俵にも乗れない。'],
+  ['player', '思ったより、道が長いんですね。'],
+  ['yamashina', '長いよ。……だから今日は、負けないつもりでやる。同期だからな。', 'smile']
 ], 'ch1.yama_talk_end', { effects: [rel('yamashina', 1, 1), set('ch1.yama_goal_known')], view: v25('hr', ['yamashina'], '休憩室 山科との会話') });
 fx('ch1.yama_talk_end', [time(15)], 'ch1.hub');
 
@@ -373,27 +372,20 @@ choice('ch1.lunch_choice', '昼休憩を、誰とどう過ごしますか？', [
   opt('alone', '事務室で午前の内容を復習する', 'ch1.lunch_a', { tone: 'careful', effects: [ev('accuracy', 2), ev('teamwork', -1), set('ch1.lunch_alone')] })
 ], { view: LV(['kubota', 'yamashina']) });
 line('ch1.lunch_k', [
-  ['kubota', '私が新人のとき、先輩に言われたんです。「仕事は、聞かれる前に報告するほど楽になる」って。実践すると、本当にそうでした。', 'smile'],
-  ['player', '報告は、迷惑にならないかと考えてしまって。'],
-  ['kubota', '迷惑になるのは、報告が遅れたときです。早い報告は、たいてい喜ばれます。内容が間違っていても、「早く知れた」ことには価値があります。'],
-  ['kubota', 'ほら、このお弁当。実は駅前のお店の日替わりなんです。月曜は唐揚げ、火曜は焼き魚。曜日で決まっていて、食べる側も「今日は唐揚げの日」と分かる。'],
-  ['player', '予告があるから、安心できるんですね。'],
-  ['kubota', 'その通り。報告も同じです。「これから何をするか」を先に言うと、周りは安心して待てるんです。', 'smile'],
-  ['kubota', '…そういえば、今朝の点呼の挨拶、声が震えていましたよ。気づいていました？'],
-  ['player', 'えっ、本当ですか。恥ずかしい…。'],
-  ['kubota', '悪いことじゃありません。最初は誰でもそうです。私は、三か月くらい震えていましたから。'],
-  ['kubota', 'さあ、食べたら少し歩きましょう。午後は、午前より人が増えます。']
+  ['kubota', '私が新人のとき、先輩に言われました。「報告は、聞かれる前にするほど楽になる」', 'smile'],
+  ['player', '迷惑にならないか、考えてしまって。'],
+  ['kubota', '迷惑なのは遅い報告です。早い報告は、間違っていても「早く知れた」だけで価値がある。'],
+  ['kubota', '……それと、今朝の点呼。声、震えてましたよ。'],
+  ['player', 'えっ。'],
+  ['kubota', '私は三か月、震えてました。', 'smile']
 ], 'ch1.lunch_end', { view: LV(['kubota']) });
 line('ch1.lunch_y', [
-  ['yamashina', '来週の土曜、青浜総合車両センターで見学会があるんだ。社員向けの公募で。行きたいけど、一人だと気後れして。'],
-  ['player', '基地の見学会、ですか。どんなことをするんです？'],
-  ['yamashina', '検修庫の中を案内してもらえる。台車の点検とか、床下機器の説明とか。普段は入れない場所だよ。', 'smile'],
-  ['yamashina', '応募は一人でもできるけど、社内の人と一緒のほうが、質問もしやすいと思って。'],
+  ['yamashina', '来週の土曜、青浜の車両センターで見学会がある。社員公募。行きたい。でも、一人だと気後れする。'],
   ['player', '山科さんは、本当に基地が好きなんですね。'],
-  ['yamashina', '好きなものの話は、いくらでもできる。…ごめん、食事中に熱くなった。'],
-  ['player', 'いえ。聞いていて楽しいです。'],
-  ['yamashina', 'ありがとう。そう言ってもらえると、少し自信が出る。', 'smile'],
-  ['yamashina', '今日の仕事が落ち着いたら、改めて誘うよ。']
+  ['yamashina', '好きなものの話は、いくらでもできる。……悪い、食事中に熱くなった。'],
+  ['player', 'いえ。聞いてて楽しいです。'],
+  ['yamashina', '……そう言われると、ちょっと自信が出る。', 'smile'],
+  ['yamashina', '今日が落ち着いたら、改めて誘う。']
 ], 'ch1.lunch_end', { effects: [set('ch1.yama_invite_hint')], view: LV(['yamashina']) });
 line('ch1.lunch_a', [
   '一人でノートを広げ、午前の判断の理由を書き出した。静かな時間が流れた。',
