@@ -1,5 +1,5 @@
-import type { ChoiceNode, HubNode, StoryData, StoryNode, TaskNode, WorldState, ChapterResult } from './types';
-import { evalCond } from './conditions';
+import type { ChoiceNode, HubNode, StoryData, StoryNode, TaskNode, WorldState, ChapterResult, Effect, Cond } from './types';
+import { evalCond, condRefs } from './conditions';
 import { applyEffects, snapshotRel, overallRating } from './worldState';
 
 export type RunnerView =
@@ -29,7 +29,7 @@ export class StoryRunner {
     // effects：ハブは初回のみ、その他は進入のたびに適用
     if (n.type !== 'hub' || first) applyEffects(w, n.effects, id);
     switch (n.type) {
-      case 'branch': { for (const c of n.cases) if (evalCond(c.when, w)) return this.enter(c.goto, guard + 1); return this.enter(n.else, guard + 1); }
+      case 'branch': { for (const c of n.cases) if (evalCond(c.when, w)) { this.recordEchoes(n.id, c.when); return this.enter(c.goto, guard + 1); } return this.enter(n.else, guard + 1); }
       case 'effect': return this.enter(n.next, guard + 1);
       case 'hub': return this.view();
       default: return this.view();
@@ -60,8 +60,22 @@ export class StoryRunner {
     this.world.story.choices.push({ node: n.id, option: opt.id, day: this.world.clock.day, minute: this.world.clock.minute, timedOut });
     this.world.log.push({ day: this.world.clock.day, minute: this.world.clock.minute, text: `選択：${opt.label}`, tag: 'choice', node: n.id });
     applyEffects(this.world, opt.effects, n.id);
+    this.recordOrigins(n.id, opt.label, opt.effects);
     return this.enter(opt.goto);
   }
+
+  /** 選択が立てたフラグの「出どころ」を記録する（後で、その選択が場面を変えたことを見せるため） */
+  private recordOrigins(nodeId: string, label: string, effects: Effect[] | undefined) {
+    const st = this.world.story; st.origins ??= {};
+    for (const e of effects ?? []) if ('set' in e && typeof e.set === 'string' && !st.origins[e.set]) st.origins[e.set] = { node: nodeId, label: label.replace(/[「」{}]/g, '').slice(0, 28), chapter: nodeId.split('.')[0] };
+  }
+  /** 分岐が、過去の選択のフラグで決まったとき、その選択を「響いた」記録として残す（画面に見せる） */
+  pendingEchoes: { flag: string; at: string; label: string; chapter: string }[] = [];
+  private recordEchoes(at: string, when: Cond | undefined) {
+    const st = this.world.story; if (!st.origins || !when) return; st.echoes ??= [];
+    const refs = condRefs(when); for (const f of refs.flags) { const o = st.origins[f]; if (!o) continue; if (st.echoes.some(e => e.flag === f && e.at === at)) continue; const e = { flag: f, at, label: o.label, chapter: o.chapter }; st.echoes.push(e); this.pendingEchoes.push(e); }
+  }
+  takeEchoes() { const out = this.pendingEchoes; this.pendingEchoes = []; return out; }
 
   interact(interactionId: string): RunnerView {
     const n = this.node(); if (n.type !== 'hub') throw new Error('hubノードではありません');

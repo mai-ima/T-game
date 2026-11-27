@@ -68,9 +68,10 @@ export class GameController {
   }
   async loadSlot(slot: string, mode: ModeId = this.mode) { try { const f = await this.saves.load(mode, slot); if (!f) { this.say('このスロットは空です'); return false; } this.restore(f); this.say('読み込みました'); this.audio.ui('confirm'); return true; } catch (e) { this.say('読み込めません：' + (e as Error).message); this.audio.ui('error'); return false; } }
   /** 選択や業務の結果で、人物との関係や評価が動いたことを、画面の隅に小さく見せる（手応えの可視化） */
-  feedbacks: { id: number; text: string; kind: 'up' | 'down' }[] = []; private fbSnap: { rel: Record<string, [number, number]>; ev: Record<string, number> } | null = null; private fbId = 0;
+  feedbacks: { id: number; text: string; kind: 'up' | 'down' | 'echo' }[] = []; private fbSnap: { rel: Record<string, [number, number]>; ev: Record<string, number> } | null = null; private fbId = 0;
   private snapshotFeedback() { const w = this.world; this.fbSnap = { rel: Object.fromEntries(Object.entries(w.relationships).map(([k, r]) => [k, [r.trust, r.rapport] as [number, number]])), ev: { ...w.career.evaluations } }; }
   private collectFeedback() {
+    for (const e of this.runner.takeEchoes().slice(0, 2)) { const id = ++this.fbId; this.feedbacks.push({ id, text: `あの選択が、この場面に響いた：「${e.label}」`, kind: 'echo' }); setTimeout(() => { this.feedbacks = this.feedbacks.filter(x => x.id !== id); this.notify(); }, 4600); this.notify(); }
     const prev = this.fbSnap; this.snapshotFeedback(); if (!prev) return; const w = this.world; const out: { text: string; kind: 'up' | 'down' }[] = [];
     for (const [id, r] of Object.entries(w.relationships)) { const [t0, p0] = prev.rel[id] ?? [0, 0]; const name = (this.story.characters[id]?.name ?? id).split(/[ 　]/)[0]; const dt = r.trust - t0, dp = r.rapport - p0; if (dt) out.push({ text: `${name}さんからの信頼`, kind: dt > 0 ? 'up' : 'down' }); if (dp) out.push({ text: dp > 0 ? `${name}さんとの距離が縮まった` : `${name}さんとの距離が開いた`, kind: dp > 0 ? 'up' : 'down' }); }
     for (const [k, v] of Object.entries(w.career.evaluations)) { const d = v - (prev.ev[k] ?? 0); if (d) out.push({ text: `${EVAL_LABEL[k as keyof typeof EVAL_LABEL] ?? k}の評価`, kind: d > 0 ? 'up' : 'down' }); }

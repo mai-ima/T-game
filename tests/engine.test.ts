@@ -262,3 +262,13 @@ describe('R7 時間軸（第1〜10章の開始日が年表どおり進む）', (
     }
   });
 });
+
+describe('後効き（過去の選択が場面を変えたことの記録）', () => {
+  it('選択が立てたフラグの出どころが残り、後の分岐でその選択が「響いた」と記録される', () => {
+    const w = createWorld(S, 'T'); const run = new StoryRunner(S, w); run.enter('ch1.p_wish'); run.choose('station');
+    expect(w.story.origins?.['legacy.wish_station']?.label).toContain('お客様と向き合っていたい');
+    const br = Object.values(S.nodes).find((n: any) => n.type === 'branch' && JSON.stringify(n.cases).includes('legacy.wish_station')) as any; expect(br).toBeTruthy();
+    run.enter(br.id); const ec = run.takeEchoes(); expect(ec.length).toBeGreaterThan(0); expect(ec[0].flag).toBe('legacy.wish_station');
+    run.enter(br.id); expect(run.takeEchoes().length).toBe(0); // 同じ場面で二重に出さない
+  });
+});

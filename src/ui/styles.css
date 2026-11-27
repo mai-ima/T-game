@@ -344,3 +344,6 @@ button, a, .dlg-box, .choice-opt { touch-action: manipulation; }
 .goals-next { list-style: none; margin: 6px 0 2px; padding: 0; display: grid; gap: 4px; }
 .goals-next li { display: flex; gap: 8px; align-items: flex-start; font-size: .92em; font-weight: 700; line-height: 1.45; } .goals-next .ck { width: 15px; height: 15px; border: 2px solid var(--ink); flex: none; margin-top: 3px; } .goals-next .allok { font-weight: 400; color: #3d4249; }
 .seg.wide { display: flex; width: 100%; } .seg.wide button { flex: 1; min-height: 48px; }
+
+/* 後効き：過去の選択が、いまの場面を変えたことを見せる */
+.fb.echo { border-left: 6px solid #f2c500; background: rgba(40, 30, 6, .94); animation: fbIn .3s var(--ease) both, fbOut .5s ease-in 4.1s forwards; } .fb.echo i { color: #ffd35a; }

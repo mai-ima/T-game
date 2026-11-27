@@ -68,7 +68,7 @@ export function GameScreen({ c, onExit }: { c: GameController; onExit: () => voi
       {v?.kind === 'task' && <TaskHost c={c} />}
       {c.endResult && v?.kind === 'end' && <ChapterEnd c={c} onExit={onExit} />}
       {c.panel === 'roster' && <RosterPanel c={c} />}{c.panel === 'career' && <CareerPanel c={c} />}{c.panel === 'relations' && <RelationsPanel c={c} />}{c.panel === 'timeline' && <TimelinePanel c={c} />}{c.panel === 'flow' && <FlowPanel c={c} />}{c.panel === 'graph' && <GraphPanel c={c} />}{c.panel === 'save' && <SavePanel c={c} />}{c.panel === 'settings' && <SettingsPanel c={c} onClose={() => { c.panel = null; c.notify(); }} />}
-      {c.feedbacks.length > 0 && <div className="fb-stack" role="status" aria-live="polite" data-ui>{c.feedbacks.map(f => <div key={f.id} className={'fb ' + f.kind}><i aria-hidden>{f.kind === 'up' ? '▲' : '▼'}</i>{f.text}</div>)}</div>}
+      {c.feedbacks.length > 0 && <div className="fb-stack" role="status" aria-live="polite" data-ui>{c.feedbacks.map(f => <div key={f.id} className={'fb ' + f.kind}><i aria-hidden>{f.kind === 'up' ? '▲' : f.kind === 'down' ? '▼' : '↩'}</i>{f.text}</div>)}</div>}
       {c.toast && <div className="toast" role="status" data-ui>{c.toast.text}</div>}
       {c.caption && <div className="caption" role="status" aria-live="polite">［放送］{c.caption.text}</div>}
       {webglFail && <div className="toast" style={{ top: 120 }}>この端末では3D描画（WebGL）を開始できなかったため、2D表示で動作しています。</div>}

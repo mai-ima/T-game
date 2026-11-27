@@ -121,7 +121,7 @@ export interface WorldState {
   relationships: Record<string, Relationship>;
   career: CareerState;
   story: {
-    chapter: string; node: string; visited: string[]; choices: { node: string; option: string; day: number; minute: number; timedOut?: boolean }[];
+    chapter: string; node: string; visited: string[]; origins?: Record<string, { node: string; label: string; chapter: string }>; echoes?: { flag: string; at: string; label: string; chapter: string }[]; choices: { node: string; option: string; day: number; minute: number; timedOut?: boolean }[];
     once: string[]; done: string[]; endings: string[]; completedChapters: string[];
     chapterResults: Record<string, ChapterResult>; trail: string[];
   };
