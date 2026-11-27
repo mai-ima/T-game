@@ -115,20 +115,11 @@ export default function ch9(k) {
     }
   };
   for (const r of ROUTES) {
-    branch('ch9.rc7_' + r, [[F('ch7.route_done_' + r), 'ch9.rc7_' + r + '_y']], 'ch9.rc_none7');
+    branch('ch9.rc7_' + r, [[F('ch7.route_done_' + r), 'ch9.rc7_' + r + '_y']], 'ch9.rc8_' + r);
     line('ch9.rc7_' + r + '_y', RC[r].a.lines, 'ch9.rc8_' + r, { effects: [{ var: { key: 'ch9.pages', add: 1 } }], view: v25(RC[r].a.bg, RC[r].a.cast, RC[r].a.cap) });
-    branch('ch9.rc8_' + r, [[F('ch8.route_done_' + r), 'ch9.rc8_' + r + '_y']], 'ch9.rc_none8');
+    branch('ch9.rc8_' + r, [[F('ch8.route_done_' + r), 'ch9.rc8_' + r + '_y']], 'ch9.pages');
     line('ch9.rc8_' + r + '_y', RC[r].b.lines, 'ch9.pages', { effects: [{ var: { key: 'ch9.pages', add: 1 } }], view: v25(RC[r].b.bg, RC[r].b.cast, RC[r].b.cap) });
   }
-  line('ch9.rc_none7', [
-    '七月の頁は、ほとんど白い。忙しかったからではない。書かなかったのだ。',
-    ['player', '（白は、次に書く人のための場所だ。…そう思うことにする）']
-  ], 'ch9.rc8route', { view: MEM('（七月の頁）') });
-  rbranch('ch9.rc8route', 'ch9.rc8_');
-  line('ch9.rc_none8', [
-    '九月の頁にも余白。一行だけ。「次は、その場で書く」。',
-    ['player', '（足りない分は、今日、口で言おう）']
-  ], 'ch9.pages', { view: MEM('（九月の頁）') });
 
   // ============ 3. 手帳の頁：共通の回収 ============
   line('ch9.pages', ['頁をめくる。付箋の色は、オレンジから青へ。色の変わり目が、判断の変わり目だった。'], 'ch9.pgA', { view: MEM() });
@@ -151,9 +142,7 @@ export default function ch9(k) {
   line('ch9.pgE_c', ['四月二日の隅。小さな字。「運行情報の誤りに、触れなかった」。', ['player', '（初日の私は、認めるより、やり過ごした）']], 'ch9.pgF', { view: MEM('（四月二日の頁）') });
   branch('ch9.pgF', [[F('legacy.rule_break'), 'ch9.pgF_r']], 'ch9.pg_end');
   line('ch9.pgF_r', ['見返しに、定規で引いた太い線。「決まりを飛ばして動いた日」。消さない。消さずに、次の頁へ。'], 'ch9.pg_end', { view: MEM('（見返し）') });
-  branch('ch9.pg_end', [[V('ch9.pages', '>=', 2), 'ch9.pg_full']], 'ch9.pg_thin');
-  line('ch9.pg_full', ['書き込みの多い手帳は、言い訳の隙がない。自己評価シートを広げた。'], 'ch9.self_stance', { view: MEM() });
-  line('ch9.pg_thin', ['余白の多い手帳は、「これから書く」の別名でもある。自己評価シートを広げた。'], 'ch9.self_stance', { view: MEM() });
+  line('ch9.pg_end', ['書き込みの多い手帳は、言い訳の隙がない。自己評価シートを広げた。'], 'ch9.self_stance', { view: MEM() });
 
   // ============ 4. 自己評価 ============
   choice('ch9.self_stance', '自己評価シート。何から書きますか？', [
@@ -223,13 +212,12 @@ export default function ch9(k) {
     '自販機の前。山科が、開けていない缶コーヒーを両手で握っている。',
     ['yamashina', '「同期との関係」って欄があるんだよ。俺、何て書かれてる？', 'worry']
   ], 'ch9.yama_b', { view: YV });
-  branch('ch9.yama_b', [[F('ch4.secret_kept'), 'ch9.yama_s'], [F('ch4.covered_yama'), 'ch9.yama_c'], [F('ch4.told_truth'), 'ch9.yama_tt'], [F('ch4.helped_yama'), 'ch9.yama_h'], [F('ch4.trust_built'), 'ch9.yama_t']], 'ch9.yama_n');
+  branch('ch9.yama_b', [[ALL(F('ch4.secret_kept'), F('ch4.helped_yama')), 'ch9.yama_h'], [F('ch4.secret_kept'), 'ch9.yama_s'], [F('ch4.told_alone'), 'ch9.yama_c'], [ALL(F('ch4.told_truth'), F('ch4.helped_yama')), 'ch9.yama_t']], 'ch9.yama_tt');
   line('ch9.yama_s', [['yamashina', '…あれ、本当に誰にも言わなかったよな。気づいてた。', 'worry'], ['yamashina', '助かった。でもお前、一人で重かったろ。次は半分持たせろ。']], 'ch9.yama_after', { effects: [rel('yamashina', 1, 1)], view: YV });
-  line('ch9.yama_c', [['yamashina', '庇われた側ってのは、情けなくて、嬉しくて、最悪だ。', 'smile'], ['player', '次は私が庇われる側で試す。'], ['yamashina', 'いい度胸だ。覚えとく。']], 'ch9.yama_after', { effects: [rel('yamashina', 1, 2)], view: YV });
+  line('ch9.yama_h', [['yamashina', '庇われた上に、数え直しまで付き合わせた。最悪の借りだ。', 'smile'], ['yamashina', '返す。利子つきで。覚悟しとけ。']], 'ch9.yama_after', { effects: [rel('yamashina', 1, 2)], view: YV });
+  line('ch9.yama_c', [['yamashina', 'お前が一人で助役に話した日。俺は、後から聞いた。', 'serious'], ['yamashina', '怒るより先に、情けなかった。…礼は、まだ言わない。順番がある。']], 'ch9.yama_after', { effects: [rel('yamashina', 1, 0)], view: YV });
+  line('ch9.yama_t', [['yamashina', '二人で報告に行って、残って直した。あの日から、評価の紙がどうでもよくなった。', 'smile'], ['yamashina', '…いや、嘘。腹は痛い。']], 'ch9.yama_after', { effects: [rel('yamashina', 1, 2)], view: YV });
   line('ch9.yama_tt', [['yamashina', 'お前が駅長に話した日、三日、口を利かなかった。', 'serious'], ['yamashina', 'でも俺のミスは、手順書の一行になった。…三日が俺の限界だ。']], 'ch9.yama_after', { effects: [rel('yamashina', 2, 0)], view: YV });
-  line('ch9.yama_h', [['yamashina', '礼を言い損ねてた。あの日、手が回ってなかった。', 'worry'], ['yamashina', '…ありがとな。それだけだ。', 'smile']], 'ch9.yama_after', { effects: [rel('yamashina', 1, 2)], view: YV });
-  line('ch9.yama_t', [['yamashina', 'お互い苦手を言い合って以来、紙の評価がどうでもよくなった。', 'smile'], ['yamashina', '…いや、嘘。腹は痛い。']], 'ch9.yama_after', { effects: [rel('yamashina', 1, 1)], view: YV });
-  line('ch9.yama_n', [['yamashina', '同期って、近いのに話さないよな。…面談の後、飯でも。', 'smile']], 'ch9.yama_after', { effects: [rel('yamashina', 0, 1)], view: YV });
   rbranch('ch9.yama_after', 'ch9.ya_');
   line('ch9.ya_station', [['yamashina', '俺は基地、お前は駅。基地の人間には、駅に信頼できる奴がいるのが、地味にでかい。']], 'ch9.iv_route', { view: YV });
   line('ch9.ya_depot', [['yamashina', 'お前が基地に通ってるの、正直悔しい。…来月、一緒に落ちたら飲もう。', 'smile']], 'ch9.iv_route', { view: YV });
@@ -273,8 +261,8 @@ export default function ch9(k) {
       { k: 'teamwork', hi: [['kuroda', '僕が詰まったとき、さりげなく助けてくれた。', 'smile']], mid: [['toda', '意見を出す前に引く場面がありました。遠慮は、情報の欠落です。']], lo: [['toda', '他の人の仕事を知る時間を取りましょう。昼休みの雑談でいい。']] }
     ]
   };
-  const HI = { service: 66, accuracy: 70, reporting: 60, teamwork: 56, safety: 62 };
-  const LO = { service: 58, accuracy: 62, reporting: 52, teamwork: 50, safety: 54 };
+  const HI = { service: 82, accuracy: 95, reporting: 72, teamwork: 66, safety: 75 };
+  const LO = { service: 70, accuracy: 80, reporting: 58, teamwork: 57, safety: 61 };
   rbranch('ch9.dm_route', 'ch9.dm_');
   for (const r of ROUTES) {
     DM[r].forEach((d, i) => {
