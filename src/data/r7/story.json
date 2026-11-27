@@ -48979,7 +48979,7 @@
      "goto": "ch9.rc7_station_y"
     }
    ],
-   "else": "ch9.rc_none7"
+   "else": "ch9.rc8_station"
   },
   "ch9.rc7_station_y": {
    "id": "ch9.rc7_station_y",
@@ -49033,7 +49033,7 @@
      "goto": "ch9.rc8_station_y"
     }
    ],
-   "else": "ch9.rc_none8"
+   "else": "ch9.pages"
   },
   "ch9.rc8_station_y": {
    "id": "ch9.rc8_station_y",
@@ -49085,7 +49085,7 @@
      "goto": "ch9.rc7_depot_y"
     }
    ],
-   "else": "ch9.rc_none7"
+   "else": "ch9.rc8_depot"
   },
   "ch9.rc7_depot_y": {
    "id": "ch9.rc7_depot_y",
@@ -49138,7 +49138,7 @@
      "goto": "ch9.rc8_depot_y"
     }
    ],
-   "else": "ch9.rc_none8"
+   "else": "ch9.pages"
   },
   "ch9.rc8_depot_y": {
    "id": "ch9.rc8_depot_y",
@@ -49190,7 +49190,7 @@
      "goto": "ch9.rc7_dispatch_y"
     }
    ],
-   "else": "ch9.rc_none7"
+   "else": "ch9.rc8_dispatch"
   },
   "ch9.rc7_dispatch_y": {
    "id": "ch9.rc7_dispatch_y",
@@ -49243,7 +49243,7 @@
      "goto": "ch9.rc8_dispatch_y"
     }
    ],
-   "else": "ch9.rc_none8"
+   "else": "ch9.pages"
   },
   "ch9.rc8_dispatch_y": {
    "id": "ch9.rc8_dispatch_y",
@@ -49296,7 +49296,7 @@
      "goto": "ch9.rc7_planning_y"
     }
    ],
-   "else": "ch9.rc_none7"
+   "else": "ch9.rc8_planning"
   },
   "ch9.rc7_planning_y": {
    "id": "ch9.rc7_planning_y",
@@ -49350,7 +49350,7 @@
      "goto": "ch9.rc8_planning_y"
     }
    ],
-   "else": "ch9.rc_none8"
+   "else": "ch9.pages"
   },
   "ch9.rc8_planning_y": {
    "id": "ch9.rc8_planning_y",
@@ -49389,73 +49389,6 @@
      "toda"
     ],
     "caption": "（回想）九月 秋ダイヤの読み合わせ"
-   }
-  },
-  "ch9.rc_none7": {
-   "id": "ch9.rc_none7",
-   "type": "line",
-   "lines": [
-    {
-     "text": "七月の頁は、ほとんど白い。忙しかったからではない。書かなかったのだ。",
-     "narration": true
-    },
-    {
-     "who": "player",
-     "text": "（白は、次に書く人のための場所だ。…そう思うことにする）"
-    }
-   ],
-   "next": "ch9.rc8route",
-   "view": {
-    "mode": "25d",
-    "bg": "office",
-    "focus": [],
-    "caption": "（七月の頁）"
-   }
-  },
-  "ch9.rc8route": {
-   "id": "ch9.rc8route",
-   "type": "branch",
-   "cases": [
-    {
-     "when": {
-      "flag": "ch6.wish_depot"
-     },
-     "goto": "ch9.rc8_depot"
-    },
-    {
-     "when": {
-      "flag": "ch6.wish_dispatch"
-     },
-     "goto": "ch9.rc8_dispatch"
-    },
-    {
-     "when": {
-      "flag": "ch6.wish_planning"
-     },
-     "goto": "ch9.rc8_planning"
-    }
-   ],
-   "else": "ch9.rc8_station"
-  },
-  "ch9.rc_none8": {
-   "id": "ch9.rc_none8",
-   "type": "line",
-   "lines": [
-    {
-     "text": "九月の頁にも余白。一行だけ。「次は、その場で書く」。",
-     "narration": true
-    },
-    {
-     "who": "player",
-     "text": "（足りない分は、今日、口で言おう）"
-    }
-   ],
-   "next": "ch9.pages",
-   "view": {
-    "mode": "25d",
-    "bg": "office",
-    "focus": [],
-    "caption": "（九月の頁）"
    }
   },
   "ch9.pages": {
@@ -49806,44 +49739,10 @@
   },
   "ch9.pg_end": {
    "id": "ch9.pg_end",
-   "type": "branch",
-   "cases": [
-    {
-     "when": {
-      "var": {
-       "key": "ch9.pages",
-       "op": ">=",
-       "val": 2
-      }
-     },
-     "goto": "ch9.pg_full"
-    }
-   ],
-   "else": "ch9.pg_thin"
-  },
-  "ch9.pg_full": {
-   "id": "ch9.pg_full",
    "type": "line",
    "lines": [
     {
      "text": "書き込みの多い手帳は、言い訳の隙がない。自己評価シートを広げた。",
-     "narration": true
-    }
-   ],
-   "next": "ch9.self_stance",
-   "view": {
-    "mode": "25d",
-    "bg": "office",
-    "focus": [],
-    "caption": "（手帳）"
-   }
-  },
-  "ch9.pg_thin": {
-   "id": "ch9.pg_thin",
-   "type": "line",
-   "lines": [
-    {
-     "text": "余白の多い手帳は、「これから書く」の別名でもある。自己評価シートを広げた。",
      "narration": true
     }
    ],
@@ -50935,36 +50834,44 @@
    "cases": [
     {
      "when": {
+      "all": [
+       {
+        "flag": "ch4.secret_kept"
+       },
+       {
+        "flag": "ch4.helped_yama"
+       }
+      ]
+     },
+     "goto": "ch9.yama_h"
+    },
+    {
+     "when": {
       "flag": "ch4.secret_kept"
      },
      "goto": "ch9.yama_s"
     },
     {
      "when": {
-      "flag": "ch4.covered_yama"
+      "flag": "ch4.told_alone"
      },
      "goto": "ch9.yama_c"
     },
     {
      "when": {
-      "flag": "ch4.told_truth"
-     },
-     "goto": "ch9.yama_tt"
-    },
-    {
-     "when": {
-      "flag": "ch4.helped_yama"
-     },
-     "goto": "ch9.yama_h"
-    },
-    {
-     "when": {
-      "flag": "ch4.trust_built"
+      "all": [
+       {
+        "flag": "ch4.told_truth"
+       },
+       {
+        "flag": "ch4.helped_yama"
+       }
+      ]
      },
      "goto": "ch9.yama_t"
     }
    ],
-   "else": "ch9.yama_n"
+   "else": "ch9.yama_tt"
   },
   "ch9.yama_s": {
    "id": "ch9.yama_s",
@@ -50999,22 +50906,84 @@
     "caption": "14:30 休憩室"
    }
   },
+  "ch9.yama_h": {
+   "id": "ch9.yama_h",
+   "type": "line",
+   "lines": [
+    {
+     "who": "yamashina",
+     "text": "庇われた上に、数え直しまで付き合わせた。最悪の借りだ。",
+     "mood": "smile"
+    },
+    {
+     "who": "yamashina",
+     "text": "返す。利子つきで。覚悟しとけ。"
+    }
+   ],
+   "next": "ch9.yama_after",
+   "effects": [
+    {
+     "rel": {
+      "char": "yamashina",
+      "trust": 1,
+      "rapport": 2
+     }
+    }
+   ],
+   "view": {
+    "mode": "25d",
+    "bg": "hr",
+    "focus": [
+     "yamashina"
+    ],
+    "caption": "14:30 休憩室"
+   }
+  },
   "ch9.yama_c": {
    "id": "ch9.yama_c",
    "type": "line",
    "lines": [
     {
      "who": "yamashina",
-     "text": "庇われた側ってのは、情けなくて、嬉しくて、最悪だ。",
-     "mood": "smile"
-    },
-    {
-     "who": "player",
-     "text": "次は私が庇われる側で試す。"
+     "text": "お前が一人で助役に話した日。俺は、後から聞いた。",
+     "mood": "serious"
     },
     {
      "who": "yamashina",
-     "text": "いい度胸だ。覚えとく。"
+     "text": "怒るより先に、情けなかった。…礼は、まだ言わない。順番がある。"
+    }
+   ],
+   "next": "ch9.yama_after",
+   "effects": [
+    {
+     "rel": {
+      "char": "yamashina",
+      "trust": 1,
+      "rapport": 0
+     }
+    }
+   ],
+   "view": {
+    "mode": "25d",
+    "bg": "hr",
+    "focus": [
+     "yamashina"
+    ],
+    "caption": "14:30 休憩室"
+   }
+  },
+  "ch9.yama_t": {
+   "id": "ch9.yama_t",
+   "type": "line",
+   "lines": [
+    {
+     "who": "yamashina",
+     "text": "二人で報告に行って、残って直した。あの日から、評価の紙がどうでもよくなった。",
+     "mood": "smile"
+    },
+    {
+     "who": "yamashina",
+     "text": "…いや、嘘。腹は痛い。"
     }
    ],
    "next": "ch9.yama_after",
@@ -51057,102 +51026,6 @@
       "char": "yamashina",
       "trust": 2,
       "rapport": 0
-     }
-    }
-   ],
-   "view": {
-    "mode": "25d",
-    "bg": "hr",
-    "focus": [
-     "yamashina"
-    ],
-    "caption": "14:30 休憩室"
-   }
-  },
-  "ch9.yama_h": {
-   "id": "ch9.yama_h",
-   "type": "line",
-   "lines": [
-    {
-     "who": "yamashina",
-     "text": "礼を言い損ねてた。あの日、手が回ってなかった。",
-     "mood": "worry"
-    },
-    {
-     "who": "yamashina",
-     "text": "…ありがとな。それだけだ。",
-     "mood": "smile"
-    }
-   ],
-   "next": "ch9.yama_after",
-   "effects": [
-    {
-     "rel": {
-      "char": "yamashina",
-      "trust": 1,
-      "rapport": 2
-     }
-    }
-   ],
-   "view": {
-    "mode": "25d",
-    "bg": "hr",
-    "focus": [
-     "yamashina"
-    ],
-    "caption": "14:30 休憩室"
-   }
-  },
-  "ch9.yama_t": {
-   "id": "ch9.yama_t",
-   "type": "line",
-   "lines": [
-    {
-     "who": "yamashina",
-     "text": "お互い苦手を言い合って以来、紙の評価がどうでもよくなった。",
-     "mood": "smile"
-    },
-    {
-     "who": "yamashina",
-     "text": "…いや、嘘。腹は痛い。"
-    }
-   ],
-   "next": "ch9.yama_after",
-   "effects": [
-    {
-     "rel": {
-      "char": "yamashina",
-      "trust": 1,
-      "rapport": 1
-     }
-    }
-   ],
-   "view": {
-    "mode": "25d",
-    "bg": "hr",
-    "focus": [
-     "yamashina"
-    ],
-    "caption": "14:30 休憩室"
-   }
-  },
-  "ch9.yama_n": {
-   "id": "ch9.yama_n",
-   "type": "line",
-   "lines": [
-    {
-     "who": "yamashina",
-     "text": "同期って、近いのに話さないよな。…面談の後、飯でも。",
-     "mood": "smile"
-    }
-   ],
-   "next": "ch9.yama_after",
-   "effects": [
-    {
-     "rel": {
-      "char": "yamashina",
-      "trust": 0,
-      "rapport": 1
      }
     }
    ],
@@ -51582,7 +51455,7 @@
         "eval": {
          "key": "service",
          "op": ">=",
-         "val": 66
+         "val": 82
         }
        },
        {
@@ -51599,7 +51472,7 @@
         "eval": {
          "key": "service",
          "op": "<",
-         "val": 58
+         "val": 70
         }
        },
        {
@@ -51703,7 +51576,7 @@
         "eval": {
          "key": "accuracy",
          "op": ">=",
-         "val": 70
+         "val": 95
         }
        },
        {
@@ -51720,7 +51593,7 @@
         "eval": {
          "key": "accuracy",
          "op": "<",
-         "val": 62
+         "val": 80
         }
        },
        {
@@ -51823,7 +51696,7 @@
         "eval": {
          "key": "teamwork",
          "op": ">=",
-         "val": 56
+         "val": 66
         }
        },
        {
@@ -51840,7 +51713,7 @@
         "eval": {
          "key": "teamwork",
          "op": "<",
-         "val": 50
+         "val": 57
         }
        },
        {
@@ -52085,7 +51958,7 @@
         "eval": {
          "key": "safety",
          "op": ">=",
-         "val": 62
+         "val": 75
         }
        },
        {
@@ -52102,7 +51975,7 @@
         "eval": {
          "key": "safety",
          "op": "<",
-         "val": 54
+         "val": 61
         }
        },
        {
@@ -52206,7 +52079,7 @@
         "eval": {
          "key": "accuracy",
          "op": ">=",
-         "val": 70
+         "val": 95
         }
        },
        {
@@ -52223,7 +52096,7 @@
         "eval": {
          "key": "accuracy",
          "op": "<",
-         "val": 62
+         "val": 80
         }
        },
        {
@@ -52326,7 +52199,7 @@
         "eval": {
          "key": "teamwork",
          "op": ">=",
-         "val": 56
+         "val": 66
         }
        },
        {
@@ -52343,7 +52216,7 @@
         "eval": {
          "key": "teamwork",
          "op": "<",
-         "val": 50
+         "val": 57
         }
        },
        {
@@ -52587,7 +52460,7 @@
         "eval": {
          "key": "reporting",
          "op": ">=",
-         "val": 60
+         "val": 72
         }
        },
        {
@@ -52604,7 +52477,7 @@
         "eval": {
          "key": "reporting",
          "op": "<",
-         "val": 52
+         "val": 58
         }
        },
        {
@@ -52709,7 +52582,7 @@
         "eval": {
          "key": "accuracy",
          "op": ">=",
-         "val": 70
+         "val": 95
         }
        },
        {
@@ -52726,7 +52599,7 @@
         "eval": {
          "key": "accuracy",
          "op": "<",
-         "val": 62
+         "val": 80
         }
        },
        {
@@ -52829,7 +52702,7 @@
         "eval": {
          "key": "safety",
          "op": ">=",
-         "val": 62
+         "val": 75
         }
        },
        {
@@ -52846,7 +52719,7 @@
         "eval": {
          "key": "safety",
          "op": "<",
-         "val": 54
+         "val": 61
         }
        },
        {
@@ -53091,7 +52964,7 @@
         "eval": {
          "key": "reporting",
          "op": ">=",
-         "val": 60
+         "val": 72
         }
        },
        {
@@ -53108,7 +52981,7 @@
         "eval": {
          "key": "reporting",
          "op": "<",
-         "val": 52
+         "val": 58
         }
        },
        {
@@ -53212,7 +53085,7 @@
         "eval": {
          "key": "accuracy",
          "op": ">=",
-         "val": 70
+         "val": 95
         }
        },
        {
@@ -53229,7 +53102,7 @@
         "eval": {
          "key": "accuracy",
          "op": "<",
-         "val": 62
+         "val": 80
         }
        },
        {
@@ -53332,7 +53205,7 @@
         "eval": {
          "key": "teamwork",
          "op": ">=",
-         "val": 56
+         "val": 66
         }
        },
        {
@@ -53349,7 +53222,7 @@
         "eval": {
          "key": "teamwork",
          "op": "<",
-         "val": 50
+         "val": 57
         }
        },
        {
