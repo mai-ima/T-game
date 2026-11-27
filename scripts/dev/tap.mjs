@@ -2,7 +2,7 @@
 import { chromium } from 'playwright-core'; import { createServer } from 'vite';
 const srv = await createServer({ server: { port: 5195 }, logLevel: 'error' }); await srv.listen();
 const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium', args: ['--no-sandbox', '--use-gl=swiftshader'] }); const pg = await b.newPage({ viewport: { width: 390, height: 780 } });
-await pg.goto('http://localhost:5195/?audit'); await pg.click('.card.playable'); await pg.click('text=最初から（第1章）'); await pg.waitForSelector('.dlg-box'); await pg.evaluate(() => window.__GC.setSettings({ textSpeed: 'slow' }));
+await pg.goto('http://localhost:5195/?audit'); await pg.click('.card.playable'); await pg.click('.start-box button:has-text("はじめる"), .start-box button:has-text("最初からやり直す")'); await pg.waitForSelector('.dlg-box'); await pg.evaluate(() => window.__GC.setSettings({ textSpeed: 'slow' }));
 const st = () => pg.evaluate(() => { const c = window.__GC; const n = c.view.node; return { idx: c.lineIndex, full: c.textWorld(n.lines[c.lineIndex].text).length, shown: document.querySelector('.dlg-text')?.textContent.length ?? -1, node: n.id }; });
 const res = [];
 for (const how of ['click', 'key']) {

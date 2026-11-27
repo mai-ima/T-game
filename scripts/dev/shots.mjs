@@ -9,7 +9,7 @@ const browser = await chromium.launch({ executablePath: '/opt/pw-browsers/chromi
 const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
 const logs = []; page.on('console', m => { if (m.type() === 'error') logs.push(m.text()); }); page.on('pageerror', e => logs.push('pageerror: ' + e.message));
 await page.goto(pathToFileURL(resolve('dist/index.html')).href + '?audit'); await page.waitForSelector('.menu');
-await page.click('button.card.playable'); await page.click('text=最初から（第1章）'); await page.waitForSelector('.dlg-box');
+await page.click('button.card.playable'); await page.click('.start-box button:has-text("はじめる"), .start-box button:has-text("最初からやり直す")'); await page.waitForSelector('.dlg-box');
 await page.evaluate((q) => { const c = window.__GC; c.settings.autoQuality = false; c.setSettings({ quality: q, autoQuality: false, clockRunning: false }); }, q);
 for (let i = 0; i < 40; i++) { const k = await page.evaluate(() => { const c = window.__GC; const v = c.view; if (v.kind === 'line') c.advanceLine(); else if (v.kind === 'choice') c.choose(v.options[0].id); return v.kind; }); if (k === 'hub') break; }
 await page.waitForTimeout(500);

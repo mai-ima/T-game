@@ -86,13 +86,15 @@ function Hud({ c, onExit }: { c: GameController; onExit: () => void }) {
       <div className="hud-top" data-ui>
         <div className="clock"><div className="t"><FlapClock text={c.clockLabel} /></div><div className="d">{c.dateLabel}</div>{cap && !c.story.persistentHud && <div className="d" style={{ color: '#ffa83a' }}>{cap}</div>}</div>
         <div className="hud-btns">
-          {!c.story.persistentHud && <div className="seg" role="group" aria-label="表示方式">{(['3d', '25d', '2d'] as const).map(m => <button key={m} className={s.view === m ? 'on' : ''} onClick={() => c.setView(m)} aria-pressed={s.view === m} aria-label={m === '3d' ? '3D表示' : m === '25d' ? '擬似3D表示' : '2D表示'}>{m === '3d' ? <Icon.view3d /> : m === '25d' ? <Icon.view25 /> : <Icon.view2 />}<span className="lbl">{m === '3d' ? '3D' : m === '25d' ? '擬似3D' : '2D'}</span></button>)}</div>}
           <button className="btn menu-btn" onClick={() => { c.audio.ui('click'); setOpen(o => !o); }} aria-expanded={open}><Icon.gear />メニュー</button>
         </div>
       </div>
       {open && <div className="msheet-bg" data-ui onClick={e => { if (e.target === e.currentTarget) setOpen(false); }}><div className="msheet" role="dialog" aria-label="メニュー">
         <div className="sheet-h"><h2>メニュー</h2><button className="btn sm" onClick={() => setOpen(false)}>閉じる</button></div>
         <div className="msheet-b">
+          <h3 className="msh">画面の見え方</h3>
+          {!c.story.persistentHud && <div className="seg wide" role="group" aria-label="表示方式">{(['3d', '25d', '2d'] as const).map(m => <button key={m} className={s.view === m ? 'on' : ''} onClick={() => c.setView(m)} aria-pressed={s.view === m} aria-label={m === '3d' ? '3D表示' : m === '25d' ? '擬似3D表示' : '2D表示'}>{m === '3d' ? <Icon.view3d /> : m === '25d' ? <Icon.view25 /> : <Icon.view2 />}<span className="lbl">{m === '3d' ? '3D' : m === '25d' ? '擬似3D' : '2D'}</span></button>)}</div>}
+          <h3 className="msh">できること</h3>
           <div className="tilegrid wide" onClick={() => setOpen(false)}>
             {!c.story.persistentHud && <button className="tile" onClick={P('roster')}><Icon.roster />勤務表</button>}<button className="tile" onClick={P('career')}><Icon.career />経歴・評価</button><button className="tile" onClick={P('relations')}><Icon.people />人物関係</button><button className="tile" onClick={P('timeline')}><Icon.timeline />年表・日誌</button><button className="tile" onClick={P('flow')}><Icon.branch />分岐図</button><button className="tile" onClick={P('save')}><Icon.save />セーブ</button><button className="tile" onClick={P('settings')}><Icon.gear />設定</button><button className="tile danger" onClick={() => { c.saveSlot('auto', true); onExit(); }}><Icon.title />タイトルに戻る</button>
           </div>
@@ -107,12 +109,15 @@ function Hud({ c, onExit }: { c: GameController; onExit: () => void }) {
 const PRESET_JA: Record<string, string> = { plaza: '駅前広場', overview: '全景（俯瞰）', top: '真上', front: '正面（北）', back: '背面（南）', side: '側面（西）', gate: '改札', gate_close: '改札機（IC読取部）', gate_side: '改札列（側面）', gate_back: '改札（内側から）', gate_wide: '幅広・有人通路', vend_close: '券売機（接写）', seisan: '精算機', concourse: 'コンコース', office: '駅事務室', platform: 'ホーム（西向き）', platform_east: 'ホーム（東向き）', train: '停車中の列車', office_in: '駅事務室（内）', shop: '売店', toilet: 'トイレ', info: '観光案内所', waiting: 'ホーム待合室', entrance: '入口の自動ドア', bus: 'バスのりば', train_front: '列車（前方）', train_side: '列車（側面・北から）', platform_high: 'ホーム俯瞰', rail: '線路沿い', vend: '券売機', board: '発車標', tactile: '点字ブロック' };
 
 function HubControls({ c }: { c: GameController }) {
-  const [run, setRun] = useState(false); const [goals, setGoals] = useState(typeof window === 'undefined' || window.innerWidth >= 760);
-  const v = c.view; if (v?.kind !== 'hub') return null; const p = c.prompt; const tgt = c.suggestTarget();
+  const [run, setRun] = useState(false); const [goals, setGoals] = useState(false);
+  const v = c.view; if (v?.kind !== 'hub') return null; const p = c.prompt; const tgt = c.suggestTarget(); const open_ = v.goals.filter(g => !g.done); const nextGoals = (open_.some(g => !g.optional) ? open_.filter(g => !g.optional) : open_).slice(0, 2);
   return (
     <>
-      <div className="goals chip" data-ui><b>業務メモ　{v.goals.filter(g => g.done).length}/{v.goals.length}</b>　<button className="btn sm ghost" style={{ minHeight: 28, padding: '0 8px' }} onClick={() => setGoals(g => !g)}>{goals ? 'たたむ' : '開く'}</button>
-        {goals && <><div className="goals-scroll"><ul>{v.goals.map(g => <li key={g.id} className={g.done ? 'done' : ''}><span className="ck">{g.done ? '✓' : ''}</span>{g.label}</li>)}</ul></div>{v.node.hint && <div className="hint">{v.node.hint}</div>}</>}</div>
+      <div className="goals chip" data-ui>
+        <div className="goals-h"><b>いまやること</b><button className="btn sm ghost" style={{ minHeight: 32, padding: '0 10px' }} onClick={() => setGoals(g => !g)} aria-expanded={goals}>{goals ? 'とじる' : `全${v.goals.length}件を見る`}</button></div>
+        {!goals && <ul className="goals-next">{nextGoals.length ? nextGoals.map(g => <li key={g.id}><span className="ck" />{g.label}</li>) : <li className="allok">やることは済みました。依頼を待つか、勤務を終えられます</li>}</ul>}
+        {goals && <><div className="goals-scroll"><ul>{v.goals.map(g => <li key={g.id} className={g.done ? 'done' : ''}><span className="ck">{g.done ? '✓' : ''}</span>{g.label}</li>)}</ul></div>{v.node.hint && <div className="hint">{v.node.hint}</div>}</>}
+      </div>
       <Joystick onMove={(x, y) => c.rm?.setMoveInput(x, y)} />
       <div className="act" data-ui>
         {p ? <button className="main" onClick={() => c.doPrompt()}>{p.label}<small>タップ／E／Enter</small></button> : tgt ? <button className="main nav" onClick={() => { c.audio.ui('click'); c.navigateTo(tgt.id, true); }} aria-label={'目的地へ自動で歩く：' + tgt.label}><span className="arrow" style={{ transform: `rotate(${tgt.bearing}rad)` }}>➤</span><span>目的地へ<small>{tgt.label}（約{Math.round(tgt.dist)}m）</small></span></button> : <div className="note">歩いて設備や人物に近づきます（黄色い標識が調べる対象）</div>}

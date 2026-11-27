@@ -8,7 +8,7 @@ const errs = []; pg.on('pageerror', e => errs.push('pageerror: ' + e.message)); 
 await pg.goto('http://localhost:5197/?audit'); await pg.waitForSelector('.menu');
 await pg.screenshot({ path: `${out}/00_menu.png` });
 await pg.click('button.card[aria-label^="R8"]'); await pg.waitForSelector('.modal'); await pg.screenshot({ path: `${out}/01_modal.png` });
-await pg.fill('#pname', '水野 湊'); await pg.click('text=最初から（第1章）'); await pg.waitForSelector('.dlg-box'); await pg.waitForTimeout(1500);
+await pg.fill('#pname', '水野 湊'); await pg.click('.start-box button:has-text("はじめる"), .start-box button:has-text("最初からやり直す")'); await pg.waitForSelector('.dlg-box'); await pg.waitForTimeout(1500);
 await pg.evaluate(() => { const r = window.__RR; if (r) r.rm.paused = true; }); // 2D会話場面では3D描画を止めて高速化
 const shots = new Set(); const snap = async (name) => { if (shots.has(name)) return; shots.add(name); await pg.waitForTimeout(450); await pg.screenshot({ path: `${out}/${name}.png` }); };
 const want = { 'ch1.o1': '10_o1', 'ch1.o3': '11_o3_discovery', 'ch1.ic1': '12_choice1', 'ch1.rules_task': '13_rules_task', 'ch1.docs_task': '14_docs_task', 'ch1.int_menu': '15_int_menu', 'ch1.tg_src': '16_tg_src', 'ch1.ot_why': '17_ot_why', 'ch1.mt_minutes': '18_mt', 'ch1.plan': '19_plan', 'ch1.grade_task': '20_grade_task', 'ch1.policy': '21_policy', 'ch1.report_task': '22_report_task' };

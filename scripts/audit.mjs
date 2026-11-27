@@ -18,7 +18,7 @@ async function boot(opts = {}) {
   const ctx = await browser.newContext({ viewport: opts.vp ?? { width: 1280, height: 800 }, hasTouch: !!opts.touch, isMobile: !!opts.touch, deviceScaleFactor: opts.dpr ?? 1, userAgent: opts.ua });
   const page = await ctx.newPage(); track(page, opts.tag ?? 'page'); await page.goto(URL + (opts.query ?? '?audit')); await page.waitForSelector('.menu', { timeout: 20000 }); return { ctx, page };
 }
-async function startGame(page, name = '水野 湊') { await page.click('button.card.playable'); await page.fill('#pname', name); await page.click('text=最初から（第1章）'); await page.waitForSelector('.dlg-box'); }
+async function startGame(page, name = '水野 湊') { await page.click('button.card.playable'); await page.fill('#pname', name); await page.click('.start-box button:has-text("はじめる"), .start-box button:has-text("最初からやり直す")'); await page.waitForSelector('.dlg-box'); }
 const gc = (page, f, arg) => page.evaluate(f, arg);
 async function toHub(page) { for (let i = 0; i < 60; i++) { const k = await gc(page, () => window.__GC.view.kind); if (k === 'hub') return true; if (k === 'line') await page.click('.dlg-box'), await page.click('.dlg-box').catch(() => {}); else if (k === 'choice') await page.click('.choice-opt >> nth=0'); else await page.waitForTimeout(100); } return false; }
 async function shot(page, name, opts = {}) { await page.screenshot({ path: `${SHOT}/${name}.jpg`, type: 'jpeg', quality: opts.q ?? 82, timeout: 180000 }); return name; }
@@ -180,11 +180,11 @@ for (const [tag, strat] of [['good', stratGood], ['risky', stratRisky]]) {
 const IPHONE = { vp: { width: 390, height: 844 }, touch: true, dpr: 2, ua: 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1' };
 async function overlaps(page) {
   return page.evaluate(() => {
-    const sel = ['.hud-top .chip', '.hud-top .seg', '.hud-top .btn', '.goals', '.joy', '.act .main', '.act .btn', '.dlg-box', '.choice-q', '.choice-opt', '.sheet', '.toast', '.caption'];
+    const sel = ['.hud-top .chip', '.hud-top .btn', '.goals', '.joy', '.act .main', '.act .btn', '.dlg-box', '.choice-q', '.choice-opt', '.sheet', '.toast', '.caption'];
     const els = []; for (const s of sel) document.querySelectorAll(s).forEach(e => { const r = e.getBoundingClientRect(); if (r.width > 0 && r.height > 0 && getComputedStyle(e).visibility !== 'hidden') els.push({ s, r, e }); });
     const W = innerWidth, H = innerHeight; const out = []; const bad = [];
     for (const a of els) { if (a.r.left < -1 || a.r.top < -1 || a.r.right > W + 1 || a.r.bottom > H + 1) bad.push(`はみ出し:${a.s}`); }
-    const pri = els.filter(x => ['.joy', '.act .main', '.act .btn', '.dlg-box', '.goals', '.hud-top .chip', '.hud-top .seg', '.choice-opt'].includes(x.s));
+    const pri = els.filter(x => ['.joy', '.act .main', '.act .btn', '.dlg-box', '.goals', '.hud-top .chip', '.choice-opt'].includes(x.s));
     for (let i = 0; i < pri.length; i++) for (let j = i + 1; j < pri.length; j++) { const a = pri[i].r, b = pri[j].r; const ox = Math.min(a.right, b.right) - Math.max(a.left, b.left), oy = Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top); if (ox > 4 && oy > 4 && pri[i].s !== pri[j].s) out.push(`${pri[i].s}×${pri[j].s}`); if (ox > 4 && oy > 4 && pri[i].s === pri[j].s && pri[i].e !== pri[j].e && pri[i].s !== '.choice-opt') out.push(`${pri[i].s}同士`); }
     const small = []; document.querySelectorAll('button, [role=button], select, input[type=checkbox]').forEach(e => { const r = e.getBoundingClientRect(); if (r.width > 0 && r.height > 0 && (r.height < 32 || r.width < 32) && getComputedStyle(e).visibility !== 'hidden') small.push((e.textContent || e.getAttribute('aria-label') || e.tagName).trim().slice(0, 12)); });
     const sx = document.documentElement.scrollWidth > innerWidth + 1;
@@ -194,7 +194,7 @@ async function overlaps(page) {
 {
   const { ctx, page } = await boot({ ...IPHONE, tag: 'iphone' }); await shot(page, '50_mobile_menu'); const o0 = await overlaps(page);
   add('iPhone相当(390×844)：メニュー横スクロール・はみ出し', !o0.hscroll && o0.bad.length === 0 ? 'PASS' : 'FAIL', `hscroll=${o0.hscroll} はみ出し=${o0.bad.join(',') || 'なし'}`);
-  await page.tap('button.card.playable'); await shot(page, '51_mobile_modal'); await page.tap('text=最初から（第1章）'); await page.waitForSelector('.dlg-box'); await shot(page, '52_mobile_prologue_25d'); const o1 = await overlaps(page);
+  await page.tap('button.card.playable'); await shot(page, '51_mobile_modal'); await page.tap('.start-box button:has-text("はじめる"), .start-box button:has-text("最初からやり直す")'); await page.waitForSelector('.dlg-box'); await shot(page, '52_mobile_prologue_25d'); const o1 = await overlaps(page);
   await toHubTap(page);
   async function toHubTap(page) { for (let i = 0; i < 60; i++) { const k = await gc(page, () => window.__GC.view.kind); if (k === 'hub') return; if (k === 'line') { await page.tap('.dlg-box'); await page.tap('.dlg-box').catch(() => {}); } else if (k === 'choice') { if (i < 12) await shot(page, '53_mobile_choice'); await page.tap('.choice-opt >> nth=0'); } else await page.waitForTimeout(100); } }
   await page.waitForTimeout(800); await gc(page, () => window.__GC.setSettings({ clockRunning: false })); await shot(page, '54_mobile_hub_3d'); const o2 = await overlaps(page);
@@ -202,7 +202,7 @@ async function overlaps(page) {
   await page.tap('.act .main'); await page.waitForSelector('.dlg-box'); await shot(page, '56_mobile_dialogue_3d'); const o4 = await overlaps(page);
   await toHubTap(page); await page.tap('text=メニュー ▾'); await page.tap('text=勤務表'); await page.waitForSelector('.sheet'); await shot(page, '57_mobile_roster'); const o5 = await overlaps(page); await page.tap('.sheet-h .btn');
   await page.tap('text=メニュー ▾').catch(() => {}); await page.tap('text=人物関係'); await page.waitForSelector('.sheet'); await shot(page, '58_mobile_relations'); await page.tap('.sheet-h .btn');
-  await page.tap('text=2D'); await page.waitForTimeout(600); await shot(page, '59_mobile_2d'); await page.tap('text=擬似3D'); await page.waitForTimeout(900); await shot(page, '60_mobile_25d'); const o6 = await overlaps(page); await page.tap('.seg >> text=3D').catch(() => {});
+  await page.tap('.menu-btn'); await page.tap('.msheet .seg button >> nth=2'); await page.keyboard.press('Escape'); await page.waitForTimeout(150); await page.waitForTimeout(600); await shot(page, '59_mobile_2d'); await page.tap('.menu-btn'); await page.tap('.msheet .seg button >> nth=1'); await page.keyboard.press('Escape'); await page.waitForTimeout(150); await page.waitForTimeout(900); await shot(page, '60_mobile_25d'); const o6 = await overlaps(page); await page.tap('.menu-btn'); await page.tap('.msheet .seg button >> nth=0'); await page.keyboard.press('Escape').catch(() => {});
   const all = { prologue: o1, hub: o2, prompt: o3, dialogue: o4, roster: o5, iso: o6 }; const ov = Object.entries(all).flatMap(([k, v]) => v.overlaps.map(x => `${k}:${x}`)); const bad = Object.entries(all).flatMap(([k, v]) => v.bad.map(x => `${k}:${x}`));
   add('iPhone相当：UI要素の重なり・画面外はみ出し', ov.length === 0 && bad.length === 0 ? 'PASS' : 'FAIL', ov.length || bad.length ? `重なり=${ov.join(' ')} はみ出し=${bad.join(' ')}` : '主要UI(HUD・ジョイスティック・操作ボタン・会話・目標)に重なりなし');
   const small = [...new Set(Object.values(all).flatMap(v => v.small))]; add('iPhone相当：タップ対象サイズ（32px未満）', small.length === 0 ? 'PASS' : 'FAIL', small.length ? '小さい: ' + small.slice(0, 8).join(',') : '主要ボタンはすべて32px以上');

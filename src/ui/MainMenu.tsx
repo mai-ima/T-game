@@ -64,18 +64,25 @@ function ModeModal({ m, c, onClose, onStart }: { m: ModeDef; c: GameController; 
         <div className="mh"><h2>{m.id}　{m.name}</h2><button className="btn sm" onClick={onClose}>閉じる</button></div>
         <div className="mb">
           <p className="sub">{m.tagline}　<span className={'pill ' + (playable ? 'ok' : 'off')}>{playable ? 'プレイ可能' : '未実装（設計のみ）'}</span></p>
-          <dl className="kv"><dt>核となるプレイ</dt><dd>{m.core}</dd><dt>経営操作</dt><dd>{m.management ? 'あり（このモードの中で独立）' : 'なし'}</dd><dt>独立セーブ領域</dt><dd>save:{m.id}:*（他モードとは共有しません）</dd>{m.seasons && <><dt>最終計画</dt><dd>{m.seasons}</dd></>}{m.playableScope && <><dt>実装範囲</dt><dd>{m.playableScope}</dd></>}</dl>
-          {!playable ? <p className="item">このモードはまだプレイできません。仕様として保持されており、共通エンジン（ストーリーグラフ・世界状態・セーブ・描画）の上に順次追加していきます。</p> : <>
-            <h3 style={{ margin: '14px 0 6px', borderBottom: '2px solid var(--ink)' }}>セーブスロット</h3>
-            <div className="slots">{['auto', '1', '2', '3'].map(s => { const f = slots[s]; return <div key={s} className="slot"><div className="meta"><b>{label(s)}</b><span>{f === 'corrupt' ? '破損データ' : f ? `${f.summary.chapterTitle}／${f.summary.dayLabel}／プレイ${Math.round(f.playtimeSec / 60)}分` : '空き'}</span></div><div className="acts"><button className="btn sm primary" disabled={!f || f === 'corrupt' || busy} onClick={async () => { setBusy(true); startAudio(); if (await c.loadSlot(s, m.id)) onStart(); setBusy(false); }}>続きから</button></div></div>; })}</div>
-            <div style={{ display: 'grid', gap: 8, margin: '14px 0 4px' }}>
-              <label htmlFor="pname">あなたの名前（作中で使われます）</label><input id="pname" type="text" value={name} maxLength={12} onChange={e => setName(e.target.value)} />
-              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                {latest && <button className="btn primary" disabled={busy} onClick={async () => { setBusy(true); startAudio(); const slot = latest.slot; if (await c.loadSlot(slot, m.id)) onStart(); setBusy(false); }}>最新のセーブから続ける（{fmtMinSafe(latest.savedAt)}）</button>}
-                <button className={'btn' + (latest ? '' : ' primary')} disabled={busy} onClick={() => { startAudio(); c.newGame(name, m.id); onStart(); }}>最初から（第1章）</button>
-              </div>
-              <p className="small">表示方式は 3D／擬似3D／2D を切り替えられます。画面左下のスティックで歩き、画面のドラッグで視点を動かします。</p>
-            </div></>}
+          {!playable ? <>
+            <p className="item">このモードはまだプレイできません。仕様として保持されており、共通エンジン（ストーリーグラフ・世界状態・セーブ・描画）の上に順次追加していきます。</p>
+            <dl className="kv"><dt>核となるプレイ</dt><dd>{m.core}</dd><dt>経営操作</dt><dd>{m.management ? 'あり（このモードの中で独立）' : 'なし'}</dd>{m.seasons && <><dt>最終計画</dt><dd>{m.seasons}</dd></>}</dl>
+          </> : <>
+            <div className="start-box">
+              {latest
+                ? <button className="btn primary big" disabled={busy} onClick={async () => { setBusy(true); startAudio(); const slot = latest.slot; if (await c.loadSlot(slot, m.id)) onStart(); setBusy(false); }}><b>続きから</b><small>{latest.summary.chapterTitle}／{latest.summary.dayLabel}</small></button>
+                : <button className="btn primary big" disabled={busy} onClick={() => { startAudio(); c.newGame(name, m.id); onStart(); }}><b>はじめる</b><small>第1章から。いつでもセーブできます</small></button>}
+              {latest && <button className="btn" disabled={busy} onClick={() => { startAudio(); c.newGame(name, m.id); onStart(); }}>最初からやり直す</button>}
+            </div>
+            <div className="field"><label htmlFor="pname">あなたの名前（作中で使われます）</label><input id="pname" type="text" value={name} maxLength={12} onChange={e => setName(e.target.value)} /></div>
+            <p className="small hint">操作：スティックで歩く／画面をドラッグで視点を動かす／黄色いボタンで、調べる・話す。</p>
+            {Object.values(slots).some(Boolean) && <details className="fold" open><summary>セーブデータ</summary>
+            <div className="slots">{['auto', '1', '2', '3'].filter(s => slots[s]).map(s => { const f = slots[s]; return <div key={s} className="slot"><div className="meta"><b>{label(s)}</b><span>{f === 'corrupt' ? '破損データ' : f ? `${f.summary.chapterTitle}／${f.summary.dayLabel}／プレイ${Math.round(f.playtimeSec / 60)}分` : '空き'}</span></div><div className="acts"><button className="btn sm primary" disabled={!f || f === 'corrupt' || busy} onClick={async () => { setBusy(true); startAudio(); if (await c.loadSlot(s, m.id)) onStart(); setBusy(false); }}>続きから</button></div></div>; })}</div>
+            </details>}
+            <details className="fold"><summary>このモードについて</summary>
+              <dl className="kv"><dt>核となるプレイ</dt><dd>{m.core}</dd><dt>経営操作</dt><dd>{m.management ? 'あり（このモードの中で独立）' : 'なし'}</dd>{m.seasons && <><dt>最終計画</dt><dd>{m.seasons}</dd></>}{m.playableScope && <><dt>いま遊べる範囲</dt><dd>{m.playableScope}</dd></>}</dl>
+            </details>
+          </>}
         </div>
       </div>
     </div>

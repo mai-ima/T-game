@@ -7,7 +7,7 @@ const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, de
 const page = await ctx.newPage(); const errs = []; page.on('pageerror', e => errs.push(e.message));
 await page.goto(pathToFileURL(resolve('dist/index.html')).href + '?audit'); await page.waitForSelector('.menu');
 await page.screenshot({ path: 'audit/tmp/ip_menu.png', timeout: 120000 });
-await page.tap('button.card.playable'); await page.tap('text=最初から（第1章）'); await page.waitForSelector('.dlg-box');
+await page.tap('button.card.playable'); await page.tap('.start-box button:has-text("はじめる"), .start-box button:has-text("最初からやり直す")'); await page.waitForSelector('.dlg-box');
 await page.screenshot({ path: 'audit/tmp/ip_prologue.png', timeout: 120000 });
 for (let i = 0; i < 60; i++) { const k = await page.evaluate(() => window.__GC.view.kind); if (k === 'hub') break; if (k === 'line') await page.tap('.dlg-box'); else if (k === 'choice') { await page.screenshot({ path: 'audit/tmp/ip_choice.png', timeout: 120000 }); await page.tap('.choice-opt >> nth=0'); } await page.waitForTimeout(80); }
 await page.evaluate(() => window.__GC.setSettings({ clockRunning: false })); await page.waitForTimeout(1500);

@@ -2,7 +2,7 @@
 import { chromium } from 'playwright-core'; import { createServer } from 'vite';
 const mode = process.argv[2] ?? 'good'; const srv = await createServer({ server: { port: 5196 }, logLevel: 'error' }); await srv.listen();
 const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium', args: ['--no-sandbox', '--use-gl=swiftshader'] }); const pg = await b.newPage({ viewport: { width: 800, height: 500 } });
-await pg.goto('http://localhost:5196/?audit'); await pg.click('.card.playable'); await pg.click('text=最初から（第1章）'); await pg.waitForTimeout(2500);
+await pg.goto('http://localhost:5196/?audit'); await pg.click('.card.playable'); await pg.click('.start-box button:has-text("はじめる"), .start-box button:has-text("最初からやり直す")'); await pg.waitForTimeout(2500);
 const r = await pg.evaluate(async mode => {
   const c = window.__GC; c.setSettings({ clockRunning: false }); const trace = []; let guard = 0; let last = '';
   while (guard++ < 6000) {

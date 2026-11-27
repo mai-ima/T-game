@@ -323,7 +323,6 @@ button, a, .dlg-box, .choice-opt { touch-action: manipulation; }
 .tgl button.on { animation: pick .18s var(--ease); } @keyframes pick { 0% { transform: scale(.94); } 100% { transform: scale(1); } }
 .item.ok, .item.ng { animation: judge .3s var(--ease); } @keyframes judge { from { background-color: #fff6c2; } }
 .act .main.nav .arrow { animation: navPulse 1.6s ease-in-out infinite; } @keyframes navPulse { 0%, 100% { transform-origin: 50% 50%; opacity: 1; } 50% { opacity: .55; } }
-.goals { animation: chIn .3s var(--ease) both; }
 @media (hover: none) { .card.playable:hover { transform: none; } .btn:not(:disabled):hover, .tile:hover { box-shadow: none; } }
 .board-strip { white-space: normal; line-height: 1.6; }
 
@@ -332,3 +331,16 @@ button, a, .dlg-box, .choice-opt { touch-action: manipulation; }
 .fb { display: inline-flex; align-items: center; gap: 8px; padding: 5px 12px; background: rgba(12, 18, 28, .92); border: 2px solid #3a414b; color: #fff; font-size: .86em; font-weight: 700; animation: fbIn .3s var(--ease) both, fbOut .4s ease-in 2.4s forwards; }
 .fb i { font-style: normal; } .fb.up { border-left: 6px solid #3fbf7f; } .fb.up i { color: #6fe0a4; } .fb.down { border-left: 6px solid #e0554a; } .fb.down i { color: #ff8b82; }
 @keyframes fbIn { from { opacity: 0; transform: translateY(-8px) scale(.96); } to { opacity: 1; transform: none; } } @keyframes fbOut { to { opacity: 0; transform: translateY(-6px); } }
+
+/* モード詳細：はじめる／続きからを最上段に */
+.start-box { display: grid; gap: 8px; margin: 10px 0 14px; }
+.btn.big { min-height: 64px; display: grid; gap: 2px; text-align: center; font-size: 1.05em; }
+.btn.big b { font-size: 1.15em; letter-spacing: .08em; } .btn.big small { font-weight: 400; opacity: .85; font-size: .78em; }
+.field { display: grid; gap: 6px; margin: 4px 0 8px; } .hint { margin: 0 0 10px; }
+.fold { border-top: 2px solid var(--ink); margin: 10px 0 0; padding: 8px 0 0; } .fold > summary { cursor: pointer; min-height: 40px; display: flex; align-items: center; font-weight: 700; }
+
+/* いまやること：次の1〜2件だけを常に見せる */
+.goals-h { display: flex; justify-content: space-between; align-items: center; gap: 8px; } .goals-h b { font-size: .95em; letter-spacing: .06em; }
+.goals-next { list-style: none; margin: 6px 0 2px; padding: 0; display: grid; gap: 4px; }
+.goals-next li { display: flex; gap: 8px; align-items: flex-start; font-size: .92em; font-weight: 700; line-height: 1.45; } .goals-next .ck { width: 15px; height: 15px; border: 2px solid var(--ink); flex: none; margin-top: 3px; } .goals-next .allok { font-weight: 400; color: #3d4249; }
+.seg.wide { display: flex; width: 100%; } .seg.wide button { flex: 1; min-height: 48px; }

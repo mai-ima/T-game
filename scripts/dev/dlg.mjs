@@ -5,7 +5,7 @@ const browser = await chromium.launch({ executablePath: '/opt/pw-browsers/chromi
 const mobile = process.argv[2] === 'm'; const ctx = await browser.newContext(mobile ? { viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, hasTouch: true, isMobile: true } : { viewport: { width: 1280, height: 800 } });
 const page = await ctx.newPage(); const errs = []; page.on('pageerror', e => errs.push(e.message));
 await page.goto(pathToFileURL(resolve('dist/index.html')).href + '?audit'); await page.waitForSelector('.menu');
-await page.click('button.card.playable'); await page.click('text=最初から（第1章）'); await page.waitForSelector('.dlg-box'); await page.waitForTimeout(2500);
+await page.click('button.card.playable'); await page.click('.start-box button:has-text("はじめる"), .start-box button:has-text("最初からやり直す")'); await page.waitForSelector('.dlg-box'); await page.waitForTimeout(2500);
 await page.screenshot({ path: `audit/tmp/dlg_${mobile ? 'm' : 'd'}_1.png`, timeout: 120000 });
 await page.evaluate(() => { const c = window.__GC; c.advanceLine(); c.advanceLine(); c.advanceLine(); c.advanceLine(); }); await page.waitForTimeout(1500);
 // 3D会話（久保田）

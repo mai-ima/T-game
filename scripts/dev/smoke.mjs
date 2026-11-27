@@ -13,7 +13,7 @@ await page.goto(url); await page.waitForSelector('.menu', { timeout: 15000 });
 await page.screenshot({ path: 'audit/tmp/menu.png' });
 await page.click('button.card.playable'); await page.waitForSelector('.modal');
 await page.screenshot({ path: 'audit/tmp/modal.png' });
-await page.click('text=最初から（第1章）'); await page.waitForSelector('.dlg-box', { timeout: 10000 });
+await page.click('.start-box button:has-text("はじめる"), .start-box button:has-text("最初からやり直す")'); await page.waitForSelector('.dlg-box', { timeout: 10000 });
 await page.waitForTimeout(800); await page.screenshot({ path: 'audit/tmp/prologue.png' });
 console.log(JSON.stringify(logs.slice(0, 20), null, 1));
 await browser.close();
