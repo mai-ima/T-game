@@ -778,6 +778,7 @@ const bestRoute = (grid, must) => { const H = grid.length, W = grid[0].length; l
   return 20; };
 /** 1つの業務（きっかけの会話 → ミニゲーム → 結果の会話 → 記録）を生成して、ハブへ登録する */
 const mini = (o) => {
+  if (o.kind === 'route' && o.config && !o.config.best) o.config.best = bestRoute(o.config.grid, o.config.must ?? []); // 最短を自動計算（0のままだと必ず大きく減点されるため）
   const ch = o.ch ?? 'ch1'; const id = ch + '.' + o.key; const task = id + '_task'; const hub = N[ch + '.hub'];
   line(id + '_1', o.intro.map(t => (typeof t === 'string' ? [o.who, t] : t)), task, { view: v3(o.cam ?? 'follow', o.title) });
   N[task] = { id: task, type: 'task', kind: o.kind, title: o.title, intro: o.hint, config: o.config, results: res3(id + '_good', id + '_mid', id + '_bad', o.ge ?? [ev('accuracy', 3)], o.me ?? [ev('accuracy', 1)], o.be ?? [ev('accuracy', -1)]), view: v3(o.cam ?? 'follow', o.title) };

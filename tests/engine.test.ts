@@ -18,7 +18,7 @@ function rng(seed: number) { let a = seed >>> 0; return () => { a = (a + 0x6d2b7
 function playthrough(seed: number, visitedAll: Set<string>) {
   const r = rng(seed); const w = createWorld(S, 'テスト');
   const run = new StoryRunner(S, w);
-  let v = run.enter(S.chapters[0].start); let guard = 0;
+  let v = run.enter(S.chapters[0].start); let guard = 0; const chDay: Record<string, number> = {};
   const endNodes: string[] = [];
   while (guard++ < 800) {
     if (v.kind === 'line') v = run.next();
@@ -32,11 +32,11 @@ function playthrough(seed: number, visitedAll: Set<string>) {
       else { advanceClock(w, 30 + Math.floor(r() * 60)); v = run.view(); } // 実ゲームでも時刻が進むと画面状態を更新する
     } else if (v.kind === 'end') {
       endNodes.push(v.node.id); run.finishChapter();
-      if (v.node.nextChapter) v = run.startChapter(v.node.nextChapter); else break;
+      if (v.node.nextChapter) { v = run.startChapter(v.node.nextChapter); chDay[w.story.chapter] = w.clock.day; } else break;
     }
   }
   for (const n of w.story.visited) visitedAll.add(n);
-  return { w, endNodes, guard };
+  return { w, endNodes, guard, chDay };
 }
 
 describe('ストーリーデータの静的検査', () => {
@@ -250,3 +250,15 @@ describe('v3.3 追加検査（第17A章：非暴力・時間軸）', () => {
   });
 });
 
+describe('R7 時間軸（第1〜10章の開始日が年表どおり進む）', () => {
+  // 期待する開始日（2027年）。章の開始時刻の年表：入社4/1、勤務初日4/2、…、基地実習12月
+  const EXPECT: Record<string, [string, string]> = { ch2: ['4-3', '4-10'], ch3: ['4-15', '4-25'], ch4: ['4-24', '5-6'], ch5: ['5-7', '5-25'], ch6: ['6-15', '6-30'], ch7: ['8-1', '8-31'], ch8: ['9-1', '9-30'], ch9: ['10-15', '11-30'], ch10: ['12-1', '12-20'] };
+  const md = (day: number) => { const d = new Date(Date.UTC(2027, 3, 1 + day)); return `${d.getUTCMonth() + 1}-${d.getUTCDate()}`; };
+  const key = (m: string) => { const [a, b] = m.split('-').map(Number); return a * 100 + b; };
+  it('どのランダム通しでも、章の開始日は単調増加し、想定の期間に収まる', () => {
+    for (let i = 0; i < 40; i++) {
+      const { chDay } = playthrough(7000 + i, new Set()); let prev = -1;
+      for (const [ch, [lo, hi]] of Object.entries(EXPECT)) { const day = chDay[ch]; if (day === undefined) continue; const m = md(day); expect(key(m), `${ch} は ${m}`).toBeGreaterThanOrEqual(key(lo)); expect(key(m), `${ch} は ${m}`).toBeLessThanOrEqual(key(hi)); expect(day, ch).toBeGreaterThan(prev); prev = day; }
+    }
+  });
+});

@@ -29,13 +29,13 @@ RRR-R7-010 一日の業務拡充（34依頼・6種のミニゲーム）／R7-011
 ## 進行中
 | ID | 範囲 | 受入基準 | 担当 | 状態 |
 |---|---|---|---|---|
-| RRR-R7-006 | R7第3〜10章（永続ルート分岐・長い会話・章ごとに別の構造） | 各章が open→end で連結、到達性・非暴力・経営なし、`npm run check` PASS、通しプレイ（good/risky） | story-architect×4（ch3-4 / ch5-6 / ch7-8 / ch9-10） | in_progress |
+| RRR-R7-006 | R7第3〜10章（scripts/story/ch3〜ch10.mjs、永続ルート・短く面白い会話） | 各章が open→end で連結、到達性・非暴力・経営なし、通し診断（good/risky） | story-architect×4 | completed（画面確認・実機は UNVERIFIED、会話の面白さは人の確認待ち） |
 | RRR-ENGINE-010 / RRR-R8-001 | 複数ストーリー登録とR8第1章「白紙の一頁」（src/data/stories.ts, scripts/build-story-r8.mjs, tests/r8.test.ts） | R8を最後まで通せる／R7とセーブ独立／到達性 | story-architect（worktree）→統合済み | completed（結末2/4の画面確認は未実施、実機UNVERIFIED） |
 
 ## 第2波（ローリング計画）
 | ID | 範囲 | 依存 | 受入基準 | 状態 |
 |---|---|---|---|---|
-| RRR-QA-006 | 時間軸・年齢・勤続の章間整合検査（R7第1〜10章） | R7-006 | 章の日付が単調増加、人物の年齢・役職が矛盾しない | pending |
+| RRR-QA-006 | 時間軸の章間整合検査（R7第1〜10章）tests/engine.test.ts | R7-006 | 章の日付が単調増加し想定期間に収まる | completed（年齢・役職の検査は未実施） |
 | RRR-QA-007 | R7全章のE2E（UI操作・good/risky・ルート別） | R7-006 | 全ルートで第10章まで完走、保存再開 | pending |
 | RRR-DEPOT-001 | 基地Aの2D配線略図と3D最小動作の同期 | ARCH | 入出区・占有が2D/3Dで一致 | pending |
 | RRR-DISP-001 | 2D指令盤（在線・ダイヤ）最小版 | RAIL-001 | 計画/実績ダイヤと列車位置が一致 | pending |

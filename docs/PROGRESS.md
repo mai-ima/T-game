@@ -2,14 +2,14 @@
 
 最終更新：2026-11-23
 
-- 状態：**IN PROGRESS**（R7第1章の縦断は実装済み。総合監査を実行中。全体の1%程度であり、完成ではない）
+- 状態：**IN PROGRESS**（R7第1〜10章とR8第1章は実装済み。総合監査は再実行待ち。全体の1%程度であり、完成ではない）
 - ブランチ：`claude/determined-babbage-4drhs6`（pushは開発ブランチのみ。main直push・force push禁止）
 - ビルド：`npx vite build` OK、`npm run check`（tsc／ESLint／madge／vitest 56件）PASS
 - iPhone実機：UNVERIFIED／実機の音・FPS・発熱：UNVERIFIED／ESLint導入済み（0エラー）
 - Artifact：ユーザー判断により**試作の公開は不要**（DEC-012）。`artifact/index.html` は生成のみ維持。Vercelは使わない
 
 ## 今回までの成果（実装済み）
-14モードメニュー（R7のみプレイ可）／共通エンジン（条件・効果・保存・キャリア）／R7第1章（309ノード、重要選択4、34依頼、6種のミニゲーム、持ち場3分岐、ch2冒頭）／3D駅（GLBモデル、改札・扉・事務室）／3D・擬似3D・2D切替／2Dピクセル会話／BGM・効果音／スマホHUD・目的地ナビ。
+14モードメニュー（R7・R8がプレイ可）／共通エンジン（条件・効果・保存・キャリア）／R7第1〜10章（約1,800ノード。第1章は34依頼・6種のミニゲーム、第3章以降は永続ルート分岐、第7〜10章は希望部署ごとに別の中盤）、R8第1章／3D駅（GLBモデル、改札・扉・事務室）／3D・擬似3D・2D切替／2Dピクセル会話／BGM・効果音／スマホHUD・目的地ナビ。
 
 ## 検出したツール（BOOT-001）
 - 使用可：Read/Write/Edit/Glob/Grep/Bash、TaskCreate/Get/List/Update、Agent（general-purpose, Explore, Plan, claude-code-guide ほか）、Skill（code-review ほか）、Monitor、ScheduleWakeup、Artifact、GitHub MCP、WebSearch。
