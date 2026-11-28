@@ -2,9 +2,11 @@ import * as THREE from 'three';
 import type { CharacterDef } from '../engine/types';
 import { canvasTex } from './materials';
 import { cloneModel } from './assets';
+import { Animator, rigOf } from './animation';
+import type { ActInput } from './animation';
 
 export interface HumanoidLook { uniform: string; hair: string; skin: string; accessory?: string; gender?: string; trousers?: string; height?: number; width?: number; hairStyle?: 'short' | 'long' | 'bun'; staff?: boolean; cap?: boolean }
-export interface Humanoid { group: THREE.Group; walk(phase: number, amount: number): void; setLabel(visible: boolean): void; look: HumanoidLook; label?: THREE.Sprite }
+export interface Humanoid { group: THREE.Group; walk(phase: number, amount: number): void; anim?: Animator; act?(dt: number, inp: ActInput, walkAmount: number): void; setLabel(visible: boolean): void; look: HumanoidLook; label?: THREE.Sprite }
 
 const geoCache = new Map<string, THREE.BufferGeometry>();
 const G = (k: string, f: () => THREE.BufferGeometry) => geoCache.get(k) ?? (geoCache.set(k, f()), geoCache.get(k)!);
@@ -66,7 +68,8 @@ export function createHumanoidFrom(template: THREE.Object3D, look: HumanoidLook,
     label = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex ?? undefined, transparent: true, depthTest: true })); label.scale.set(1.1 / s, 0.28 / s, 1); label.position.y = 2.1; label.renderOrder = 20; g.add(label);
   }
   const base = torso.position.y;
-  return { group: g as THREE.Group, look, label,
+  const anim = new Animator(rigOf(g));
+  return { group: g as THREE.Group, look, label, anim, act: (dt, inp, wa) => anim.update(dt, inp, wa),
     walk(phase, amount) { const a = Math.sin(phase) * 0.62 * amount; legL.rotation.x = a; legR.rotation.x = -a; shinL.rotation.x = Math.max(0, -a) * 0.9 * amount; shinR.rotation.x = Math.max(0, a) * 0.9 * amount; armL.rotation.x = -a * 0.7; armR.rotation.x = a * 0.7; foreL.rotation.x = -0.12 - Math.max(0, a) * 0.5 * amount; foreR.rotation.x = -0.12 - Math.max(0, -a) * 0.5 * amount; torso.position.y = base + Math.abs(Math.sin(phase)) * 0.012 * amount; },
     setLabel(v) { if (label) label.visible = v; } };
 }

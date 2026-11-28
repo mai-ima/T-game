@@ -3,7 +3,11 @@ import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { GTAOPass } from 'three/examples/jsm/postprocessing/GTAOPass.js';
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
+import { BokehPass } from 'three/examples/jsm/postprocessing/BokehPass.js';
+import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
 import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
+import { frameShot, pickShot, handheld } from './cinema';
+import type { ShotKind } from './cinema';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import type { StationData } from './stationBuilder';
 import { D, P, TRACK_Z, RAIL_TOP } from './stationBuilder';
@@ -46,7 +50,9 @@ export class RenderManager {
   private raf = 0; private last = 0; private acc = 0; private walkPhase = 0; private lastStepSign = 1; fps = 60; frameMs = 16; paused = false; time = 0;
   plan: PlanView = { cx: 0, cz: -10, scale: 6 }; planFollow = true; planLevel: 'auto' | 'ground' | 'platform' | 'deck' = 'auto'; ctx2d?: CanvasRenderingContext2D | null;
   clipPlane = new THREE.Plane(new THREE.Vector3(0, -1, 0), 4.6); private pointers = new Map<number, { x: number; y: number }>(); private downInfo: { x: number; y: number; t: number; moved: boolean } | null = null; private pinch = 0;
-  private postBroken = false; private composer: EffectComposer | null = null; private composerCam: THREE.Camera | null = null;
+  /** 会話の演出：話者（'player' か人物ID）・台詞番号・強調。controller が台詞ごとに更新する */
+  dialogue: { speaker: string | null; index: number; emphasis: boolean } = { speaker: null, index: 0, emphasis: false }; private shotKey = ''; private shotKind: ShotKind = 'two'; private focusDist = 3;
+  private bokeh: BokehPass | null = null; private grade: ShaderPass | null = null; private postBroken = false; private composer: EffectComposer | null = null; private composerCam: THREE.Camera | null = null;
   onUpdate?: (info: { t: number }) => void; envTex?: THREE.Texture; daylight = 1; private movedThisFrame = false;
 
   constructor(o: RMOptions) {
@@ -113,15 +119,19 @@ export class RenderManager {
     this.resize();
   }
   /** 高品質のみ：奥行きの陰影（GTAO）と控えめな光のにじみ。重い環境では自動品質が下げる。 */
-  private disposeComposer() { this.composer?.dispose(); this.composer = null; this.composerCam = null; }
+  private disposeComposer() { this.composer?.dispose(); this.composer = null; this.composerCam = null; this.bokeh = null; this.grade = null; }
   private buildComposer(cam: THREE.Camera) {
     const r = this.renderer!; const size = r.getSize(new THREE.Vector2()); const pr = r.getPixelRatio();
     const rt = new THREE.WebGLRenderTarget(size.x * pr, size.y * pr, { type: THREE.HalfFloatType, samples: 4 });
     const c = new EffectComposer(r, rt); c.setPixelRatio(pr); c.setSize(size.x, size.y);
     c.addPass(new RenderPass(this.scene, cam));
-    const ao = new GTAOPass(this.scene, cam, size.x, size.y); ao.output = GTAOPass.OUTPUT.Default; ao.updateGtaoMaterial({ radius: 0.9, distanceExponent: 1.6, thickness: 1.5, scale: 1.7, samples: 12 }); c.addPass(ao);
+    const ao = new GTAOPass(this.scene, cam, size.x, size.y); ao.output = GTAOPass.OUTPUT.Default; ao.updateGtaoMaterial({ radius: 0.4, distanceExponent: 1.3, thickness: 0.8, scale: 1.2, samples: 12 }); c.addPass(ao);
     c.addPass(new UnrealBloomPass(size, 0.18, 0.5, 0.92));
+    // 会話中は、話者にピントを合わせて背景をぼかす（被写界深度）
+    const bk = new BokehPass(this.scene, cam as THREE.PerspectiveCamera, { focus: 3, aperture: 0.00022, maxblur: 0.012 }); bk.enabled = false; c.addPass(bk); this.bokeh = bk;
     c.addPass(new OutputPass());
+    // 仕上げ：ビネット・わずかな色の傾き・フィルムの粒状感（OutputPass のあとで表示色空間に対して適用）
+    const gr = new ShaderPass({ uniforms: { tDiffuse: { value: null }, time: { value: 0 }, grain: { value: 0.035 }, vig: { value: 0.28 } }, vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }', fragmentShader: 'uniform sampler2D tDiffuse; uniform float time; uniform float grain; uniform float vig; varying vec2 vUv; float h(vec2 p){ return fract(sin(dot(p, vec2(12.9898,78.233)) + time) * 43758.5453); } void main(){ vec4 c = texture2D(tDiffuse, vUv); vec2 d = vUv - 0.5; float v = smoothstep(0.85, 0.2, length(d) * (1.0 + vig)); c.rgb *= mix(1.0 - vig, 1.0, v); float l = dot(c.rgb, vec3(0.299,0.587,0.114)); c.rgb += vec3(0.012, 0.0, -0.012) * (l - 0.5); c.rgb += (h(vUv * 1000.0) - 0.5) * grain * (1.0 - l * 0.5); gl_FragColor = c; }' }); c.addPass(gr); this.grade = gr;
     this.composer = c; this.composerCam = cam;
   }
   setViewMode(m: ViewMode) {
@@ -131,6 +141,7 @@ export class RenderManager {
   setCameraMode(m: CamMode) { this.camMode = m; if (m === 'free') this.freeTarget.set(this.sim.player.x, this.sim.player.y + 1.4, this.sim.player.z); if (m === 'follow') { this.yaw = this.sim.player.yaw + Math.PI; } if (m === 'first') { this.fpYaw = this.sim.player.yaw; this.fpPitch = 0; } if (m !== 'preset') this.presetName = null; }
   setPreset(name: string | null) { if (!name) { this.presetName = null; if (this.camMode === 'preset') this.camMode = 'follow'; return; } const p = this.data.presets[name]; if (!p) return; this.presetName = name; this.camMode = 'preset'; this.presetPos.set(...p.pos); this.presetTarget.set(...p.target); this.presetFov = p.fov ?? 55; }
   /** 会話時：指定人物／設備にカメラを向ける */
+  setDialogue(speaker: string | null, index: number, emphasis: boolean) { this.dialogue = { speaker, index, emphasis }; }
   setFocus(id: string | null) {
     this.focusId = id; if (!id) return; const a = this.data.anchors[id]; if (!a) { this.focusId = null; return; }
     const n = this.sim.npcs[id]; const x = n ? n.x : a.x, y = n ? n.y : a.y, z = n ? n.z : a.z; const yaw = n ? n.anchorYaw : a.yaw; const side = new THREE.Vector3(Math.cos(yaw), 0, -Math.sin(yaw));
@@ -260,9 +271,13 @@ export class RenderManager {
 
   private updateEntities(dt: number) {
     if (!this.webgl) return; const p = this.sim.player; this.player.group.position.set(p.x, p.y, p.z); this.player.group.rotation.y = p.yaw; this.player.walk(this.time * 9, p.walking ? 1 : 0); this.player.group.visible = this.camMode !== 'first' || this.viewMode !== '3d';
-    for (const n of Object.values(this.sim.npcs)) { const h = this.humans[n.id]; if (!h) continue; h.group.visible = n.visible; h.group.position.set(n.x, n.y, n.z); h.group.rotation.y = n.yaw; h.walk(this.time * 2, 0); }
+    const talkingNow = this.focusId ? this.dialogue.speaker : null; const eyeP = new THREE.Vector3(p.x, p.y + 1.6, p.z);
+    for (const n of Object.values(this.sim.npcs)) { const h = this.humans[n.id]; if (!h) continue; h.group.visible = n.visible; h.group.position.set(n.x, n.y, n.z); h.group.rotation.y = n.yaw; h.walk(this.time * 2, 0);
+      const near = Math.hypot(p.x - n.x, p.z - n.z) < 4.5 && Math.abs(p.y - n.y) < 2; const inTalk = this.focusId === n.id;
+      if (inTalk) { const want = Math.atan2(p.x - n.x, p.z - n.z); let df = want - n.yaw; while (df > Math.PI) df -= 2 * Math.PI; while (df < -Math.PI) df += 2 * Math.PI; n.yaw += df * Math.min(1, dt * 6); h.group.rotation.y = n.yaw; }
+      h.act?.(dt, { act: inTalk ? (talkingNow === n.id ? 'talk' : 'listen') : 'idle', lookAt: near || inTalk ? eyeP : null, emphasis: this.dialogue.emphasis ? 1 : 0.4 }, 0); }
+    { const fn = this.focusId ? this.sim.npcs[this.focusId] : null; this.player.act?.(dt, { act: this.focusId ? (talkingNow === 'player' ? 'talk' : 'listen') : 'idle', lookAt: fn ? new THREE.Vector3(fn.x, fn.y + 1.6, fn.z) : null, emphasis: 0.4 }, p.walking ? 1 : 0); }
     this.sim.crowd.forEach((c, i) => { const h = this.crowd[i]; if (!h) return; h.group.visible = c.visible && h.group.userData.allowed !== false; h.group.position.set(c.x, c.y, c.z); h.group.rotation.y = c.yaw; h.walk(this.time * 6 + i, c.walking ? 0.8 : 0); });
-    void dt;
   }
   /** 自動改札機の扉：通路付近に人がいる間は開き、通過後に閉じる（プレイヤー・NPC・群衆すべて対象） */
   private updateGates(dt: number) {
@@ -301,7 +316,14 @@ export class RenderManager {
     }
     if (this.camMode === 'follow' && !this.focusId && this.sim.player.walking && this.time - this.lastCamTouch > 1.2) { let df = (this.sim.player.yaw + Math.PI) - this.yaw; while (df > Math.PI) df -= 2 * Math.PI; while (df < -Math.PI) df += 2 * Math.PI; this.yaw += df * Math.min(1, dt * 1.6); }
     const pos = new THREE.Vector3(), tgt = new THREE.Vector3(); let fov = 55;
-    if (this.focusId) { pos.copy(this.focusPos); tgt.copy(this.focusTarget); fov = 42; }
+    if (this.focusId) {
+      const fn = this.sim.npcs[this.focusId]; const key = this.focusId + ':' + this.dialogue.index + ':' + this.dialogue.speaker;
+      if (fn) {
+        if (key !== this.shotKey) { this.shotKey = key; this.shotKind = pickShot(this.dialogue.index, this.dialogue.speaker === 'player', this.dialogue.emphasis); }
+        const npcS = { x: fn.x, y: fn.y, z: fn.z, yaw: fn.yaw }; const pl = { x: p.x, y: p.y, z: p.z, yaw: p.yaw }; const spk = this.dialogue.speaker === 'player' ? pl : npcS; const oth = this.dialogue.speaker === 'player' ? npcS : pl;
+        const sh = frameShot(this.shotKind, spk, oth); const hh = handheld(this.time, this.shotKind === 'close' ? 1 : 0.6); pos.copy(sh.pos); pos.x += hh.dx; pos.y += hh.dy; tgt.copy(sh.target); fov = sh.fov; this.focusDist = sh.focus;
+      } else { pos.copy(this.focusPos); tgt.copy(this.focusTarget); fov = 42; }
+    }
     else if (this.camMode === 'preset') { pos.copy(this.presetPos); tgt.copy(this.presetTarget); fov = this.presetFov; }
     else if (this.camMode === 'first') { pos.set(p.x, p.y + 1.62, p.z); tgt.set(p.x - Math.sin(this.fpYaw + Math.PI) * Math.cos(this.fpPitch), p.y + 1.62 + Math.sin(this.fpPitch), p.z - Math.cos(this.fpYaw + Math.PI) * Math.cos(this.fpPitch)); fov = 70; }
     else { const base = this.camMode === 'free' ? this.freeTarget : new THREE.Vector3(p.x, p.y + 1.45, p.z); tgt.copy(base); let d = this.dist; const inOffice = p.x > 7.2 && p.x < 13.8 && p.z > -11.8 && p.z < -1.2 && p.y > 4; if (inOffice && this.camMode === 'follow') d = Math.min(d, 3.4);
@@ -321,7 +343,9 @@ export class RenderManager {
     }
     const cam = this.activeCam();
     if (QUALITY[this.quality].post && !this.postBroken && this.viewMode === '3d') {
-      try { if (!this.composer || this.composerCam !== cam) { this.disposeComposer(); this.buildComposer(cam); } this.composer!.render(); return; } catch { this.postBroken = true; this.disposeComposer(); }
+      try { if (!this.composer || this.composerCam !== cam) { this.disposeComposer(); this.buildComposer(cam); }
+        if (this.bokeh) { const talk = !!this.focusId && !!this.sim.npcs[this.focusId]; this.bokeh.enabled = talk; if (talk) (this.bokeh.uniforms as Record<string, { value: number }>)['focus'].value = this.focusDist; }
+        if (this.grade) this.grade.uniforms['time'].value = this.time % 10; this.composer!.render(); return; } catch { this.postBroken = true; this.disposeComposer(); }
     }
     this.renderer.render(this.scene, cam);
   }

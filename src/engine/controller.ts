@@ -93,7 +93,7 @@ export class GameController {
   tapLine?: () => void;
   advanceLine() {
     if (!this.view || this.view.kind !== 'line') return; const n = this.view.node; this.audio.ui('page');
-    if (this.lineIndex < n.lines.length - 1) { this.lineIndex++; this.recordLine(); this.notify(); return; }
+    if (this.lineIndex < n.lines.length - 1) { this.lineIndex++; this.recordLine(); this.rm?.setDialogue(n.lines[this.lineIndex].who ?? null, this.lineIndex, false); this.notify(); return; }
     this.view = this.runner.next(); this.afterView(); this.notify();
   }
   private recordLine() { if (this.view?.kind !== 'line') return; const l = this.view.node.lines[this.lineIndex]; this.pushBacklog(l.narration ? '' : this.speakerName(l.who), this.textWorld(l.text)); }
@@ -127,6 +127,7 @@ export class GameController {
   /** 現在のノードに合わせて、注目カメラ・調べる対象マーカーを設定する */
   applyCamera() {
     const v = this.view; const rm = this.rm; if (!v || !rm) return; const hint = 'node' in v ? v.node.view : undefined;
+    const ln = v.kind === 'line' ? v.node.lines[this.lineIndex] : null; rm.setDialogue(ln ? (ln.who ?? null) : null, this.lineIndex, !!v.node && 'important' in v.node && !!(v.node as { important?: boolean }).important);
     if (v.kind === 'hub') { rm.setFocus(null); if (rm.camMode === 'preset') rm.setPreset(null); rm.setMarkers(v.interactions.map(i => ({ object: i.object, label: i.label }))); }
     else { rm.setMarkers([]); const cam = hint?.cam; if (cam?.startsWith('npc:')) rm.setFocus(cam.slice(4)); else { rm.setFocus(null); if (cam && rm.data.presets[cam] && cam !== 'follow') rm.setPreset(cam); } }
   }
