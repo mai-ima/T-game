@@ -58,9 +58,9 @@ describe('ストーリーデータの静的検査', () => {
   });
 });
 
-describe('分岐到達性（ランダム・プレイスルー 600回）', () => {
+describe('分岐到達性（ランダム・プレイスルー 1500回）', () => {
   const visited = new Set<string>(); const flagsSeen = new Set<string>(); const ratings = new Set<string>(); const endIds = new Set<string>(); const ch2variants = new Set<string>();
-  for (let i = 0; i < 600; i++) {
+  for (let i = 0; i < 1500; i++) {
     const { w, endNodes } = playthrough(1000 + i, visited);
     Object.keys(w.flags).forEach(f => flagsSeen.add(f));
     ratings.add(overallRating(w.career).rating);

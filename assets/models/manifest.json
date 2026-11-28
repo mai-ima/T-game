@@ -1,51 +1,52 @@
 {
- "generated": "2026-11-23T05:21:50.639Z",
+ "generated": "2026-11-28T08:39:29.220Z",
  "models": {
   "human": {
    "top": [
     [
-     "HeadParts_Skin",
-     1508
-    ],
-    [
      "TorsoParts_Uniform",
-     1152
+     3424
     ],
     [
-     "HairShortMesh",
-     594
+     "HeadParts_Skin",
+     2192
     ],
     [
      "HairLongTop",
-     594
+     800
+    ],
+    [
+     "HairShortMesh",
+     720
+    ],
+    [
+     "HairBunTop",
+     720
     ],
     [
      "ForearmParts_Skin",
-     420
+     636
     ],
     [
      "ForearmParts_Skin",
-     420
-    ],
-    [
-     "ShinParts_Trousers",
-     408
+     636
     ]
    ],
-   "tris": 12454,
-   "meshes": 53,
+   "tris": 21528,
+   "meshes": 65,
    "materials": [
     "Uniform",
     "Shirt",
     "Brass",
-    "NameTag",
     "Black",
+    "NameTag",
     "Tie",
     "Skin",
     "EyeWhite",
     "Iris",
     "Hair",
     "Lip",
+    "MouthDark",
     "Accessory",
     "Trousers",
     "Shoes",
@@ -57,18 +58,88 @@
     "SuitcaseHandle"
    ],
    "size": [
-    1.013,
-    1.847,
-    0.352
+    0.994,
+    1.756,
+    0.38
    ],
    "center": [
-    0.213,
-    0.889,
-    0.044
+    0.223,
+    0.878,
+    0.03
    ],
-   "named": 78,
-   "glbKB": 122,
-   "rawKB": 496
+   "named": 91,
+   "glbKB": 251,
+   "rawKB": 745
+  },
+  "human_lo": {
+   "top": [
+    [
+     "TorsoParts_Uniform",
+     1656
+    ],
+    [
+     "HeadParts_Skin",
+     1112
+    ],
+    [
+     "TorsoParts_Brass",
+     504
+    ],
+    [
+     "HeadParts_EyeWhite",
+     432
+    ],
+    [
+     "HeadParts_Black",
+     352
+    ],
+    [
+     "ArmParts_Uniform",
+     312
+    ],
+    [
+     "ArmParts_Uniform",
+     312
+    ]
+   ],
+   "tris": 12348,
+   "meshes": 65,
+   "materials": [
+    "Uniform",
+    "Shirt",
+    "Brass",
+    "Black",
+    "NameTag",
+    "Tie",
+    "Skin",
+    "EyeWhite",
+    "Iris",
+    "Hair",
+    "Lip",
+    "MouthDark",
+    "Accessory",
+    "Trousers",
+    "Shoes",
+    "Sole",
+    "BagLeather",
+    "CaneWood",
+    "CaneWood2",
+    "SuitcaseShell",
+    "SuitcaseHandle"
+   ],
+   "size": [
+    0.993,
+    1.756,
+    0.38
+   ],
+   "center": [
+    0.223,
+    0.878,
+    0.03
+   ],
+   "named": 91,
+   "glbKB": 207,
+   "rawKB": 529
   }
  }
 }
