@@ -61,6 +61,7 @@ export function createHumanoidFrom(template: THREE.Object3D, look: HumanoidLook,
   g.traverse(o => { const m = o as THREE.Mesh; if (m.isMesh) { const mat = m.material as THREE.MeshStandardMaterial; const c = col[mat.name]; if (c) mat.color.set(c); } });
   const node = (n: string) => g.getObjectByName(n); const vis = (n: string, v: boolean) => { const o = node(n); if (o) o.visible = v; };
   const hs = look.hairStyle ?? (look.gender === 'f' ? 'long' : 'short'); vis('HairLong', hs === 'long'); vis('HairShort', hs === 'short'); vis('HairBun', hs === 'bun'); vis('Cap', !!look.cap); vis('Glasses', look.accessory === 'glasses'); vis('Bag', look.accessory === 'bag'); vis('Cane', look.accessory === 'cane'); vis('Suitcase', look.accessory === 'suitcase'); vis('TieNode', !!look.staff);
+  for (const m of ['MouthSmile', 'MouthWorry', 'MouthOpen']) vis(m, false); vis('MouthFlat', true); // 表情用の口は通常は平常のみ表示
   const legL = node('LegL')!, legR = node('LegR')!, armL = node('ArmL')!, armR = node('ArmR')!, shinL = node('ShinL')!, shinR = node('ShinR')!, foreL = node('ForearmL')!, foreR = node('ForearmR')!, torso = node('Torso')!;
   let label: THREE.Sprite | undefined;
   if (name) {
