@@ -6,3 +6,6 @@ dist-lab
 coverage/
 .claude/worktrees/
 dist-art/
+audit/models/
+audit/shots/
+audit/run.log
