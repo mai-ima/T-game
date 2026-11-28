@@ -52,7 +52,7 @@ export class RenderManager {
   clipPlane = new THREE.Plane(new THREE.Vector3(0, -1, 0), 4.6); private pointers = new Map<number, { x: number; y: number }>(); private downInfo: { x: number; y: number; t: number; moved: boolean } | null = null; private pinch = 0;
   /** 会話の演出：話者（'player' か人物ID）・台詞番号・強調。controller が台詞ごとに更新する */
   dialogue: { speaker: string | null; index: number; emphasis: boolean } = { speaker: null, index: 0, emphasis: false }; private shotKey = ''; private shotKind: ShotKind = 'two'; private focusDist = 3;
-  private bokeh: BokehPass | null = null; private grade: ShaderPass | null = null; private postBroken = false; private composer: EffectComposer | null = null; private composerCam: THREE.Camera | null = null;
+  private ao: GTAOPass | null = null; private bokeh: BokehPass | null = null; private grade: ShaderPass | null = null; private postBroken = false; private composer: EffectComposer | null = null; private composerCam: THREE.Camera | null = null;
   onUpdate?: (info: { t: number }) => void; envTex?: THREE.Texture; daylight = 1; private movedThisFrame = false;
 
   constructor(o: RMOptions) {
@@ -119,13 +119,13 @@ export class RenderManager {
     this.resize();
   }
   /** 高品質のみ：奥行きの陰影（GTAO）と控えめな光のにじみ。重い環境では自動品質が下げる。 */
-  private disposeComposer() { this.composer?.dispose(); this.composer = null; this.composerCam = null; this.bokeh = null; this.grade = null; }
+  private disposeComposer() { this.composer?.dispose(); this.composer = null; this.composerCam = null; this.bokeh = null; this.grade = null; this.ao = null; }
   private buildComposer(cam: THREE.Camera) {
     const r = this.renderer!; const size = r.getSize(new THREE.Vector2()); const pr = r.getPixelRatio();
     const rt = new THREE.WebGLRenderTarget(size.x * pr, size.y * pr, { type: THREE.HalfFloatType, samples: 4 });
     const c = new EffectComposer(r, rt); c.setPixelRatio(pr); c.setSize(size.x, size.y);
     c.addPass(new RenderPass(this.scene, cam));
-    const ao = new GTAOPass(this.scene, cam, size.x, size.y); ao.output = GTAOPass.OUTPUT.Default; ao.updateGtaoMaterial({ radius: 0.4, distanceExponent: 1.3, thickness: 0.8, scale: 1.2, samples: 12 }); c.addPass(ao);
+    const ao = new GTAOPass(this.scene, cam, size.x, size.y); ao.output = GTAOPass.OUTPUT.Default; ao.updateGtaoMaterial({ radius: 0.4, distanceExponent: 1.3, thickness: 0.8, scale: 1.2, samples: 12 }); c.addPass(ao); this.ao = ao;
     c.addPass(new UnrealBloomPass(size, 0.18, 0.5, 0.92));
     // 会話中は、話者にピントを合わせて背景をぼかす（被写界深度）
     const bk = new BokehPass(this.scene, cam as THREE.PerspectiveCamera, { focus: 3, aperture: 0.00022, maxblur: 0.012 }); bk.enabled = false; c.addPass(bk); this.bokeh = bk;
@@ -344,7 +344,7 @@ export class RenderManager {
     const cam = this.activeCam();
     if (QUALITY[this.quality].post && !this.postBroken && this.viewMode === '3d') {
       try { if (!this.composer || this.composerCam !== cam) { this.disposeComposer(); this.buildComposer(cam); }
-        if (this.bokeh) { const talk = !!this.focusId && !!this.sim.npcs[this.focusId]; this.bokeh.enabled = talk; if (talk) (this.bokeh.uniforms as Record<string, { value: number }>)['focus'].value = this.focusDist; }
+        if (this.bokeh) { const talk = !!this.focusId && !!this.sim.npcs[this.focusId]; this.bokeh.enabled = talk; if (this.ao) this.ao.enabled = !talk; if (talk) (this.bokeh.uniforms as Record<string, { value: number }>)['focus'].value = this.focusDist; }
         if (this.grade) this.grade.uniforms['time'].value = this.time % 10; this.composer!.render(); return; } catch { this.postBroken = true; this.disposeComposer(); }
     }
     this.renderer.render(this.scene, cam);
