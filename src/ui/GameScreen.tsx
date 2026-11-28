@@ -2,7 +2,7 @@ import { useEffect, useReducer, useRef, useState } from 'react';
 import type { GameController } from '../engine/controller';
 import { RenderManager } from '../render/renderManager';
 import { loadAssets } from '../render/assets';
-import { Joystick, Portrait, Stage25D, useTypewriter } from './parts';
+import { Joystick, Portrait, Stage25D, useTypewriter, todOf, setTalking } from './parts';
 import { ChecklistTask, ComposeTask, RosterTask, TerminalTask } from './Tasks';
 import { TimingTask, FindTask, WatchTask, RouteTask, SortTask, MemoryTask } from './Minigames';
 import { DocsTask, GradeTask } from './DocTasks';
@@ -131,7 +131,7 @@ function HubControls({ c }: { c: GameController }) {
 
 function StageView({ c }: { c: GameController }) {
   const v = c.view!; if (v.kind === 'hub') return null; const h = v.node.view!; const line = v.kind === 'line' ? v.node.lines[c.lineIndex] : null;
-  return <Stage25D bg={h.bg ?? 'office'} cast={h.focus ?? []} speaker={line?.who ?? (v.kind === 'choice' ? v.node.who : undefined)} characters={c.story.characters} caption={h.caption} mood={line?.mood} />;
+  return <Stage25D bg={h.bg ?? 'office'} cast={h.focus ?? []} speaker={line?.who ?? (v.kind === 'choice' ? v.node.who : undefined)} characters={c.story.characters} caption={h.caption} mood={line?.mood} tod={todOf(c.world.clock.minute)} cinema={v.kind === 'choice' && !!v.node.important} sceneKey={v.node.id.split('.').slice(0, 2).join('.')} />;
 }
 
 function DialogueBox({ c }: { c: GameController }) {
@@ -139,6 +139,7 @@ function DialogueBox({ c }: { c: GameController }) {
   const tw = useTypewriter(text, c.settings.textSpeed, (ln?.id ?? '') + ':' + c.lineIndex); const [log, setLog] = useState(false);
   const lastLen = useRef(0); useEffect(() => { const n = tw.shown.length; if (l && n > lastLen.current && n % 3 === 0 && /\S/.test(tw.shown[n - 1] ?? '')) c.audio.blip(c.voiceOf(l.who), l.narration ? 'narration' : 'voice'); lastLen.current = n; }, [tw.shown]); // eslint-disable-line
   useEffect(() => { lastLen.current = 0; }, [ln?.id, c.lineIndex]);
+  useEffect(() => { setTalking(!!l && !l.narration && !tw.done); return () => setTalking(false); }, [l, tw.done]);
   const click = () => { if (!tw.done) tw.skip(); else c.advanceLine(); };
   useEffect(() => { c.tapLine = click; return () => { if (c.tapLine === click) c.tapLine = undefined; }; }); // キー操作もタップと同じ動作にする
   if (v?.kind !== 'line' || !l) return null; const last = c.lineIndex === v.node.lines.length - 1;

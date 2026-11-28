@@ -347,3 +347,26 @@ button, a, .dlg-box, .choice-opt { touch-action: manipulation; }
 
 /* 後効き：過去の選択が、いまの場面を変えたことを見せる */
 .fb.echo { border-left: 6px solid #f2c500; background: rgba(40, 30, 6, .94); animation: fbIn .3s var(--ease) both, fbOut .5s ease-in 4.1s forwards; } .fb.echo i { color: #ffd35a; }
+
+/* ===== 2D場面の演出：時間帯の色味・ビネット・ほこり・立ち絵の呼吸 ===== */
+.s25 { position: relative; overflow: hidden; }
+.s25 .pxbg { animation: pushIn 14s ease-out both; transform-origin: 50% 60%; }
+@keyframes pushIn { from { transform: scale(1); } to { transform: scale(1.06); } }
+.s25 .tint, .s25 .vig, .s25 .dust, .s25 .bars { position: absolute; inset: 0; pointer-events: none; }
+.s25 .tint { mix-blend-mode: multiply; transition: background 1.2s var(--ease, ease); }
+.s25.tod-dawn .tint { background: linear-gradient(#ffd9c4cc, #f6e7d8aa); }
+.s25.tod-day .tint { background: transparent; }
+.s25.tod-dusk .tint { background: linear-gradient(#ffb070dd, #d98a6ccc); }
+.s25.tod-night .tint { background: linear-gradient(#27345ecc, #1a2240e6); }
+.s25 .vig { background: radial-gradient(ellipse at 50% 45%, transparent 55%, #0008 100%); }
+.s25 .dust i { position: absolute; top: -4%; width: 3px; height: 3px; border-radius: 50%; background: #fff7; animation: dustFall linear infinite; }
+.s25.tod-night .dust i { background: #9bb4ff66; }
+@keyframes dustFall { from { transform: translate(0, 0); opacity: 0; } 10% { opacity: .8; } to { transform: translate(24px, 110vh); opacity: 0; } }
+.s25 .bars { background: #000; height: 0; transition: height .6s var(--ease, ease); inset: auto; left: 0; right: 0; z-index: 3; }
+.s25 .bars.top { top: 0; } .s25 .bars.bot { bottom: 0; }
+.s25.cinema .bars { height: 7%; }
+.s25 .cast .who { animation: whoIn .45s var(--ease, ease) both; }
+@keyframes whoIn { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+.pxp.alive { animation: breathe 4.2s ease-in-out infinite; transform-origin: 50% 100%; }
+@keyframes breathe { 0%, 100% { transform: scaleY(1); } 50% { transform: scaleY(1.012) translateY(-1px); } }
+@media (prefers-reduced-motion: reduce) { .s25 .pxbg, .s25 .dust i, .pxp.alive, .s25 .cast .who { animation: none; } }

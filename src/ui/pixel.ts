@@ -31,7 +31,7 @@ export function pixelPortrait(d: CharacterDef, mood: string): string {
   const P = new Px(PW, PH); const st = STYLE[d.id] ?? { hair: d.gender === 'f' ? 'bob' : 'short' } as { hair: Hair; eye?: string }; const female = d.gender === 'f', child = st.hair === 'child', old = d.age >= 65;
   const staff = d.dept === 'station' || d.dept === 'dispatch' || d.dept === 'hr' || d.id === 'player';
   const sk = d.skin, skL = shade(sk, 0.22), skD = shade(sk, -0.18), skDD = shade(sk, -0.34); const hr = d.hair, hrL = shade(hr, 0.3), hrD = shade(hr, -0.35); const un = d.uniform, unL = shade(un, 0.2), unD = shade(un, -0.32);
-  const INK = '#1a1410'; const eyeC = st.eye ?? '#2a1d16'; const happy = mood === 'smile', worry = mood === 'worry', serious = mood === 'serious', surprise = mood === 'surprise';
+  const INK = '#1a1410'; const eyeC = st.eye ?? '#2a1d16'; const parts = mood.split('~'); const base = parts[0]; const blink = parts.includes('b'), talk = parts.includes('m'); const happy = base === 'smile', worry = base === 'worry', serious = base === 'serious', surprise = base === 'surprise';
   const cx = 32, fy = child ? 33 : 30, frx = child ? 13 : 14, fry = child ? 14 : 17;
   // 髪（後ろ）
   if (st.hair === 'bob') { P.rect(14, 14, 36, 42, hr); P.rect(14, 56, 36, 1, hrD); }
@@ -55,6 +55,7 @@ export function pixelPortrait(d: CharacterDef, mood: string): string {
   if (old) { P.rect(cx - 10, fy - 9, 7, 1, skDD); P.rect(cx + 3, fy - 9, 7, 1, skDD); P.px(cx - 6, fy + 10, skDD); P.px(cx + 6, fy + 10, skDD); }
   // 目・眉・鼻・口
   const ey = fy - 1; const eye = (x: number, f: number) => {
+    if (blink && !happy) { P.rect(x - 3, ey + 1, 7, 1, INK); P.px(x - 3, ey, INK); P.px(x + 3, ey, INK); return; } // まばたき（閉じた目）
     if (happy) { P.px(x - 3, ey + 1, INK); P.px(x - 2, ey, INK); P.px(x - 1, ey - 1, INK); P.px(x, ey - 1, INK); P.px(x + 1, ey - 1, INK); P.px(x + 2, ey, INK); P.px(x + 3, ey + 1, INK); return; }
     const hgt = surprise ? 6 : serious ? 3 : 4; P.rect(x - 3, ey - 2, 7, hgt, '#fbfaf6'); P.rect(x - 1 + f, ey - 1, 3, surprise ? 4 : 3, eyeC); P.px(x + f, ey - 1, '#000'); P.px(x - 1 + f, ey - 1, '#fff'); P.rect(x - 3, ey - 3, 7, 1, INK); if (female) { P.px(x - 4 * f * -1, ey - 3, INK); P.px(x + 4 * f * -1 + (f > 0 ? 0 : 0), ey - 3, INK); } P.rect(x - 3, ey + hgt - 2, 7, 1, skD);
   };
@@ -63,7 +64,8 @@ export function pixelPortrait(d: CharacterDef, mood: string): string {
   brow(cx - 7, 1); brow(cx + 7, -1);
   P.px(cx, fy + 4, skD); P.px(cx, fy + 5, skDD); P.px(cx + 1, fy + 5, skDD);
   const my = fy + 10; const lip = '#8a3a34';
-  if (happy) { P.rect(cx - 3, my, 7, 1, lip); P.rect(cx - 2, my + 1, 5, 2, '#5a1f1c'); P.rect(cx - 2, my + 1, 5, 1, '#fff'); P.px(cx - 4, my - 1, lip); P.px(cx + 4, my - 1, lip); }
+  if (talk && !happy && !surprise) { P.rect(cx - 2, my, 5, 1, lip); P.rect(cx - 2, my + 1, 5, 2, '#5a1f1c'); P.rect(cx - 1, my + 3, 3, 1, lip); } // 話している口
+  else if (happy) { P.rect(cx - 3, my, 7, 1, lip); P.rect(cx - 2, my + 1, 5, 2, '#5a1f1c'); P.rect(cx - 2, my + 1, 5, 1, '#fff'); P.px(cx - 4, my - 1, lip); P.px(cx + 4, my - 1, lip); }
   else if (surprise) { P.rect(cx - 1, my, 3, 3, '#5a1f1c'); P.rect(cx - 2, my + 1, 1, 1, lip); P.rect(cx + 2, my + 1, 1, 1, lip); P.rect(cx - 1, my - 1, 3, 1, lip); P.rect(cx - 1, my + 3, 3, 1, lip); }
   else if (worry) { P.rect(cx - 2, my + 1, 5, 1, lip); P.px(cx - 3, my + 2, lip); P.px(cx + 3, my + 2, lip); P.px(cx + 12, ey - 4, '#9fd0ee'); P.px(cx + 12, ey - 3, '#9fd0ee'); P.px(cx + 12, ey - 2, '#5aa6cc'); }
   else if (serious) P.rect(cx - 3, my + 1, 7, 1, lip); else { P.rect(cx - 2, my + 1, 5, 1, lip); P.px(cx - 3, my, lip); P.px(cx + 3, my, lip); }
