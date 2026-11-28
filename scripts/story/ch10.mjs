@@ -6,7 +6,7 @@
 export default function ch10(k) {
   const { N, characters, line, choice, branch, fx, opt, set, rel, ev, sk, tr, tl, log, F, ANY, ALL, hm, v25, res3 } = k;
 
-  characters.sawada ??= { id: 'sawada', name: '沢田 良平', kana: 'さわだ りょうへい', role: '車両基地 検修技術員', dept: 'depot', age: 31, years: 9, uniform: '#2f4f6a', hair: '#2a2a2a', skin: '#e8c29c', trait: '丁寧で手が早い。説明は短く、図で見せる。', bio: '橘検修長の下で九年。見習いの質問には、一度考えさせてから答える。', gender: 'm', accessory: 'none' };
+  characters.sawada_r ??= { id: 'sawada_r', name: '沢田 良平', kana: 'さわだ りょうへい', role: '車両基地 検修技術員', dept: 'depot', age: 31, years: 9, uniform: '#2f4f6a', hair: '#2a2a2a', skin: '#e8c29c', trait: '丁寧で手が早い。説明は短く、図で見せる。', bio: '橘検修長の下で九年。見習いの質問には、一度考えさせてから答える。', gender: 'm', accessory: 'none' };
   characters.minase ??= { id: 'minase', name: '水無瀬 美咲', kana: 'みなせ みさき', role: '輸送指令員', dept: 'dispatch', age: 34, years: 12, uniform: '#2a3d52', hair: '#2b2118', skin: '#f0cfae', trait: '落ち着いた声。復唱を欠かさない。', bio: '浜口と同じ指令所の当番員。新人の電話記録を丁寧に読む。', gender: 'f', accessory: 'glasses' };
   characters.toda ??= { id: 'toda', name: '戸田 玲子', kana: 'とだ れいこ', role: '本社 輸送計画課 課長補佐', dept: 'planning', age: 42, years: 19, uniform: '#3a4a5e', hair: '#2a2024', skin: '#f0cfae', trait: '数字を見て、人の事情も見る。会議では最後まで聞く。', bio: 'ダイヤ案の取りまとめ役。現場の声を資料に落とす仕事を大事にしている。', gender: 'f', accessory: 'glasses' };
   characters.kuroda ??= { id: 'kuroda', name: '黒田 拓海', kana: 'くろだ たくみ', role: '輸送計画課 係員', dept: 'planning', age: 27, years: 4, uniform: '#3a4a5e', hair: '#1c1c28', skin: '#efc9a6', trait: '資料の体裁にうるさい。教えるのは早口。', bio: '入社四年目。数字の置き方に、いつも一言ある。', gender: 'm', accessory: 'none' };
@@ -27,100 +27,186 @@ export default function ch10(k) {
     line(id + '_b', [[who, texts[2], 'serious']], nxt, { view });
   };
 
-  // ============ 共通の導入：人事の事前メモ（過去の選択を一言で突く）============
+  // ============ 共通の導入：出発前の駅を歩く（3Dハブ）。人の口から、半年が語られる ============
+  const RL = (char, key, op, val) => ({ rel: { char, key, op, val } });
+  const chain = (pre, next, items, view) => items.forEach(([cond, lines], i) => { const nx = i + 1 < items.length ? pre + (i + 1) : next; branch(pre + i, [[cond, pre + i + 'y']], nx); line(pre + i + 'y', lines, nx, { view }); });
+  const v3 = k.v3, hub = k.hub, T = k.T, time = k.time;
   line('ch10.open', [
-    '人事課の控室。石油ストーブが、チッ、と鳴った。机に、封筒が一通。',
-    ['morishita', '12月7日。今日から三日間は「研修」扱いです。九時から十七時。残業はつけません。'],
-    ['morishita', '体調が悪ければ、研修中でも言ってください。言える人が、一番長持ちします。'],
-    ['morishita', '実習先には、評価メモを渡してあります。何が書いてあるか、先に。']
-  ], 'ch10.m1', { effects: [day(33), at(7, 50), set('ch10.started'), tl('12月7日 三日間の実習が始まる'), log('第10章 基地実習へ', 'chapter')], view: HR(['morishita'], '12月7日（火） 7:50 本社 人事課') });
-  const MV = HR(['morishita'], '事前メモ');
-  branch('ch10.m1', [[F('ch3.honest'), 'ch10.m1h'], [F('ch3.pushed'), 'ch10.m1p']], 'ch10.m2');
-  line('ch10.m1h', [['morishita', '五月、体調不良を自分で申告。「自己管理ができる」。今回も、同じ姿勢で。']], 'ch10.m2', { view: MV });
-  line('ch10.m1p', [['morishita', '五月、無理をして勤務。後半に「休む判断を学んだ」と添えてあります。今回は、自分で線を。']], 'ch10.m2', { view: MV });
-  branch('ch10.m2', [[F('ch4.secret_kept'), 'ch10.m2s'], [F('ch4.trust_built'), 'ch10.m2t']], 'ch10.m3');
-  line('ch10.m2s', [['morishita', '同期の事情を守った件。守秘はできる人、と。一人で抱える癖も、同じ欄に。']], 'ch10.m3', { view: MV });
-  line('ch10.m2t', [['morishita', '同期と弱さを言い合えた件。初対面ばかりの実習で、効く力です。']], 'ch10.m3', { view: MV });
-  branch('ch10.m3', [[F('ch5.late_report'), 'ch10.m3l']], 'ch10.m3b');
-  line('ch10.m3l', [['morishita', '七月の遅れた報告。その後、第一報が早くなったと、付記されています。']], 'ch10.m3b', { view: MV });
-  branch('ch10.m3b', [[F('ch5.root_found'), 'ch10.m3r']], 'ch10.m4');
-  line('ch10.m3r', [['morishita', '原因を人でなく、場所と手順に求めた件。高く評価されています。']], 'ch10.m4', { view: MV });
-  branch('ch10.m4', [[F('ch2.idea_selfpost'), 'ch10.m4s'], [F('ch2.proposal_sent'), 'ch10.m4p'], [F('ch2.idea_consult'), 'ch10.m4c'], [F('ch2.idea_skip'), 'ch10.m4k']], 'ch10.m5');
-  line('ch10.m4s', [['morishita', '四月の掲示の件。気づきを持ち込むときは、まず相談から。']], 'ch10.m5', { view: MV });
-  line('ch10.m4p', [['morishita', '四月の提案書は、実習先にも共有済みです。書く場面で、効きます。']], 'ch10.m5', { view: MV });
-  line('ch10.m4c', [['morishita', '四月は、気づきを先に相談した、と。順番を守る人は、現場で信用されます。']], 'ch10.m5', { view: MV });
-  line('ch10.m4k', [['morishita', '四月は、気づきを見送った、と。三日間は、小さくても、口に出す練習を。']], 'ch10.m5', { view: MV });
-  branch('ch10.m5', [[ANY(F('legacy.rule_break'), F('legacy.concealed')), 'ch10.m5x']], 'ch10.m6');
-  line('ch10.m5x', [['morishita', '過去の指摘も伝わっています。向き合い方を選んだ日のことも、同じ紙に。この三日間は、その続きです。', 'smile']], 'ch10.m6', { view: MV });
-  branch('ch10.m6', [[ANY(F('ch9.rec_kubota'), F('ch9.rec_sawada'), F('ch9.rec_minase')), 'ch10.m6a'], [ANY(F('ch9.rec_shiraishi'), F('ch9.rec_tachibana'), F('ch9.rec_hamaguchi'), F('ch9.rec_toda')), 'ch10.m6b'], [F('ch9.rec_yamashina'), 'ch10.m6c']], 'ch10.route');
-  line('ch10.m6a', [['morishita', '推薦書は、毎日を見ていた人が書きました。場面が具体的で、先方が待っています。']], 'ch10.route', { view: MV });
-  line('ch10.m6b', [['morishita', '推薦書は、責任ある立場の方が。重い言葉は、期待と同じ重さです。']], 'ch10.route', { view: MV });
-  line('ch10.m6c', [['morishita', '推薦書は同期の方が。別枠ですが、先方は、人柄の欄を一番楽しみにしています。']], 'ch10.route', { view: MV });
-  rbranch('ch10.route', 'ch10.in_');
+    '12月7日、朝。青嶺中央駅のホームに、冬の光が低く差している。吐く息が、白い。',
+    ['morishita', '（電話）今日から三日間は「研修」扱いです。九時から十七時。残業はつけません。体調が悪ければ、研修中でも言ってください。'],
+    ['morishita', '出発の前に、駅で、挨拶を。…実習先には、書類より先に、人の言葉が届きます。']
+  ], 'ch10.hub', { effects: [day(33), at(7, 20), set('ch10.started'), tl('12月7日 三日間の実習が始まる'), log('第10章 基地実習へ', 'chapter')], view: v3('platform', '12月7日（火） 7:20 青嶺中央駅') });
+  hub('ch10', {
+    title: '青嶺中央駅 出発前（12月7日・朝）',
+    hint: '出発まで、四十分。顔なじみに会って、持っていくものを受け取ります。白石駅長からは、必ず。',
+    timed: [{ id: 'go', at: hm(8, 10), goto: 'ch10.route' }],
+    goals: [{ id: 'g_env', label: '白石駅長から、封筒を受け取る', when: F('ch10.env_done') }],
+    exit: { label: '実習先へ出発する', requires: ALL(F('ch10.started'), F('ch10.env_done'), k.T('>=', hm(7, 50))), goto: 'ch10.route' }
+  });
+  const HB = N['ch10.hub']; const HR0 = F('ch10.started'); const SV0 = (w, c) => v25('office', w, c);
+  HB.interactions.push({ id: 'shira', object: 'shiraishi', label: '白石駅長から、封筒を受け取る', goto: 'ch10.sh_1', requires: HR0, once: true, icon: '✉' });
+  HB.interactions.push({ id: 'kubota', object: 'kubota', label: '久保田に声をかける', goto: 'ch10.kb_0', requires: HR0, once: true, icon: '🍙' });
+  HB.interactions.push({ id: 'yama', object: 'yamashina', label: '山科に会う', goto: 'ch10.ym_0', requires: HR0, once: true, icon: '🥫' });
+  HB.interactions.push({ id: 'kaji', object: 'kajiwara', label: '梶原さんに会う', goto: 'ch10.kj_0', requires: HR0, once: true, icon: '👵' });
+  HB.interactions.push({ id: 'tsutsui', object: 'gate_wide', label: '改札の外で、警備の筒井さんが手を振っている', goto: 'ch10.tt_1', requires: ALL(HR0, ANY(F('ch7.inc_plaza'), F('ch7.inc_stairs'), F('ch7.hesitated'), F('ch7.guard_stairs'), F('ch7.guard_plaza'))), once: true, icon: '🦺' });
+  HB.interactions.push({ id: 'mizuki', object: 'emergency_btn', label: 'ホームの端に、車掌の水城さんがいる', goto: 'ch10.mz_1', requires: ALL(HR0, ANY(F('ch7.mizuki_helped'), F('ch7.mizuki_covered'), F('ch7.mizuki_frozen'), F('ch7.miz_confided'), F('ch7.crew_announce'))), once: true, icon: '🚃' });
+  HB.interactions.push({ id: 'hinata', object: 'hinata', label: '改札の外で、小さな団扇が揺れている', goto: 'ch10.hn_1', requires: ALL(HR0, F('ch7.hinata_seed')), once: true, icon: '🎐' });
+  fx('ch10.hb_back', [time(10)], 'ch10.hub');
+  const CV = (w, c) => v25('office', w, c);
+  line('ch10.sh_1', [
+    ['shiraishi', '実習先への封筒だ。…中身は、私が書いた。読むのは先方だ。'],
+    ['shiraishi', '推薦書も、入っている。誰に頼んだか、先方は、見ている。']
+  ], 'ch10.sh_r0', { view: CV(['shiraishi'], '7:35 駅事務室') });
+  chain('ch10.sh_r', 'ch10.sh_e', [
+    [F('ch9.rec_kubota'), [['shiraishi', '久保田の推薦書は、七割が褒め言葉で、三割が直す話だった。…三割が、一番、長かった。']]],
+    [F('ch9.rec_shiraishi'), [['shiraishi', '私の推薦書は、昨日の夜に、書いた。…君にも、読ませる約束だったな。']]],
+    [F('ch9.rec_yamashina'), [['shiraishi', '山科の推薦書は、字が汚くて、読むのに十分かかった。…盛ってはいなかった。']]],
+    [F('ch9.rec_tachibana'), [['shiraishi', '橘から、推薦書が来た。便箋、一枚。「事実だけ書く」と、冒頭に。']]],
+    [F('ch9.rec_sawada_r'), [['shiraishi', '基地の沢田から、場面ごとの推薦書が来た。「記録票の一日」が、一番、長い。']]],
+    [F('ch9.rec_hamaguchi'), [['shiraishi', '浜口さんの推薦書は、「確定した事だけ」。三行だった。']]],
+    [F('ch9.rec_minase'), [['shiraishi', '水無瀬さんの推薦書は、復唱の記録が、並んでいた。数字で、語らせる人だ。']]],
+    [F('ch9.rec_toda'), [['shiraishi', '戸田さんの推薦書の一行目は、君の数字だった。…月曜に、自分で探してきたやつだ。']]],
+    [F('ch9.rate_high'), [['shiraishi', '評価は「期待を上回る」。…期待は、褒め言葉ではなく、宿題だ。']]],
+    [F('ch9.rate_mid'), [['shiraishi', '評価は「期待どおり」。…どおり、は、案外、難しい。']]],
+    [F('ch9.iv_argue'), [['shiraishi', '面談で、事情を話したそうだな。…事情は、記録に残った。聞き入れられたかは、別の話だ。']]],
+    [F('ch9.iv_accept'), [['shiraishi', '言い訳をしなかったそうだな。…金曜の振り返りは、まだ続けているか。']]],
+    [F('ch9.iv_fix'), [['shiraishi', '手順書を、自分で書いたそうだな。…土曜が潰れた分、今日は、早く寝ろ。']]],
+    [F('ch7.shiraishi_story'), [['shiraishi', '夏に話した去年のこと。…今も、毎朝、一人で、声を出している。']]],
+    [F('ch7.shiraishi_closed'), [['shiraishi', '去年の話は、まだ、しない。…君が、実習から戻ったら、聞け。']]],
+    [F('ch7.hama_invite'), [['shiraishi', '浜口さんから、伝言だ。「指令室の椅子は、まだ空いている」と。']]]
+  ], CV(['shiraishi'], '7:38 駅事務室'));
+  branch('ch10.sh_e', [[F('ch9.rate_low'), 'ch10.sh_low'], [F('ch9.polished'), 'ch10.sh_pol'], [F('ch9.weekend_gone'), 'ch10.sh_wk'], [F('ch9.weekly_report'), 'ch10.sh_wr']], 'ch10.sh_rel');
+  line('ch10.sh_low', [['shiraishi', '評価は「要育成」だった。…終点ではない。実習は、挽回の場にもなる。']], 'ch10.sh_rel', { view: CV(['shiraishi']) });
+  line('ch10.sh_pol', [['shiraishi', '自己評価の最後の一行。あれは、私も、気づいていた。…消さなくていい。次に、書かなければいい。']], 'ch10.sh_rel', { view: CV(['shiraishi']) });
+  line('ch10.sh_wk', [['shiraishi', '先週の土曜、手順書を書いていたな。…読んだ。「誰に、いつ、何を言う」。使える。']], 'ch10.sh_rel', { view: CV(['shiraishi']) });
+  line('ch10.sh_wr', [['shiraishi', '金曜の振り返り、四回分、受け取っている。…続けているのは、君だけだ。']], 'ch10.sh_rel', { view: CV(['shiraishi']) });
+  branch('ch10.sh_rel', [[RL('shiraishi', 'trust', '>=', 5), 'ch10.sh_rel_y']], 'ch10.sh_g');
+  line('ch10.sh_rel_y', [['shiraishi', '…夏の話の続きをしよう。去年の階段で、手が先に出て、声が出なかった。あれから、私は、声を出す練習を、毎朝している。'], ['shiraishi', '君に、先に、見せておく。…ホームの端で、一人で。']], 'ch10.sh_g', { view: CV(['shiraishi']) });
+  branch('ch10.sh_g', [[F('ch9.guess_right'), 'ch10.sh_g1']], 'ch10.sh_end');
+  line('ch10.sh_g1', [['shiraishi', '匿名の声の主を、当てたそうだな。…見ている人を見る目は、駅員の目だ。']], 'ch10.sh_end', { view: CV(['shiraishi']) });
+  fx('ch10.sh_end', [set('ch10.env_done'), time(10)], 'ch10.hub');
+  // 久保田：半年の話は、人の口で
+  chain('ch10.kb', 'ch10.kb_x', [
+    [F('ch3.honest'), [['kubota', '五月、体調を自分から申告した日。…あれ以来、私も、言うようになりました。']]],
+    [F('ch3.pushed'), [['kubota', '五月、無理して出た日の顔、覚えてます。…今日は、顔色、いいですね。']]],
+    [F('ch5.late_report'), [['kubota', '七月の第一報の件。あれから、早くなりました。…遅れた十一分は、私も、一緒に、待ちました。']]],
+    [F('ch5.root_found'), [['kubota', '原因を、置き場所に求めた件。他の駅の人にも、話してるんです。…あなたの名前は、出してませんけど。']]],
+    [F('ch2.idea_selfpost'), [['kubota', '四月の絵、今も、券売機の横に、複写して貼ってあります。…許可つきで。']]],
+    [F('ch2.proposal_sent'), [['kubota', '四月の提案書、本社の人が、研修資料に、使ってるそうです。']]],
+    [F('ch9.peer_open'), [['kubota', '評価の日に話したこと、覚えてますか。…あれは、私の本音でした。']]],
+    [F('ch8.vow_note'), [['kubota', '「声にならない合図」のメモ、朝礼で、毎週、読んでます。']]],
+    [F('ch9.iv_silent'), [['kubota', '面談で、黙った、と聞きました。…黙った日の話を、聞かせてください。帰ってきたら。']]]
+  ], CV(['kubota'], '7:45 コンコース'));
+  line('ch10.kb_0', [['kubota', '腕章、持ちました？ 預かる側の人は、借りる側の顔を、覚えますから。', 'smile']], 'ch10.kb0', { view: CV(['kubota'], '7:45 コンコース') });
+  branch('ch10.kb_x', [[RL('kubota', 'trust', '>=', 6), 'ch10.kb_xy']], 'ch10.hb_back');
+  line('ch10.kb_xy', [['kubota', '…正直に言います。あなたが異動を希望したら、私は、寂しいです。でも、背中は、押します。']], 'ch10.hb_back', { view: CV(['kubota']) });
+  // 山科
+  line('ch10.ym_0', [['yamashina', '腹は、治った。…お前は？', 'smile']], 'ch10.ym0', { view: CV(['yamashina'], '7:50 ホーム') });
+  chain('ch10.ym', 'ch10.hb_back', [
+    [F('ch8.route_done_station'), [['yamashina', '九月の見学、ホームから見てた。子どもに囲まれて、顔が、赤かった。', 'smile']]],
+    [F('ch9.yama_real'), [['yamashina', '「手順書に一行足した奴」。…あれ、実は、面談で、そのまま書かれてた。ありがとな。']]],
+    [F('ch9.yama_soothe'), [['yamashina', '「悪いことは書かれてない」って、言ったな。…書かれてた。ちょっとだけ。…でも、怒ってない。']]],
+    [F('ch9.yama_silent'), [['yamashina', '缶コーヒー、あの日、開けなかった。…今日、開ける。']]],
+    [F('ch9.weekend_gone'), [['yamashina', 'お前、土曜、いなかったな。手順書か。…俺のぶんも、書いてくれ。']]],
+    [F('ch5.slot_player'), [['yamashina', '同じ実習を狙ってた。…落ちても、お前なら、いいと思ってた。']]]
+  ], CV(['yamashina'], '7:52 ホーム'));
+  // 梶原さん：帽子
+  line('ch10.kj_0', [['kajiwara', 'あら、実習の日ね。寒いから、首、巻いてらっしゃい。']], 'ch10.kj0', { view: CV(['kajiwara'], '7:55 コンコース') });
+  chain('ch10.kj', 'ch10.hb_back', [
+    [F('ch9.hat_sent'), [['kajiwara', '野村さんから、はがきが来たの。「帽子、届いた」って、それだけ。…それだけで、十分でしょう。', 'smile']]],
+    [F('ch9.hat_pending'), [['kajiwara', 'あの帽子、まだ、あなたの手元ね。…冬になると、頭が、寒くなるのよ。（笑って）']]],
+    [{ gone: 'nomura' }, [['kajiwara', '水曜のベンチが、広く見えるの。…あなたのせいじゃ、ないのよ。そう言うのも、変だけど。', 'worry']]],
+    [F('ch9.nomura_gift'), [['kajiwara', '野村さん、あの柿、あなたが食べるって聞いて、嬉しそうだったわ。']]],
+    [F('ch8.nomura_gone'), [['kajiwara', '野村さんの通院、別の駅で、続いているそうよ。…「いいよ」の癖は、そのまま。']]]
+  ], CV(['kajiwara'], '7:56 コンコース'));
+  // 筒井・水城・ひなた：夏の客演が、冬の駅に戻る
+  chain('ch10.tt', 'ch10.hb_back', [
+    [F('ch7.inc_plaza'), [['tsutsui', '警備会社に、遊軍の増員を出した。膝は、診断書で通った。…広場の端は、来年、二人で持つ。']]],
+    [F('ch7.hesitated'), [['tsutsui', '夏の夜、止めるのか流すのか、決まらなかったな。…怒っちゃいない。次は、早く言え。']]],
+    [ANY(F('ch7.guard_stairs'), F('ch7.guard_plaza')), [['tsutsui', '置き場を決めてくれたのは、君だった。…手を横に振る合図、年末の初詣でも、使う。']]]
+  ], CV(['tsutsui'], '7:58 駅前'));
+  line('ch10.tt_1', [['tsutsui', '朝から、冷えるな。…実習か。気をつけろ。']], 'ch10.tt0', { view: CV(['tsutsui'], '7:58 駅前') });
+  chain('ch10.mz', 'ch10.hb_back', [
+    [F('ch7.mizuki_helped'), [['mizuki', '夏のベルの夜、ありがとう。…あれから、ベルが鳴る前に、息を、一つ吸う癖が、つきました。', 'smile']]],
+    [F('ch7.mizuki_frozen'), [['mizuki', '夏のこと、もう、大丈夫です。…ただ、次は、先に、声をかけてくれると、嬉しい。']]],
+    [F('ch7.miz_confided'), [['mizuki', '夏の夜に話したこと、誰にも、言ってませんよね。…信じています。']]],
+    [F('ch7.crew_announce'), [['mizuki', '「後ろが空いています」。あの一文、乗務員の間で、標準になりました。']]]
+  ], CV(['mizuki'], '8:00 ホーム'));
+  line('ch10.mz_1', [['mizuki', 'おはようございます。…今日は、乗る側ですか。']], 'ch10.mz0', { view: CV(['mizuki'], '8:00 ホーム') });
+  line('ch10.hn_1', [
+    '改札の外。小さな手が、団扇を振っている。母親の隣で、女の子が、封筒を差し出した。',
+    ['hinata', 'えきいんさん！ おてがみ！ …じつしゅう、がんばって！', 'smile']
+  ], 'ch10.hn_r0', { view: CV(['hinata'], '8:02 改札の外') });
+  chain('ch10.hn_r', 'ch10.hb_back', [
+    [F('ch8.uchiwa_back'), [['hinata', 'このうちわ、まいにち、もってる。…えきいんさんが、みつけてくれたから。']]],
+    [F('ch8.hi_ask'), [['hinata', 'おかあさんに、おべんとうの、ありがとう、いえたよ！']]],
+    [F('ch8.school_invite'), [['hinata', 'せんせいが、らいねんも、くるって！ やくそくだよ！']]],
+    [F('ch8.tour_cut'), [['hinata', 'うんてんだい、みられなかったけど、いいよ。…らいねん、ぜんぶ、みせてね。']]],
+    [F('ch8.hi_silent'), [['hinata', '…あのとき、きけなかったこと、おてがみに、かいたの。よんでね。']]]
+  ], CV(['hinata'], '8:03 改札の外'));
+  branch('ch10.route', [[F('ch6.wish_depot'), 'ch10.in_depot'], [F('ch6.wish_dispatch'), 'ch10.in_dispatch'], [F('ch6.wish_planning'), 'ch10.in_planning']], 'ch10.in_station');
 
-  // ============ 共通：異動可否の判定（career の要件を会話で示す）============
-  const JD = {
-    station: ['上級駅務、助役候補の道の目安です。在籍十八か月以上。現在八か月。あと十か月。', 'service', 'teamwork', 58, 56],
-    depot: ['検修の要件は、在籍十二か月、駅務基礎、車両基地入門、安全五十八・正確さ五十六。現在八か月。あと四か月。', 'safety', 'accuracy', 58, 56],
-    dispatch: ['指令補助の目安は、在籍二十四か月、駅務基礎、運転整理の基礎研修。現在八か月。あと十六か月です。', 'reporting', 'safety', 60, 58],
-    planning: ['輸送計画の要件は、在籍二十四か月、駅務基礎、報連相六十・正確さ五十八。現在八か月。あと十六か月。', 'reporting', 'accuracy', 60, 58]
+  // ============ 実習の終わり：指導者が、口で伝える（数字の読み上げではなく、会話）============
+  const JDL = {
+    station: ['hoshino', '要件の話を、数字では、しません。…助役の道は、あと一年は、遠い。ただ、三日間の動きは、遠くに見えなかった。'],
+    depot: ['tachibana', '今日、基地へ入れるかと聞かれたら、まだだ、と答える。…ただ、お前の手は、もう、半分、基地の手だ。'],
+    dispatch: ['hamaguchi', '指令の席は、今は、遠い。枠も、少ない。…ただ、扉の外の椅子は、お前のために、空けておく。'],
+    planning: ['toda', '企画の席は、まだ、先です。承認の壁は、数字だけでは、越えられません。…ただ、資料の音は、もう、聞こえています。']
   };
-  const JV = HR(['morishita'], '15:50 人事課 面談（オンライン）');
-  line('ch10.jd_open', [['morishita', '三日間、お疲れさまでした。最後に、異動の「可否」を。数字で、正直に。']], 'ch10.jd_route', { effects: [at(15, 50)], view: JV });
+  for (const r of ROUTES) line('ch10.jd_' + r, [JDL[r], ['morishita', '（電話）三日間、お疲れさまでした。この先を、選んでください。選んだ道は、取り消せません。']], 'ch10.jx_' + r + '0', { view: v25(r === 'depot' ? 'depot' : 'office', [JDL[r][0]], '15:50 ' + r) });
+  line('ch10.jd_open', ['実習の最後の面談。指導者が、湯呑みを置いた。'], 'ch10.jd_route', { view: HR(['morishita'], '15:50 面談') });
   rbranch('ch10.jd_route', 'ch10.jd_');
-  for (const r of ROUTES) line('ch10.jd_' + r, [['morishita', JD[r][0]], ['morishita', '在籍だけは、今日どれだけ頑張っても動きません。「足りない」でなく「これから積む」です。']], 'ch10.jd_cert', { view: JV });
-  branch('ch10.jd_cert', [[{ cert: 'station_basic' }, 'ch10.jd_cert_y']], 'ch10.jd_cert_n');
-  line('ch10.jd_cert_y', [['morishita', '駅務基礎の修了は、確認できています。ここは満たしています。']], 'ch10.jd_ev_route', { view: JV });
-  line('ch10.jd_cert_n', [['morishita', '駅務基礎の修了は、まだ記録にありません。次の定期研修で受けられるよう、調整します。']], 'ch10.jd_ev_route', { view: JV });
-  rbranch('ch10.jd_ev_route', 'ch10.jd_ev_');
-  for (const r of ROUTES) branch('ch10.jd_ev_' + r, [[ALL(E(JD[r][1], '>=', JD[r][3]), E(JD[r][2], '>=', JD[r][4])), 'ch10.jd_ev_y']], 'ch10.jd_ev_n');
-  line('ch10.jd_ev_y', [['morishita', '評価の要件は、今の水準で満たしています。時間さえ経てば、条件の一つは、もう用意できている。', 'smile']], 'ch10.jd_sum_route', { view: JV });
-  line('ch10.jd_ev_n', [['morishita', '評価の要件には、あと少し届きません。数字は、日々の積み重ねで動きます。']], 'ch10.jd_sum_route', { view: JV });
-  rbranch('ch10.jd_sum_route', 'ch10.jd_sum_');
-  const JS = {
-    station: '判定は「要件未達」。ただ、希望は記録に残ります。条件が揃う来年の秋以降に、再判定です。',
-    depot: '判定は「要件未達」。ただ、車両基地入門の研修は、この三日間を含めて記録できます。',
-    dispatch: '判定は「要件未達」。指令補助は枠が少ない道です。早めに、研修計画を一緒に。',
-    planning: '判定は「要件未達」。企画は枠が少ない。評価の数字を、丁寧に積みましょう。'
+  const JX = {
+    station: [['hoshino', [[F('ch10.st_zone_task_ok'), '壁の位置は、全問、分かっていた。'], [F('ch10.st_sort_task_ok'), '窓口の振り分けは、迷いがなかった。'], [F('ch10.st_watch_task_ok'), 'ホームの見守りは、十人とも届いた。'], [F('ch10.st_route_task_ok'), '案内所を飛ばさない道を、引けた。'], [F('ch10.st_care'), '倒れた人の手を、握っていたのが、記憶に残っています。'], [F('ch10.cost_st_hand'), 'ボタンを最初に押した。…倒れた人の隣に、誰も残らなかったのは、見ていました。'], [F('ch10.cost_st_button'), '人を動かした。…手を握れなかった分、倒れた人は、一瞬、一人でした。'], [F('ch10.cost_st_call'), '手を握った。…ボタンが数十秒遅れたのは、訓練でも、数えます。'], [F('ch10.st_silent'), '最初の五秒、動けなかった。…その五秒を、忘れないでください。']]]],
+    depot: [['tachibana', [[F('ch10.dp_tool_task_ok'), '工具の員数は、一本も、狂わなかった。'], [F('ch10.dp_record'), '手帳は、後輩に見せろ。…記録の癖は、財産だ。'], [F('ch8.tachi_hat_promise'), '野村の帽子の件は、降りる前に、間に合わせる。お前も、手紙を添えろ。'], [F('ch8.tachi_told_nomura'), '野村には、もう言った。お前の前で。…あいつは、笑った。'], [F('ch7.tachi_asked'), '夏に「眼鏡は」と聞いたのは、お前だけだった。…車に、置いてきたのではない。胸のポケットだ。'], [F('ch7.tachi_covered'), '夏、照明の向きを直したな。…あの日から、お前の前でだけ、針を読ませた。'], [F('ch7.tachi_quiet'), '夏、何も聞かずに、読んでくれた。…今日も、そうだった。'], [F('ch10.cost_dp_glasses'), '午後、眼鏡の話をしていた時、お前は、手帳を見ていたな。…聞かれたくない話ではなかった。'], [F('ch10.cost_dp_notes'), '質問で手が止まって、手帳が半分で終わった。…半分でも、質問の分だけ、基地は前に進む。'], [F('ch10.cost_dp_hands'), '資格の順番は聞いたが、沢田の手を、見ていなかったな。…手は、順番より、先に覚える。'], [F('ch10.dp_silent'), '線の外で、立っていたな。…見るのも、仕事のうちだ。次は、書け。']]]],
+    dispatch: [['hamaguchi', [[F('ch10.ds_zone_task_ok'), '扉の外から見る意味を、分かっていた。'], [F('ch10.ds_route_task_ok'), '迂回の案は、現場に、そのまま出せた。'], [F('ch10.ds_action'), '「ホームで待機を」と足した一報は、駅で、一番、読まれていた。'], [F('ch7.hama_invite'), '夏に言った椅子は、本当に、空けてある。'], [F('ch10.cost_ds_action'), '次の時刻は書いた。…行動の一行がなくて、駅は、待つしかなかった。'], [F('ch10.cost_ds_time'), '確定と見込みを分けた。…次の時刻がなくて、駅の問いは、残った。'], [F('ch10.cost_ds_split'), '行動は足せた。…確定と見込みが混ざった一報は、指令では、一番、危ない。'], [F('ch10.ds_silent'), '一報に、何も足さなかったな。…足さない一報は、足りない形で、読まれる。']]]],
+    planning: [['toda', [[F('ch10.pl_zone_task_ok'), '承認の壁は、正しく読めていました。'], [F('ch10.pl_mem_task_ok'), '議事の順番と数字は、一つも、ずれていません。'], [F('ch10.pl_listen'), '聞くのに徹した人の議事録は、一番、正確でした。'], [F('ch10.cost_pl_voice'), '現場の声は、議事録の隅に、小さく書かれました。…根拠が、一行あれば、真ん中に書けたのに。'], [F('ch10.cost_pl_data'), '数字は通りました。…現場の「ぎりぎり」は、誰も、書きませんでした。'], [F('ch10.cost_pl_data2'), '聞くのに徹して、発言の時間は、過ぎました。…黙っている間も、運転課は、見ています。'], [F('ch10.pl_silent'), '沈黙は、議事録に、四秒、書かれました。']]]]
   };
-  for (const r of ROUTES) line('ch10.jd_sum_' + r, [['morishita', JS[r]], ['morishita', 'あなたの価値の評価ではありません。時間と資格と研修の「順番」の話です。']], 'ch10.fin_' + r, { view: JV });
+  for (const r of ROUTES) { const [who, items] = JX[r][0]; chain('ch10.jx_' + r, 'ch10.fin_' + r, items.map(([c, t]) => [c, [[who, t]]]), v25(r === 'depot' ? 'depot' : 'office', [who], '15:55 ' + r)); }
 
-  // ============ 章末の重要選択（ルートで名前と意味が変わる）============
+
+  // ============ 章末の重要選択：結果が、実際に違う ============
   const FIN = {
-    station: { q: '三日間を終えて。これからの道は？', stay: '青嶺中央駅に戻り、学んだ手順を持ち帰って駅務を深める', trans: '他駅で、助役候補の道へ。海浜口駅への異動を正式に希望する' },
-    depot: { q: '三日間を終えて。これからの道は？', stay: '駅に戻り、基地の「記録と確認」を持ち帰って駅務を深める', trans: '基地で働きたい。車両基地への異動を正式に希望する' },
-    dispatch: { q: '三日間を終えて。これからの道は？', stay: '駅に戻り、指令の「確定と見込み」を持ち帰って駅務を深める', trans: '指令の仕事へ。指令補助への異動希望を正式に出す' },
-    planning: { q: '三日間を終えて。これからの道は？', stay: '駅に戻り、資料と会議の学びを現場に持ち帰る', trans: '企画の仕事へ。輸送計画課への異動を正式に希望する' }
+    station: { stay: '青嶺中央駅に戻り、学んだ手順を持ち帰って、駅務を深める（今年の異動申請の窓は、閉じる）', trans: '他駅で、助役候補の道へ。海浜口駅への異動を、正式に希望する（久保田との日々は、離れる）' },
+    depot: { stay: '駅に戻り、基地の「記録と確認」を持ち帰る。橘の見送りは、駅から', trans: '基地で働きたい。異動を希望し、橘の最後の月を、基地で過ごす（駅の仲間とは、離れる）' },
+    dispatch: { stay: '駅に戻り、指令の「確定と見込み」を持ち帰る（扉の外の椅子は、閉じる）', trans: '指令補助への異動を希望する。枠のない席の、順番待ちに、名前を置く' },
+    planning: { stay: '駅に戻り、資料と会議の学びを、現場へ持ち帰る（企画の席は、今年は、閉じる）', trans: '輸送計画課への異動を希望する。駅の朝礼から、離れる' }
   };
-  const APPLY = { station: { dept: 'station', note: '海浜口駅での上級駅務（助役候補）への異動希望' }, depot: { dept: 'depot', note: '青浜総合車両センター 検修への異動希望' }, planning: { dept: 'planning', note: '本社 輸送計画課への異動希望' } };
-  for (const r of ROUTES) {
-    line('ch10.fin_' + r, [['morishita', '最後に、あなたの気持ちを。どちらも、間違いではありません。「深める」も「踏み出す」も、同じ重さです。']], 'ch10.fc_' + r, { view: HR(['morishita'], '16:10 人事課 面談') });
-    choice('ch10.fc_' + r, FIN[r].q, [
-      opt('stay', FIN[r].stay, 'ch10.sc_' + r + '_stay', { tone: 'careful', effects: [set('ch10.stay'), ev('teamwork', 1), ...(r === 'depot' ? [set('ch10.back_to_station')] : [])] }),
-      opt('transfer', FIN[r].trans, 'ch10.sc_' + r + '_tr', { tone: 'risky', effects: [set('ch10.transfer'), set('ch10.transfer_to_' + r), ...(APPLY[r] ? [{ apply: APPLY[r] }] : []), ...(r === 'depot' ? [set('ch10.apply_depot')] : [])] })
-    ], { important: true, who: 'morishita', view: HR(['morishita'], '16:10 章末の選択') });
-  }
-  const SC = {
+  const APPLY = { station: { dept: 'station', note: '海浜口駅での上級駅務（助役候補）への異動希望' }, depot: { dept: 'depot', note: '青浜総合車両センター 検修への異動希望' }, dispatch: { dept: 'dispatch', note: '輸送指令（指令補助）への異動希望' }, planning: { dept: 'planning', note: '輸送計画課への異動希望' } };
+  // 四つの段で、選んだ道が別の景色になる（beats: 4つ）
+  const ARM = {
     station: {
-      stay: [['morishita', '深める、ですね。星野助役にも伝えます。手順を持ち帰る人は、駅の宝です。', 'smile'], ['player', '他駅の形を、そのまま持ち込まず、うちの駅の形に直します。'], ['morishita', '来月から、月一回、他駅の運用を学ぶ日を作りましょう。']],
-      tr: [['morishita', '海浜口駅への希望、受け付けます。判定は「要件未達」で保留。希望は、記録に残ります。', 'serious'], ['player', '今すぐでなくていいです。条件が揃うまで、今の駅で、やる事をやります。']]
+      stay: [[['hoshino', '深める、ですね。…持ち帰る、というのは、重い仕事です。他駅の形を、そのまま持ち込まないこと。']], [['player', '海浜口の「運転に関わるか」の表を、うちの駅の形に直して、試します。']], [['hoshino', '来月、ここの若手が、青嶺中央へ、見学に行く。受け入れるのは、君だ。']], ['海浜口駅の窓は、今年は、閉じた。代わりに、駅の仕事が、一つ、名前つきで、手元に残った。']],
+      tr: [[['hoshino', '希望は、受け付けます。ただ、助役の枠は、年に一つ。…待つ間、ここで、非常勤の見習いを、続けますか。']], [['player', 'はい。休日に、通います。']], [['kubota', '（電話）…聞きました。朝礼の一分は、空けておきます。席は、そのままに。']], ['青嶺中央駅の朝礼で、挨拶をする日が、決まった。「これが、最後の朝礼です」と、言う日だ。']]
     },
     depot: {
-      stay: [['morishita', '深める、ですね。橘さんにも伝えます。基地は「駅を知る人」を欲しがっています。', 'smile'], ['player', '基地の「三回読む」を、駅に持ち帰ります。駅にも同じ手順があるはずなので。']],
-      tr: [['morishita', '車両基地への希望、受け付けます。判定は「要件未達」で保留。この三日間は、研修として記録します。', 'serious'], ['player', '四月まで、駅務基礎と評価を、一つずつ積みます。']]
+      stay: [[['tachibana', '駅に戻る、か。…それも、一つの道だ。基地は、駅を知る人間を、欲しがっている。']], [['player', '橘さんの見送りは、駅から、させてください。']], [['tachibana', '…年内で、降りる。この三日間が、検修長としての、最後の見習い指導だった。']], ['橘は、胸ポケットから、老眼鏡のケースを出して、机に置いた。「預かれ。…使え、とは言わん」。']],
+      tr: [[['tachibana', '基地に来る、か。…資格は、まだ遠いぞ。だが、俺の最後の弟子の枠は、一つ、残してある。']], [['player', '読ませてください。札も、記録票も。']], [['tachibana', '…読んでくれ。（札を、差し出す）老眼鏡は、もう、要らん。お前の目が、ある。']], ['橘は、頭を下げる代わりに、帽子を、深くかぶった。駅の仲間と離れる冬が、始まる。']]
     },
     dispatch: {
-      stay: [['morishita', '深める、ですね。浜口さんにも伝えます。指令は「駅の事情を知る人」を頼りにしています。', 'smile'], ['player', '「確定と見込み」を、駅の放送と引継ぎで、そのまま使います。']],
-      tr: [['morishita', '指令補助への希望、受け付けます。ただ、正式な異動先の枠に、まだ登録がありません。希望のメモとして保管します。', 'serious'], ['player', '枠がなくても、残してもらえるのは助かります。研修計画を、一緒に。']]
+      stay: [[['hamaguchi', '駅に戻る、か。…指令は、駅の事情を知る人間を、頼りにしている。']], [['player', '「確定と見込み」を、駅の放送と、引継ぎで、使います。']], [['minase', '扉の外の椅子は、片づけます。…でも、聞き返す声は、もう、持っていってください。']], ['白線の手前に、置かれていた椅子が、廊下の隅に、畳まれた。来年の秋まで、その席は、閉じる。']],
+      tr: [[['hamaguchi', '希望は、受け付ける。枠がない。…順番待ちの紙に、名前を書け。']], [['player', '書きます。…何年でも。']], [['minase', '待つ間、毎週、扉の外で、聞く練習を。…来られますか。']], ['廊下の椅子は、そのまま。名前を書いた紙は、冬の机の端で、少し、丸まった。']]
     },
     planning: {
-      stay: [['morishita', '深める、ですね。戸田さんにも伝えます。計画は「現場の肌感覚を持つ人」を欲しがっています。', 'smile'], ['player', '資料の端の注記を、駅の日報にも広げます。数字に顔をつける練習です。']],
-      tr: [['morishita', '輸送計画課への希望、受け付けます。判定は「要件未達」で保留。三日間の資料は、保管します。', 'serious'], ['player', '練習資料を毎月一本、書きます。戸田さんに、読んでもらえるでしょうか。']]
+      stay: [[['toda', '駅に戻る、か。…計画は、現場の肌感覚を持つ人を、欲しがります。']], [['player', '資料の端の注記を、駅の日報にも、広げます。']], [['kuroda', '僕の矛盾探し、毎月、送ります。…添削、お願いします。']], ['企画の席は、今年は、閉じた。代わりに、朝礼の隅に、数字を一つ置く役が、できた。']],
+      tr: [[['toda', '希望は、受け付けます。ただ、決裁は、遅い。…待つ間、資料を、毎月一本、書いて。']], [['player', '書きます。駅の音のする資料を。']], [['kuroda', '僕が、最初の読者です。…厳しいですよ。']], ['朝礼の隅から、数字を一つ置く役が、いなくなる。空いた席に、誰かが座る気配が、した。']]
     }
   };
   for (const r of ROUTES) {
-    line('ch10.sc_' + r + '_stay', SC[r].stay, 'ch10.cl_' + r, { effects: [tl('12月9日 学びを持ち帰り、今の持ち場を深める道を選ぶ')], view: HR(['morishita'], '16:30 人事課 面談') });
-    line('ch10.sc_' + r + '_tr', SC[r].tr, 'ch10.cl_' + r, { effects: [tl('12月9日 実習先への異動を、正式に希望として記録する')], view: HR(['morishita'], '16:30 人事課 面談') });
+    line('ch10.fin_' + r, [['morishita', '選ぶ前に、一つだけ。深めれば、窓が一つ閉じる。踏み出せば、慣れた人と、離れる。…どちらにも、失うものが、あります。']], 'ch10.fc_' + r, { view: HR(['morishita'], '16:10 人事課 面談') });
+    const O = (key, goto, extra) => opt(key, FIN[r][key === 'stay' ? 'stay' : 'trans'], goto, extra);
+    choice('ch10.fc_' + r, '三日間を終えて。これからの道は？', [
+      O('stay', 'ch10.fa_' + r + '_s0', { tone: 'careful', effects: [set('ch10.stay'), ev('teamwork', 1), { lock: { id: 'ch10.transfer_path', note: '今年の異動申請の窓は、閉じた' } }, ...(r === 'depot' ? [set('ch10.back_to_station')] : [])] }),
+      O('trans', 'ch10.fa_' + r + '_t0', { tone: 'risky', effects: [set('ch10.transfer'), set('ch10.transfer_to_' + r), { apply: APPLY[r] }, { lock: { id: 'ch10.stay_deepen', note: '「持ち帰る」課題は、受け取らなかった' } }, ...(r === 'depot' ? [set('ch10.apply_depot')] : [])] })
+    ], { important: true, who: 'morishita', view: HR(['morishita'], '16:10 章末の選択') });
+    for (const key of ['stay', 'tr']) {
+      const sfx = key === 'stay' ? 's' : 't';
+      ARM[r][key].forEach((b, i) => {
+        const id = `ch10.fa_${r}_${sfx}${i}`; const nx = i < 3 ? `ch10.fa_${r}_${sfx}${i + 1}` : 'ch10.cl_' + r;
+        const fxs = i === 3 ? (r === 'depot' ? [{ depart: { char: 'tachibana', note: key === 'stay' ? '橘検修長は、年内で基地を降りた。老眼鏡のケースを、残して' : '橘検修長は、年内で基地を降りる。最後の弟子に、札を託して' } }, set('ch10.tachi_left_' + (key === 'stay' ? 'stay' : 'tr'))] : []) : [];
+        line(id, b, nx, { effects: fxs, view: HR(['morishita'], '16:' + (20 + i * 3) + ' ' + r) });
+      });
+    }
   }
 
   // ============ 閉幕（ルート別。選んだ道を読む。腕章の返却のあと）============
@@ -133,7 +219,7 @@ export default function ch10(k) {
   };
   for (const r of ROUTES) {
     const [id, bg, cap] = CLV[r];
-    branch('ch10.cl_' + r, [[F('ch10.transfer'), 'ch10.cl_' + r + '_t']], 'ch10.cl_' + r + '_s');
+    branch('ch10.cl_' + r, r === 'depot' ? [[ALL(F('ch10.apply_depot'), F('ch10.transfer_to_depot'), F('ch10.tachi_left_tr')), 'ch10.cl_depot_t'], [ALL(F('ch10.back_to_station'), F('ch10.tachi_left_stay')), 'ch10.cl_depot_s']] : [[ALL(F('ch10.transfer'), F('ch10.transfer_to_' + r)), 'ch10.cl_' + r + '_t'], [F('ch10.stay'), 'ch10.cl_' + r + '_s']], 'ch10.cl_' + r + '_s');
     line('ch10.cl_' + r + '_s', CLX[r].s, 'ch10.end', { effects: [at(17, 0)], view: v25(bg, [id], '12月9日 17:00 ' + cap) });
     line('ch10.cl_' + r + '_t', CLX[r].t, 'ch10.end', { effects: [at(17, 0)], view: v25(bg, [id], '12月9日 17:00 ' + cap) });
   }
@@ -150,14 +236,14 @@ export default function ch10(k) {
     ['tachibana', '来たな。この三日間、お前は見習いだ。これを付けろ。'],
     '黄色い腕章。白い糸で「見習・監督下」。布のくせに、やけに重い。',
     ['yamashina', '…重いな、これ。布なのに。', 'worry']
-  ], 'ch10.dp_plan', { effects: [at(9, 0), set('ch10.route_depot')], view: DV(['tachibana', 'sawada', 'yamashina'], '12月7日（火） 9:00 青浜総合車両センター') });
+  ], 'ch10.dp_plan', { effects: [at(9, 0)], view: DV(['tachibana', 'sawada_r', 'yamashina'], '12月7日（火） 9:00 青浜総合車両センター') });
   branch('ch10.dp_plan', [[F('ch6.plan_cert'), 'ch10.dp_pc'], [F('ch6.plan_ojt'), 'ch10.dp_po']], 'ch10.dp_wall');
   line('ch10.dp_pc', [['tachibana', '資格を先に取る計画だったな。いい。ただ、座学で床下の匂いは分からん。']], 'ch10.dp_wall', { view: DV(['tachibana'], '9:20') });
   line('ch10.dp_po', [['tachibana', '現場で覚える計画か。基地の現場は、資格者の隣でしか成立せん。']], 'ch10.dp_wall', { view: DV(['tachibana'], '9:20') });
   line('ch10.dp_wall', [
     '黒板に、赤線が一本。左は「見習い・監督下」。右は「有資格者のみ」。',
     ['tachibana', '赤線の右は触るな。触りたくなったら、俺を見ろ。止めてやる。']
-  ], 'ch10.dp_zone_task', { view: DV(['sawada', 'tachibana'], '9:40 検修庫 詰所') });
+  ], 'ch10.dp_zone_task', { view: DV(['sawada_r', 'tachibana'], '9:40 検修庫 詰所') });
   mk('ch10.dp_zone_task', 'checklist', '作業区分の確認（見習いの壁）', '見習いにできる作業か、有資格者だけの作業かを判定します。', {
     config: { labels: checklistLabels }, items: [
       { id: 'a', label: '検査済みの点検記録票を、先輩の確認を受けながら読み上げて照合する', truth: 'ok', why: '記録の確認は、見習いの基本業務です。' },
@@ -166,10 +252,10 @@ export default function ch10(k) {
       { id: 'd', label: '留置線で、編成を動かす入換の合図を、自分の判断で出す', truth: 'ng', why: '入換は、資格者の合図と運転がそろって成り立ちます。' },
       { id: 'e', label: '検修庫の通路を巡回し、油漏れや置き忘れを見つけて報告する', truth: 'ok', why: '見回りと報告は、見習いにも期待される仕事です。' }
     ]
-  }, 'sawada', ['全問正解です。壁の位置が分かれば、三日間は安全です。', '数問ずれました。赤線の右では、必ず止まってください。', '壁を軽く見ていませんか。壁は、あなたを守っています。'], [[ev('safety', 3)], [ev('safety', 1)], [ev('safety', -2)]], 'ch10.dp_rec_intro', DV(['sawada'], '10:00 検修庫'));
+  }, 'sawada_r', ['全問正解です。壁の位置が分かれば、三日間は安全です。', '数問ずれました。赤線の右では、必ず止まってください。', '壁を軽く見ていませんか。壁は、あなたを守っています。'], [[ev('safety', 3)], [ev('safety', 1)], [ev('safety', -2)]], 'ch10.dp_rec_intro', DV(['sawada_r'], '10:00 検修庫'));
   line('ch10.dp_rec_intro', [
-    ['sawada', '記録票は、次の作業者への手紙です。誤字は、次の人の命綱のほつれです。']
-  ], 'ch10.dp_rec_task', { view: DV(['sawada'], '10:20') });
+    ['sawada_r', '記録票は、次の作業者への手紙です。誤字は、次の人の命綱のほつれです。']
+  ], 'ch10.dp_rec_task', { view: DV(['sawada_r'], '10:20') });
   mk('ch10.dp_rec_task', 'checklist', '点検記録票の確認', '各項目が、記録として正しいか、不備があるかを判定します。', {
     config: { labels: ['記載は正しい', '不備がある'] }, items: [
       { id: 'a', label: '検査日と次回検査期限が、規程の間隔に合っている', truth: 'ok', why: '間隔が合っていれば、記載として正しいです。' },
@@ -178,27 +264,27 @@ export default function ch10(k) {
       { id: 'd', label: '部品交換の欄に、交換日と担当者の名前がそろっている', truth: 'ok', why: '日付と担当者が揃えば、追跡できます。' },
       { id: 'e', label: '備考欄は空白で、「異常なし」の記載がある', truth: 'ok', why: '異常なしの記載があれば、空白でも書式上許されます。' }
     ]
-  }, 'sawada', ['二つとも拾いましたね。単位に気づく人は、少ないんです。', '惜しい。印と単位は、必ず見てください。', '見落としが多いです。声に出して、桁と単位から。'], [[ev('accuracy', 4), sk('depot', 3), tr('depot_intro', 20)], [ev('accuracy', 1), tr('depot_intro', 10)], [ev('accuracy', -2), tr('depot_intro', 5)]], 'ch10.dp_lunch', DV(['sawada'], '11:30 検修庫'));
+  }, 'sawada_r', ['二つとも拾いましたね。単位に気づく人は、少ないんです。', '惜しい。印と単位は、必ず見てください。', '見落としが多いです。声に出して、桁と単位から。'], [[ev('accuracy', 4), sk('depot', 3), tr('depot_intro', 20)], [ev('accuracy', 1), tr('depot_intro', 10)], [ev('accuracy', -2), tr('depot_intro', 5)]], 'ch10.dp_lunch', DV(['sawada_r'], '11:30 検修庫'));
   line('ch10.dp_lunch', [
     '正午。詰所の長机に、使い込んだ魔法瓶。橘が、湯呑みを三つ並べた。',
     ['tachibana', '昼を飛ばす奴は、午後に手が鈍る。飲め。'],
     ['tachibana', '俺は三年かかった。同期は一年。悔しかったが、遅い奴のほうが事故は少ない。'],
     '橘が、手元の札を、そっと沢田のほうへ滑らせた。「読んでくれ」。老眼鏡は、胸ポケットに入ったままだった。',
-    ['sawada', '…はい。「交換済」です。']
-  ], 'ch10.dp_d1end', { effects: [at(12, 0)], view: DV(['tachibana', 'yamashina', 'sawada'], '12:00 詰所') });
+    ['sawada_r', '…はい。「交換済」です。']
+  ], 'ch10.dp_d1end', { effects: [at(12, 0)], view: DV(['tachibana', 'yamashina', 'sawada_r'], '12:00 詰所') });
   branch('ch10.dp_d1end', [[F('ch10.dp_zone_task_ok'), 'ch10.dp_d1end_a']], 'ch10.dp_d1end_b');
   line('ch10.dp_d1end_a', [['tachibana', '区分表は全問正解だったな。壁を知る奴は、壁際で安全に動ける。', 'smile'], '十七時。橘が詰所の電気を消した。「明日、体を持ってこい」。'], 'ch10.dp_d2', { effects: [at(17, 0), tl('12月7日 基地実習 初日を終える')], view: DV(['tachibana'], '17:00 詰所') });
   line('ch10.dp_d1end_b', [['tachibana', '区分表は、ずれたな。壁の前でぶつかれたなら、悪くない。'], '十七時。橘が詰所の電気を消した。「明日、体を持ってこい」。'], 'ch10.dp_d2', { effects: [at(17, 0), tl('12月7日 基地実習 初日を終える')], view: DV(['tachibana'], '17:00 詰所') });
 
   line('ch10.dp_d2', [
     '二日目。窓に霜。工具室の金属が、触れるとキンと冷たい。',
-    ['sawada', '床下に工具を忘れた編成が走ったら。想像できますね。'],
+    ['sawada_r', '床下に工具を忘れた編成が走ったら。想像できますね。'],
     ['player', '一本ずつ、声に出して数えます。']
-  ], 'ch10.dp_tool_task', { effects: [day(1), at(9, 0)], view: DV(['sawada'], '12月8日（水） 9:00 工具室') });
+  ], 'ch10.dp_tool_task', { effects: [day(1), at(9, 0)], view: DV(['sawada_r'], '12月8日（水） 9:00 工具室') });
   mk('ch10.dp_tool_task', 'memory', '工具の員数点検', '表示されている工具を覚え、同じ順に報告します。', {
     config: { sequence: ['トルクレンチ', 'ノギス', 'ハンマー', '懐中電灯'], pool: ['トルクレンチ', 'ノギス', 'ハンマー', '懐中電灯', 'スパナ', 'ドライバー', 'ペンチ', 'ゲージ'], showMs: 4600, showLabel: '作業前の工具箱' }
-  }, 'sawada', ['全部合ってます。数える声が、もう基地の声ですよ。', '順番が一本、ずれました。置き場所と一緒に覚えると、ずれません。', '数が合いません。作業前は、必ず二人で数えます。一人の確信は信じません。'], [[ev('accuracy', 3), ev('safety', 2)], [ev('accuracy', 1)], [ev('safety', -2)]], 'ch10.dp_parts_intro', DV(['sawada'], '9:30 工具室'));
-  line('ch10.dp_parts_intro', [['sawada', '次は部品札。読み違えると、使えない部品が「良品」に戻ります。']], 'ch10.dp_parts_task', { view: DV(['sawada'], '10:30 部品庫') });
+  }, 'sawada_r', ['全部合ってます。数える声が、もう基地の声ですよ。', '順番が一本、ずれました。置き場所と一緒に覚えると、ずれません。', '数が合いません。作業前は、必ず二人で数えます。一人の確信は信じません。'], [[ev('accuracy', 3), ev('safety', 2)], [ev('accuracy', 1)], [ev('safety', -2)]], 'ch10.dp_parts_intro', DV(['sawada_r'], '9:30 工具室'));
+  line('ch10.dp_parts_intro', [['sawada_r', '次は部品札。読み違えると、使えない部品が「良品」に戻ります。']], 'ch10.dp_parts_task', { view: DV(['sawada_r'], '10:30 部品庫') });
   mk('ch10.dp_parts_task', 'sort', '部品札の仕分け', '札に従って、部品を正しい棚へ仕分けます。', {
     config: { perItem: 8, bins: [{ id: 'good', label: '良品棚（再使用可）' }, { id: 'check', label: '要検査棚' }, { id: 'scrap', label: '交換済み・廃棄' }], items: [
       { id: 'a', label: '「検査済・合格」の札が付いた締結部品', bin: 'good', why: '合格札があるので、良品棚です。' },
@@ -207,31 +293,36 @@ export default function ch10(k) {
       { id: 'd', label: '「再検査待ち」の札が付いたシール材', bin: 'check', why: '再検査待ちは、検査棚です。' },
       { id: 'e', label: '「検査済・合格」だが、日付が古く規程の期限切れ', bin: 'check', why: '期限切れの合格札は、再検査が必要です。' }
     ] }
-  }, 'sawada', ['期限まで見ましたね。…私が新人の頃より、速い。', 'ほぼ合ってます。期限切れの合格札だけ、気をつけて。', '札の読み方を、もう一度やりましょう。付き合います。'], [[ev('accuracy', 3), sk('depot', 3), tr('depot_intro', 35)], [ev('accuracy', 1), tr('depot_intro', 20)], [ev('accuracy', -1), tr('depot_intro', 10)]], 'ch10.dp_wall2', DV(['sawada'], '11:20 部品庫'));
+  }, 'sawada_r', ['期限まで見ましたね。…私が新人の頃より、速い。', 'ほぼ合ってます。期限切れの合格札だけ、気をつけて。', '札の読み方を、もう一度やりましょう。付き合います。'], [[ev('accuracy', 3), sk('depot', 3), tr('depot_intro', 35)], [ev('accuracy', 1), tr('depot_intro', 20)], [ev('accuracy', -1), tr('depot_intro', 10)]], 'ch10.dp_wall2', DV(['sawada_r'], '11:20 部品庫'));
   line('ch10.dp_wall2', [
     '黄色い線で囲まれた区画。沢田が、床下へ潜る前に、一度だけ振り向いた。',
-    ['sawada', '有資格者の作業をします。見習いは、線の外から。声は、どうぞ。'],
+    ['sawada_r', '有資格者の作業をします。見習いは、線の外から。声は、どうぞ。'],
     ['tachibana', '迷いは、資格の前に全部片付けてある。見えるか、あの手が。']
-  ], 'ch10.dp_line_choice', { effects: [at(13, 0)], view: DV(['sawada', 'tachibana', 'yamashina'], '13:00 検修庫 作業区画') });
+  ], 'ch10.dp_line_choice', { effects: [at(13, 0)], view: DV(['sawada_r', 'tachibana', 'yamashina'], '13:00 検修庫 作業区画') });
   choice('ch10.dp_line_choice', '線の外から、有資格者の作業を見ています。どう過ごす？', [
     opt('record', '手順と声かけを、全部手帳に書き取る', 'ch10.dp_c_record', { tone: 'careful', effects: [set('ch10.dp_record'), ev('accuracy', 2), sk('depot', 2)] }),
     opt('ask', '合間に「なぜその順番か」を聞く', 'ch10.dp_c_ask', { tone: 'honest', effects: [set('ch10.dp_ask'), ev('reporting', 2), rel('tachibana', 1, 1)] }),
-    opt('path', '橘に、資格の取り方と順番を聞く', 'ch10.dp_c_path', { tone: 'quick', effects: [set('ch10.dp_path'), ev('teamwork', 1), tr('depot_intro', 10)] })
-  ], { important: true, view: DV(['sawada', 'tachibana'], '13:10 検修庫 作業区画') });
+    opt('path', '橘に、資格の取り方と順番を聞く', 'ch10.dp_c_path', { tone: 'quick', effects: [set('ch10.dp_path'), ev('teamwork', 1), tr('depot_intro', 10)] }),
+    opt('silent', '（言葉が出ない）', 'ch10.dp_c_s', { tone: 'neutral', effects: [set('ch10.dp_silent')] })
+  ], { important: true, timeLimit: 25, defaultOption: 'silent', view: DV(['sawada_r', 'tachibana'], '13:10 検修庫 作業区画') });
   line('ch10.dp_c_record', [
     '「ふたを閉める前に、もう一度数える」。手帳に、一行ずつ。',
     ['tachibana', '書くのは、見るの一部だ。見習いは、見て、書け。'],
-    '終わって、沢田が手帳に一言足した。「ここ、順番が逆です」。']
-  , 'ch10.dp_d2end', { view: DV(['tachibana', 'sawada'], '14:00 検修庫') });
+    '終わって、沢田が手帳に一言足した。「ここ、順番が逆です」。',
+    '手帳は、びっしり埋まった。顔を上げた時、橘が、自分の眼鏡の話を誰かにした背中しか、見えなかった。'
+  ], 'ch10.dp_d2end', { effects: [{ lock: { id: 'ch10.dp_glasses', note: '橘の眼鏡の話は、聞き逃した' } }, set('ch10.cost_dp_glasses')], view: DV(['tachibana', 'sawada_r'], '14:00 検修庫') });
   line('ch10.dp_c_ask', [
     ['player', 'なぜ、閉める前にもう一度数えるんですか。'],
-    ['sawada', '（床下から）作業中に、記憶が書き換わるからです。人間の記憶は、都合がいい。'],
-    ['tachibana', '見習いの質問は、手順書の足りない一行を教えてくれる。', 'smile']
-  ], 'ch10.dp_d2end', { view: DV(['sawada', 'tachibana'], '14:00 検修庫') });
+    ['sawada_r', '（床下から）作業中に、記憶が書き換わるからです。人間の記憶は、都合がいい。'],
+    ['tachibana', '見習いの質問は、手順書の足りない一行を教えてくれる。', 'smile'],
+    '質問は、作業の流れを、少し止めた。沢田は、礼を言わなかった。手帳は、半分しか埋まらなかった。'
+  ], 'ch10.dp_d2end', { effects: [{ lock: { id: 'ch10.dp_notes', note: '手帳の記録は、半分で終わった' } }, set('ch10.cost_dp_notes')], view: DV(['sawada_r', 'tachibana'], '14:00 検修庫') });
   line('ch10.dp_c_path', [
     ['player', '資格まで、順番を教えてください。'],
-    ['tachibana', '駅務基礎。基地入門。検修補助の座学と実技。三つ目に、半年から二年。']
-  ], 'ch10.dp_d2end', { view: DV(['tachibana'], '14:00 検修庫') });
+    ['tachibana', '駅務基礎。基地入門。検修補助の座学と実技。三つ目に、半年から二年。'],
+    '資格の順番は、聞けた。ただ、その間、床下の手の動きを、見ていなかった。'
+  ], 'ch10.dp_d2end', { effects: [{ lock: { id: 'ch10.dp_hands', note: '手の動きを見る機会は、戻らない' } }, set('ch10.cost_dp_hands')], view: DV(['tachibana'], '14:00 検修庫') });
+  line('ch10.dp_c_s', ['線の外で、立ちすくんでいた。手帳は、白いまま。', ['tachibana', '…見習いは、見て、書け。黙って立つのは、見たことに、ならん。', 'serious'], '沢田が、床下から、何も言わずに、手を一度だけ、振った。「いまのは、見ていないのと、同じです」。'], 'ch10.dp_d2end', { view: DV(['sawada_r', 'tachibana'], '14:00 検修庫') });
   line('ch10.dp_d2end', [
     '十七時のチャイム。'
   ], 'ch10.dp_d3', { effects: [at(17, 0), tl('12月8日 基地実習 二日目を終える')], view: DV(['tachibana', 'yamashina'], '17:00 詰所') });
@@ -265,11 +356,11 @@ export default function ch10(k) {
   line('ch10.dp_talk_xp', [['tachibana', '資格の順番を、自分から聞いた奴は久しぶりだ。研修日程は、人事に伝えておく。']], 'ch10.dp_return', { view: DV(['tachibana'], '14:40 詰所') });
   line('ch10.dp_talk_xr', [['tachibana', 'あの手帳は、後輩に見せろ。見習いの記録は、財産だ。']], 'ch10.dp_return', { view: DV(['tachibana'], '14:40 詰所') });
   line('ch10.dp_return', [
-    ['sawada', '腕章を。…ゆっくり外してください。三日分、汗が染みてます。', 'smile'],
+    ['sawada_r', '腕章を。…ゆっくり外してください。三日分、汗が染みてます。', 'smile'],
     '黄色い布を畳んで、両手で渡した。肩が軽くなった。それが、少し寂しかった。',
     ['yamashina', '来年の四月、また付ける。今度は、外す日のために。'],
     ['tachibana', '行け。人事が待ってる。']
-  ], 'ch10.dp_vjd', { effects: [tr('depot_intro', 100), set('ch10.dp_done'), sk('depot', 3), tl('12月9日 車両基地入門の三日間を修了する')], view: DV(['tachibana', 'sawada', 'yamashina'], '15:30 詰所') });
+  ], 'ch10.dp_vjd', { effects: [tr('depot_intro', 100), sk('depot', 3), tl('12月9日 車両基地入門の三日間を修了する')], view: DV(['tachibana', 'sawada_r', 'yamashina'], '15:30 詰所') });
   fx('ch10.dp_vjd', [], 'ch10.jd_open');
 
   // ----------- station：上級駅務の研修（他駅・星野）-----------
@@ -278,7 +369,7 @@ export default function ch10(k) {
     '海浜口駅。発車メロディが、青嶺中央と違う。それだけで、他人の家に来た気分になる。',
     ['hoshino', '助役の星野です。ここは、通院と買い物のお客様が多い駅です。顔を覚えている方が、たくさんいます。', 'smile'],
     '星野が渡した腕章は、水色。白い糸で「実習・監督下」。'
-  ], 'ch10.st_plan', { effects: [at(9, 0), set('ch10.route_station')], view: SV(['hoshino'], '12月7日（火） 9:00 海浜口駅 駅事務室') });
+  ], 'ch10.st_plan', { effects: [at(9, 0)], view: SV(['hoshino'], '12月7日（火） 9:00 海浜口駅 駅事務室') });
   branch('ch10.st_plan', [[F('ch6.plan_cert'), 'ch10.st_pc'], [F('ch6.plan_ojt'), 'ch10.st_po']], 'ch10.st_wall');
   line('ch10.st_pc', [['hoshino', '資格を先に、の計画でしたね。「運転取扱」の座学は、早めに。毎日、有資格者の仕事が見られます。']], 'ch10.st_wall', { view: SV(['hoshino'], '9:20') });
   line('ch10.st_po', [['hoshino', '現場で覚える計画でしたね。駅はそれが強い。ただ、運転に関わる部分は、座学が先です。']], 'ch10.st_wall', { view: SV(['hoshino'], '9:20') });
@@ -328,21 +419,26 @@ export default function ch10(k) {
   choice('ch10.st_drill_choice', '訓練です。ホームで人が倒れました。最初の一手は？', [
     opt('button', '非常停止ボタンを押し、助役へ第一報', 'ch10.st_c_button', { tone: 'quick', effects: [set('ch10.st_button'), ev('safety', 2)] }),
     opt('call', '周りに声をかけて人手を集め、助役への連絡を頼み、付き添う', 'ch10.st_c_call', { tone: 'caring', effects: [set('ch10.st_call'), ev('teamwork', 2)] }),
-    opt('care', '側に付き添い、近くの人にボタンを頼む', 'ch10.st_c_care', { tone: 'honest', effects: [set('ch10.st_care'), ev('service', 2)] })
-  ], { important: true, view: SV(['hoshino'], '13:05 ホーム（訓練）') });
+    opt('care', '側に付き添い、近くの人にボタンを頼む', 'ch10.st_c_care', { tone: 'honest', effects: [set('ch10.st_care'), ev('service', 2)] }),
+    opt('silent', '（言葉が出ない）', 'ch10.st_c_s', { tone: 'neutral', effects: [set('ch10.st_silent')] })
+  ], { important: true, timeLimit: 25, defaultOption: 'silent', view: SV(['hoshino'], '13:05 ホーム（訓練）') });
   line('ch10.st_c_button', [
     '赤いボタンを叩く。ブザーが、ホームの端まで走った。',
-    ['hoshino', '正解。ただ、押した後も、人を一人にしない。迷わず押すのは、見習いにも許された、数少ない近道です。', 'smile']
-  ], 'ch10.st_d2end', { view: SV(['hoshino'], '13:30 ホーム（訓練）') });
+    ['hoshino', '正解。ただ、押した後も、人を一人にしない。迷わず押すのは、見習いにも許された、数少ない近道です。', 'smile'],
+    'ボタンは、押した。ただ、倒れた「お客様」の隣には、誰も、残らなかった。'
+  ], 'ch10.st_d2end', { effects: [{ lock: { id: 'ch10.st_hand', note: '付き添う一手は、取れなかった' } }, set('ch10.cost_st_hand')], view: SV(['hoshino'], '13:30 ホーム（訓練）') });
   line('ch10.st_c_call', [
     ['player', 'そこの方、助役への連絡を。あなたはAEDを。私は付き添います。'],
-    '若手たちが、一斉に動く。声を出すと、場が変わる。'
-  ], 'ch10.st_d2end', { view: SV(['hoshino'], '13:30 ホーム（訓練）') });
+    '若手たちが、一斉に動く。声を出すと、場が変わる。',
+    '人は動いた。ただ、自分は声を出す係になって、手を握れなかった。ボタンは、誰かが押した。'
+  ], 'ch10.st_d2end', { effects: [{ lock: { id: 'ch10.st_button', note: '最初にボタンを押す一手は、取れなかった' } }, set('ch10.cost_st_button')], view: SV(['hoshino'], '13:30 ホーム（訓練）') });
   line('ch10.st_c_care', [
     ['player', '聞こえますか。ここにいます。そこの方、赤いボタンを！'],
     '倒れた「お客様」の手を握る。握り返された気がした。演技かもしれない。',
-    ['hoshino', '「一人で抱えない」。三日間の宿題です。', 'smile']
-  ], 'ch10.st_d2end', { view: SV(['hoshino'], '13:30 ホーム（訓練）') });
+    ['hoshino', '「一人で抱えない」。三日間の宿題です。', 'smile'],
+    '手は握れた。ただ、ボタンを頼むまで、数十秒、遅れた。…遅れは、訓練でも、数えられる。'
+  ], 'ch10.st_d2end', { effects: [{ lock: { id: 'ch10.st_call', note: '人手を集める一手は、取れなかった' } }, set('ch10.cost_st_call')], view: SV(['hoshino'], '13:30 ホーム（訓練）') });
+  line('ch10.st_c_s', ['声が出ない。「倒れた客」の若手が、五秒、そのまま倒れていた。', ['hoshino', '（拡声器）…想定終了。現実なら、この五秒が、一番、長い。', 'serious'], '倒れ役の若手が、起き上がって、苦笑した。「大丈夫ですか」と、言われたのは、こちらだった。'], 'ch10.st_d2end', { view: SV(['hoshino'], '13:30 ホーム（訓練）') });
   line('ch10.st_d2end', [
     '倒れ役の若手が、笑って手を振る。'
   ], 'ch10.st_d3', { effects: [at(17, 0), tl('12月8日 他駅での実習 二日目を終える')], view: SV(['hoshino'], '17:00 海浜口駅') });
@@ -372,7 +468,7 @@ export default function ch10(k) {
     ['hoshino', '腕章を。三日間、線を守りました。それが一番の合格点です。'],
     '水色の布を畳んで渡す。肩が、少し軽くなった。',
     ['hoshino', '人事が、オンラインで待っています。']
-  ], 'ch10.st_vjd', { effects: [sk('station', 3), set('ch10.st_done'), tl('12月9日 上級駅務の三日間を修了する')], view: SV(['hoshino'], '15:30 海浜口駅') });
+  ], 'ch10.st_vjd', { effects: [sk('station', 3), tl('12月9日 上級駅務の三日間を修了する')], view: SV(['hoshino'], '15:30 海浜口駅') });
   fx('ch10.st_vjd', [], 'ch10.jd_open');
 
   // ----------- dispatch：指令所での実習（浜口・水無瀬）。扉の外から見る -----------
@@ -383,7 +479,7 @@ export default function ch10(k) {
     ['minase', '膝に記録用紙を。聞こえたことを、聞こえたままに。', 'smile'],
     '灰色の腕章。白い糸で「見習・監督下」。',
     ['hamaguchi', '指令は、「動かさない勇気」と「動かす責任」の仕事だ。外から、見ろ。']
-  ], 'ch10.ds_plan', { effects: [at(9, 0), set('ch10.route_dispatch')], view: PV(['hamaguchi', 'minase'], '12月7日（火） 9:00 輸送指令所 入口') });
+  ], 'ch10.ds_plan', { effects: [at(9, 0)], view: PV(['hamaguchi', 'minase'], '12月7日（火） 9:00 輸送指令所 入口') });
   branch('ch10.ds_plan', [[F('ch6.plan_cert'), 'ch10.ds_pc'], [F('ch6.plan_ojt'), 'ch10.ds_po']], 'ch10.ds_wall');
   line('ch10.ds_pc', [['hamaguchi', '資格を先に、の計画だったな。指令は、それが唯一の入口だ。']], 'ch10.ds_wall', { view: PV(['hamaguchi'], '9:20') });
   line('ch10.ds_po', [['hamaguchi', '現場で覚える計画か。指令は、現場で覚える場所じゃない。聞いて、書いて、座学で体系にする。順番だ。']], 'ch10.ds_wall', { view: PV(['hamaguchi'], '9:20') });
@@ -433,21 +529,26 @@ export default function ch10(k) {
   choice('ch10.ds_choice', '強風の一報に、あと一つ足すなら？', [
     opt('time', '次の連絡の時刻', 'ch10.ds_c_time', { tone: 'careful', effects: [set('ch10.ds_time'), ev('reporting', 2)] }),
     opt('split', '確定と見込みを分ける一文', 'ch10.ds_c_split', { tone: 'honest', effects: [set('ch10.ds_split'), ev('accuracy', 2)] }),
-    opt('action', '駅への具体的な行動の指示', 'ch10.ds_c_action', { tone: 'caring', effects: [set('ch10.ds_action'), ev('service', 2)] })
-  ], { important: true, view: PV(['hamaguchi'], '13:10 輸送指令所 扉の外') });
+    opt('action', '駅への具体的な行動の指示', 'ch10.ds_c_action', { tone: 'caring', effects: [set('ch10.ds_action'), ev('service', 2)] }),
+    opt('silent', '（言葉が出ない）', 'ch10.ds_c_s', { tone: 'neutral', effects: [set('ch10.ds_silent')] })
+  ], { important: true, timeLimit: 25, defaultOption: 'silent', view: PV(['hamaguchi'], '13:10 輸送指令所 扉の外') });
   line('ch10.ds_c_time', [
     ['player', '情報がないと、駅は何も言えません。次がいつか分かれば、案内を続けられます。'],
-    ['hamaguchi', '中身より、「いつ来るか」が安心になる時がある。…守れる時刻を約束しろ。', 'smile']
-  ], 'ch10.ds_d2end', { view: PV(['hamaguchi', 'minase'], '13:30 輸送指令所') });
+    ['hamaguchi', '中身より、「いつ来るか」が安心になる時がある。…守れる時刻を約束しろ。', 'smile'],
+    '次の連絡の時刻は、足せた。ただ、「ホームで待機を」の行動は、足せなかった。駅は、待つだけになる。'
+  ], 'ch10.ds_d2end', { effects: [{ lock: { id: 'ch10.ds_action', note: '行動を足す一手は、取れなかった' } }, set('ch10.cost_ds_action')], view: PV(['hamaguchi', 'minase'], '13:30 輸送指令所') });
   line('ch10.ds_c_split', [
     ['player', '「確定、強風で速度規制。見込み、解除は十四時以降」と、分けます。'],
-    ['hamaguchi', '…それだ。俺が何年、言い続けてると思ってる。']
-  ], 'ch10.ds_d2end', { view: PV(['hamaguchi', 'minase'], '13:30 輸送指令所') });
+    ['hamaguchi', '…それだ。俺が何年、言い続けてると思ってる。'],
+    '確定と見込みは、分けられた。ただ、「次はいつか」を、書き忘れた。駅の問いが、残る。'
+  ], 'ch10.ds_d2end', { effects: [{ lock: { id: 'ch10.ds_time', note: '次の時刻を足す一手は、取れなかった' } }, set('ch10.cost_ds_time')], view: PV(['hamaguchi', 'minase'], '13:30 輸送指令所') });
   line('ch10.ds_c_action', [
     ['player', '「ホームで待機を」「階段の混雑に注意を」と、行動を。'],
     ['hamaguchi', '現場の目だな。だが、指令は、駅の仕事に指示を出しすぎん。'],
-    ['minase', '駅から来た人の視点は、指令にも必要です。役割の線だけ、覚えて。', 'smile']
-  ], 'ch10.ds_d2end', { view: PV(['hamaguchi', 'minase'], '13:30 輸送指令所') });
+    ['minase', '駅から来た人の視点は、指令にも必要です。役割の線だけ、覚えて。', 'smile'],
+    '行動は、足せた。ただ、確定と見込みが、混ざったままだ。浜口の赤ペンが、そこに、止まった。'
+  ], 'ch10.ds_d2end', { effects: [{ lock: { id: 'ch10.ds_split', note: '確定と見込みを分ける一手は、取れなかった' } }, set('ch10.cost_ds_split')], view: PV(['hamaguchi', 'minase'], '13:30 輸送指令所') });
+  line('ch10.ds_c_s', ['一報に、足す言葉が、出ない。記録用紙が、白いまま、膝の上にあった。', ['hamaguchi', '…足さなかった一報は、読まれる。足りない形で。それも、記録だ。', 'serious'], ['minase', '（小声で）…次は、一語でいいんです。「確認します」だけでも。']], 'ch10.ds_d2end', { view: PV(['hamaguchi', 'minase'], '13:20 扉の外') });
   line('ch10.ds_d2end', [
     '規制は、十五時過ぎに解除された。最後の一報が、淡々と読み上げられる。'
   ], 'ch10.ds_d3', { effects: [at(17, 0), tl('12月8日 指令所での実習 二日目を終える')], view: PV(['minase'], '17:00 輸送指令所') });
@@ -485,7 +586,7 @@ export default function ch10(k) {
     ['hamaguchi', '腕章を返せ。扉の外の椅子に、よく座った。それが一番難しい仕事だ。'],
     '灰色の布を畳んで渡す。扉の向こうで、電話が鳴った。いつもと同じ音が、少し違って聞こえた。',
     ['minase', '人事が、オンラインで待っています。']
-  ], 'ch10.ds_vjd', { effects: [sk('dispatch', 3), set('ch10.ds_done'), tl('12月9日 指令所での三日間を修了する')], view: PV(['hamaguchi', 'minase'], '15:30 輸送指令所') });
+  ], 'ch10.ds_vjd', { effects: [sk('dispatch', 3), tl('12月9日 指令所での三日間を修了する')], view: PV(['hamaguchi', 'minase'], '15:30 輸送指令所') });
   fx('ch10.ds_vjd', [], 'ch10.jd_open');
 
   // ----------- planning：企画部署での実習（戸田・黒田）。資料と会議 -----------
@@ -495,7 +596,7 @@ export default function ch10(k) {
     ['toda', '三日間、資料と会議を見ます。見習いは、会議ではオブザーバー。発言は、求められたときだけ。'],
     '薄い緑の名札。紙の厚みで、「オブザーバー」と読める。',
     ['toda', '企画は、数字と人の事情の通訳です。通訳が、話を作ってはいけません。']
-  ], 'ch10.pl_plan', { effects: [at(9, 0), set('ch10.route_planning')], view: LV(['toda', 'kuroda'], '12月7日（火） 9:00 本社 輸送計画課') });
+  ], 'ch10.pl_plan', { effects: [at(9, 0)], view: LV(['toda', 'kuroda'], '12月7日（火） 9:00 本社 輸送計画課') });
   branch('ch10.pl_plan', [[F('ch6.plan_cert'), 'ch10.pl_pc'], [F('ch6.plan_ojt'), 'ch10.pl_po']], 'ch10.pl_wall');
   line('ch10.pl_pc', [['toda', '資格を先に、の計画でしたね。企画は資格より実績ですが、堅実な順番です。']], 'ch10.pl_wall', { view: LV(['toda'], '9:20') });
   line('ch10.pl_po', [['toda', '現場で覚える計画でしたね。企画は、現場の経験が資料の質を決めます。ただ、決裁は順番に積み上がります。']], 'ch10.pl_wall', { view: LV(['toda'], '9:20') });
@@ -552,23 +653,28 @@ export default function ch10(k) {
   choice('ch10.pl_choice', '会議で、一言を求められました。どう答える？', [
     opt('data', '清掃の実測時間（四分四十秒）を挙げ、数字で話す', 'ch10.pl_c_data', { tone: 'careful', effects: [set('ch10.pl_data'), ev('accuracy', 2), ev('reporting', 1)] }),
     opt('voice', '「現場は五分でもぎりぎりです」と、率直な感触を言う', 'ch10.pl_c_voice', { tone: 'honest', effects: [set('ch10.pl_voice'), ev('service', 2)] }),
-    opt('listen', '「今は聞きます。根拠を添えた資料で、後でお出しします」と答える', 'ch10.pl_c_listen', { tone: 'neutral', effects: [set('ch10.pl_listen'), ev('reporting', 2)] })
-  ], { important: true, view: LV(['toda'], '13:10 本社 小会議室') });
+    opt('listen', '「今は聞きます。根拠を添えた資料で、後でお出しします」と答える', 'ch10.pl_c_listen', { tone: 'neutral', effects: [set('ch10.pl_listen'), ev('reporting', 2)] }),
+    opt('silent', '（言葉が出ない）', 'ch10.pl_c_s', { tone: 'neutral', effects: [set('ch10.pl_silent')] })
+  ], { important: true, timeLimit: 25, defaultOption: 'silent', view: LV(['toda'], '13:10 本社 小会議室') });
   line('ch10.pl_c_data', [
     ['player', '先月の駅の記録で、折返しの平均は四分四十秒でした。詰めると、清掃の抜けが出ます。'],
     '部屋が、一瞬静かになった。数字は、事情を、一番短い言葉で運ぶ。',
-    ['toda', '出典は駅営業課の記録。運転課の方、次の案に反映できますか。']
-  ], 'ch10.pl_d2end', { view: LV(['toda', 'kuroda'], '13:30 小会議室') });
+    ['toda', '出典は駅営業課の記録。運転課の方、次の案に反映できますか。'],
+    '数字は通った。ただ、現場の言い分は、聞いてもらえなかった。'
+  ], 'ch10.pl_d2end', { effects: [{ lock: { id: 'ch10.pl_voice', note: '現場の声を届ける一手は、取れなかった' } }, set('ch10.cost_pl_voice')], view: LV(['toda', 'kuroda'], '13:30 小会議室') });
   line('ch10.pl_c_voice', [
     ['player', '現場は、五分でもぎりぎりです。清掃を削ると、車内の印象が変わります。'],
     '空気が少し柔らぐ。「現場の声は、そうですよね」と、誰かが頷いた。',
-    ['toda', '率直な感触は、会議に必要です。あとで、数字に直しましょう。一緒に。', 'smile']
-  ], 'ch10.pl_d2end', { view: LV(['toda', 'kuroda'], '13:30 小会議室') });
+    ['toda', '率直な感触は、会議に必要です。あとで、数字に直しましょう。一緒に。', 'smile'],
+    '現場の声は届いた。ただ、根拠のない言葉として、議事録の隅に、小さく書かれた。'
+  ], 'ch10.pl_d2end', { effects: [{ lock: { id: 'ch10.pl_data', note: '数字で通す一手は、取れなかった' } }, set('ch10.cost_pl_data')], view: LV(['toda', 'kuroda'], '13:30 小会議室') });
   line('ch10.pl_c_listen', [
     ['player', '今は聞きます。根拠を添えた資料で、後でお出しします。'],
     '聞くことに集中すると、他の人の言葉が、普段よりよく聞こえた。',
-    ['toda', '聞くのは遠慮でなく、選択です。会議の後、資料で返して。', 'smile']
-  ], 'ch10.pl_d2end', { view: LV(['toda', 'kuroda'], '13:30 小会議室') });
+    ['toda', '聞くのは遠慮でなく、選択です。会議の後、資料で返して。', 'smile'],
+    '聞くのに徹した。ただ、発言を求められた時間は、そのまま、過ぎた。'
+  ], 'ch10.pl_d2end', { effects: [{ lock: { id: 'ch10.pl_data2', note: '発言する機会は、戻らない' } }, set('ch10.cost_pl_data2')], view: LV(['toda', 'kuroda'], '13:30 小会議室') });
+  line('ch10.pl_c_s', ['一言を求められて、言葉が、出ない。沈黙は、議事録に、四秒、書かれた。', ['toda', '…沈黙は、議事録に書けません。でも、運転課の人は、見ていました。', 'serious']], 'ch10.pl_d2end', { view: PV(['toda', 'kuroda'], '13:20 小会議室') });
   line('ch10.pl_d2end', [
     '会議は、十分、延びた。結論は、持ち越し。'
   ], 'ch10.pl_d3', { effects: [at(17, 0), tl('12月8日 企画部署での実習 二日目を終える')], view: LV(['toda'], '17:00 輸送計画課') });
@@ -605,6 +711,7 @@ export default function ch10(k) {
     ['toda', '名札を。座っていることが、一番難しい仕事です。'],
     '薄い緑の名札を外して、渡す。紙の軽さが、手のひらに残った。',
     ['toda', '人事が、オンラインで待っています。']
-  ], 'ch10.pl_vjd', { effects: [sk('planning', 3), set('ch10.pl_done'), tl('12月9日 企画部署での三日間を修了する')], view: LV(['toda', 'kuroda'], '15:30 輸送計画課') });
+  ], 'ch10.pl_vjd', { effects: [sk('planning', 3), tl('12月9日 企画部署での三日間を修了する')], view: LV(['toda', 'kuroda'], '15:30 輸送計画課') });
   fx('ch10.pl_vjd', [], 'ch10.jd_open');
+  k.shuffleCompose('ch10.');
 }

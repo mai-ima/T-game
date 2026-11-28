@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-28T08:42:58.360Z",
+ "generated": "2026-11-28T08:43:13.765Z",
  "models": {
   "human": {
    "top": [
@@ -68,8 +68,8 @@
     0.03
    ],
    "named": 91,
-   "glbKB": 221,
-   "rawKB": 611
+   "glbKB": 170,
+   "rawKB": 563
   },
   "human_lo": {
    "top": [
@@ -138,8 +138,8 @@
     0.03
    ],
    "named": 91,
-   "glbKB": 197,
-   "rawKB": 494
+   "glbKB": 146,
+   "rawKB": 446
   }
  }
 }

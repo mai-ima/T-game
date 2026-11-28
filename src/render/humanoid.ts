@@ -3,7 +3,7 @@ import type { CharacterDef } from '../engine/types';
 import { canvasTex } from './materials';
 import { cloneModel } from './assets';
 
-export interface HumanoidLook { uniform: string; hair: string; skin: string; accessory?: string; gender?: string; trousers?: string; height?: number; staff?: boolean; cap?: boolean }
+export interface HumanoidLook { uniform: string; hair: string; skin: string; accessory?: string; gender?: string; trousers?: string; height?: number; width?: number; hairStyle?: 'short' | 'long' | 'bun'; staff?: boolean; cap?: boolean }
 export interface Humanoid { group: THREE.Group; walk(phase: number, amount: number): void; setLabel(visible: boolean): void; look: HumanoidLook; label?: THREE.Sprite }
 
 const geoCache = new Map<string, THREE.BufferGeometry>();
@@ -54,11 +54,11 @@ export function createHumanoid(look: HumanoidLook, name?: string): Humanoid {
 
 /** GLBテンプレート（src/lab/human.ts製）から個別の人物を作る。材質名で色替え、節点の表示切替で髪型・持ち物を変える。 */
 export function createHumanoidFrom(template: THREE.Object3D, look: HumanoidLook, name?: string): Humanoid {
-  const g = cloneModel(template); const s = look.height ?? 1; g.scale.setScalar(s);
+  const g = cloneModel(template); const s = look.height ?? 1; g.scale.set(s * (look.width ?? 1), s, s * (look.width ?? 1));
   const col: Record<string, string> = { Uniform: look.uniform, Hair: look.hair, Skin: look.skin, Trousers: look.trousers ?? (look.staff ? '#232a38' : '#3a3a44'), Accessory: '#1d2a44', Shirt: look.staff ? '#f4f4f0' : look.uniform };
   g.traverse(o => { const m = o as THREE.Mesh; if (m.isMesh) { const mat = m.material as THREE.MeshStandardMaterial; const c = col[mat.name]; if (c) mat.color.set(c); } });
   const node = (n: string) => g.getObjectByName(n); const vis = (n: string, v: boolean) => { const o = node(n); if (o) o.visible = v; };
-  vis('HairLong', look.gender === 'f'); vis('HairShort', look.gender !== 'f'); vis('Cap', !!look.cap); vis('Glasses', look.accessory === 'glasses'); vis('Bag', look.accessory === 'bag'); vis('Cane', look.accessory === 'cane'); vis('Suitcase', look.accessory === 'suitcase'); vis('TieNode', !!look.staff);
+  const hs = look.hairStyle ?? (look.gender === 'f' ? 'long' : 'short'); vis('HairLong', hs === 'long'); vis('HairShort', hs === 'short'); vis('HairBun', hs === 'bun'); vis('Cap', !!look.cap); vis('Glasses', look.accessory === 'glasses'); vis('Bag', look.accessory === 'bag'); vis('Cane', look.accessory === 'cane'); vis('Suitcase', look.accessory === 'suitcase'); vis('TieNode', !!look.staff);
   const legL = node('LegL')!, legR = node('LegR')!, armL = node('ArmL')!, armR = node('ArmR')!, shinL = node('ShinL')!, shinR = node('ShinR')!, foreL = node('ForearmL')!, foreR = node('ForearmR')!, torso = node('Torso')!;
   let label: THREE.Sprite | undefined;
   if (name) {
