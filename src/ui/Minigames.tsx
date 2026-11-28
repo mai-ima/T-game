@@ -85,7 +85,7 @@ export function WatchTask({ node, onDone, relaxed }: { node: TaskNode; onDone: D
     <TaskShell title={node.title} intro={node.intro}>
       <div className="mg-meta"><span>声かけ成功 {saved}</span><span>線を越えた {lost}</span></div>
       <div className="mg-scene watch" aria-label="ホーム。黄色い線へ近づいた人をタップして声をかける"><div className="mg-line" /><div className="mg-edge">ホーム端</div>
-        {ps.map(p => <button key={p.id} className={'mg-person ' + (p.state === 'saved' ? 'saved' : p.state === 'lost' ? 'lost' : p.bad ? 'bad' : 'safe')} style={{ left: p.x * 100 + '%', top: p.y * 100 + '%' }} onClick={() => tap(p.id)} aria-label={p.bad ? '線に近づく人' : '立ち止まっている人'}>{p.state === 'saved' ? '😊' : p.state === 'lost' ? '⚠' : p.bad ? '🚶' : '🧍'}</button>)}
+        {ps.map(p => <button key={p.id} className={'mg-person ' + (p.state === 'saved' ? 'saved' : p.state === 'lost' ? 'lost' : p.bad ? 'bad' : 'safe')} style={{ left: p.x * 100 + '%', top: p.y * 100 + '%' }} onClick={() => tap(p.id)} aria-label={p.bad ? '線に近づく人' : '立ち止まっている人'}><Pawn kind={p.state === 'saved' ? 'saved' : p.state === 'lost' ? 'lost' : p.bad ? 'walk' : 'stand'} /></button>)}
       </div>
       <p className="small">黄色い線に向かって歩いてくる人をタップして、声をかけて下がってもらいます。立ち止まっている人は見守るだけで大丈夫です。</p>
       {fin && <Finish score={score} label="見守り" onDone={onDone} />}
@@ -155,5 +155,19 @@ export function MemoryTask({ node, onDone }: { node: TaskNode; onDone: Done }) {
       </>}
       {phase === 'done' && <Finish score={score} label="入力の正確さ" onDone={onDone} />}
     </TaskShell>
+  );
+}
+
+/** ホーム見守り用のドット絵風の人影（絵文字をやめて画面の雰囲気を揃える） */
+function Pawn({ kind }: { kind: 'saved' | 'lost' | 'walk' | 'stand' }) {
+  const body = kind === 'lost' ? '#c0392b' : kind === 'saved' ? '#2e8b57' : kind === 'walk' ? '#d98a1e' : '#4a6fa5';
+  return (
+    <svg viewBox="0 0 16 16" width="30" height="30" shapeRendering="crispEdges" aria-hidden>
+      <rect x="6" y="1" width="4" height="4" fill="#f1c9a0" /><rect x="6" y="1" width="4" height="1" fill="#3a2a22" />
+      <rect x="5" y="5" width="6" height="5" fill={body} />
+      {kind === 'walk' ? <><rect x="4" y="10" width="3" height="5" fill="#2b2b3a" /><rect x="9" y="9" width="3" height="5" fill="#2b2b3a" /></> : <><rect x="5" y="10" width="2" height="5" fill="#2b2b3a" /><rect x="9" y="10" width="2" height="5" fill="#2b2b3a" /></>}
+      {kind === 'lost' && <rect x="7" y="6" width="2" height="3" fill="#fff" />}
+      {kind === 'saved' && <rect x="6" y="3" width="4" height="1" fill="#fff" />}
+    </svg>
   );
 }

@@ -193,7 +193,7 @@ function ChapterEnd({ c, onExit }: { c: GameController; onExit: () => void }) {
         <h3>{n?.nextChapter ? '次の章への影響' : '今回の判断の記録'}</h3>
         {flags.length ? <ul>{flags.map(f => <li key={f}>{INFLUENCE[f]}</li>)}</ul> : <p className="small">特筆すべき分岐はありません。</p>}
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 18 }}>
-          {n?.nextChapter && <button className="btn primary" onClick={() => c.startNextChapter()}>第2章 冒頭（体験版）へ進む</button>}
+          {n?.nextChapter && <button className="btn primary" onClick={() => c.startNextChapter()}>{(() => { const t = c.story.chapters.find(x => x.id === n.nextChapter)?.title; return t ? `次へ：${t}` : '次の章へ進む'; })()}</button>}
           <button className="btn" onClick={() => { c.panel = 'flow'; c.notify(); }}>分岐図を見る</button><button className="btn" onClick={() => { c.panel = 'career'; c.notify(); }}>経歴・異動可否</button><button className="btn" onClick={() => { c.panel = 'save'; c.notify(); }}>セーブ</button><button className="btn ghost" onClick={onExit}>タイトルに戻る</button>
         </div>
         {!n?.nextChapter && <p className="small" style={{ marginTop: 14 }}>実装済みの範囲はここまでです。{c.mode === 'R8' ? '第2章以降（全96章企画）' : '第3章以降（全96章企画）'}は未実装です。</p>}
