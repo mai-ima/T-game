@@ -59,6 +59,8 @@ export function applyEffect(w: WorldState, e: Effect, nodeId?: string) {
   else if ('log' in e) w.log.push({ day: w.clock.day, minute: w.clock.minute, text: e.log.text, tag: e.log.tag, node: nodeId });
   else if ('timeline' in e) w.timeline.push({ day: w.clock.day, minute: w.clock.minute, text: e.timeline.text, tag: e.timeline.tag, node: nodeId });
   else if ('done' in e) { if (!w.story.done.includes(e.done)) w.story.done.push(e.done); }
+  else if ('depart' in e) { w.flags['gone.' + e.depart.char] = true; w.timeline.push({ day: w.clock.day, minute: w.clock.minute, text: e.depart.note ?? `${e.depart.char} が職場を去った`, tag: 'depart', node: nodeId }); }
+  else if ('lock' in e) { w.flags['locked.' + e.lock.id] = true; if (e.lock.note) w.timeline.push({ day: w.clock.day, minute: w.clock.minute, text: e.lock.note, tag: 'lock', node: nodeId }); }
   else if ('ending' in e) { if (!w.story.endings.includes(e.ending)) w.story.endings.push(e.ending); }
 }
 

@@ -272,3 +272,15 @@ describe('後効き（過去の選択が場面を変えたことの記録）', (
     run.enter(br.id); expect(run.takeEchoes().length).toBe(0); // 同じ場面で二重に出さない
   });
 });
+
+describe('取り返しのつかない変化（depart / lock）', () => {
+  it('depart は gone 条件を立て、時系列に残る。lock は locked 条件を立てる', async () => {
+    const { applyEffects } = await import('../src/engine/worldState');
+    const w = createWorld(S, 'テスト');
+    expect(evalCond({ gone: 'yamashina' }, w)).toBe(false);
+    applyEffects(w, [{ depart: { char: 'yamashina', note: '山科が異動した' } }, { lock: { id: 'base_route', note: '基地の道が閉じた' } }]);
+    expect(evalCond({ gone: 'yamashina' }, w)).toBe(true);
+    expect(evalCond({ locked: 'base_route' }, w)).toBe(true);
+    expect(w.timeline.some(t => t.tag === 'depart')).toBe(true);
+  });
+});

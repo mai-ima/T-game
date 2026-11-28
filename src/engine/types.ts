@@ -14,6 +14,7 @@ export type Cond =
   | { visited: string } | { notVisited: string }
   | { chose: { node: string; option: string } }
   | { done: string } | { nodePrefix: string }
+  | { gone: string } | { locked: string }
   | { all: Cond[] } | { any: Cond[] } | { not: Cond };
 
 export type EvalKey = 'service'|'accuracy'|'reporting'|'teamwork'|'safety';
@@ -33,6 +34,8 @@ export type Effect =
   | { log: { text: string; tag?: string } }
   | { timeline: { text: string; tag?: string } }
   | { done: string }
+  | { depart: { char: string; note?: string } }   // 人物が職場を去る（取り返しがつかない・非暴力）
+  | { lock: { id: string; note?: string } }       // 選ばなかった道が恒久的に閉じる
   | { ending: string };
 
 export interface Speaker { id?: string; name?: string }
