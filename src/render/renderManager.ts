@@ -1,4 +1,9 @@
 import * as THREE from 'three';
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
+import { GTAOPass } from 'three/examples/jsm/postprocessing/GTAOPass.js';
+import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
+import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import type { StationData } from './stationBuilder';
 import { D, P, TRACK_Z, RAIL_TOP } from './stationBuilder';
@@ -41,6 +46,7 @@ export class RenderManager {
   private raf = 0; private last = 0; private acc = 0; private walkPhase = 0; private lastStepSign = 1; fps = 60; frameMs = 16; paused = false; time = 0;
   plan: PlanView = { cx: 0, cz: -10, scale: 6 }; planFollow = true; planLevel: 'auto' | 'ground' | 'platform' | 'deck' = 'auto'; ctx2d?: CanvasRenderingContext2D | null;
   clipPlane = new THREE.Plane(new THREE.Vector3(0, -1, 0), 4.6); private pointers = new Map<number, { x: number; y: number }>(); private downInfo: { x: number; y: number; t: number; moved: boolean } | null = null; private pinch = 0;
+  private postBroken = false; private composer: EffectComposer | null = null; private composerCam: THREE.Camera | null = null;
   onUpdate?: (info: { t: number }) => void; envTex?: THREE.Texture; daylight = 1; private movedThisFrame = false;
 
   constructor(o: RMOptions) {
@@ -103,7 +109,20 @@ export class RenderManager {
     for (const h of Object.values(this.humans)) h.setLabel(Q.labels); this.player?.setLabel(Q.labels);
     if (Q.envMap) { if (!this.envTex) { const pm = new THREE.PMREMGenerator(r); this.envTex = pm.fromScene(new RoomEnvironment(), 0.04).texture; pm.dispose(); } this.scene.environment = this.envTex; this.scene.environmentIntensity = 0.55; } else this.scene.environment = null;
     this.scene.traverse(o => { const m = (o as THREE.Mesh).material as THREE.Material | THREE.Material[] | undefined; if (m) (Array.isArray(m) ? m : [m]).forEach(x => { x.needsUpdate = true; }); });
+    if (!Q.post) this.disposeComposer();
     this.resize();
+  }
+  /** 高品質のみ：奥行きの陰影（GTAO）と控えめな光のにじみ。重い環境では自動品質が下げる。 */
+  private disposeComposer() { this.composer?.dispose(); this.composer = null; this.composerCam = null; }
+  private buildComposer(cam: THREE.Camera) {
+    const r = this.renderer!; const size = r.getSize(new THREE.Vector2()); const pr = r.getPixelRatio();
+    const rt = new THREE.WebGLRenderTarget(size.x * pr, size.y * pr, { type: THREE.HalfFloatType, samples: 4 });
+    const c = new EffectComposer(r, rt); c.setPixelRatio(pr); c.setSize(size.x, size.y);
+    c.addPass(new RenderPass(this.scene, cam));
+    const ao = new GTAOPass(this.scene, cam, size.x, size.y); ao.output = GTAOPass.OUTPUT.Default; ao.updateGtaoMaterial({ radius: 0.9, distanceExponent: 1.6, thickness: 1.5, scale: 1.7, samples: 12 }); c.addPass(ao);
+    c.addPass(new UnrealBloomPass(size, 0.18, 0.5, 0.92));
+    c.addPass(new OutputPass());
+    this.composer = c; this.composerCam = cam;
   }
   setViewMode(m: ViewMode) {
     if (m !== '2d' && !this.webgl) return; this.viewMode = m; this.o.canvas.style.visibility = m === '2d' ? 'hidden' : 'visible'; this.o.plan.style.visibility = m === '2d' ? 'visible' : 'hidden';
@@ -181,7 +200,7 @@ export class RenderManager {
   dispose() { this.stop(); this.renderer?.dispose(); }
   resize() {
     const host = this.o.canvas.parentElement; if (!host) return; const w = Math.max(1, host.clientWidth), h = Math.max(1, host.clientHeight);
-    if (this.renderer) this.renderer.setSize(w, h, false); this.persp.aspect = w / h; this.persp.updateProjectionMatrix();
+    if (this.renderer) { this.renderer.setSize(w, h, false); this.composer?.setPixelRatio(this.renderer.getPixelRatio()); this.composer?.setSize(w, h); } this.persp.aspect = w / h; this.persp.updateProjectionMatrix();
     const dpr = Math.min(window.devicePixelRatio || 1, 2); this.o.plan.width = Math.round(w * dpr); this.o.plan.height = Math.round(h * dpr); this.o.plan.style.width = '100%'; this.o.plan.style.height = '100%';
   }
 
@@ -300,7 +319,11 @@ export class RenderManager {
       if (this.planFollow) { this.plan.cx += (this.sim.player.x - this.plan.cx) * 0.12; this.plan.cz += (this.sim.player.z - this.plan.cz) * 0.12; }
       g.setTransform(dpr, 0, 0, dpr, 0, 0); drawPlan(g, cv.width / dpr, cv.height / dpr, this.plan, this.data, this.sim, this.trains, this.activeMarkers, this.planLevel); return;
     }
-    this.renderer.render(this.scene, this.activeCam());
+    const cam = this.activeCam();
+    if (QUALITY[this.quality].post && !this.postBroken && this.viewMode === '3d') {
+      try { if (!this.composer || this.composerCam !== cam) { this.disposeComposer(); this.buildComposer(cam); } this.composer!.render(); return; } catch { this.postBroken = true; this.disposeComposer(); }
+    }
+    this.renderer.render(this.scene, cam);
   }
 
   stats() {

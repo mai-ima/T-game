@@ -1,10 +1,10 @@
 export type QualityId = 'high' | 'medium' | 'low';
-export interface QualityPreset { id: QualityId; label: string; pixelRatioCap: number; shadows: boolean; shadowMap: number; maxLod: 0 | 1 | 2; crowd: number; envMap: boolean; labels: boolean; desc: string }
+export interface QualityPreset { id: QualityId; label: string; pixelRatioCap: number; shadows: boolean; shadowMap: number; maxLod: 0 | 1 | 2; crowd: number; envMap: boolean; post: boolean; labels: boolean; desc: string }
 
 export const QUALITY: Record<QualityId, QualityPreset> = {
-  high: { id: 'high', label: '最高', pixelRatioCap: 2, shadows: true, shadowMap: 2048, maxLod: 2, crowd: 16, envMap: true, labels: true, desc: '影・環境反射・全ディテール' },
-  medium: { id: 'medium', label: '標準', pixelRatioCap: 1.5, shadows: true, shadowMap: 1024, maxLod: 1, crowd: 9, envMap: false, labels: true, desc: '影あり・小部品を一部省略' },
-  low: { id: 'low', label: '最低', pixelRatioCap: 0.8, shadows: false, shadowMap: 512, maxLod: 0, crowd: 5, envMap: false, labels: false, desc: '影なし・低解像度・主要設備のみ' }
+  high: { id: 'high', label: '最高', pixelRatioCap: 2, shadows: true, shadowMap: 2048, maxLod: 2, crowd: 16, envMap: true, post: true, labels: true, desc: '影・環境反射・奥行きの陰影・光のにじみ・全ディテール' },
+  medium: { id: 'medium', label: '標準', pixelRatioCap: 1.5, shadows: true, shadowMap: 1024, maxLod: 1, crowd: 9, envMap: false, post: false, labels: true, desc: '影あり・小部品を一部省略' },
+  low: { id: 'low', label: '最低', pixelRatioCap: 0.8, shadows: false, shadowMap: 512, maxLod: 0, crowd: 5, envMap: false, post: false, labels: false, desc: '影なし・低解像度・主要設備のみ' }
 };
 
 /** FPSに応じて品質を自動調整（autoモード時）。下げるのは速く、上げるのは慎重に。 */
