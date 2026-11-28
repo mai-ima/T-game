@@ -417,6 +417,22 @@
     ]
    }
   },
+  "uno": {
+   "id": "uno",
+   "name": "宇野 保",
+   "kana": "うの たもつ",
+   "role": "利用者（月曜の常連）",
+   "dept": "none",
+   "age": 74,
+   "years": 0,
+   "uniform": "#5a5f6a",
+   "hair": "#d0d0d0",
+   "skin": "#e4c09c",
+   "trait": "毎週月曜、妻の通院に付き添う。紙の回数券を、いつも二枚買う。",
+   "bio": "券売機の画面が変わってから、買い方が分からなくなった。",
+   "gender": "m",
+   "accessory": "cane"
+  },
   "sugiura": {
    "id": "sugiura",
    "name": "杉浦 恒夫",
@@ -5261,12 +5277,12 @@
     },
     {
      "who": "yamashina",
-     "text": "この床下機器、図面で見るのと全然違うな…。",
+     "text": "この床下機器、図面で見るのと全然違うな……。",
      "mood": "smile"
     },
     {
      "who": "yamashina",
-     "text": "駅の仕事を覚えるのが先なのは分かってる。でも、ここで働きたい気持ちは、やっぱり本物だ。"
+     "text": "駅の仕事を覚えるのが先なのは、分かってる。でも、ここで働きたいのは、本物だ。"
     },
     {
      "who": "player",
@@ -5274,7 +5290,7 @@
     },
     {
      "who": "yamashina",
-     "text": "ああ。二人で、見えない道を、歩いていこう。"
+     "text": "ああ。"
     }
    ],
    "next": "ch2.end",
@@ -5543,7 +5559,7 @@
    "chapter": "ch2",
    "title": "第2章 最初の週末",
    "nextChapter": "ch3",
-   "summary": "勤務2週目の月曜が終わった。気づいたことをどう扱ったか。誰と昼を過ごしたか。その積み重ねが、次の週の勤務表と、人との距離を少しずつ変えていく。",
+   "summary": "勤務2週目の月曜が終わった。券売機の前の男性に、何をしたか。何を、しなかったか。誰の隣で昼を食べ、何を捨てたか。選ばなかった道は、戻らない。",
    "effects": [
     {
      "timeline": {
@@ -11417,28 +11433,25 @@
    "type": "line",
    "lines": [
     {
-     "text": "4月5日（月）。春の雨上がりの朝。ホームの屋根から落ちる水滴が、規則正しい音を立てている。",
+     "text": "4月5日（月）。雨上がりの朝。ホームの屋根から、水滴が規則正しく落ちている。",
      "narration": true
     },
     {
      "who": "shiraishi",
-     "text": "朝礼を始める。今週のテーマは「駅の顔」だ。駅員の仕事は、改札に立っているだけではない。迷っている人に最初に気づくのが、私たちの仕事だ。"
+     "text": "朝礼を始める。今週は「駅の顔」だ。"
     },
     {
      "who": "kubota",
-     "text": "今日は、窓口と券売機の周りを中心に動いてもらいます。時間が空いたら、気づいたことをメモしてください。後で聞きます。"
+     "text": "今日の依頼は六件。八時間では、終わりません。",
+     "mood": "serious"
     },
     {
      "who": "yamashina",
-     "text": "俺は朝のラッシュのホーム見守りか。よし、任せてくれ。",
+     "text": "俺は朝のホームを取る。先に言ったもの勝ちだろ。",
      "mood": "smile"
-    },
-    {
-     "who": "shiraishi",
-     "text": "先週は、慌ただしかったと思う。今週は、慣れてきたところに落とし穴がある。「分かったつもり」を、一つずつ疑いなさい。"
     }
    ],
-   "next": "ch2.hub",
+   "next": "ch2.brief_rel",
    "effects": [
     {
      "clock": {
@@ -11456,7 +11469,7 @@
     },
     {
      "log": {
-      "text": "第2週の朝礼。テーマは「駅の顔」",
+      "text": "第2週の朝礼。依頼は六件",
       "tag": "work"
      }
     }
@@ -11470,6 +11483,65 @@
      "yamashina"
     ],
     "caption": "4月5日（月） 8:20 駅事務室"
+   }
+  },
+  "ch2.brief_rel": {
+   "id": "ch2.brief_rel",
+   "type": "branch",
+   "cases": [
+    {
+     "when": {
+      "rel": {
+       "char": "kubota",
+       "key": "trust",
+       "op": ">=",
+       "val": 3
+      }
+     },
+     "goto": "ch2.br_close"
+    }
+   ],
+   "else": "ch2.br_far"
+  },
+  "ch2.br_close": {
+   "id": "ch2.br_close",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "ベビーカーの方は十一時です。窓口は、午後に回しても間に合います。"
+    },
+    {
+     "who": "kubota",
+     "text": "捨てる順番だけ、先に決めておくと楽ですよ。",
+     "mood": "smile"
+    }
+   ],
+   "next": "ch2.hub",
+   "view": {
+    "mode": "25d",
+    "bg": "office",
+    "focus": [
+     "kubota"
+    ]
+   }
+  },
+  "ch2.br_far": {
+   "id": "ch2.br_far",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "順番は、自分で決めてください。"
+    }
+   ],
+   "next": "ch2.hub",
+   "view": {
+    "mode": "25d",
+    "bg": "office",
+    "focus": [
+     "kubota"
+    ]
    }
   },
   "ch2.hub": {
@@ -11617,7 +11689,7 @@
     {
      "id": "coins",
      "object": "vend2",
-     "label": "両替用の釣銭を準備する",
+     "label": "売店の両替用の釣銭を準備する",
      "goto": "ch2.coins_1",
      "requires": {
       "all": [
@@ -11643,7 +11715,7 @@
     {
      "id": "idea",
      "object": "vend2",
-     "label": "券売機の前で、迷っている方の様子を観察する",
+     "label": "券売機の前で、迷っている方の様子を見る",
      "goto": "ch2.idea_1",
      "requires": {
       "all": [
@@ -11749,7 +11821,7 @@
     },
     {
      "id": "g_coins",
-     "label": "（業務）釣銭の準備",
+     "label": "（頼まれごと）売店の釣銭の準備",
      "when": {
       "flag": "ch2.coins_done"
      },
@@ -11804,11 +11876,11 @@
    "lines": [
     {
      "who": "kubota",
-     "text": "雨の日は、床が滑りやすくなります。始発から一番人が通る前に、一周見ておきましょう。"
+     "text": "雨の日は、床が滑ります。一周、見てきてください。"
     },
     {
      "who": "kubota",
-     "text": "傘の水滴、足元の濡れ、案内板のずれ。目を使ってください。"
+     "text": "傘の水滴、足元の濡れ、案内板のずれ。目を使って。"
     }
    ],
    "next": "ch2.patrol_task",
@@ -11939,7 +12011,7 @@
    "lines": [
     {
      "who": "kubota",
-     "text": "雨の日の見回りは、これだけ見てもらえれば十分です。助かります。",
+     "text": "全部拾えていますね。",
      "mood": "smile"
     }
    ],
@@ -11951,7 +12023,7 @@
    "lines": [
     {
      "who": "kubota",
-     "text": "見落としが少しありました。入口付近は、朝に一番最初に見てください。"
+     "text": "入口の水は、先に見てください。"
     }
    ],
    "next": "ch2.patrol_end"
@@ -11962,7 +12034,7 @@
    "lines": [
     {
      "who": "kubota",
-     "text": "濡れた床は転倒につながります。見回りの順番を決めましょう。",
+     "text": "濡れた床は、朝いちばんです。",
      "mood": "serious"
     }
    ],
@@ -11982,7 +12054,7 @@
      }
     },
     {
-     "time": 15
+     "time": 40
     },
     {
      "log": {
@@ -11999,11 +12071,11 @@
    "lines": [
     {
      "who": "yamashina",
-     "text": "お、来たか。朝のホームは、スマホを見ながら歩く人が多い。線に近づいたら、すぐ声だ。"
+     "text": "来たか。朝のホームは、スマホを見たまま歩く人が多い。"
     },
     {
      "who": "yamashina",
-     "text": "怖がらせないように、短く、はっきり。「黄色い線の内側へ」だけでいい。"
+     "text": "線に近づいたら、声。短く、はっきり。「黄色い線の内側へ」だけでいい。"
     }
    ],
    "next": "ch2.rush_task",
@@ -12072,7 +12144,7 @@
    "lines": [
     {
      "who": "yamashina",
-     "text": "いい声かけだった。あれなら、誰も嫌な顔をしない。",
+     "text": "今の声かけなら、誰も嫌な顔をしない。",
      "mood": "smile"
     }
    ],
@@ -12084,7 +12156,7 @@
    "lines": [
     {
      "who": "yamashina",
-     "text": "何人か線を越えさせてしまったな。視線を広く。"
+     "text": "何人か、線を越えさせたな。"
     }
    ],
    "next": "ch2.rush_end"
@@ -12095,7 +12167,7 @@
    "lines": [
     {
      "who": "yamashina",
-     "text": "朝は特に危ない時間だ。全体を見る練習をしよう。",
+     "text": "朝は特に、危ない時間だ。",
      "mood": "serious"
     }
    ],
@@ -12115,7 +12187,7 @@
      }
     },
     {
-     "time": 20
+     "time": 60
     },
     {
      "log": {
@@ -12132,11 +12204,11 @@
    "lines": [
     {
      "who": "kubota",
-     "text": "窓口は、きっぷ以外の相談も来ます。聞いてから分類する癖をつけてください。"
+     "text": "窓口は、きっぷ以外の相談も来ます。"
     },
     {
      "who": "kubota",
-     "text": "迷ったら、「確認します」と言って私に聞くこと。勝手に判断しないのが鉄則です。"
+     "text": "迷ったら、「確認します」と言って私に。"
     }
    ],
    "next": "ch2.window_task",
@@ -12269,7 +12341,7 @@
    "lines": [
     {
      "who": "kubota",
-     "text": "落ち着いて、迷ったものはちゃんと確認に回せました。それが正解です。",
+     "text": "迷ったものを、ちゃんと回せましたね。",
      "mood": "smile"
     }
    ],
@@ -12281,7 +12353,7 @@
    "lines": [
     {
      "who": "kubota",
-     "text": "数件、判断が違いました。迷ったら確認、を思い出してください。"
+     "text": "数件、判断が違いました。"
     }
    ],
    "next": "ch2.window_end"
@@ -12292,7 +12364,7 @@
    "lines": [
     {
      "who": "kubota",
-     "text": "自分で決めてしまうと、後で大きな問題になることがあります。必ず確認を。",
+     "text": "自分で決めると、後で大きくなります。",
      "mood": "serious"
     }
    ],
@@ -12312,7 +12384,7 @@
      }
     },
     {
-     "time": 25
+     "time": 120
     },
     {
      "log": {
@@ -12329,11 +12401,11 @@
    "lines": [
     {
      "who": "shiraishi",
-     "text": "月に一度、お客様の声を整理して、本社に送る。内容は、改善の材料になる。"
+     "text": "月に一度、お客様の声を整理して、本社に送る。"
     },
     {
      "who": "shiraishi",
-     "text": "全部を覚える必要はない。ただ、要点は自分の言葉で言えるようにしなさい。"
+     "text": "全部は覚えなくていい。要点だけ、自分の言葉で。"
     }
    ],
    "next": "ch2.voice_task",
@@ -12419,7 +12491,7 @@
    "lines": [
     {
      "who": "shiraishi",
-     "text": "そうだ。数だけでなく、「いつ」「誰が」まで拾えている。",
+     "text": "「いつ」「誰が」まで拾えている。",
      "mood": "smile"
     }
    ],
@@ -12431,7 +12503,7 @@
    "lines": [
     {
      "who": "shiraishi",
-     "text": "おおむね合っている。細かい点ほど、改善の鍵になる。"
+     "text": "大筋は合っている。"
     }
    ],
    "next": "ch2.voice_end"
@@ -12442,7 +12514,7 @@
    "lines": [
     {
      "who": "shiraishi",
-     "text": "もう一度、原文を読み直しなさい。要点を取り違えると、改善が的外れになる。",
+     "text": "もう一度、原文を。",
      "mood": "serious"
     }
    ],
@@ -12462,7 +12534,7 @@
      }
     },
     {
-     "time": 20
+     "time": 90
     },
     {
      "log": {
@@ -12483,7 +12555,7 @@
     },
     {
      "who": "kubota",
-     "text": "まず案内所で、行き先の乗り場を確認してから、エレベーターへ向かいましょう。"
+     "text": "まず案内所で乗り場を確認して、それからエレベーターへ。"
     }
    ],
    "next": "ch2.guide_task",
@@ -12575,7 +12647,7 @@
    "lines": [
     {
      "who": "kubota",
-     "text": "無理のない道でした。お客様も安心されたと思います。",
+     "text": "無理のない道でした。",
      "mood": "smile"
     }
    ],
@@ -12587,7 +12659,7 @@
    "lines": [
     {
      "who": "kubota",
-     "text": "着きましたが、少し遠回りでした。最短の道も覚えておきましょう。"
+     "text": "着きましたが、少し遠回りでした。"
     }
    ],
    "next": "ch2.guide_end"
@@ -12598,7 +12670,7 @@
    "lines": [
     {
      "who": "kubota",
-     "text": "案内所に寄らないと、行き先を間違えることがあります。確認が先です。",
+     "text": "案内所を挟まないと、行き先を間違えます。",
      "mood": "serious"
     }
    ],
@@ -12618,7 +12690,7 @@
      }
     },
     {
-     "time": 20
+     "time": 60
     },
     {
      "log": {
@@ -12635,11 +12707,11 @@
    "lines": [
     {
      "who": "sakai",
-     "text": "今日は雨だから、傘を買いに来て千円札を崩す人が多いんだ。"
+     "text": "今日は雨だから、傘を買って千円札を崩す人が多いの。"
     },
     {
      "who": "sakai",
-     "text": "手伝ってくれる？ 機械のタイミングが、慣れないと難しくてね。"
+     "text": "手伝ってくれる？ あの機械、慣れないと難しくてね。"
     }
    ],
    "next": "ch2.coins_task",
@@ -12721,7 +12793,7 @@
    "lines": [
     {
      "who": "sakai",
-     "text": "すごいね、新人さんなのに。これで夕方まで持ちそう。",
+     "text": "すごいわね、新人さんなのに。",
      "mood": "smile"
     }
    ],
@@ -12733,7 +12805,7 @@
    "lines": [
     {
      "who": "sakai",
-     "text": "ちょっと崩れたけど、使えるよ。"
+     "text": "ちょっと崩れたけど、使えるわ。"
     }
    ],
    "next": "ch2.coins_end"
@@ -12744,7 +12816,7 @@
    "lines": [
     {
      "who": "sakai",
-     "text": "難しかったね。ゆっくりやり直せば大丈夫。",
+     "text": "難しかったわね。やり直せば大丈夫。",
      "mood": "serious"
     }
    ],
@@ -12764,11 +12836,11 @@
      }
     },
     {
-     "time": 15
+     "time": 45
     },
     {
      "log": {
-      "text": "釣銭の準備",
+      "text": "売店の釣銭を準備",
       "tag": "work"
      }
     }
@@ -12780,28 +12852,28 @@
    "type": "line",
    "lines": [
     {
-     "text": "券売機の前に、年配の男性が立っている。画面を見つめたまま、数十秒が過ぎた。",
+     "text": "券売機の前で、年配の男性が立ち止まっている。指が、画面の同じ場所を三度なぞった。",
      "narration": true
     },
     {
-     "who": "player",
-     "text": "（「ご案内」の表示を探している…。ボタンの位置が分かりにくいのかもしれない）"
-    },
-    {
-     "text": "同じ光景を見るのは、今日で三度目だった。そのたびに、誰かが後ろに並んで、ため息をついていた。",
+     "text": "後ろに二人。誰も、何も言わない。",
      "narration": true
     },
     {
-     "who": "kubota",
-     "text": "（通りかかって）…気づきましたか。実は、前から言われているんです。でも、券売機の設定は私たちの一存では変えられなくて。"
-    },
-    {
-     "who": "player",
-     "text": "何か、できることはないでしょうか。"
+     "who": "uno",
+     "text": "……先週は、ここにあったんだが。"
     },
     {
      "who": "kubota",
-     "text": "私は、できることがあるなら、きちんとした形でやりたいと思っています。{player}さんは、どうしたいですか？"
+     "text": "（小声で）先週、画面が変わりました。宇野さん。毎週月曜、奥様の通院に付き添って、紙の回数券を買う方です。"
+    },
+    {
+     "who": "kubota",
+     "text": "本社には二度、上げています。返事は、まだ。"
+    },
+    {
+     "who": "kubota",
+     "text": "{player}さんなら、どうしますか。"
     }
    ],
    "next": "ch2.idea_choice",
@@ -12814,11 +12886,11 @@
   "ch2.idea_choice": {
    "id": "ch2.idea_choice",
    "type": "choice",
-   "prompt": "気づいたことを、どう扱いますか？",
+   "prompt": "宇野さんの後ろに、列ができはじめている。",
    "options": [
     {
      "id": "consult",
-     "label": "久保田さんに相談して、改善提案書にまとめる",
+     "label": "久保田と、提案書を書く。午後が、それでつぶれる",
      "goto": "ch2.idea_c",
      "tone": "careful",
      "effects": [
@@ -12836,7 +12908,7 @@
     },
     {
      "id": "selfpost",
-     "label": "手書きの案内を作って、自分で券売機の横に貼る",
+     "label": "手書きの案内を作って、今すぐ券売機の横に貼る",
      "goto": "ch2.idea_s",
      "tone": "risky",
      "effects": [
@@ -12846,10 +12918,28 @@
      ]
     },
     {
-     "id": "skip",
-     "label": "今は自分の仕事を覚えるのが先。見送る",
-     "goto": "ch2.idea_k",
+     "id": "boss",
+     "label": "駅長に直接話す。久保田を通さず、今日のうちに許可を取る",
+     "goto": "ch2.idea_b",
      "tone": "quick",
+     "effects": [
+      {
+       "set": "ch2.idea_boss"
+      },
+      {
+       "rel": {
+        "char": "kubota",
+        "trust": -1,
+        "rapport": 0
+       }
+      }
+     ]
+    },
+    {
+     "id": "skip",
+     "label": "今は列を流すのが先。宇野さんを窓口へ案内する",
+     "goto": "ch2.idea_k",
+     "tone": "neutral",
      "effects": [
       {
        "set": "ch2.idea_skip"
@@ -12870,20 +12960,15 @@
    "lines": [
     {
      "who": "kubota",
-     "text": "ありがとうございます。それが一番いい形です。ただ、提案書は「気持ち」ではなく「事実」から書きます。"
+     "text": "……ありがとうございます。まず、見たことを数えましょう。"
     },
     {
      "who": "kubota",
-     "text": "「分かりにくい」だけでは、本社は動けません。何を見て、何回あって、どうなったか。そこから始めましょう。"
+     "text": "何を見て、何回あったか。「分かりにくい」だけでは、本社は動けません。"
     },
     {
-     "who": "player",
-     "text": "事実、ですね。観察したことを、順番に書いてみます。"
-    },
-    {
-     "who": "kubota",
-     "text": "駅長は、現場の声を一番大事にしてくれる人です。でも、決まりを守る人でもあります。両方に届く書き方をしましょう。",
-     "mood": "smile"
+     "text": "午後は、これでつぶれる。窓口の山は、手つかずのまま。",
+     "narration": true
     }
    ],
    "next": "ch2.proposal_task",
@@ -12909,7 +12994,7 @@
      "options": [
       {
        "id": "f1",
-       "text": "午前中に、年配のお客様が券売機の「ご案内」を探して迷う場面を3回見ました。",
+       "text": "午前中に、年配のお客様が券売機で回数券を探して迷う場面を3回見ました。",
        "good": true,
        "why": "回数と場面が書かれた事実です。"
       },
@@ -12983,18 +13068,15 @@
      "effects": [
       {
        "eval": {
-        "key": "service",
-        "add": 3
-       }
-      },
-      {
-       "eval": {
         "key": "accuracy",
         "add": 2
        }
       },
       {
        "set": "ch2.proposal_good"
+      },
+      {
+       "time": 45
       }
      ]
     },
@@ -13003,10 +13085,7 @@
      "goto": "ch2.proposal_mid",
      "effects": [
       {
-       "eval": {
-        "key": "accuracy",
-        "add": 1
-       }
+       "time": 45
       }
      ]
     },
@@ -13015,10 +13094,7 @@
      "goto": "ch2.proposal_bad",
      "effects": [
       {
-       "eval": {
-        "key": "accuracy",
-        "add": -1
-       }
+       "time": 45
       }
      ]
     }
@@ -13038,21 +13114,16 @@
    "lines": [
     {
      "who": "kubota",
-     "text": "事実、小さな提案、確かめ方。これは、そのまま駅長に出せます。",
-     "mood": "smile"
-    },
-    {
-     "who": "kubota",
-     "text": "私も、前から思っていました。{player}さんが言葉にしてくれて、助かりました。"
+     "text": "数字が入っています。このまま、本社に回します。"
     }
    ],
-   "next": "ch2.idea_done",
+   "next": "ch2.idea_c_end",
    "effects": [
     {
      "rel": {
       "char": "kubota",
-      "trust": 2,
-      "rapport": 2
+      "trust": 1,
+      "rapport": 1
      }
     },
     {
@@ -13075,19 +13146,10 @@
    "lines": [
     {
      "who": "kubota",
-     "text": "方向は合っています。ただ、根拠の書き方をもう少し丁寧に。私も一緒に直しましょう。"
+     "text": "根拠を一行、足して出します。"
     }
    ],
-   "next": "ch2.idea_done",
-   "effects": [
-    {
-     "rel": {
-      "char": "kubota",
-      "trust": 1,
-      "rapport": 1
-     }
-    }
-   ],
+   "next": "ch2.idea_c_end",
    "view": {
     "mode": "25d",
     "bg": "office",
@@ -13102,8 +13164,34 @@
    "lines": [
     {
      "who": "kubota",
-     "text": "気持ちは伝わります。でも、このままでは出せません。まず、見たことを数えるところから、一緒にやり直しましょう。",
-     "mood": "serious"
+     "text": "……夕方、もう一度やりましょう。今日の分は、私が持ちます。"
+    }
+   ],
+   "next": "ch2.idea_c_end",
+   "effects": [
+    {
+     "rel": {
+      "char": "kubota",
+      "trust": 0,
+      "rapport": 1
+     }
+    }
+   ],
+   "view": {
+    "mode": "25d",
+    "bg": "office",
+    "focus": [
+     "kubota"
+    ]
+   }
+  },
+  "ch2.idea_c_end": {
+   "id": "ch2.idea_c_end",
+   "type": "line",
+   "lines": [
+    {
+     "text": "提案書は、封筒に入った。窓口の山は、久保田が一人で崩している。",
+     "narration": true
     }
    ],
    "next": "ch2.idea_done",
@@ -13120,89 +13208,76 @@
    "type": "line",
    "lines": [
     {
-     "text": "手元のコピー用紙に、大きな文字で「ご案内はここを押してください」と書いた。テープで券売機の横に貼る。",
+     "text": "コピー用紙に、大きく書いた。「回数券は ここ →」。テープで、券売機の横に貼る。",
      "narration": true
     },
     {
-     "who": "player",
-     "text": "（これで、迷う人が減るはず）"
-    },
-    {
-     "text": "二十分後。巡回から戻った久保田が、足を止めた。",
+     "text": "宇野さんは、矢印の通りに指を動かした。ボタンが押され、紙の券が二枚、出てきた。",
      "narration": true
     },
     {
-     "who": "kubota",
-     "text": "…これ、いつ貼りましたか。",
-     "mood": "serious"
+     "who": "uno",
+     "text": "ああ、これだ。……ありがとう。"
     },
     {
-     "who": "player",
-     "text": "先ほどです。迷う方が多かったので、少しでも役に立てばと…。"
-    },
-    {
-     "who": "kubota",
-     "text": "気持ちは分かります。本当に。でも、券売機まわりの掲示は、本社の承認が必要です。理由は、二つあります。"
-    },
-    {
-     "who": "kubota",
-     "text": "一つは、案内の内容が間違っていた場合、駅全体の責任になること。もう一つは、貼り紙が機械の表示を隠して、かえって混乱を生む場合があること。"
-    },
-    {
-     "who": "player",
-     "text": "…すみません。確認せずに、自分で決めてしまいました。"
-    },
-    {
-     "who": "kubota",
-     "text": "謝ってほしいのではないんです。ただ、いい考えでも、手順を飛ばすと、周りの信頼を一つずつ減らしていきます。"
-    },
-    {
-     "who": "kubota",
-     "text": "貼り紙は、いったん外しましょう。そして、今日のうちに、きちんとした形にしませんか。私も手伝います。",
-     "mood": "smile"
-    },
-    {
-     "text": "剥がした紙は、少しだけ丸まっていた。手の中で、軽く、でも確かな重さを持っていた。",
+     "text": "久保田は、窓口で電話に出ていた。こちらは、見ていない。",
      "narration": true
     }
    ],
    "next": "ch2.idea_done",
    "effects": [
     {
-     "rel": {
-      "char": "kubota",
-      "trust": -1,
-      "rapport": 1
-     }
+     "time": 10
+    }
+   ],
+   "view": {
+    "mode": "3d",
+    "cam": "npc:vend2",
+    "caption": "券売機2号機"
+   }
+  },
+  "ch2.idea_b": {
+   "id": "ch2.idea_b",
+   "type": "line",
+   "lines": [
+    {
+     "text": "駅事務室。白石は、書類から顔を上げなかった。",
+     "narration": true
     },
     {
-     "eval": {
-      "key": "safety",
-      "add": -2
-     }
+     "who": "player",
+     "text": "券売機の画面が変わって、迷う方が出ています。今日、案内を貼る許可をください。"
     },
     {
-     "eval": {
-      "key": "teamwork",
-      "add": -1
-     }
+     "who": "shiraishi",
+     "text": "久保田は、知っているのか。"
     },
     {
-     "set": "legacy.rule_break"
+     "who": "player",
+     "text": "……いえ。まだ話していません。"
     },
     {
-     "timeline": {
-      "text": "4月5日 許可なく券売機に掲示し、指導を受ける"
-     }
+     "who": "shiraishi",
+     "text": "許可は出す。印刷は事務員に頼め。久保田には、私から話す。"
+    },
+    {
+     "text": "判が、ひとつ押された。",
+     "narration": true
+    }
+   ],
+   "next": "ch2.idea_done",
+   "effects": [
+    {
+     "time": 25
     }
    ],
    "view": {
     "mode": "25d",
     "bg": "office",
     "focus": [
-     "kubota"
+     "shiraishi"
     ],
-    "caption": "駅事務室 指導"
+    "caption": "駅事務室"
    }
   },
   "ch2.idea_k": {
@@ -13211,28 +13286,25 @@
    "lines": [
     {
      "who": "player",
-     "text": "（今は、自分の仕事を覚えるのが先だ…）"
+     "text": "（今は、列を流すのが先だ）"
     },
     {
-     "text": "券売機の前の男性は、結局、窓口まで歩いてきた。久保田が、笑顔で対応している。",
+     "text": "宇野さんを、窓口へ案内した。久保田が、笑顔で応じている。",
      "narration": true
     },
     {
      "who": "kubota",
-     "text": "（戻ってきて）…今の方、またいらっしゃいますよ、きっと。気づいたことがあれば、いつでも言ってくださいね。"
+     "text": "……そうですか。分かりました。"
     },
     {
-     "who": "player",
-     "text": "はい。もう少し、観察してみます。"
+     "text": "券売機の前の列が、一人ずつ、ほどけていく。",
+     "narration": true
     }
    ],
    "next": "ch2.idea_done",
    "effects": [
     {
-     "eval": {
-      "key": "accuracy",
-      "add": 1
-     }
+     "time": 5
     }
    ],
    "view": {
@@ -13255,32 +13327,24 @@
      }
     },
     {
-     "time": 15
-    },
-    {
      "log": {
-      "text": "券売機の案内について、対応を決める",
+      "text": "券売機の前の男性について、対応を決める",
       "tag": "work"
      }
     }
    ],
-   "next": "ch2.hub"
+   "next": "ch2.pm_gate"
   },
   "ch2.lunch": {
    "id": "ch2.lunch",
    "type": "line",
    "lines": [
     {
-     "text": "12時。雨は上がり、休憩室の窓から、薄い日が差し込んでいる。",
+     "text": "12時。休憩室の窓から、薄い日が差している。",
      "narration": true
     },
     {
-     "who": "kubota",
-     "text": "お疲れさまです。午前は、よく動きましたね。お茶をどうぞ。",
-     "mood": "smile"
-    },
-    {
-     "text": "弁当を広げる人、仮眠をとる人。駅の昼は、静かで、少しだけ温かい。",
+     "text": "久保田の隣が空いている。山科が、こちらに手を挙げた。駅長は、茶を淹れている。",
      "narration": true
     }
    ],
@@ -13289,7 +13353,9 @@
     "mode": "25d",
     "bg": "hr",
     "focus": [
-     "kubota"
+     "kubota",
+     "yamashina",
+     "shiraishi"
     ],
     "caption": "昼休憩 休憩室"
    }
@@ -13297,11 +13363,11 @@
   "ch2.lunch_choice": {
    "id": "ch2.lunch_choice",
    "type": "choice",
-   "prompt": "昼休憩を、誰と過ごしますか？",
+   "prompt": "トレイを持ったまま、立っている。",
    "options": [
     {
      "id": "kubota",
-     "label": "久保田さんと、午前の振り返りをする",
+     "label": "久保田の隣に座る",
      "goto": "ch2.lunch_k",
      "tone": "careful",
      "effects": [
@@ -13313,13 +13379,20 @@
        }
       },
       {
+       "rel": {
+        "char": "yamashina",
+        "trust": 0,
+        "rapport": -1
+       }
+      },
+      {
        "set": "ch2.lunch_kubota"
       }
      ]
     },
     {
      "id": "yamashina",
-     "label": "山科さんと、お互いの近況を話す",
+     "label": "山科の向かいに座る",
      "goto": "ch2.lunch_y",
      "tone": "caring",
      "effects": [
@@ -13331,13 +13404,20 @@
        }
       },
       {
+       "rel": {
+        "char": "kubota",
+        "trust": 0,
+        "rapport": -1
+       }
+      },
+      {
        "set": "ch2.lunch_yamashina"
       }
      ]
     },
     {
      "id": "shiraishi",
-     "label": "駅長の隣に座って、駅の話を聞く",
+     "label": "駅長の隣に座る",
      "goto": "ch2.lunch_s",
      "tone": "caring",
      "effects": [
@@ -13349,11 +13429,31 @@
        }
       },
       {
-       "set": "ch2.lunch_shiraishi"
+       "rel": {
+        "char": "yamashina",
+        "trust": 0,
+        "rapport": -1
+       }
+      },
+      {
+       "set": "ch2.shiraishi_motto"
+      }
+     ]
+    },
+    {
+     "id": "alone",
+     "label": "誰にも声をかけず、隅の席で食べる",
+     "goto": "ch2.lunch_a",
+     "effects": [
+      {
+       "set": "ch2.lunch_alone"
       }
      ]
     }
    ],
+   "timeLimit": 15,
+   "defaultOption": "alone",
+   "who": "kubota",
    "view": {
     "mode": "25d",
     "bg": "hr",
@@ -13371,24 +13471,24 @@
    "lines": [
     {
      "who": "kubota",
-     "text": "朝のホーム、どうでした。最初の一人に声をかけるのは、勇気がいるでしょう。"
+     "text": "朝のホーム、どうでした。最初の一人に声をかけるのは、勇気がいる。"
     },
     {
      "who": "player",
-     "text": "一番緊張しました。でも、言ってみると、意外と普通に聞いてくれて。"
+     "text": "一番緊張しました。でも、意外と普通に聞いてくれて。"
     },
     {
      "who": "kubota",
-     "text": "お客様は、こちらが思うほど構えていません。構えているのは、いつも私たちのほう。",
+     "text": "怒られたのは、五年で二回です。一回目は、私が悪かった。"
+    },
+    {
+     "who": "kubota",
+     "text": "二回目は、虫の居所の悪い方でした。……どっちか、自分では分からないのが、困りますけど。",
      "mood": "smile"
     },
     {
-     "who": "kubota",
-     "text": "怒られたのは、五年で二回です。一回目は私が悪かった。二回目は、虫の居所が悪い方でした。"
-    },
-    {
-     "who": "kubota",
-     "text": "大事なのは、理由を一度だけ考えること。引きずらないこと。"
+     "text": "向こうの席で、山科が一人で、パンの袋を開けている。",
+     "narration": true
     }
    ],
    "next": "ch2.lunch_end",
@@ -13407,35 +13507,30 @@
    "lines": [
     {
      "who": "yamashina",
-     "text": "朝のホーム、見てたか？ 実は最初の一声まで、五分固まってた。",
+     "text": "朝のホーム、見てたか。最初の一声まで、五分固まってた。",
      "mood": "smile"
     },
     {
      "who": "player",
-     "text": "全然そう見えなかったよ。"
+     "text": "全然そう見えなかった。"
     },
     {
      "who": "yamashina",
-     "text": "顔に出さないのだけは得意なんだ。……同期の中で、俺が一番遅れてる気がする。"
-    },
-    {
-     "who": "player",
-     "text": "見えない道でも、一日ずつ歩けば、あとから道になるんじゃないかな。"
+     "text": "顔に出さないのだけは、得意なんだ。……基地入門研修の公募、駅から推薦は一名だけだ。俺は、出す。"
     },
     {
      "who": "yamashina",
-     "text": "……お前、たまにいいこと言うな。",
-     "mood": "smile"
+     "text": "書類が一行も書けてないのは、内緒な。"
     },
     {
-     "who": "yamashina",
-     "text": "券売機の件、提案書にするなら手伝う。同期だからな。"
+     "text": "久保田は、窓際でお茶を飲んでいた。こちらは、見なかった。",
+     "narration": true
     }
    ],
    "next": "ch2.lunch_end",
    "effects": [
     {
-     "set": "ch2.yama_help"
+     "set": "ch2.yama_confided"
     }
    ],
    "view": {
@@ -13453,16 +13548,12 @@
    "lines": [
     {
      "who": "shiraishi",
-     "text": "珍しいね。若い人は、私の隣には座らないものだ。",
+     "text": "珍しいね。若い人は、私の隣には座らない。",
      "mood": "smile"
     },
     {
      "who": "shiraishi",
-     "text": "この駅の初代駅長は、毎朝、改札の外に立って挨拶していた。「駅の顔は、立っている人の顔だ」と。"
-    },
-    {
-     "who": "player",
-     "text": "駅の顔は、立っている人の顔……。"
+     "text": "初代の駅長は、毎朝、改札の外に立って挨拶していた。「駅の顔は、立っている人の顔だ」と。"
     },
     {
      "who": "shiraishi",
@@ -13470,25 +13561,56 @@
     },
     {
      "who": "player",
-     "text": "券売機で迷っていた、年配の男性の顔を、覚えています。"
+     "text": "券売機で迷っていた、年配の男性の顔を。"
     },
     {
      "who": "shiraishi",
-     "text": "十分だ。それが仕事の始まりだよ。",
+     "text": "……そうか。"
+    }
+   ],
+   "next": "ch2.lunch_end",
+   "view": {
+    "mode": "25d",
+    "bg": "hr",
+    "focus": [
+     "shiraishi"
+    ],
+    "caption": "昼休憩 休憩室"
+   }
+  },
+  "ch2.lunch_a": {
+   "id": "ch2.lunch_a",
+   "type": "line",
+   "lines": [
+    {
+     "text": "トレイを持ったまま、動けなかった。結局、隅の席で、弁当を開けた。",
+     "narration": true
+    },
+    {
+     "text": "誰も、何も言わない。味噌汁だけが、先に冷めた。",
+     "narration": true
+    },
+    {
+     "who": "sakai",
+     "text": "（売店の窓から）あら、お昼、一人？ ……いいのよ。あたしも十年、そうだったもの。",
      "mood": "smile"
     }
    ],
    "next": "ch2.lunch_end",
    "effects": [
     {
-     "set": "ch2.shiraishi_motto"
+     "rel": {
+      "char": "sakai",
+      "trust": 0,
+      "rapport": 1
+     }
     }
    ],
    "view": {
     "mode": "25d",
     "bg": "hr",
     "focus": [
-     "shiraishi"
+     "sakai"
     ],
     "caption": "昼休憩 休憩室"
    }
@@ -13510,19 +13632,887 @@
      }
     }
    ],
+   "next": "ch2.pm_gate"
+  },
+  "ch2.pm_gate": {
+   "id": "ch2.pm_gate",
+   "type": "branch",
+   "cases": [
+    {
+     "when": {
+      "all": [
+       {
+        "flag": "ch2.idea_done"
+       },
+       {
+        "flag": "ch2.lunch_done"
+       },
+       {
+        "notFlag": "ch2.pm_done"
+       }
+      ]
+     },
+     "goto": "ch2.pm"
+    }
+   ],
+   "else": "ch2.hub"
+  },
+  "ch2.pm": {
+   "id": "ch2.pm",
+   "type": "branch",
+   "cases": [
+    {
+     "when": {
+      "flag": "ch2.idea_selfpost"
+     },
+     "goto": "ch2.pm_self"
+    },
+    {
+     "when": {
+      "flag": "ch2.idea_boss"
+     },
+     "goto": "ch2.pm_boss"
+    },
+    {
+     "when": {
+      "flag": "ch2.idea_consult"
+     },
+     "goto": "ch2.pm_cons"
+    }
+   ],
+   "else": "ch2.pm_skip"
+  },
+  "ch2.pm_end": {
+   "id": "ch2.pm_end",
+   "type": "effect",
+   "effects": [
+    {
+     "set": "ch2.pm_done"
+    }
+   ],
    "next": "ch2.hub"
+  },
+  "ch2.pm_self": {
+   "id": "ch2.pm_self",
+   "type": "line",
+   "lines": [
+    {
+     "text": "午後。貼り紙は、午前じゅう効いていた。",
+     "narration": true
+    },
+    {
+     "text": "三十分前、久保田が駅長室から戻ってきた。貼り紙の矢印は二号機を指していた。回数券が出るのは、一号機だった。",
+     "narration": true
+    },
+    {
+     "text": "誤った券で払い戻しになった客が、二人。",
+     "narration": true
+    },
+    {
+     "who": "kubota",
+     "text": "駅長には、指導の責任は私にある、と言いました。"
+    },
+    {
+     "text": "久保田は、こちらを見ない。書類を揃える手だけが、少し速い。",
+     "narration": true
+    }
+   ],
+   "next": "ch2.pm_self_c",
+   "view": {
+    "mode": "25d",
+    "bg": "office",
+    "focus": [
+     "kubota"
+    ],
+    "caption": "午後 駅事務室"
+   }
+  },
+  "ch2.pm_self_c": {
+   "id": "ch2.pm_self_c",
+   "type": "choice",
+   "prompt": "久保田は、書類を揃え続けている。",
+   "options": [
+    {
+     "id": "own",
+     "label": "「私が貼りました。駅長に、話してきます」",
+     "goto": "ch2.ps_own",
+     "tone": "honest",
+     "effects": [
+      {
+       "set": "ch2.owned_up"
+      },
+      {
+       "rel": {
+        "char": "kubota",
+        "trust": 2,
+        "rapport": 1
+       }
+      },
+      {
+       "rel": {
+        "char": "shiraishi",
+        "trust": -1,
+        "rapport": 0
+       }
+      }
+     ]
+    },
+    {
+     "id": "repair",
+     "label": "「払い戻しの二人に、電話をかけます」",
+     "goto": "ch2.ps_rep",
+     "tone": "caring",
+     "effects": [
+      {
+       "set": "ch2.repaired"
+      },
+      {
+       "rel": {
+        "char": "kubota",
+        "trust": 1,
+        "rapport": 0
+       }
+      },
+      {
+       "time": 30
+      }
+     ]
+    },
+    {
+     "id": "defend",
+     "label": "「貼り紙で、宇野さんは買えました」",
+     "goto": "ch2.ps_def",
+     "tone": "risky",
+     "effects": [
+      {
+       "set": "ch2.defended"
+      },
+      {
+       "rel": {
+        "char": "kubota",
+        "trust": -1,
+        "rapport": 0
+       }
+      }
+     ]
+    },
+    {
+     "id": "silent",
+     "label": "……何も言わない",
+     "goto": "ch2.ps_sil",
+     "effects": [
+      {
+       "set": "ch2.kubota_covered"
+      },
+      {
+       "rel": {
+        "char": "kubota",
+        "trust": -2,
+        "rapport": -1
+       }
+      }
+     ]
+    }
+   ],
+   "important": true,
+   "timeLimit": 15,
+   "defaultOption": "silent",
+   "who": "kubota",
+   "view": {
+    "mode": "25d",
+    "bg": "office",
+    "focus": [
+     "kubota"
+    ]
+   }
+  },
+  "ch2.ps_own": {
+   "id": "ch2.ps_own",
+   "type": "line",
+   "lines": [
+    {
+     "text": "駅長室のドアは、ノックの前に開いていた。",
+     "narration": true
+    },
+    {
+     "who": "shiraishi",
+     "text": "……久保田から、聞いている。座れ。"
+    }
+   ],
+   "next": "ch2.ps_own_b",
+   "view": {
+    "mode": "25d",
+    "bg": "office",
+    "focus": [
+     "shiraishi"
+    ],
+    "caption": "駅長室"
+   }
+  },
+  "ch2.ps_own_b": {
+   "id": "ch2.ps_own_b",
+   "type": "branch",
+   "cases": [
+    {
+     "when": {
+      "rel": {
+       "char": "shiraishi",
+       "key": "trust",
+       "op": ">=",
+       "val": 3
+      }
+     },
+     "goto": "ch2.ps_own_g"
+    }
+   ],
+   "else": "ch2.ps_own_s"
+  },
+  "ch2.ps_own_g": {
+   "id": "ch2.ps_own_g",
+   "type": "line",
+   "lines": [
+    {
+     "who": "shiraishi",
+     "text": "貼る前に、なぜ私のところへ来なかった。"
+    },
+    {
+     "who": "player",
+     "text": "……来ると、間に合わない気がしました。"
+    },
+    {
+     "who": "shiraishi",
+     "text": "間に合わなかったのは、矢印だ。"
+    }
+   ],
+   "next": "ch2.ps_own_e",
+   "view": {
+    "mode": "25d",
+    "bg": "office",
+    "focus": [
+     "shiraishi"
+    ]
+   }
+  },
+  "ch2.ps_own_s": {
+   "id": "ch2.ps_own_s",
+   "type": "line",
+   "lines": [
+    {
+     "who": "shiraishi",
+     "text": "貼り紙は、剥がした。次からは、貼る前に私のところへ来い。"
+    }
+   ],
+   "next": "ch2.ps_own_e",
+   "effects": [
+    {
+     "eval": {
+      "key": "safety",
+      "add": -1
+     }
+    }
+   ],
+   "view": {
+    "mode": "25d",
+    "bg": "office",
+    "focus": [
+     "shiraishi"
+    ]
+   }
+  },
+  "ch2.ps_own_e": {
+   "id": "ch2.ps_own_e",
+   "type": "line",
+   "lines": [
+    {
+     "text": "部屋を出ると、久保田が廊下に立っていた。何も言わず、小さく頭を下げた。",
+     "narration": true
+    }
+   ],
+   "next": "ch2.pm_end",
+   "view": {
+    "mode": "25d",
+    "bg": "office",
+    "focus": [
+     "kubota"
+    ]
+   }
+  },
+  "ch2.ps_rep": {
+   "id": "ch2.ps_rep",
+   "type": "line",
+   "lines": [
+    {
+     "text": "電話は、二件。一人は笑って許してくれた。もう一人は、三分、黙ってから「分かりました」と言った。",
+     "narration": true
+    },
+    {
+     "text": "受話器を置くと、久保田の手が止まっていた。",
+     "narration": true
+    },
+    {
+     "who": "kubota",
+     "text": "……ありがとうございます。",
+     "mood": "normal"
+    },
+    {
+     "text": "駅長への報告は、久保田の名前のまま残った。",
+     "narration": true
+    }
+   ],
+   "next": "ch2.pm_end",
+   "view": {
+    "mode": "25d",
+    "bg": "office",
+    "focus": [
+     "kubota"
+    ]
+   }
+  },
+  "ch2.ps_def": {
+   "id": "ch2.ps_def",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "知っています。見ていました。"
+    },
+    {
+     "who": "kubota",
+     "text": "払い戻しの二人の連絡先です。お願いします。"
+    },
+    {
+     "text": "紙を渡す指が、一度も触れなかった。",
+     "narration": true
+    }
+   ],
+   "next": "ch2.pm_end",
+   "effects": [
+    {
+     "time": 30
+    }
+   ],
+   "view": {
+    "mode": "25d",
+    "bg": "office",
+    "focus": [
+     "kubota"
+    ]
+   }
+  },
+  "ch2.ps_sil": {
+   "id": "ch2.ps_sil",
+   "type": "line",
+   "lines": [
+    {
+     "text": "何か言おうとした。言葉が、先に消えた。",
+     "narration": true
+    },
+    {
+     "who": "kubota",
+     "text": "……何でもありません。",
+     "mood": "normal"
+    },
+    {
+     "text": "久保田は、貼り紙の件を、最後まで一人で持った。",
+     "narration": true
+    }
+   ],
+   "next": "ch2.pm_end",
+   "view": {
+    "mode": "25d",
+    "bg": "office",
+    "focus": [
+     "kubota"
+    ]
+   }
+  },
+  "ch2.pm_boss": {
+   "id": "ch2.pm_boss",
+   "type": "line",
+   "lines": [
+    {
+     "text": "午後。券売機の横に、印刷された案内が貼られた。隅に、駅長の判が押してある。",
+     "narration": true
+    },
+    {
+     "who": "uno",
+     "text": "ああ、これだ。……読みやすいね。"
+    },
+    {
+     "text": "久保田が、貼り紙の前で足を止めた。",
+     "narration": true
+    }
+   ],
+   "next": "ch2.pm_boss_b",
+   "view": {
+    "mode": "3d",
+    "cam": "npc:vend2",
+    "caption": "券売機2号機"
+   }
+  },
+  "ch2.pm_boss_b": {
+   "id": "ch2.pm_boss_b",
+   "type": "branch",
+   "cases": [
+    {
+     "when": {
+      "rel": {
+       "char": "kubota",
+       "key": "trust",
+       "op": ">=",
+       "val": 3
+      }
+     },
+     "goto": "ch2.pb_close"
+    }
+   ],
+   "else": "ch2.pb_far"
+  },
+  "ch2.pb_close": {
+   "id": "ch2.pb_close",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "駅長から聞きました。……一言、ほしかったです。"
+    },
+    {
+     "text": "貼り紙を、指先で、少しだけ直した。",
+     "narration": true
+    }
+   ],
+   "next": "ch2.pm_end",
+   "effects": [
+    {
+     "set": "ch2.kubota_hurt"
+    }
+   ],
+   "view": {
+    "mode": "3d",
+    "cam": "npc:kubota",
+    "caption": "券売機2号機"
+   }
+  },
+  "ch2.pb_far": {
+   "id": "ch2.pb_far",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "そうですか。"
+    },
+    {
+     "text": "久保田は、それ以上、何も言わなかった。",
+     "narration": true
+    }
+   ],
+   "next": "ch2.pm_end",
+   "effects": [
+    {
+     "set": "ch2.kubota_hurt"
+    }
+   ],
+   "view": {
+    "mode": "3d",
+    "cam": "npc:kubota",
+    "caption": "券売機2号機"
+   }
+  },
+  "ch2.pm_cons": {
+   "id": "ch2.pm_cons",
+   "type": "line",
+   "lines": [
+    {
+     "text": "午後。提案書は、本社の受付に預けられた。",
+     "narration": true
+    }
+   ],
+   "next": "ch2.pm_cons_b",
+   "view": {
+    "mode": "25d",
+    "bg": "office",
+    "focus": [
+     "kubota"
+    ],
+    "caption": "午後 駅事務室"
+   }
+  },
+  "ch2.pm_cons_b": {
+   "id": "ch2.pm_cons_b",
+   "type": "branch",
+   "cases": [
+    {
+     "when": {
+      "flag": "ch2.voice_done"
+     },
+     "goto": "ch2.pc_fast"
+    }
+   ],
+   "else": "ch2.pc_slow"
+  },
+  "ch2.pc_fast": {
+   "id": "ch2.pc_fast",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "先月の「お客様の声」の数字を、添えました。返事は、一週間後です。"
+    }
+   ],
+   "next": "ch2.pc_uno",
+   "effects": [
+    {
+     "set": "ch2.proposal_fast"
+    }
+   ],
+   "view": {
+    "mode": "25d",
+    "bg": "office",
+    "focus": [
+     "kubota"
+    ]
+   }
+  },
+  "ch2.pc_slow": {
+   "id": "ch2.pc_slow",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "返事は、三週間後です。それまでは、今のままです。"
+    }
+   ],
+   "next": "ch2.pc_uno",
+   "view": {
+    "mode": "25d",
+    "bg": "office",
+    "focus": [
+     "kubota"
+    ]
+   }
+  },
+  "ch2.pc_uno": {
+   "id": "ch2.pc_uno",
+   "type": "line",
+   "lines": [
+    {
+     "text": "十四時半。宇野さんが、また券売機の前に立った。帰りの切符だ。",
+     "narration": true
+    },
+    {
+     "who": "uno",
+     "text": "……先週は、ここにあったんだが。"
+    },
+    {
+     "text": "二人で、画面を三つ戻って、回数券を見つけた。振り向くと、列は五人になっていた。",
+     "narration": true
+    },
+    {
+     "who": "uno",
+     "text": "まだ、変わってないね。"
+    }
+   ],
+   "next": "ch2.pm_end",
+   "effects": [
+    {
+     "time": 15
+    }
+   ],
+   "view": {
+    "mode": "3d",
+    "cam": "npc:vend2",
+    "caption": "券売機2号機"
+   }
+  },
+  "ch2.pm_skip": {
+   "id": "ch2.pm_skip",
+   "type": "line",
+   "lines": [
+    {
+     "text": "十四時半。宇野さんが、窓口の前に立った。券売機の列に並ぶのを、やめたらしい。",
+     "narration": true
+    },
+    {
+     "who": "uno",
+     "text": "帰りの切符を。回数券を、二枚。"
+    },
+    {
+     "text": "回数券は、券売機でしか出ない。窓口の前には、四人が並んでいる。",
+     "narration": true
+    }
+   ],
+   "next": "ch2.pm_skip_c",
+   "view": {
+    "mode": "3d",
+    "cam": "npc:kubota",
+    "caption": "窓口前"
+   }
+  },
+  "ch2.pm_skip_c": {
+   "id": "ch2.pm_skip_c",
+   "type": "choice",
+   "prompt": "宇野さんが、こちらを見ている。",
+   "options": [
+    {
+     "id": "walk",
+     "label": "窓口を離れて、宇野さんを券売機へ連れていく",
+     "goto": "ch2.psk_walk",
+     "tone": "caring",
+     "effects": [
+      {
+       "set": "ch2.uno_helped"
+      },
+      {
+       "time": 20
+      }
+     ]
+    },
+    {
+     "id": "ask",
+     "label": "久保田に、窓口を頼む",
+     "goto": "ch2.psk_ask",
+     "tone": "careful",
+     "requires": {
+      "rel": {
+       "char": "kubota",
+       "key": "trust",
+       "op": ">=",
+       "val": 2
+      }
+     },
+     "effects": [
+      {
+       "set": "ch2.uno_helped"
+      },
+      {
+       "rel": {
+        "char": "kubota",
+        "trust": 0,
+        "rapport": 1
+       }
+      },
+      {
+       "time": 15
+      }
+     ]
+    },
+    {
+     "id": "hold",
+     "label": "「少しお待ちください」と言って、窓口の列を先にさばく",
+     "goto": "ch2.psk_hold",
+     "tone": "careful",
+     "effects": [
+      {
+       "set": "ch2.uno_left"
+      },
+      {
+       "depart": {
+        "char": "uno",
+        "note": "4月5日 宇野さんは、この駅の券売機を使わなくなった"
+       }
+      }
+     ]
+    },
+    {
+     "id": "silent",
+     "label": "……何も言わない",
+     "goto": "ch2.psk_sil",
+     "effects": [
+      {
+       "set": "ch2.uno_left"
+      },
+      {
+       "depart": {
+        "char": "uno",
+        "note": "4月5日 宇野さんは、この駅の券売機を使わなくなった"
+       }
+      }
+     ]
+    }
+   ],
+   "important": true,
+   "timeLimit": 15,
+   "defaultOption": "silent",
+   "who": "uno",
+   "view": {
+    "mode": "3d",
+    "cam": "npc:kubota",
+    "caption": "窓口前"
+   }
+  },
+  "ch2.psk_walk": {
+   "id": "ch2.psk_walk",
+   "type": "line",
+   "lines": [
+    {
+     "text": "券売機の前で、一緒に画面を三つ戻った。回数券が、二枚出た。",
+     "narration": true
+    },
+    {
+     "who": "uno",
+     "text": "ありがとう。……来週も、月曜に来るよ。"
+    }
+   ],
+   "next": "ch2.psk_walk_b",
+   "view": {
+    "mode": "3d",
+    "cam": "npc:vend2",
+    "caption": "券売機2号機"
+   }
+  },
+  "ch2.psk_walk_b": {
+   "id": "ch2.psk_walk_b",
+   "type": "branch",
+   "cases": [
+    {
+     "when": {
+      "rel": {
+       "char": "kubota",
+       "key": "trust",
+       "op": ">=",
+       "val": 2
+      }
+     },
+     "goto": "ch2.psk_w_k"
+    }
+   ],
+   "else": "ch2.psk_w_n"
+  },
+  "ch2.psk_w_k": {
+   "id": "ch2.psk_w_k",
+   "type": "line",
+   "lines": [
+    {
+     "text": "窓口に戻ると、久保田が、四人を一人でさばき終えていた。",
+     "narration": true
+    },
+    {
+     "who": "kubota",
+     "text": "……行って正解でした。次は、先に目で合図をください。"
+    }
+   ],
+   "next": "ch2.psk_w_e",
+   "view": {
+    "mode": "3d",
+    "cam": "npc:kubota",
+    "caption": "窓口前"
+   }
+  },
+  "ch2.psk_w_n": {
+   "id": "ch2.psk_w_n",
+   "type": "line",
+   "lines": [
+    {
+     "text": "窓口に戻ると、列の最後の一人は、いなくなっていた。電車を、一本、見送ったらしい。",
+     "narration": true
+    }
+   ],
+   "next": "ch2.psk_w_e",
+   "view": {
+    "mode": "3d",
+    "cam": "npc:kubota",
+    "caption": "窓口前"
+   }
+  },
+  "ch2.psk_w_e": {
+   "id": "ch2.psk_w_e",
+   "type": "line",
+   "lines": [
+    {
+     "text": "窓口の椅子に座ると、膝の上で、手が少し震えていた。",
+     "narration": true
+    }
+   ],
+   "next": "ch2.pm_end",
+   "view": {
+    "mode": "3d",
+    "cam": "npc:kubota",
+    "caption": "窓口前"
+   }
+  },
+  "ch2.psk_ask": {
+   "id": "ch2.psk_ask",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "行ってください。窓口は、持ちます。"
+    },
+    {
+     "text": "券売機の前で、回数券が二枚、出た。",
+     "narration": true
+    },
+    {
+     "who": "uno",
+     "text": "ありがとう。……来週も、月曜に来るよ。"
+    },
+    {
+     "text": "久保田は、昼を食べ損ねた顔で、最後の客を見送っていた。",
+     "narration": true
+    }
+   ],
+   "next": "ch2.pm_end",
+   "view": {
+    "mode": "3d",
+    "cam": "npc:vend2",
+    "caption": "券売機2号機"
+   }
+  },
+  "ch2.psk_hold": {
+   "id": "ch2.psk_hold",
+   "type": "line",
+   "lines": [
+    {
+     "text": "窓口の列を、四人、さばいた。十二分かかった。",
+     "narration": true
+    },
+    {
+     "text": "顔を上げると、宇野さんの姿は、もうなかった。",
+     "narration": true
+    },
+    {
+     "text": "券売機の前に、使われなかった整理券が一枚、落ちていた。",
+     "narration": true
+    }
+   ],
+   "next": "ch2.pm_end",
+   "view": {
+    "mode": "3d",
+    "cam": "npc:kubota",
+    "caption": "窓口前"
+   }
+  },
+  "ch2.psk_sil": {
+   "id": "ch2.psk_sil",
+   "type": "line",
+   "lines": [
+    {
+     "text": "何も言えないうちに、宇野さんは、一度だけ頷いた。",
+     "narration": true
+    },
+    {
+     "who": "uno",
+     "text": "……もういい。タクシーにする。"
+    },
+    {
+     "text": "杖の音が、改札の外へ遠ざかっていった。",
+     "narration": true
+    }
+   ],
+   "next": "ch2.pm_end",
+   "view": {
+    "mode": "3d",
+    "cam": "npc:kubota",
+    "caption": "窓口前"
+   }
   },
   "ch2.review": {
    "id": "ch2.review",
    "type": "line",
    "lines": [
     {
-     "text": "16時30分。駅事務室で、白石駅長と久保田が待っていた。机の上に、一枚の評価シートが置かれている。",
+     "text": "16時30分。駅事務室。白石が、来週の勤務表を、机の上でこちらへ向けた。",
      "narration": true
-    },
-    {
-     "who": "shiraishi",
-     "text": "今日は、初めての「週次の振り返り」だ。評価ではなく、成長のための面談だと思ってほしい。"
     }
    ],
    "next": "ch2.review_b",
@@ -13555,18 +14545,24 @@
     },
     {
      "when": {
-      "flag": "ch2.proposal_good"
+      "flag": "ch2.idea_boss"
      },
-     "goto": "ch2.rv_good"
+     "goto": "ch2.rv_b"
     },
     {
      "when": {
       "flag": "ch2.idea_consult"
      },
-     "goto": "ch2.rv_try"
+     "goto": "ch2.rv_c"
+    },
+    {
+     "when": {
+      "flag": "ch2.idea_skip"
+     },
+     "goto": "ch2.rv_k"
     }
    ],
-   "else": "ch2.rv_plain"
+   "else": "ch2.rv_rel"
   },
   "ch2.rv_s": {
    "id": "ch2.rv_s",
@@ -13574,27 +14570,14 @@
    "lines": [
     {
      "who": "shiraishi",
-     "text": "券売機の件は、久保田から聞いた。いい着眼だと思う。ただ、手順を飛ばした。",
-     "mood": "serious"
-    },
-    {
-     "who": "kubota",
-     "text": "責めているわけではありません。ただ、気づいたことは、先に相談してほしかった。"
+     "text": "貼り紙は、剥がしておいた。矢印が一か所、違っていた。"
     },
     {
      "who": "shiraishi",
-     "text": "駅は、一人の判断で動くと、必ずどこかにひずみが出る。君の観察は、正しい。だから、正しい形で出し直しなさい。"
-    },
-    {
-     "who": "player",
-     "text": "はい。もう一度、手順を踏んでやり直します。"
-    },
-    {
-     "who": "shiraishi",
-     "text": "提案書を書く気があるなら、私も目を通す。出しなさい。"
+     "text": "宇野さんの件は、私も気になっていた。出し直すなら、来週だ。"
     }
    ],
-   "next": "ch2.rv_choice",
+   "next": "ch2.rv_rel",
    "view": {
     "mode": "25d",
     "bg": "office",
@@ -13604,35 +14587,90 @@
     ]
    }
   },
-  "ch2.rv_good": {
-   "id": "ch2.rv_good",
+  "ch2.rv_b": {
+   "id": "ch2.rv_b",
    "type": "line",
    "lines": [
     {
      "who": "shiraishi",
-     "text": "提案書を読んだ。事実と提案と確認方法が揃っていて、本社にそのまま出せる。",
-     "mood": "smile"
-    },
-    {
-     "who": "kubota",
-     "text": "一週間の試行で、許可を取る方向で進めましょう。"
+     "text": "券売機の件、早かったな。"
     },
     {
      "who": "shiraishi",
-     "text": "新人の提案が採用されることは、珍しい。だが、手順と根拠が揃えば、通る。覚えておきなさい。"
+     "text": "久保田は、何も言わなかった。それが、気になっている。"
     }
    ],
-   "next": "ch2.rv_choice",
+   "next": "ch2.rv_rel",
+   "view": {
+    "mode": "25d",
+    "bg": "office",
+    "focus": [
+     "shiraishi",
+     "kubota"
+    ]
+   }
+  },
+  "ch2.rv_c": {
+   "id": "ch2.rv_c",
+   "type": "line",
+   "lines": [
+    {
+     "who": "shiraishi",
+     "text": "提案書は、受け取った。"
+    }
+   ],
+   "next": "ch2.rv_c_b",
+   "view": {
+    "mode": "25d",
+    "bg": "office",
+    "focus": [
+     "shiraishi",
+     "kubota"
+    ]
+   }
+  },
+  "ch2.rv_c_b": {
+   "id": "ch2.rv_c_b",
+   "type": "branch",
+   "cases": [
+    {
+     "when": {
+      "flag": "ch2.proposal_good"
+     },
+     "goto": "ch2.rv_c_ok"
+    }
+   ],
+   "else": "ch2.rv_rel"
+  },
+  "ch2.rv_c_ok": {
+   "id": "ch2.rv_c_ok",
+   "type": "effect",
    "effects": [
     {
      "set": "ch2.proposal_sent"
     },
     {
      "timeline": {
-      "text": "4月5日 改善提案書が駅長に承認される"
+      "text": "4月5日 改善提案書が、本社へ回る"
      }
     }
    ],
+   "next": "ch2.rv_rel"
+  },
+  "ch2.rv_k": {
+   "id": "ch2.rv_k",
+   "type": "line",
+   "lines": [
+    {
+     "who": "shiraishi",
+     "text": "今日は、券売機の件には触れなかったそうだな。"
+    },
+    {
+     "who": "shiraishi",
+     "text": "触れない日も、ある。"
+    }
+   ],
+   "next": "ch2.rv_rel",
    "view": {
     "mode": "25d",
     "bg": "office",
@@ -13642,61 +14680,59 @@
     ]
    }
   },
-  "ch2.rv_try": {
-   "id": "ch2.rv_try",
-   "type": "line",
-   "lines": [
+  "ch2.rv_rel": {
+   "id": "ch2.rv_rel",
+   "type": "branch",
+   "cases": [
     {
-     "who": "shiraishi",
-     "text": "相談してから動く、という選択をしてくれたこと自体が、今日の収穫だ。",
-     "mood": "smile"
-    },
-    {
-     "who": "kubota",
-     "text": "提案書は、まだ磨く余地があります。明日、もう一度一緒に見ましょう。"
+     "when": {
+      "rel": {
+       "char": "shiraishi",
+       "key": "trust",
+       "op": ">=",
+       "val": 3
+      }
+     },
+     "goto": "ch2.rv_t"
     }
    ],
-   "next": "ch2.rv_choice",
-   "view": {
-    "mode": "25d",
-    "bg": "office",
-    "focus": [
-     "shiraishi",
-     "kubota"
-    ]
-   }
+   "else": "ch2.rv_choice"
   },
-  "ch2.rv_plain": {
-   "id": "ch2.rv_plain",
+  "ch2.rv_t": {
+   "id": "ch2.rv_t",
    "type": "line",
    "lines": [
     {
      "who": "shiraishi",
-     "text": "今日は、与えられた仕事を丁寧にこなしていたと聞いている。基本は、それでいい。"
+     "text": "来週の早番は、杉浦助役だ。無口だが、悪い人ではない。"
     },
     {
-     "who": "kubota",
-     "text": "次の週は、「気づいたことを、形にする」ことも練習してみましょう。"
+     "who": "shiraishi",
+     "text": "二十五年、早番に立っている。……鍵束を、誰にも預けたことがない。"
     }
    ],
    "next": "ch2.rv_choice",
+   "effects": [
+    {
+     "set": "ch2.knows_key_story"
+    }
+   ],
    "view": {
     "mode": "25d",
     "bg": "office",
     "focus": [
-     "shiraishi",
-     "kubota"
+     "shiraishi"
     ]
    }
   },
   "ch2.rv_choice": {
    "id": "ch2.rv_choice",
    "type": "choice",
-   "prompt": "来週、いちばん伸ばしたいことは？",
+   "prompt": "来週の研修枠は、一つしか空いていない。",
    "options": [
     {
      "id": "service",
-     "label": "お客様への声かけと、接客",
+     "label": "接客の稽古。声かけと、お客様の話の聞き方",
      "goto": "ch2.closing",
      "tone": "caring",
      "effects": [
@@ -13704,16 +14740,22 @@
        "set": "next.focus_service"
       },
       {
-       "eval": {
-        "key": "service",
-        "add": 2
+       "lock": {
+        "id": "slot_accuracy",
+        "note": "来週の研修枠：「確認の稽古」は、この四半期、空きがない"
+       }
+      },
+      {
+       "lock": {
+        "id": "slot_team",
+        "note": "来週の研修枠：「連携の稽古」は、この四半期、空きがない"
        }
       }
      ]
     },
     {
      "id": "accuracy",
-     "label": "正確さ。手順と確認の徹底",
+     "label": "確認の稽古。指差しと、二重確認の型",
      "goto": "ch2.closing",
      "tone": "careful",
      "effects": [
@@ -13721,26 +14763,38 @@
        "set": "next.focus_accuracy"
       },
       {
-       "eval": {
-        "key": "accuracy",
-        "add": 2
+       "lock": {
+        "id": "slot_service",
+        "note": "来週の研修枠：「接客の稽古」は、この四半期、空きがない"
+       }
+      },
+      {
+       "lock": {
+        "id": "slot_team",
+        "note": "来週の研修枠：「連携の稽古」は、この四半期、空きがない"
        }
       }
      ]
     },
     {
-     "id": "teamwork",
-     "label": "同僚との連携と、相談のしかた",
-     "goto": "ch2.closing",
+     "id": "team",
+     "label": "連携の稽古。先輩への相談と、引継ぎのしかた",
+     "goto": "ch2.rv_t1",
      "tone": "caring",
      "effects": [
       {
        "set": "next.focus_team"
       },
       {
-       "eval": {
-        "key": "teamwork",
-        "add": 2
+       "lock": {
+        "id": "slot_service",
+        "note": "来週の研修枠：「接客の稽古」は、この四半期、空きがない"
+       }
+      },
+      {
+       "lock": {
+        "id": "slot_accuracy",
+        "note": "来週の研修枠：「確認の稽古」は、この四半期、空きがない"
        }
       }
      ]
@@ -13756,25 +14810,124 @@
     ]
    }
   },
+  "ch2.rv_t1": {
+   "id": "ch2.rv_t1",
+   "type": "line",
+   "lines": [
+    {
+     "who": "shiraishi",
+     "text": "連携は、一人では稽古にならん。山科と組め。"
+    },
+    {
+     "who": "yamashina",
+     "text": "（入口から）……俺か。"
+    }
+   ],
+   "next": "ch2.rv_tb",
+   "view": {
+    "mode": "25d",
+    "bg": "office",
+    "focus": [
+     "shiraishi",
+     "yamashina"
+    ]
+   }
+  },
+  "ch2.rv_tb": {
+   "id": "ch2.rv_tb",
+   "type": "branch",
+   "cases": [
+    {
+     "when": {
+      "rel": {
+       "char": "yamashina",
+       "key": "rapport",
+       "op": ">=",
+       "val": 2
+      }
+     },
+     "goto": "ch2.rv_ty"
+    }
+   ],
+   "else": "ch2.rv_tn"
+  },
+  "ch2.rv_ty": {
+   "id": "ch2.rv_ty",
+   "type": "line",
+   "lines": [
+    {
+     "who": "yamashina",
+     "text": "分かった。来週の昼は、俺が席を取る。"
+    },
+    {
+     "text": "山科は、目を合わせずに言った。",
+     "narration": true
+    }
+   ],
+   "next": "ch2.rv_te",
+   "view": {
+    "mode": "25d",
+    "bg": "office",
+    "focus": [
+     "yamashina"
+    ]
+   }
+  },
+  "ch2.rv_tn": {
+   "id": "ch2.rv_tn",
+   "type": "line",
+   "lines": [
+    {
+     "who": "yamashina",
+     "text": "……分かりました。"
+    },
+    {
+     "text": "山科の返事は、半分、駅長に向いていた。",
+     "narration": true
+    }
+   ],
+   "next": "ch2.rv_te",
+   "view": {
+    "mode": "25d",
+    "bg": "office",
+    "focus": [
+     "yamashina"
+    ]
+   }
+  },
+  "ch2.rv_te": {
+   "id": "ch2.rv_te",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "組む相手が決まると、相談の仕方も決まります。"
+    }
+   ],
+   "next": "ch2.closing",
+   "view": {
+    "mode": "25d",
+    "bg": "office",
+    "focus": [
+     "kubota"
+    ]
+   }
+  },
   "ch2.closing": {
    "id": "ch2.closing",
    "type": "line",
    "lines": [
     {
      "who": "shiraishi",
-     "text": "よし。来週の勤務表を、渡しておく。再来週には、初めての早番が入る。五時半の始業だ。体を、慣らしておきなさい。"
+     "text": "再来週に、初めての早番が入る。五時半の始業だ。"
     },
     {
      "who": "kubota",
-     "text": "早番の前の晩は、いつもより一時間早く寝てください。私は、それを三年かけて覚えました。",
+     "text": "前の晩は、いつもより一時間早く寝てください。私は、それを三年かけて覚えました。",
      "mood": "smile"
-    },
-    {
-     "text": "窓の外は、すっかり日が落ちていた。券売機の前の男性は、もういない。それでも、顔だけは、はっきり覚えていた。",
-     "narration": true
     }
    ],
-   "next": "ch2.after",
+   "next": "ch2.out",
    "view": {
     "mode": "25d",
     "bg": "office",
@@ -13783,6 +14936,269 @@
      "kubota"
     ],
     "caption": "17:30 駅事務室"
+   }
+  },
+  "ch2.out": {
+   "id": "ch2.out",
+   "type": "branch",
+   "cases": [
+    {
+     "when": {
+      "notFlag": "ch2.patrol_done"
+     },
+     "goto": "ch2.o_patrol"
+    }
+   ],
+   "else": "ch2.out2"
+  },
+  "ch2.o_patrol": {
+   "id": "ch2.o_patrol",
+   "type": "line",
+   "lines": [
+    {
+     "text": "入口の傘立ての前で、女性が足を取られた。買い物袋が、濡れた床に広がった。",
+     "narration": true
+    },
+    {
+     "text": "久保田が、黙ってしゃがんで、拾っている。",
+     "narration": true
+    }
+   ],
+   "next": "ch2.out2",
+   "effects": [
+    {
+     "rel": {
+      "char": "kubota",
+      "trust": -1,
+      "rapport": 0
+     }
+    }
+   ],
+   "view": {
+    "mode": "3d",
+    "cam": "npc:kubota",
+    "caption": "入口"
+   }
+  },
+  "ch2.out2": {
+   "id": "ch2.out2",
+   "type": "branch",
+   "cases": [
+    {
+     "when": {
+      "notFlag": "ch2.coins_done"
+     },
+     "goto": "ch2.o_coins"
+    }
+   ],
+   "else": "ch2.out3"
+  },
+  "ch2.o_coins": {
+   "id": "ch2.o_coins",
+   "type": "line",
+   "lines": [
+    {
+     "who": "sakai",
+     "text": "千円札を崩せなくて、お客さんに頭を下げたの。……いいのよ、新人さんは忙しいもの。"
+    },
+    {
+     "text": "売店のシャッターは、いつもより少し早く降りた。",
+     "narration": true
+    }
+   ],
+   "next": "ch2.out3",
+   "effects": [
+    {
+     "rel": {
+      "char": "sakai",
+      "trust": -1,
+      "rapport": -1
+     }
+    }
+   ],
+   "view": {
+    "mode": "25d",
+    "bg": "office",
+    "focus": [
+     "sakai"
+    ],
+    "caption": "17:40 売店前"
+   }
+  },
+  "ch2.out3": {
+   "id": "ch2.out3",
+   "type": "branch",
+   "cases": [
+    {
+     "when": {
+      "notFlag": "ch2.guide_done"
+     },
+     "goto": "ch2.o_guide"
+    }
+   ],
+   "else": "ch2.out4"
+  },
+  "ch2.o_guide": {
+   "id": "ch2.o_guide",
+   "type": "line",
+   "lines": [
+    {
+     "text": "ベビーカーの母親は、結局、久保田が案内した。",
+     "narration": true
+    },
+    {
+     "who": "kubota",
+     "text": "……いいんです。行き先は、合っていましたから。",
+     "mood": "normal"
+    }
+   ],
+   "next": "ch2.out4",
+   "effects": [
+    {
+     "rel": {
+      "char": "kubota",
+      "trust": -1,
+      "rapport": 0
+     }
+    }
+   ],
+   "view": {
+    "mode": "25d",
+    "bg": "office",
+    "focus": [
+     "kubota"
+    ]
+   }
+  },
+  "ch2.out4": {
+   "id": "ch2.out4",
+   "type": "branch",
+   "cases": [
+    {
+     "when": {
+      "any": [
+       {
+        "gone": "uno"
+       },
+       {
+        "flag": "ch2.uno_left"
+       }
+      ]
+     },
+     "goto": "ch2.o_gone"
+    },
+    {
+     "when": {
+      "flag": "ch2.uno_helped"
+     },
+     "goto": "ch2.o_uhelp"
+    }
+   ],
+   "else": "ch2.out5"
+  },
+  "ch2.o_gone": {
+   "id": "ch2.o_gone",
+   "type": "line",
+   "lines": [
+    {
+     "text": "券売機の前に、宇野さんはいない。来週の月曜も、たぶん。",
+     "narration": true
+    },
+    {
+     "text": "画面の「回数券」のボタンは、今日も、同じ場所にある。",
+     "narration": true
+    }
+   ],
+   "next": "ch2.out5",
+   "view": {
+    "mode": "3d",
+    "cam": "npc:vend2",
+    "caption": "券売機2号機"
+   }
+  },
+  "ch2.o_uhelp": {
+   "id": "ch2.o_uhelp",
+   "type": "line",
+   "lines": [
+    {
+     "text": "帰り際、宇野さんは、改札の外で帽子を軽く上げた。",
+     "narration": true
+    }
+   ],
+   "next": "ch2.out5",
+   "view": {
+    "mode": "3d",
+    "cam": "npc:vend2",
+    "caption": "改札前"
+   }
+  },
+  "ch2.out5": {
+   "id": "ch2.out5",
+   "type": "branch",
+   "cases": [
+    {
+     "when": {
+      "rel": {
+       "char": "yamashina",
+       "key": "rapport",
+       "op": ">=",
+       "val": 3
+      }
+     },
+     "goto": "ch2.o_yama"
+    },
+    {
+     "when": {
+      "flag": "ch2.lunch_alone"
+     },
+     "goto": "ch2.o_alone"
+    }
+   ],
+   "else": "ch2.after"
+  },
+  "ch2.o_yama": {
+   "id": "ch2.o_yama",
+   "type": "line",
+   "lines": [
+    {
+     "who": "yamashina",
+     "text": "来週の早番の前の晩、電話するかもしれない。出なくていい。……いや、出てくれ。"
+    },
+    {
+     "text": "先に歩いていく背中が、少しだけ、急いでいた。",
+     "narration": true
+    }
+   ],
+   "next": "ch2.after",
+   "effects": [
+    {
+     "set": "ch2.yama_will_call"
+    }
+   ],
+   "view": {
+    "mode": "25d",
+    "bg": "office",
+    "focus": [
+     "yamashina"
+    ],
+    "caption": "17:50 通用口"
+   }
+  },
+  "ch2.o_alone": {
+   "id": "ch2.o_alone",
+   "type": "line",
+   "lines": [
+    {
+     "text": "通用口で、靴紐を結び直した。今日、昼に話した人の顔を、思い出せなかった。",
+     "narration": true
+    }
+   ],
+   "next": "ch2.after",
+   "view": {
+    "mode": "25d",
+    "bg": "office",
+    "focus": [],
+    "caption": "17:50 通用口"
    }
   },
   "ch2.after": {
@@ -13817,14 +15233,9 @@
     {
      "who": "player",
      "text": "（見ました、という返事を、今から本当にしよう）"
-    },
-    {
-     "who": "kubota",
-     "text": "（メッセージ）杉浦助役は無口です。返事がなくても、嫌われてはいません。",
-     "mood": "smile"
     }
    ],
-   "next": "ch3.eve_task",
+   "next": "ch3.open_b",
    "effects": [
     {
      "clock": {
@@ -13851,6 +15262,86 @@
      "kubota"
     ],
     "caption": "4月18日（日） 20:30 社員寮"
+   }
+  },
+  "ch3.open_b": {
+   "id": "ch3.open_b",
+   "type": "branch",
+   "cases": [
+    {
+     "when": {
+      "flag": "ch2.lunch_yamashina"
+     },
+     "goto": "ch3.op_y"
+    },
+    {
+     "when": {
+      "flag": "ch2.lunch_kubota"
+     },
+     "goto": "ch3.op_k"
+    },
+    {
+     "when": {
+      "flag": "ch2.lunch_alone"
+     },
+     "goto": "ch3.op_a"
+    }
+   ],
+   "else": "ch3.eve_task"
+  },
+  "ch3.op_y": {
+   "id": "ch3.op_y",
+   "type": "line",
+   "lines": [
+    {
+     "who": "yamashina",
+     "text": "（メッセージ）昼に話したこと、誰にも言うなよ。推薦は一名。……おやすみ。"
+    }
+   ],
+   "next": "ch3.eve_task",
+   "view": {
+    "mode": "25d",
+    "bg": "hr",
+    "focus": [
+     "yamashina"
+    ]
+   }
+  },
+  "ch3.op_k": {
+   "id": "ch3.op_k",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "（メッセージ）あの日、隣に座ってくれて、嬉しかったです。早く寝てください。",
+     "mood": "smile"
+    }
+   ],
+   "next": "ch3.eve_task",
+   "view": {
+    "mode": "25d",
+    "bg": "hr",
+    "focus": [
+     "kubota"
+    ]
+   }
+  },
+  "ch3.op_a": {
+   "id": "ch3.op_a",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "（メッセージ）あの日のお昼、声をかければよかったです。明日の朝食は、一緒に。"
+    }
+   ],
+   "next": "ch3.eve_task",
+   "view": {
+    "mode": "25d",
+    "bg": "hr",
+    "focus": [
+     "kubota"
+    ]
    }
   },
   "ch3.eve_task": {
@@ -13906,7 +15397,7 @@
    "results": [
     {
      "min": 80,
-     "goto": "ch3.eve_good",
+     "goto": "ch3.eve_ring",
      "effects": [
       {
        "eval": {
@@ -13919,15 +15410,12 @@
         "key": "safety",
         "add": 2
        }
-      },
-      {
-       "set": "ch3.interval_ok"
       }
      ]
     },
     {
      "min": 50,
-     "goto": "ch3.eve_mid",
+     "goto": "ch3.eve_ring",
      "effects": [
       {
        "eval": {
@@ -13939,7 +15427,7 @@
     },
     {
      "min": 0,
-     "goto": "ch3.eve_bad",
+     "goto": "ch3.eve_ring",
      "effects": [
       {
        "eval": {
@@ -13965,14 +15453,30 @@
     "caption": "4月18日（日） 20:45 社員寮"
    }
   },
-  "ch3.eve_good": {
-   "id": "ch3.eve_good",
+  "ch3.eve_ring": {
+   "id": "ch3.eve_ring",
+   "type": "branch",
+   "cases": [
+    {
+     "when": {
+      "flag": "ch2.yama_will_call"
+     },
+     "goto": "ch3.ring_w"
+    }
+   ],
+   "else": "ch3.ring_n"
+  },
+  "ch3.ring_w": {
+   "id": "ch3.ring_w",
    "type": "line",
    "lines": [
     {
-     "who": "kubota",
-     "text": "（メッセージ）全問合格です。私は新人の夜、アイロンを二回かけました。",
-     "mood": "smile"
+     "text": "二十一時三十分。携帯が震えた。山科。「電話するかもしれない」は、本当になった。",
+     "narration": true
+    },
+    {
+     "text": "三回、四回。目覚ましを止める指が、画面の上で止まっている。",
+     "narration": true
     }
    ],
    "next": "ch3.eve_choice",
@@ -13980,17 +15484,22 @@
     "mode": "25d",
     "bg": "hr",
     "focus": [
-     "kubota"
-    ]
+     "yamashina"
+    ],
+    "caption": "4月18日（日） 21:30 社員寮"
    }
   },
-  "ch3.eve_mid": {
-   "id": "ch3.eve_mid",
+  "ch3.ring_n": {
+   "id": "ch3.ring_n",
    "type": "line",
    "lines": [
     {
-     "who": "kubota",
-     "text": "（メッセージ）目覚ましは三台でも、誰も笑いません。"
+     "text": "二十一時三十分。携帯が震えた。山科。……珍しい。",
+     "narration": true
+    },
+    {
+     "text": "三回、四回。目覚ましを止める指が、画面の上で止まっている。",
+     "narration": true
     }
    ],
    "next": "ch3.eve_choice",
@@ -13998,37 +15507,37 @@
     "mode": "25d",
     "bg": "hr",
     "focus": [
-     "kubota"
-    ]
-   }
-  },
-  "ch3.eve_bad": {
-   "id": "ch3.eve_bad",
-   "type": "line",
-   "lines": [
-    {
-     "who": "kubota",
-     "text": "（メッセージ）勤務間隔だけは覚えて。寝坊は取り返せても、間隔は戻りません。",
-     "mood": "serious"
-    }
-   ],
-   "next": "ch3.eve_choice",
-   "view": {
-    "mode": "25d",
-    "bg": "hr",
-    "focus": [
-     "kubota"
-    ]
+     "yamashina"
+    ],
+    "caption": "4月18日（日） 21:30 社員寮"
    }
   },
   "ch3.eve_choice": {
    "id": "ch3.eve_choice",
    "type": "choice",
-   "prompt": "消灯まで、あと数時間。どう過ごす？",
+   "prompt": "着信が、鳴り続けている。",
    "options": [
     {
+     "id": "help",
+     "label": "出る。山科の志望書を、一緒に書く",
+     "goto": "ch3.eve_help",
+     "tone": "caring",
+     "effects": [
+      {
+       "set": "ch3.helped_yama"
+      },
+      {
+       "rel": {
+        "char": "yamashina",
+        "trust": 2,
+        "rapport": 2
+       }
+      }
+     ]
+    },
+    {
      "id": "sleep",
-     "label": "手順書は明日の自分に任せて、早く寝る",
+     "label": "出ない。「ごめん、明日早い」とだけ送って、寝る",
      "goto": "ch3.eve_sleep",
      "tone": "careful",
      "effects": [
@@ -14036,65 +15545,192 @@
        "set": "ch3.slept_well"
       },
       {
-       "eval": {
-        "key": "safety",
-        "add": 1
+       "rel": {
+        "char": "yamashina",
+        "trust": 0,
+        "rapport": -1
        }
       }
      ]
     },
     {
      "id": "study",
-     "label": "眠くなるまで、手順書を読み込む",
+     "label": "出ない。画面を伏せて、手順書を読み込む",
      "goto": "ch3.eve_study",
      "tone": "risky",
      "effects": [
       {
-       "set": "ch3.slept_short"
+       "set": "ch3.drilled"
       },
       {
-       "eval": {
-        "key": "accuracy",
-        "add": 1
-       }
-      },
-      {
-       "eval": {
-        "key": "safety",
-        "add": -1
+       "rel": {
+        "char": "yamashina",
+        "trust": 0,
+        "rapport": -1
        }
       }
      ]
     },
     {
-     "id": "call",
-     "label": "眠れないという山科の電話に、つきあう",
-     "goto": "ch3.eve_call",
-     "tone": "caring",
+     "id": "ring",
+     "label": "画面を見つめたまま、何もしない",
+     "goto": "ch3.eve_ring2",
      "effects": [
       {
-       "set": "ch3.slept_short"
-      },
-      {
-       "set": "ch3.called_yama"
+       "set": "ch3.yama_unanswered"
       },
       {
        "rel": {
         "char": "yamashina",
-        "trust": 1,
-        "rapport": 2
+        "trust": 0,
+        "rapport": -2
        }
       }
      ]
     }
    ],
    "important": true,
-   "who": "kubota",
+   "timeLimit": 12,
+   "defaultOption": "ring",
+   "who": "yamashina",
    "view": {
     "mode": "25d",
     "bg": "hr",
     "focus": [
-     "kubota"
+     "yamashina"
+    ]
+   }
+  },
+  "ch3.eve_help": {
+   "id": "ch3.eve_help",
+   "type": "line",
+   "lines": [
+    {
+     "who": "yamashina",
+     "text": "眠れないわけじゃない。目が冴えてるだけだ。"
+    },
+    {
+     "who": "player",
+     "text": "……何かあったんだな。"
+    },
+    {
+     "who": "yamashina",
+     "text": "基地入門研修の志望書。締切は明後日。一行も書けてない。"
+    }
+   ],
+   "next": "ch3.eve_help_b",
+   "view": {
+    "mode": "25d",
+    "bg": "hr",
+    "focus": [
+     "yamashina"
+    ],
+    "caption": "4月18日（日） 21:35 社員寮"
+   }
+  },
+  "ch3.eve_help_b": {
+   "id": "ch3.eve_help_b",
+   "type": "branch",
+   "cases": [
+    {
+     "when": {
+      "flag": "ch2.yama_confided"
+     },
+     "goto": "ch3.eh_known"
+    }
+   ],
+   "else": "ch3.eh_new"
+  },
+  "ch3.eh_known": {
+   "id": "ch3.eh_known",
+   "type": "line",
+   "lines": [
+    {
+     "who": "player",
+     "text": "昼に言ってたやつだな。"
+    },
+    {
+     "who": "yamashina",
+     "text": "……覚えてたのか。"
+    }
+   ],
+   "next": "ch3.eh_mid",
+   "view": {
+    "mode": "25d",
+    "bg": "hr",
+    "focus": [
+     "yamashina"
+    ]
+   }
+  },
+  "ch3.eh_new": {
+   "id": "ch3.eh_new",
+   "type": "line",
+   "lines": [
+    {
+     "who": "yamashina",
+     "text": "推薦は、駅から一名だけだ。……言ってなかったな。"
+    },
+    {
+     "who": "player",
+     "text": "一名。"
+    }
+   ],
+   "next": "ch3.eh_mid",
+   "view": {
+    "mode": "25d",
+    "bg": "hr",
+    "focus": [
+     "yamashina"
+    ]
+   }
+  },
+  "ch3.eh_mid": {
+   "id": "ch3.eh_mid",
+   "type": "line",
+   "lines": [
+    {
+     "text": "「なぜ、車両なのか」。山科は、その一行で、四十分、止まっていた。",
+     "narration": true
+    },
+    {
+     "who": "player",
+     "text": "最初に床下を見た日のこと、書けばいい。図面と、全然違ったって言ってたろ。"
+    },
+    {
+     "text": "二十三時五十分。志望書は、三行だけ、書けた。",
+     "narration": true
+    }
+   ],
+   "next": "ch3.eh_end",
+   "view": {
+    "mode": "25d",
+    "bg": "hr",
+    "focus": [
+     "yamashina"
+    ],
+    "caption": "4月18日（日） 23:50 社員寮"
+   }
+  },
+  "ch3.eh_end": {
+   "id": "ch3.eh_end",
+   "type": "line",
+   "lines": [
+    {
+     "who": "yamashina",
+     "text": "借りだな。……この一名は、俺が取る。"
+    },
+    {
+     "who": "player",
+     "text": "（明日の自分に、手順書は任せた）"
+    }
+   ],
+   "next": "ch3.wake",
+   "view": {
+    "mode": "25d",
+    "bg": "hr",
+    "focus": [
+     "yamashina"
     ]
    }
   },
@@ -14103,26 +15739,20 @@
    "type": "line",
    "lines": [
     {
+     "text": "メッセージを一通だけ送った。「ごめん、明日早い。」",
+     "narration": true
+    },
+    {
      "text": "二台の目覚ましを、わざと別の音にした。並べると、小さな合唱団だ。",
      "narration": true
     },
     {
-     "text": "二十一時十分、消灯。遠くのトラックの音が、だんだん間遠になる。",
-     "narration": true
-    },
-    {
-     "text": "眠る前に、ふと思った。始発の最初の客は、どんな顔だろう。",
+     "text": "二十一時四十分、消灯。通知は一度だけ光って、消えた。",
      "narration": true
     }
    ],
    "next": "ch3.wake",
    "effects": [
-    {
-     "eval": {
-      "key": "safety",
-      "add": 1
-     }
-    },
     {
      "time": 30
     }
@@ -14131,13 +15761,17 @@
     "mode": "25d",
     "bg": "hr",
     "focus": [],
-    "caption": "4月18日（日） 21:10 社員寮"
+    "caption": "4月18日（日） 21:40 社員寮"
    }
   },
   "ch3.eve_study": {
    "id": "ch3.eve_study",
    "type": "line",
    "lines": [
+    {
+     "text": "画面を伏せた。着信は、机の上で、震えたまま止まった。",
+     "narration": true
+    },
     {
      "text": "手順書の三ページ目で、同じ行を三回読んでいた。",
      "narration": true
@@ -14164,37 +15798,25 @@
     "caption": "4月18日（日） 23:40 社員寮"
    }
   },
-  "ch3.eve_call": {
-   "id": "ch3.eve_call",
+  "ch3.eve_ring2": {
+   "id": "ch3.eve_ring2",
    "type": "line",
    "lines": [
     {
-     "text": "二十二時四十分。着信は山科。第一声が「まだ起きてるか」だった。",
+     "text": "画面を、見つめていた。出るでも、切るでもなく。",
      "narration": true
     },
     {
-     "who": "yamashina",
-     "text": "眠れないわけじゃない。目が冴えてるだけだ。",
-     "mood": "normal"
+     "text": "鳴り止んだあとの部屋は、前より静かになった。",
+     "narration": true
     },
     {
-     "who": "yamashina",
-     "text": "基地入門研修の公募、駅から推薦は一名だけらしい。出す。一行も書けてないけど、問題ない。"
-    },
-    {
-     "who": "player",
-     "text": "問題ない人は、夜十時に電話してこない。"
-    },
-    {
-     "text": "切ったあとも、目だけが冴えていた。天井が、やけに近い。",
+     "text": "眠れなかった。二時を回っても、天井が近い。",
      "narration": true
     }
    ],
    "next": "ch3.wake",
    "effects": [
-    {
-     "set": "ch3.yama_slot_hint"
-    },
     {
      "time": 30
     }
@@ -14202,10 +15824,8 @@
    "view": {
     "mode": "25d",
     "bg": "hr",
-    "focus": [
-     "yamashina"
-    ],
-    "caption": "4月18日（日） 22:40 社員寮"
+    "focus": [],
+    "caption": "4月19日（月） 2:10 社員寮"
    }
   },
   "ch3.wake": {
@@ -14308,9 +15928,6 @@
      "clock": {
       "minute": 305
      }
-    },
-    {
-     "set": "ch3.arrived"
     }
    ],
    "view": {
@@ -14870,9 +16487,6 @@
    "next": "ch3.hub",
    "effects": [
     {
-     "set": "ch3.saw_dawn"
-    },
-    {
      "log": {
       "text": "夜明けの青嶺中央駅",
       "tag": "work"
@@ -14900,7 +16514,7 @@
     },
     {
      "who": "sugiura",
-     "text": "十時半に休憩。眠かったら、その場で言え。我慢は道具にならん。"
+     "text": "十時半に休憩だ。"
     },
     {
      "who": "kubota",
@@ -14934,18 +16548,24 @@
     },
     {
      "when": {
-      "flag": "ch2.proposal_sent"
+      "flag": "ch2.idea_boss"
      },
-     "goto": "ch3.bn_prop"
+     "goto": "ch3.bn_boss"
     },
     {
      "when": {
       "flag": "ch2.idea_consult"
      },
      "goto": "ch3.bn_cons"
+    },
+    {
+     "when": {
+      "flag": "ch2.idea_skip"
+     },
+     "goto": "ch3.bn_skip"
     }
    ],
-   "else": "ch3.bn_skip"
+   "else": "ch3.bn_none"
   },
   "ch3.bn_self": {
    "id": "ch3.bn_self",
@@ -14953,19 +16573,137 @@
    "lines": [
     {
      "who": "sugiura",
-     "text": "駅長のメモだ。「手順を飛ばさない新人に」。"
+     "text": "駅長のメモだ。貼り紙の件。"
     },
     {
      "who": "sugiura",
-     "text": "今日は全部、指差しだ。省略なし。",
-     "mood": "serious"
+     "text": "久保田が、頭を下げたそうだな。"
     }
    ],
-   "next": "ch3.handover_task",
+   "next": "ch3.bn_self_b",
+   "view": {
+    "mode": "25d",
+    "bg": "office",
+    "focus": [
+     "sugiura",
+     "kubota"
+    ]
+   }
+  },
+  "ch3.bn_self_b": {
+   "id": "ch3.bn_self_b",
+   "type": "branch",
+   "cases": [
+    {
+     "when": {
+      "flag": "ch2.owned_up"
+     },
+     "goto": "ch3.bn_s_own"
+    },
+    {
+     "when": {
+      "flag": "ch2.repaired"
+     },
+     "goto": "ch3.bn_s_rep"
+    },
+    {
+     "when": {
+      "flag": "ch2.defended"
+     },
+     "goto": "ch3.bn_s_def"
+    },
+    {
+     "when": {
+      "flag": "ch2.kubota_covered"
+     },
+     "goto": "ch3.bn_s_cov"
+    }
+   ],
+   "else": "ch3.focus"
+  },
+  "ch3.bn_s_own": {
+   "id": "ch3.bn_s_own",
+   "type": "line",
+   "lines": [
+    {
+     "who": "sugiura",
+     "text": "駅長室に、自分で行ったそうだな。"
+    },
+    {
+     "who": "sugiura",
+     "text": "……それだけだ。"
+    }
+   ],
+   "next": "ch3.focus",
    "effects": [
     {
-     "set": "ch3.strict_check"
+     "rel": {
+      "char": "sugiura",
+      "trust": 1,
+      "rapport": 0
+     }
+    }
+   ],
+   "view": {
+    "mode": "25d",
+    "bg": "office",
+    "focus": [
+     "sugiura",
+     "kubota"
+    ]
+   }
+  },
+  "ch3.bn_s_rep": {
+   "id": "ch3.bn_s_rep",
+   "type": "line",
+   "lines": [
+    {
+     "who": "sugiura",
+     "text": "払い戻しの客に、電話したのは誰だ。"
     },
+    {
+     "who": "player",
+     "text": "私です。"
+    },
+    {
+     "who": "sugiura",
+     "text": "……そうか。"
+    }
+   ],
+   "next": "ch3.focus",
+   "effects": [
+    {
+     "rel": {
+      "char": "sugiura",
+      "trust": 1,
+      "rapport": 0
+     }
+    }
+   ],
+   "view": {
+    "mode": "25d",
+    "bg": "office",
+    "focus": [
+     "sugiura",
+     "kubota"
+    ]
+   }
+  },
+  "ch3.bn_s_def": {
+   "id": "ch3.bn_s_def",
+   "type": "line",
+   "lines": [
+    {
+     "who": "sugiura",
+     "text": "「宇野さんは買えた」と言ったそうだな。久保田の前で。"
+    },
+    {
+     "text": "久保田は、書類から目を上げなかった。",
+     "narration": true
+    }
+   ],
+   "next": "ch3.focus",
+   "effects": [
     {
      "rel": {
       "char": "sugiura",
@@ -14983,8 +16721,134 @@
     ]
    }
   },
-  "ch3.bn_prop": {
-   "id": "ch3.bn_prop",
+  "ch3.bn_s_cov": {
+   "id": "ch3.bn_s_cov",
+   "type": "line",
+   "lines": [
+    {
+     "who": "sugiura",
+     "text": "久保田が、一人で持ったそうだな。"
+    },
+    {
+     "text": "誰も、それ以上は言わなかった。",
+     "narration": true
+    }
+   ],
+   "next": "ch3.focus",
+   "effects": [
+    {
+     "rel": {
+      "char": "sugiura",
+      "trust": -1,
+      "rapport": 0
+     }
+    }
+   ],
+   "view": {
+    "mode": "25d",
+    "bg": "office",
+    "focus": [
+     "sugiura",
+     "kubota"
+    ]
+   }
+  },
+  "ch3.bn_boss": {
+   "id": "ch3.bn_boss",
+   "type": "line",
+   "lines": [
+    {
+     "who": "sugiura",
+     "text": "駅長に、直接か。"
+    },
+    {
+     "who": "kubota",
+     "text": "……"
+    }
+   ],
+   "next": "ch3.bn_boss_b",
+   "view": {
+    "mode": "25d",
+    "bg": "office",
+    "focus": [
+     "sugiura",
+     "kubota"
+    ]
+   }
+  },
+  "ch3.bn_boss_b": {
+   "id": "ch3.bn_boss_b",
+   "type": "branch",
+   "cases": [
+    {
+     "when": {
+      "flag": "ch2.kubota_hurt"
+     },
+     "goto": "ch3.bn_b_h"
+    }
+   ],
+   "else": "ch3.focus"
+  },
+  "ch3.bn_b_h": {
+   "id": "ch3.bn_b_h",
+   "type": "line",
+   "lines": [
+    {
+     "who": "sugiura",
+     "text": "久保田は、あの日から、口数が減った。"
+    },
+    {
+     "who": "sugiura",
+     "text": "お前のせいとは、言わん。"
+    }
+   ],
+   "next": "ch3.focus",
+   "effects": [
+    {
+     "rel": {
+      "char": "sugiura",
+      "trust": 0,
+      "rapport": -1
+     }
+    }
+   ],
+   "view": {
+    "mode": "25d",
+    "bg": "office",
+    "focus": [
+     "sugiura",
+     "kubota"
+    ]
+   }
+  },
+  "ch3.bn_cons": {
+   "id": "ch3.bn_cons",
+   "type": "branch",
+   "cases": [
+    {
+     "when": {
+      "all": [
+       {
+        "flag": "ch2.proposal_sent"
+       },
+       {
+        "flag": "ch2.proposal_fast"
+       }
+      ]
+     },
+     "goto": "ch3.bn_posted"
+    },
+    {
+     "when": {
+      "flag": "ch2.proposal_sent"
+     },
+     "goto": "ch3.bn_pending"
+    }
+   ],
+   "else": "ch3.bn_redo"
+  },
+  "ch3.bn_posted": {
+   "id": "ch3.bn_posted",
    "type": "line",
    "lines": [
     {
@@ -14997,7 +16861,7 @@
      "mood": "smile"
     }
    ],
-   "next": "ch3.handover_task",
+   "next": "ch3.focus",
    "effects": [
     {
      "rel": {
@@ -15016,20 +16880,20 @@
     ]
    }
   },
-  "ch3.bn_cons": {
-   "id": "ch3.bn_cons",
+  "ch3.bn_pending": {
+   "id": "ch3.bn_pending",
    "type": "line",
    "lines": [
     {
      "who": "sugiura",
-     "text": "駅長のメモだ。「相談できる新人。伸ばせ」。"
+     "text": "提案書は、本社の返事待ちだそうだな。"
     },
     {
      "who": "sugiura",
-     "text": "今日は一度だけ、相談する前に自分で考えろ。"
+     "text": "券売機の前で、まだ迷う客がいる。……待つのも、仕事だ。"
     }
    ],
-   "next": "ch3.handover_task",
+   "next": "ch3.focus",
    "effects": [
     {
      "rel": {
@@ -15048,6 +16912,29 @@
     ]
    }
   },
+  "ch3.bn_redo": {
+   "id": "ch3.bn_redo",
+   "type": "line",
+   "lines": [
+    {
+     "who": "sugiura",
+     "text": "提案書は、出し直しだそうだな。"
+    },
+    {
+     "who": "sugiura",
+     "text": "出し直せる分、まだいい。"
+    }
+   ],
+   "next": "ch3.focus",
+   "view": {
+    "mode": "25d",
+    "bg": "office",
+    "focus": [
+     "sugiura",
+     "kubota"
+    ]
+   }
+  },
   "ch3.bn_skip": {
    "id": "ch3.bn_skip",
    "type": "line",
@@ -15055,28 +16942,176 @@
     {
      "who": "sugiura",
      "text": "駅長のメモだ。「気づいたことは声にしろ」。"
-    },
-    {
-     "who": "sugiura",
-     "text": "静かな朝ほど、声は通る。使え。"
     }
    ],
-   "next": "ch3.handover_task",
-   "effects": [
-    {
-     "rel": {
-      "char": "sugiura",
-      "trust": 0,
-      "rapport": 1
-     }
-    }
-   ],
+   "next": "ch3.bn_skip_b",
    "view": {
     "mode": "25d",
     "bg": "office",
     "focus": [
      "sugiura",
      "kubota"
+    ]
+   }
+  },
+  "ch3.bn_skip_b": {
+   "id": "ch3.bn_skip_b",
+   "type": "branch",
+   "cases": [
+    {
+     "when": {
+      "gone": "uno"
+     },
+     "goto": "ch3.bn_gone"
+    }
+   ],
+   "else": "ch3.focus"
+  },
+  "ch3.bn_gone": {
+   "id": "ch3.bn_gone",
+   "type": "line",
+   "lines": [
+    {
+     "who": "sugiura",
+     "text": "券売機の前にいた客が、一人、来なくなったそうだ。"
+    },
+    {
+     "who": "sugiura",
+     "text": "窓口に回した、あの人だな。"
+    }
+   ],
+   "next": "ch3.focus",
+   "view": {
+    "mode": "25d",
+    "bg": "office",
+    "focus": [
+     "sugiura",
+     "kubota"
+    ]
+   }
+  },
+  "ch3.bn_none": {
+   "id": "ch3.bn_none",
+   "type": "line",
+   "lines": [
+    {
+     "who": "sugiura",
+     "text": "駅長のメモは、今日は白紙だ。"
+    },
+    {
+     "who": "sugiura",
+     "text": "白紙の日は、自分で書け。"
+    }
+   ],
+   "next": "ch3.focus",
+   "view": {
+    "mode": "25d",
+    "bg": "office",
+    "focus": [
+     "sugiura",
+     "kubota"
+    ]
+   }
+  },
+  "ch3.focus": {
+   "id": "ch3.focus",
+   "type": "branch",
+   "cases": [
+    {
+     "when": {
+      "flag": "next.focus_accuracy"
+     },
+     "goto": "ch3.fc_acc"
+    },
+    {
+     "when": {
+      "flag": "next.focus_team"
+     },
+     "goto": "ch3.fc_team"
+    },
+    {
+     "when": {
+      "flag": "next.focus_service"
+     },
+     "goto": "ch3.fc_svc"
+    }
+   ],
+   "else": "ch3.handover_task"
+  },
+  "ch3.fc_acc": {
+   "id": "ch3.fc_acc",
+   "type": "line",
+   "lines": [
+    {
+     "who": "sugiura",
+     "text": "指差しの型が、揃ってる。誰に教わった。"
+    },
+    {
+     "who": "player",
+     "text": "先週の稽古で。"
+    },
+    {
+     "who": "sugiura",
+     "text": "……崩すな。"
+    }
+   ],
+   "next": "ch3.handover_task",
+   "effects": [
+    {
+     "set": "ch3.drilled"
+    }
+   ],
+   "view": {
+    "mode": "25d",
+    "bg": "office",
+    "focus": [
+     "sugiura"
+    ]
+   }
+  },
+  "ch3.fc_team": {
+   "id": "ch3.fc_team",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "困ったら、私か助役に。先に言う相手は、決めてありますね。"
+    }
+   ],
+   "next": "ch3.handover_task",
+   "effects": [
+    {
+     "set": "ch3.has_buddy"
+    }
+   ],
+   "view": {
+    "mode": "25d",
+    "bg": "office",
+    "focus": [
+     "kubota"
+    ]
+   }
+  },
+  "ch3.fc_svc": {
+   "id": "ch3.fc_svc",
+   "type": "line",
+   "lines": [
+    {
+     "who": "sugiura",
+     "text": "五時五十二分の客がいる。顔を見て、挨拶しろ。"
+    }
+   ],
+   "next": "ch3.handover_task",
+   "effects": [
+    {
+     "set": "ch3.svc_ready"
+    }
+   ],
+   "view": {
+    "mode": "25d",
+    "bg": "office",
+    "focus": [
+     "sugiura"
     ]
    }
   },
@@ -15109,7 +17144,7 @@
    "results": [
     {
      "min": 80,
-     "goto": "ch3.ho_good",
+     "goto": "ch3.ho_done",
      "effects": [
       {
        "eval": {
@@ -15127,7 +17162,7 @@
     },
     {
      "min": 50,
-     "goto": "ch3.ho_mid",
+     "goto": "ch3.ho_done",
      "effects": [
       {
        "eval": {
@@ -15139,7 +17174,7 @@
     },
     {
      "min": 0,
-     "goto": "ch3.ho_bad",
+     "goto": "ch3.ho_done",
      "effects": [
       {
        "eval": {
@@ -15159,51 +17194,13 @@
     "caption": "5:35 駅事務室 引継ぎ"
    }
   },
-  "ch3.ho_good": {
-   "id": "ch3.ho_good",
+  "ch3.ho_done": {
+   "id": "ch3.ho_done",
    "type": "line",
    "lines": [
     {
      "who": "sugiura",
-     "text": "耳が開いてるな。鍵と同じだ。開けておけば、入れる。",
-     "mood": "smile"
-    }
-   ],
-   "next": "ch3.brief_end",
-   "view": {
-    "mode": "25d",
-    "bg": "office",
-    "focus": [
-     "sugiura"
-    ]
-   }
-  },
-  "ch3.ho_mid": {
-   "id": "ch3.ho_mid",
-   "type": "line",
-   "lines": [
-    {
-     "who": "sugiura",
-     "text": "八割か。残りの二割で、人は転ぶ。"
-    }
-   ],
-   "next": "ch3.brief_end",
-   "view": {
-    "mode": "25d",
-    "bg": "office",
-    "focus": [
-     "sugiura"
-    ]
-   }
-  },
-  "ch3.ho_bad": {
-   "id": "ch3.ho_bad",
-   "type": "line",
-   "lines": [
-    {
-     "who": "sugiura",
-     "text": "朝は聞き直せん。耳は最初から開けておけ。",
-     "mood": "serious"
+     "text": "復唱は、聞いた。"
     }
    ],
    "next": "ch3.brief_end",
@@ -15334,7 +17331,7 @@
    "lines": [
     {
      "who": "kubota",
-     "text": "ぴたりです。今の鍵の音、覚えておいて。",
+     "text": "その鍵の音、覚えておいて。",
      "mood": "smile"
     }
    ],
@@ -15357,7 +17354,7 @@
    "lines": [
     {
      "who": "kubota",
-     "text": "固定が甘いと、途中で降りてきます。もう一度。",
+     "text": "固定が甘いと、途中で降りてきます。",
      "mood": "serious"
     }
    ],
@@ -15377,7 +17374,7 @@
      }
     },
     {
-     "time": 15
+     "time": 40
     },
     {
      "log": {
@@ -15554,7 +17551,7 @@
    "lines": [
     {
      "who": "kubota",
-     "text": "暗がりの見落としは、始発の人の転倒です。やり直しましょう。",
+     "text": "暗がりの見落としは、始発の人の転倒です。",
      "mood": "serious"
     }
    ],
@@ -15574,7 +17571,7 @@
      }
     },
     {
-     "time": 15
+     "time": 35
     },
     {
      "log": {
@@ -15678,7 +17675,7 @@
    "lines": [
     {
      "who": "kubota",
-     "text": "何人か、線を越えさせました。視線を広く。"
+     "text": "何人か、線を越えさせました。"
     }
    ],
    "next": "ch3.commute_end"
@@ -15689,7 +17686,7 @@
    "lines": [
     {
      "who": "kubota",
-     "text": "朝は焦っている人が多い。まず全体を見る練習を。",
+     "text": "朝は焦っている人が多い。全体を見て。",
      "mood": "serious"
     }
    ],
@@ -15709,7 +17706,7 @@
      }
     },
     {
-     "time": 20
+     "time": 60
     },
     {
      "log": {
@@ -15734,6 +17731,10 @@
      "mood": "smile"
     },
     {
+     "who": "sugiura",
+     "text": "……どうも。"
+    },
+    {
      "who": "tsumura",
      "text": "二十五年、断られたことがない。……そっちは新顔か。"
     },
@@ -15743,16 +17744,7 @@
     },
     {
      "who": "tsumura",
-     "text": "覚えた。五時五十二分の客だ。女房が入院した年も、この電車に乗った。"
-    },
-    {
-     "who": "sugiura",
-     "text": "……津村さん。",
-     "mood": "worry"
-    },
-    {
-     "who": "tsumura",
-     "text": "昔話だ、昔話。"
+     "text": "覚えた。五時五十二分の客だ。"
     }
    ],
    "next": "ch3.ts_branch",
@@ -15784,7 +17776,7 @@
      "goto": "ch3.ts_memory"
     }
    ],
-   "else": "ch3.ts_choice"
+   "else": "ch3.ts_2"
   },
   "ch3.ts_memory": {
    "id": "ch3.ts_memory",
@@ -15796,7 +17788,7 @@
     },
     {
      "who": "player",
-     "text": "梶原さんの顔も、まだ覚えています。"
+     "text": "券売機の前の、年配の方の顔を、覚えています。"
     },
     {
      "who": "tsumura",
@@ -15804,19 +17796,7 @@
      "mood": "smile"
     }
    ],
-   "next": "ch3.ts_choice",
-   "effects": [
-    {
-     "set": "ch3.ts_remembered"
-    },
-    {
-     "rel": {
-      "char": "tsumura",
-      "trust": 1,
-      "rapport": 1
-     }
-    }
-   ],
+   "next": "ch3.ts_2",
    "view": {
     "mode": "25d",
     "bg": "office",
@@ -15826,86 +17806,29 @@
     ]
    }
   },
-  "ch3.ts_choice": {
-   "id": "ch3.ts_choice",
-   "type": "choice",
-   "prompt": "津村が、ふと聞いた。「あんた、早番は好きになれそうかい」",
-   "options": [
-    {
-     "id": "quiet",
-     "label": "「静かで心細いです。でも、夜明けの色には驚きました」",
-     "goto": "ch3.ts_a",
-     "tone": "honest",
-     "effects": [
-      {
-       "rel": {
-        "char": "tsumura",
-        "trust": 1,
-        "rapport": 1
-       }
-      },
-      {
-       "set": "ch3.ts_honest_feel"
-      }
-     ]
-    },
-    {
-     "id": "try",
-     "label": "「まだ分かりません。一か月、続けてみます」",
-     "goto": "ch3.ts_b",
-     "tone": "careful",
-     "effects": [
-      {
-       "rel": {
-        "char": "tsumura",
-        "trust": 1,
-        "rapport": 0
-       }
-      },
-      {
-       "eval": {
-        "key": "accuracy",
-        "add": 1
-       }
-      }
-     ]
-    },
-    {
-     "id": "ask",
-     "label": "「津村さんは、なぜ二十五年も続けられたんですか」",
-     "goto": "ch3.ts_c",
-     "tone": "caring",
-     "effects": [
-      {
-       "rel": {
-        "char": "tsumura",
-        "trust": 1,
-        "rapport": 2
-       }
-      },
-      {
-       "set": "ch3.ts_asked"
-      }
-     ]
-    }
-   ],
-   "who": "tsumura",
-   "view": {
-    "mode": "25d",
-    "bg": "office",
-    "focus": [
-     "tsumura",
-     "sugiura"
-    ]
-   }
-  },
-  "ch3.ts_a": {
-   "id": "ch3.ts_a",
+  "ch3.ts_2": {
+   "id": "ch3.ts_2",
    "type": "line",
    "lines": [
     {
+     "text": "指令の電話が鳴った。杉浦が、事務室へ入っていく。",
+     "narration": true
+    },
+    {
      "who": "tsumura",
-     "text": "心細いうちは、気が張ってる。事故は、慣れた頃に来る。"
+     "text": "兄ちゃん。今日が最後だ。"
+    },
+    {
+     "who": "tsumura",
+     "text": "女房が、また入院してな。向こうの病院の近くに、間借りする。来週からは、乗らん。"
+    },
+    {
+     "who": "tsumura",
+     "text": "杉浦さんには、言うな。二十五年、湿っぽいのは性に合わん。"
+    },
+    {
+     "text": "津村は、缶をもう一本、こちらの手に置いた。",
+     "narration": true
     }
    ],
    "next": "ch3.ts_end",
@@ -15913,69 +17836,9 @@
     "mode": "25d",
     "bg": "office",
     "focus": [
-     "tsumura",
-     "sugiura"
-    ]
-   }
-  },
-  "ch3.ts_b": {
-   "id": "ch3.ts_b",
-   "type": "line",
-   "lines": [
-    {
-     "who": "tsumura",
-     "text": "一か月か。一日で分かった顔をする奴より、信用できる。"
-    },
-    {
-     "who": "sugiura",
-     "text": "足りなければ三か月。焦るな。",
-     "mood": "smile"
-    }
-   ],
-   "next": "ch3.ts_end",
-   "view": {
-    "mode": "25d",
-    "bg": "office",
-    "focus": [
-     "tsumura",
-     "sugiura"
-    ]
-   }
-  },
-  "ch3.ts_c": {
-   "id": "ch3.ts_c",
-   "type": "line",
-   "lines": [
-    {
-     "who": "tsumura",
-     "text": "簡単だ。毎朝、改札に同じ顔があった。"
-    },
-    {
-     "who": "sugiura",
-     "text": "……",
-     "mood": "worry"
-    },
-    {
-     "who": "tsumura",
-     "text": "照れるな、事実だ。茶を黙って受け取ってくれる、それだけで乗れた朝がある。"
-    }
-   ],
-   "next": "ch3.ts_end",
-   "effects": [
-    {
-     "eval": {
-      "key": "service",
-      "add": 2
-     }
-    }
-   ],
-   "view": {
-    "mode": "25d",
-    "bg": "office",
-    "focus": [
-     "tsumura",
-     "sugiura"
-    ]
+     "tsumura"
+    ],
+    "caption": "5:46 改札口"
    }
   },
   "ch3.ts_end": {
@@ -15986,10 +17849,7 @@
      "set": "ch3.ts_done"
     },
     {
-     "set": "ch3.tsumura_met"
-    },
-    {
-     "time": 8
+     "time": 12
     },
     {
      "log": {
@@ -16038,15 +17898,15 @@
    "type": "line",
    "lines": [
     {
-     "text": "窓の中で、帆布のカバンが、小さく手を挙げた。",
+     "text": "杉浦が、ホームの端に立っていた。窓の列を、一つずつ見ている。",
      "narration": true
     },
     {
-     "text": "杉浦は無言で、帽子のつばに指を添えていた。",
-     "narration": true
+     "who": "sugiura",
+     "text": "津村さん、何か言っていたか。"
     }
    ],
-   "next": "ch3.first_end",
+   "next": "ch3.ts_choice",
    "view": {
     "mode": "3d",
     "cam": "platform",
@@ -16071,6 +17931,225 @@
     "mode": "3d",
     "cam": "platform",
     "caption": "5:55 ホーム 始発列車"
+   }
+  },
+  "ch3.ts_choice": {
+   "id": "ch3.ts_choice",
+   "type": "choice",
+   "prompt": "列車が、ホームに入ってくる。杉浦は、前を向いたままだ。",
+   "options": [
+    {
+     "id": "tell",
+     "label": "「今日が最後だと、仰っていました」",
+     "goto": "ch3.ts_tell",
+     "tone": "honest",
+     "effects": [
+      {
+       "set": "ch3.ts_told"
+      },
+      {
+       "rel": {
+        "char": "sugiura",
+        "trust": 1,
+        "rapport": 1
+       }
+      },
+      {
+       "rel": {
+        "char": "tsumura",
+        "trust": -1,
+        "rapport": 0
+       }
+      }
+     ]
+    },
+    {
+     "id": "keep",
+     "label": "「いえ。特には」",
+     "goto": "ch3.ts_keep",
+     "tone": "careful",
+     "effects": [
+      {
+       "set": "ch3.ts_kept"
+      },
+      {
+       "rel": {
+        "char": "tsumura",
+        "trust": 1,
+        "rapport": 1
+       }
+      },
+      {
+       "lock": {
+        "id": "sugiura_goodbye",
+        "note": "杉浦助役は、津村さんに別れを言えなかった"
+       }
+      }
+     ]
+    },
+    {
+     "id": "silent",
+     "label": "……何も言わない",
+     "goto": "ch3.ts_sil",
+     "effects": [
+      {
+       "set": "ch3.ts_silent"
+      },
+      {
+       "lock": {
+        "id": "sugiura_goodbye",
+        "note": "杉浦助役は、津村さんに別れを言えなかった"
+       }
+      }
+     ]
+    }
+   ],
+   "important": true,
+   "timeLimit": 12,
+   "defaultOption": "silent",
+   "who": "sugiura",
+   "view": {
+    "mode": "3d",
+    "cam": "platform",
+    "caption": "5:55 ホーム 始発列車"
+   }
+  },
+  "ch3.ts_tell": {
+   "id": "ch3.ts_tell",
+   "type": "line",
+   "lines": [
+    {
+     "who": "sugiura",
+     "text": "……そうか。"
+    },
+    {
+     "text": "列車が止まった。三両目の窓で、帆布のカバンが立ち上がる。",
+     "narration": true
+    }
+   ],
+   "next": "ch3.ts_tell_b",
+   "view": {
+    "mode": "3d",
+    "cam": "platform",
+    "caption": "5:56 ホーム 始発列車"
+   }
+  },
+  "ch3.ts_tell_b": {
+   "id": "ch3.ts_tell_b",
+   "type": "branch",
+   "cases": [
+    {
+     "when": {
+      "flag": "ch3.svc_ready"
+     },
+     "goto": "ch3.ts_tell_s"
+    }
+   ],
+   "else": "ch3.ts_tell_p"
+  },
+  "ch3.ts_tell_s": {
+   "id": "ch3.ts_tell_s",
+   "type": "line",
+   "lines": [
+    {
+     "who": "player",
+     "text": "津村さん。二十五年、お疲れさまでした。"
+    },
+    {
+     "who": "tsumura",
+     "text": "……言うなと、言ったろう。",
+     "mood": "smile"
+    }
+   ],
+   "next": "ch3.ts_tell_e",
+   "view": {
+    "mode": "3d",
+    "cam": "platform",
+    "caption": "5:56 ホーム 始発列車"
+   }
+  },
+  "ch3.ts_tell_p": {
+   "id": "ch3.ts_tell_p",
+   "type": "line",
+   "lines": [
+    {
+     "text": "窓の中で、津村がこちらを見た。肩を、少しだけすくめた。",
+     "narration": true
+    }
+   ],
+   "next": "ch3.ts_tell_e",
+   "view": {
+    "mode": "3d",
+    "cam": "platform",
+    "caption": "5:56 ホーム 始発列車"
+   }
+  },
+  "ch3.ts_tell_e": {
+   "id": "ch3.ts_tell_e",
+   "type": "line",
+   "lines": [
+    {
+     "text": "杉浦は、帽子を取った。発車ベルが鳴り終わるまで、頭を上げなかった。",
+     "narration": true
+    }
+   ],
+   "next": "ch3.first_end",
+   "view": {
+    "mode": "3d",
+    "cam": "platform",
+    "caption": "5:57 ホーム 始発列車"
+   }
+  },
+  "ch3.ts_keep": {
+   "id": "ch3.ts_keep",
+   "type": "line",
+   "lines": [
+    {
+     "who": "player",
+     "text": "いえ。特には。"
+    },
+    {
+     "who": "sugiura",
+     "text": "……そうか。"
+    },
+    {
+     "text": "杉浦は、いつものように、帽子のつばに指を添えた。窓の中で、帆布のカバンが、小さく手を挙げた。",
+     "narration": true
+    },
+    {
+     "text": "杉浦は、それが最後だとは、知らない。",
+     "narration": true
+    }
+   ],
+   "next": "ch3.first_end",
+   "view": {
+    "mode": "3d",
+    "cam": "platform",
+    "caption": "5:56 ホーム 始発列車"
+   }
+  },
+  "ch3.ts_sil": {
+   "id": "ch3.ts_sil",
+   "type": "line",
+   "lines": [
+    {
+     "text": "口が、動かなかった。",
+     "narration": true
+    },
+    {
+     "who": "sugiura",
+     "text": "……聞かんでおく。"
+    },
+    {
+     "text": "前照灯が、ホームを白く洗って、通り過ぎた。",
+     "narration": true
+    }
+   ],
+   "next": "ch3.first_end",
+   "view": {
+    "mode": "3d",
+    "cam": "platform",
+    "caption": "5:56 ホーム 始発列車"
    }
   },
   "ch3.first_end": {
@@ -16237,7 +18316,7 @@
    "lines": [
     {
      "who": "kubota",
-     "text": "切り替えが自然でした。急ぐ人も、ゆっくりの人も、顔が緩んでいましたよ。",
+     "text": "急ぐ人も、ゆっくりの人も、顔が緩んでいました。",
      "mood": "smile"
     }
    ],
@@ -16249,7 +18328,7 @@
    "lines": [
     {
      "who": "kubota",
-     "text": "順番が少し入れ替わりました。まず「急ぎですか」を。"
+     "text": "順番が少し入れ替わりました。"
     }
    ],
    "next": "ch3.svc_window_end"
@@ -16260,7 +18339,7 @@
    "lines": [
     {
      "who": "kubota",
-     "text": "急ぐ人を待たせましたね。最初の一言で、時間を聞きましょう。",
+     "text": "急ぐ人を、待たせましたね。",
      "mood": "serious"
     }
    ],
@@ -16280,7 +18359,7 @@
      }
     },
     {
-     "time": 25
+     "time": 90
     },
     {
      "log": {
@@ -16310,7 +18389,7 @@
     },
     {
      "who": "sakai",
-     "text": "失礼ね。……ねえ、あなた、続くの？ 三か月で消える子も見たから。"
+     "text": "……ねえ、あなた、続くの？ 三か月で消える子も見たから。"
     },
     {
      "who": "player",
@@ -16322,7 +18401,7 @@
      "mood": "smile"
     }
    ],
-   "next": "ch3.svc_sakai_end",
+   "next": "ch3.svc_sakai_b",
    "view": {
     "mode": "25d",
     "bg": "office",
@@ -16333,15 +18412,96 @@
     "caption": "6:35 売店前"
    }
   },
+  "ch3.svc_sakai_b": {
+   "id": "ch3.svc_sakai_b",
+   "type": "branch",
+   "cases": [
+    {
+     "when": {
+      "all": [
+       {
+        "notFlag": "ch3.ts_done"
+       },
+       {
+        "rel": {
+         "char": "sakai",
+         "key": "rapport",
+         "op": ">=",
+         "val": 1
+        }
+       }
+      ]
+     },
+     "goto": "ch3.svc_sakai_ts"
+    },
+    {
+     "when": {
+      "all": [
+       {
+        "notFlag": "ch2.coins_done"
+       },
+       {
+        "rel": {
+         "char": "sakai",
+         "key": "rapport",
+         "op": "<=",
+         "val": 1
+        }
+       }
+      ]
+     },
+     "goto": "ch3.svc_sakai_cold"
+    }
+   ],
+   "else": "ch3.svc_sakai_end"
+  },
+  "ch3.svc_sakai_ts": {
+   "id": "ch3.svc_sakai_ts",
+   "type": "line",
+   "lines": [
+    {
+     "who": "sakai",
+     "text": "津村さん、今日が最後だって。さっき聞いたの。……会えなかったのね。"
+    }
+   ],
+   "next": "ch3.svc_sakai_end",
+   "effects": [
+    {
+     "set": "ch3.ts_late_known"
+    }
+   ],
+   "view": {
+    "mode": "25d",
+    "bg": "office",
+    "focus": [
+     "sakai"
+    ]
+   }
+  },
+  "ch3.svc_sakai_cold": {
+   "id": "ch3.svc_sakai_cold",
+   "type": "line",
+   "lines": [
+    {
+     "who": "sakai",
+     "text": "……昨日の両替のことは、もういいの。忙しかったでしょうし。"
+    }
+   ],
+   "next": "ch3.svc_sakai_end",
+   "view": {
+    "mode": "25d",
+    "bg": "office",
+    "focus": [
+     "sakai"
+    ]
+   }
+  },
   "ch3.svc_sakai_end": {
    "id": "ch3.svc_sakai_end",
    "type": "effect",
    "effects": [
     {
      "set": "ch3.svc_sakai_done"
-    },
-    {
-     "set": "ch3.svc_regulars"
     },
     {
      "rel": {
@@ -16351,13 +18511,7 @@
      }
     },
     {
-     "eval": {
-      "key": "service",
-      "add": 2
-     }
-    },
-    {
-     "time": 15
+     "time": 20
     },
     {
      "log": {
@@ -16476,7 +18630,7 @@
    "lines": [
     {
      "who": "kubota",
-     "text": "無駄がない。毎朝この順で回れますね。",
+     "text": "毎朝この順で回れますね。",
      "mood": "smile"
     }
    ],
@@ -16488,7 +18642,7 @@
    "lines": [
     {
      "who": "kubota",
-     "text": "回れていますが、少し遠回りでした。"
+     "text": "少し遠回りでした。"
     }
    ],
    "next": "ch3.plat_round_end"
@@ -16499,7 +18653,7 @@
    "lines": [
     {
      "who": "kubota",
-     "text": "一か所、見落としです。巡回は、抜けが一番怖い。",
+     "text": "一か所、見落としです。",
      "mood": "serious"
     }
    ],
@@ -16519,7 +18673,7 @@
      }
     },
     {
-     "time": 25
+     "time": 70
     },
     {
      "log": {
@@ -16559,9 +18713,13 @@
     {
      "who": "hamaguchi",
      "text": "それだ。結論、場所、影響。十八年、それしか言ってない。"
+    },
+    {
+     "who": "sugiura",
+     "text": "紙でいい。俺は今でも、手帳に書いている。"
     }
    ],
-   "next": "ch3.plat_phone_c",
+   "next": "ch3.plat_phone_end",
    "view": {
     "mode": "25d",
     "bg": "office",
@@ -16569,93 +18727,6 @@
      "sugiura"
     ],
     "caption": "6:40 駅事務室 指令直通電話"
-   }
-  },
-  "ch3.plat_phone_c": {
-   "id": "ch3.plat_phone_c",
-   "type": "choice",
-   "prompt": "電話を切ると、杉浦が見ていた。報告を、どう振り返る？",
-   "options": [
-    {
-     "id": "fix",
-     "label": "「結論が出せませんでした。順序を紙に書いておきます」",
-     "goto": "ch3.plat_phone_a",
-     "tone": "honest",
-     "effects": [
-      {
-       "eval": {
-        "key": "reporting",
-        "add": 3
-       }
-      },
-      {
-       "rel": {
-        "char": "sugiura",
-        "trust": 1,
-        "rapport": 0
-       }
-      }
-     ]
-    },
-    {
-     "id": "pass",
-     "label": "「何とか伝わりました。慣れればできます」",
-     "goto": "ch3.plat_phone_b",
-     "tone": "quick",
-     "effects": [
-      {
-       "eval": {
-        "key": "reporting",
-        "add": 0
-       }
-      }
-     ]
-    }
-   ],
-   "who": "sugiura",
-   "view": {
-    "mode": "25d",
-    "bg": "office",
-    "focus": [
-     "sugiura"
-    ]
-   }
-  },
-  "ch3.plat_phone_a": {
-   "id": "ch3.plat_phone_a",
-   "type": "line",
-   "lines": [
-    {
-     "who": "sugiura",
-     "text": "紙でいい。俺は今でも、手帳に書いている。",
-     "mood": "smile"
-    }
-   ],
-   "next": "ch3.plat_phone_end",
-   "view": {
-    "mode": "25d",
-    "bg": "office",
-    "focus": [
-     "sugiura"
-    ]
-   }
-  },
-  "ch3.plat_phone_b": {
-   "id": "ch3.plat_phone_b",
-   "type": "line",
-   "lines": [
-    {
-     "who": "sugiura",
-     "text": "慣れる前に、一度間違える。順序は今のうちに書いておけ。"
-    }
-   ],
-   "next": "ch3.plat_phone_end",
-   "view": {
-    "mode": "25d",
-    "bg": "office",
-    "focus": [
-     "sugiura"
-    ]
    }
   },
   "ch3.plat_phone_end": {
@@ -16666,9 +18737,6 @@
      "set": "ch3.plat_phone_done"
     },
     {
-     "set": "ch3.plat_report_order"
-    },
-    {
      "rel": {
       "char": "hamaguchi",
       "trust": 1,
@@ -16676,7 +18744,14 @@
      }
     },
     {
-     "time": 15
+     "rel": {
+      "char": "sugiura",
+      "trust": 1,
+      "rapport": 0
+     }
+    },
+    {
+     "time": 20
     },
     {
      "log": {
@@ -16748,7 +18823,7 @@
    "results": [
     {
      "min": 80,
-     "goto": "ch3.off_log_good",
+     "goto": "ch3.off_log_ok",
      "effects": [
       {
        "eval": {
@@ -16766,7 +18841,7 @@
     },
     {
      "min": 50,
-     "goto": "ch3.off_log_mid",
+     "goto": "ch3.off_log_ok",
      "effects": [
       {
        "eval": {
@@ -16778,7 +18853,7 @@
     },
     {
      "min": 0,
-     "goto": "ch3.off_log_bad",
+     "goto": "ch3.off_log_ok",
      "effects": [
       {
        "eval": {
@@ -16801,53 +18876,22 @@
     "caption": "駅事務室 業務端末"
    }
   },
-  "ch3.off_log_good": {
-   "id": "ch3.off_log_good",
+  "ch3.off_log_ok": {
+   "id": "ch3.off_log_ok",
    "type": "line",
    "lines": [
     {
      "who": "kubota",
-     "text": "「たぶん」を全部見抜きましたね。日報が怖くなくなる頃です。",
-     "mood": "smile"
+     "text": "日報は、確認できました。"
     }
    ],
    "next": "ch3.off_book_1",
    "effects": [
     {
      "set": "ch3.off_log_done"
-    }
-   ]
-  },
-  "ch3.off_log_mid": {
-   "id": "ch3.off_log_mid",
-   "type": "line",
-   "lines": [
+    },
     {
-     "who": "kubota",
-     "text": "「たぶん」が出たら、一度手を止めて事実を探しましょう。"
-    }
-   ],
-   "next": "ch3.off_book_1",
-   "effects": [
-    {
-     "set": "ch3.off_log_done"
-    }
-   ]
-  },
-  "ch3.off_log_bad": {
-   "id": "ch3.off_log_bad",
-   "type": "line",
-   "lines": [
-    {
-     "who": "kubota",
-     "text": "推測は、事実の顔をして後の人を迷わせます。一緒に読み直しましょう。",
-     "mood": "serious"
-    }
-   ],
-   "next": "ch3.off_book_1",
-   "effects": [
-    {
-     "set": "ch3.off_log_done"
+     "time": 25
     }
    ]
   },
@@ -16877,11 +18921,6 @@
     }
    ],
    "next": "ch3.off_book_c",
-   "effects": [
-    {
-     "set": "ch3.off_book_seen"
-    }
-   ],
    "view": {
     "mode": "25d",
     "bg": "office",
@@ -16921,9 +18960,6 @@
    "next": "ch3.off_book_end",
    "effects": [
     {
-     "set": "ch3.off_book_cut"
-    },
-    {
      "rel": {
       "char": "sugiura",
       "trust": 1,
@@ -16944,10 +18980,7 @@
    "type": "effect",
    "effects": [
     {
-     "set": "ch3.off_book_done"
-    },
-    {
-     "time": 20
+     "time": 25
     },
     {
      "log": {
@@ -17030,11 +19063,11 @@
   "ch3.sleepy_choice": {
    "id": "ch3.sleepy_choice",
    "type": "choice",
-   "prompt": "眠気が、はっきりしてきた。ここで、どうする？",
+   "prompt": "数字が、二重に見える。",
    "options": [
     {
      "id": "honest",
-     "label": "「眠気が強くて、確認が不安です。少し休ませてください」と言う",
+     "label": "「眠気が強くて、確認が不安です。十五分、休ませてください」",
      "goto": "ch3.hn_1",
      "tone": "honest",
      "effects": [
@@ -17056,9 +19089,42 @@
       {
        "rel": {
         "char": "sugiura",
-        "trust": 2,
+        "trust": 1,
         "rapport": 1
        }
+      },
+      {
+       "rel": {
+        "char": "kubota",
+        "trust": 1,
+        "rapport": 1
+       }
+      }
+     ]
+    },
+    {
+     "id": "kubota",
+     "label": "久保田にだけ、小声で言う。「読み上げ、代わってもらえますか」",
+     "goto": "ch3.kb_1",
+     "tone": "careful",
+     "requires": {
+      "any": [
+       {
+        "flag": "ch3.has_buddy"
+       },
+       {
+        "rel": {
+         "char": "kubota",
+         "key": "trust",
+         "op": ">=",
+         "val": 3
+        }
+       }
+      ]
+     },
+     "effects": [
+      {
+       "set": "ch3.told_kubota"
       },
       {
        "rel": {
@@ -17094,15 +19160,12 @@
     },
     {
      "id": "coffee",
-     "label": "席を外して濃いコーヒーを飲み、何も言わずに戻る",
+     "label": "席を外して、濃いコーヒーを飲んで戻る",
      "goto": "ch3.pu_c",
      "tone": "quick",
      "effects": [
       {
        "set": "ch3.pushed"
-      },
-      {
-       "set": "ch3.coffee"
       },
       {
        "eval": {
@@ -17117,9 +19180,27 @@
        }
       }
      ]
+    },
+    {
+     "id": "silent",
+     "label": "何も言わず、読み上げを始める",
+     "goto": "ch3.pu_s",
+     "effects": [
+      {
+       "set": "ch3.pushed"
+      },
+      {
+       "eval": {
+        "key": "safety",
+        "add": -2
+       }
+      }
+     ]
     }
    ],
    "important": true,
+   "timeLimit": 15,
+   "defaultOption": "silent",
    "who": "kubota",
    "view": {
     "mode": "25d",
@@ -17139,23 +19220,19 @@
      "text": "まず座ってください。立っていなくていいです。"
     },
     {
-     "text": "杉浦が、珍しくペンを置いた。",
+     "text": "杉浦が、ペンを置いた。",
      "narration": true
     },
     {
      "who": "sugiura",
-     "text": "……言ったか。黙って続けて取り返しがつかん方が、よほど迷惑だ。"
+     "text": "……言ったか。"
     },
     {
      "who": "sugiura",
-     "text": "迷惑には、軽いのと重いのがある。今のは軽い方だ。"
-    },
-    {
-     "who": "sugiura",
-     "text": "状態を言葉にしろ。報告の稽古だ。"
+     "text": "休むなら、その間は俺が立つ。十五分だ。"
     }
    ],
-   "next": "ch3.hn_task",
+   "next": "ch3.hn_stand",
    "view": {
     "mode": "25d",
     "bg": "office",
@@ -17166,177 +19243,84 @@
     "caption": "8:42 駅事務室"
    }
   },
-  "ch3.hn_task": {
-   "id": "ch3.hn_task",
-   "type": "task",
-   "kind": "compose",
-   "title": "体調の申告を、組み立てる",
-   "intro": "「状態」「業務への影響」「お願いしたいこと」を、伝わる言葉で組み立ててください。",
-   "slots": [
+  "ch3.hn_stand": {
+   "id": "ch3.hn_stand",
+   "type": "line",
+   "lines": [
     {
-     "id": "state",
-     "label": "状態",
-     "options": [
-      {
-       "id": "s1",
-       "text": "八時過ぎから、画面の文字が二重に見えて、確認の途中で、何度か意識が遠のきそうになります。",
-       "good": true,
-       "why": "いつから、どんな状態か、具体的に伝わります。"
-      },
-      {
-       "id": "s2",
-       "text": "少し眠いだけです。",
-       "good": false,
-       "why": "程度が分かりません。具体的な状態を伝えます。"
-      },
-      {
-       "id": "s3",
-       "text": "昨夜、遅くまで起きていた自分が悪いです。",
-       "good": false,
-       "why": "原因の追及より、いまの状態の共有が先です。"
-      }
-     ]
+     "text": "杉浦が、窓口の椅子に座り直した。",
+     "narration": true
     },
     {
-     "id": "effect",
-     "label": "業務への影響",
-     "options": [
-      {
-       "id": "e1",
-       "text": "この状態で、券売機の履歴の確認や、放送を行うと、見落としや言い間違いが出る恐れがあります。",
-       "good": true,
-       "why": "業務への具体的な影響が、示されています。"
-      },
-      {
-       "id": "e2",
-       "text": "仕事には、まったく影響ありません。",
-       "good": false,
-       "why": "申告の意味が、なくなってしまいます。"
-      },
-      {
-       "id": "e3",
-       "text": "みなさんに迷惑がかかるので、本当は、言いたくありません。",
-       "good": false,
-       "why": "気持ちの説明で、状態も影響も伝わっていません。"
-      }
-     ]
-    },
-    {
-     "id": "ask",
-     "label": "お願いしたいこと",
-     "options": [
-      {
-       "id": "r1",
-       "text": "十五分ほど休憩をいただき、戻ったら、その間の確認を、どなたかに見てもらえませんか。",
-       "good": true,
-       "why": "休憩で様子を見て、確認を二重化する、現実的な依頼です。"
-      },
-      {
-       "id": "r2",
-       "text": "何もしなくていいので、放っておいてください。",
-       "good": false,
-       "why": "業務の穴ができます。代替を相談する姿勢が必要です。"
-      },
-      {
-       "id": "r3",
-       "text": "今日は、もう、帰らせてください。",
-       "good": false,
-       "why": "程度に対して過大な申し出です。まず休憩で様子を見る依頼が、適切です。"
-      }
-     ]
+     "text": "十時半の休憩は、その分、削れる。本人は、何も言わなかった。",
+     "narration": true
     }
    ],
-   "results": [
-    {
-     "min": 66,
-     "goto": "ch3.hn_good",
-     "effects": [
-      {
-       "eval": {
-        "key": "reporting",
-        "add": 4
-       }
-      }
-     ]
-    },
-    {
-     "min": 34,
-     "goto": "ch3.hn_mid",
-     "effects": [
-      {
-       "eval": {
-        "key": "reporting",
-        "add": 1
-       }
-      }
-     ]
-    },
-    {
-     "min": 0,
-     "goto": "ch3.hn_bad",
-     "effects": [
-      {
-       "eval": {
-        "key": "reporting",
-        "add": -1
-       }
-      }
-     ]
-    }
-   ],
+   "next": "ch3.hn_key",
    "view": {
     "mode": "25d",
     "bg": "office",
     "focus": [
-     "sugiura",
-     "kubota"
-    ],
-    "caption": "8:44 駅事務室 申告"
+     "sugiura"
+    ]
    }
   },
-  "ch3.hn_good": {
-   "id": "ch3.hn_good",
+  "ch3.hn_key": {
+   "id": "ch3.hn_key",
+   "type": "branch",
+   "cases": [
+    {
+     "when": {
+      "rel": {
+       "char": "sugiura",
+       "key": "trust",
+       "op": ">=",
+       "val": 2
+      }
+     },
+     "goto": "ch3.hn_key_y"
+    }
+   ],
+   "else": "ch3.hn_key_n"
+  },
+  "ch3.hn_key_y": {
+   "id": "ch3.hn_key_y",
    "type": "line",
    "lines": [
     {
-     "who": "sugiura",
-     "text": "状態、影響、依頼。これなら誰でも動ける。",
-     "mood": "smile"
+     "text": "杉浦は、鍵束から、小さな鍵を一つ外した。",
+     "narration": true
     },
     {
-     "who": "kubota",
-     "text": "私の新人のときと、一字一句同じです。"
+     "who": "sugiura",
+     "text": "更衣室の予備だ。預ける。……失くすな。"
+    },
+    {
+     "text": "手のひらに、冷たい金属が一つ、乗った。",
+     "narration": true
     }
    ],
    "next": "ch3.hn_rest",
    "effects": [
     {
-     "set": "ch3.report_good"
-    },
-    {
-     "rel": {
-      "char": "sugiura",
-      "trust": 1,
-      "rapport": 1
-     }
+     "set": "ch3.got_key"
     }
    ],
    "view": {
     "mode": "25d",
     "bg": "office",
     "focus": [
-     "sugiura",
-     "kubota"
+     "sugiura"
     ]
    }
   },
-  "ch3.hn_mid": {
-   "id": "ch3.hn_mid",
+  "ch3.hn_key_n": {
+   "id": "ch3.hn_key_n",
    "type": "line",
    "lines": [
     {
      "who": "sugiura",
-     "text": "大筋は伝わった。「いつから」が欲しい。次はそこだ。"
+     "text": "十五分で戻れ。"
     }
    ],
    "next": "ch3.hn_rest",
@@ -17344,28 +19328,7 @@
     "mode": "25d",
     "bg": "office",
     "focus": [
-     "sugiura",
-     "kubota"
-    ]
-   }
-  },
-  "ch3.hn_bad": {
-   "id": "ch3.hn_bad",
-   "type": "line",
-   "lines": [
-    {
-     "who": "sugiura",
-     "text": "言いにくいのは分かる。あとで一緒に直そう。",
-     "mood": "normal"
-    }
-   ],
-   "next": "ch3.hn_rest",
-   "view": {
-    "mode": "25d",
-    "bg": "office",
-    "focus": [
-     "sugiura",
-     "kubota"
+     "sugiura"
     ]
    }
   },
@@ -17378,39 +19341,13 @@
      "narration": true
     },
     {
-     "who": "sugiura",
-     "text": "十五分、目を閉じろ。眠らなくていい。"
-    },
-    {
-     "who": "sugiura",
-     "text": "二十五年前、俺は黙った。放送で行先を取り違えた。誰も乗り間違えなかった。運だ。"
-    },
-    {
-     "who": "sugiura",
-     "text": "先輩は言った。「言えない空気を作った俺たちが悪い」と。"
-    },
-    {
      "who": "kubota",
-     "text": "私も聞かれました。「眠いか」って。泣きそうでした。",
+     "text": "私も、新人のときに聞かれました。「眠いか」って。泣きそうでした。",
      "mood": "smile"
-    },
-    {
-     "who": "sugiura",
-     "text": "次は、お前が聞け。"
     }
    ],
    "next": "ch3.hn_end",
    "effects": [
-    {
-     "rel": {
-      "char": "sugiura",
-      "trust": 1,
-      "rapport": 2
-     }
-    },
-    {
-     "set": "ch3.sugiura_story"
-    },
     {
      "time": 15
     }
@@ -17419,7 +19356,6 @@
     "mode": "25d",
     "bg": "hr",
     "focus": [
-     "sugiura",
      "kubota"
     ],
     "caption": "8:50 休憩室"
@@ -17434,17 +19370,105 @@
     },
     {
      "log": {
-      "text": "眠気を正直に申告し、休憩を取る",
+      "text": "眠気を申告し、休憩を取る。その間、杉浦が窓口に立った",
       "tag": "work"
      }
     },
     {
      "timeline": {
-      "text": "4月19日 眠気を正直に申告した"
+      "text": "4月19日 眠気を申告し、十五分休んだ"
      }
     }
    ],
    "next": "ch3.mid_merge"
+  },
+  "ch3.kb_1": {
+   "id": "ch3.kb_1",
+   "type": "line",
+   "lines": [
+    {
+     "who": "player",
+     "text": "（小声で）久保田さん。読み上げ、代わってもらえますか。数字が、二重に見えて。"
+    },
+    {
+     "who": "kubota",
+     "text": "……分かりました。あちらで座っていてください。"
+    },
+    {
+     "text": "杉浦は、机の向こうで、こちらを見ていた。何も言わなかった。",
+     "narration": true
+    }
+   ],
+   "next": "ch3.kb_2",
+   "view": {
+    "mode": "25d",
+    "bg": "office",
+    "focus": [
+     "kubota",
+     "sugiura"
+    ]
+   }
+  },
+  "ch3.kb_2": {
+   "id": "ch3.kb_2",
+   "type": "line",
+   "lines": [
+    {
+     "text": "十五分後。机の端に、付箋が一枚。細い字で、「眠いときは先に言う　杉浦」。",
+     "narration": true
+    },
+    {
+     "who": "sugiura",
+     "text": "言う相手は、俺でもいい。"
+    },
+    {
+     "text": "久保田が、小さく咳をした。",
+     "narration": true
+    }
+   ],
+   "next": "ch3.kb_end",
+   "effects": [
+    {
+     "rel": {
+      "char": "sugiura",
+      "trust": -1,
+      "rapport": 0
+     }
+    },
+    {
+     "time": 15
+    }
+   ],
+   "view": {
+    "mode": "25d",
+    "bg": "office",
+    "focus": [
+     "sugiura",
+     "kubota"
+    ],
+    "caption": "9:00 駅事務室"
+   }
+  },
+  "ch3.kb_end": {
+   "id": "ch3.kb_end",
+   "type": "effect",
+   "effects": [
+    {
+     "set": "ch3.sleepy_done"
+    },
+    {
+     "log": {
+      "text": "眠気を久保田にだけ伝え、読み上げを代わってもらう",
+      "tag": "work"
+     }
+    },
+    {
+     "timeline": {
+      "text": "4月19日 眠気を久保田にだけ伝えた"
+     }
+    }
+   ],
+   "next": "ch3.hub"
   },
   "ch3.pu_1": {
    "id": "ch3.pu_1",
@@ -17502,10 +19526,38 @@
     ]
    }
   },
+  "ch3.pu_s": {
+   "id": "ch3.pu_s",
+   "type": "line",
+   "lines": [
+    {
+     "who": "kubota",
+     "text": "……始めてください。"
+    },
+    {
+     "text": "声が、出なかった。そのまま、読み上げを始めた。数字が、一つずつ、ずれていく。",
+     "narration": true
+    }
+   ],
+   "next": "ch3.pu_slip",
+   "view": {
+    "mode": "25d",
+    "bg": "office",
+    "focus": [
+     "kubota"
+    ]
+   }
+  },
   "ch3.pu_slip": {
    "id": "ch3.pu_slip",
    "type": "branch",
    "cases": [
+    {
+     "when": {
+      "flag": "ch3.drilled"
+     },
+     "goto": "ch3.pu_caught"
+    },
     {
      "when": {
       "flag": "route.platform"
@@ -17520,6 +19572,34 @@
     }
    ],
    "else": "ch3.pu_slip_svc"
+  },
+  "ch3.pu_caught": {
+   "id": "ch3.pu_caught",
+   "type": "line",
+   "lines": [
+    {
+     "text": "九時十分。確認の途中で、手が止まった。指差しの型が先に動いて、自分の誤りに気づいた。",
+     "narration": true
+    },
+    {
+     "text": "自分で線を引いて、書き直した。",
+     "narration": true
+    },
+    {
+     "who": "sugiura",
+     "text": "……見ていた。言わずに直したな。",
+     "mood": "normal"
+    }
+   ],
+   "next": "ch3.pu_talk",
+   "view": {
+    "mode": "25d",
+    "bg": "office",
+    "focus": [
+     "sugiura"
+    ],
+    "caption": "9:10 駅事務室"
+   }
   },
   "ch3.pu_slip_svc": {
    "id": "ch3.pu_slip_svc",
@@ -17539,20 +19619,27 @@
      "text": "え。……二枚、混ざってました。"
     },
     {
+     "text": "一枚は、もう客の手の中だった。改札の向こうで、会社員の背中が小さくなっていく。",
+     "narration": true
+    },
+    {
      "who": "kubota",
-     "text": "二重確認は、運を当てにしないための仕組みです。",
-     "mood": "serious"
+     "text": "レジは、私が合わせておきます。今日だけです。"
     }
    ],
    "next": "ch3.pu_talk",
    "effects": [
     {
-     "set": "ch3.slip_cash"
-    },
-    {
      "eval": {
       "key": "accuracy",
       "add": -2
+     }
+    },
+    {
+     "rel": {
+      "char": "kubota",
+      "trust": -1,
+      "rapport": 0
      }
     }
    ],
@@ -17583,19 +19670,27 @@
      "text": "……十八日。昨日です。"
     },
     {
+     "text": "記録は、指令に一度、読み上げられたあとだった。",
+     "narration": true
+    },
+    {
      "who": "sugiura",
-     "text": "間違いを見つけたのが、書いた本人じゃない。そこが問題だ。"
+     "text": "（受話器）浜口さん、訂正を。……いや、こっちの誤りだ。"
     }
    ],
    "next": "ch3.pu_talk",
    "effects": [
     {
-     "set": "ch3.slip_date"
-    },
-    {
      "eval": {
       "key": "accuracy",
       "add": -2
+     }
+    },
+    {
+     "rel": {
+      "char": "hamaguchi",
+      "trust": -1,
+      "rapport": 0
      }
     }
    ],
@@ -17613,7 +19708,7 @@
    "type": "line",
    "lines": [
     {
-     "text": "九時十分。送信ボタンの数秒前、「二番線照明」が「異常なし」になっていた。",
+     "text": "九時十分。送信の数秒前、「二番線照明」が「異常なし」になっていた。",
      "narration": true
     },
     {
@@ -17622,20 +19717,27 @@
      "mood": "surprise"
     },
     {
+     "text": "送信は、一件、済んでいた。",
+     "narration": true
+    },
+    {
      "who": "kubota",
-     "text": "読み合わせは、こういう時のためです。",
-     "mood": "serious"
+     "text": "訂正は出しておきます。照明の交換は、明日になります。"
     }
    ],
    "next": "ch3.pu_talk",
    "effects": [
     {
-     "set": "ch3.slip_log"
-    },
-    {
      "eval": {
       "key": "accuracy",
       "add": -2
+     }
+    },
+    {
+     "rel": {
+      "char": "kubota",
+      "trust": -1,
+      "rapport": 0
      }
     }
    ],
@@ -17663,29 +19765,36 @@
     },
     {
      "who": "sugiura",
-     "text": "「大丈夫です」と言った時、大丈夫だったか。"
-    },
-    {
-     "who": "player",
-     "text": "……眠かったです。"
+     "text": "二十五年前、俺も黙った。放送で、行先を取り違えた。"
     },
     {
      "who": "sugiura",
-     "text": "言えん空気を作ったのも、こっちだ。だが「できない」と言うのも、仕事だ。"
+     "text": "誰も乗り間違えなかった。運だ。"
+    },
+    {
+     "who": "sugiura",
+     "text": "先輩は言った。「言えない空気を作った、俺たちが悪い」と。"
     },
     {
      "who": "kubota",
-     "text": "私も同じ失敗をしました。責めません。次は先に。",
+     "text": "私も、聞かれました。「眠いか」って。",
      "mood": "smile"
+    },
+    {
+     "who": "sugiura",
+     "text": "次は、お前が聞け。"
     }
    ],
    "next": "ch3.pu_end",
    "effects": [
     {
+     "set": "ch3.sugiura_story"
+    },
+    {
      "rel": {
       "char": "sugiura",
-      "trust": 0,
-      "rapport": 1
+      "trust": 1,
+      "rapport": 2
      }
     },
     {
@@ -17711,13 +19820,13 @@
     },
     {
      "log": {
-      "text": "眠気を言い出せず、小さな誤りを出す",
+      "text": "眠気を言い出せず、誤りを出す",
       "tag": "work"
      }
     },
     {
      "timeline": {
-      "text": "4月19日 眠気を言い出せず、小さな誤りを出した"
+      "text": "4月19日 眠気を言い出せず、誤りを出した"
      }
     }
    ],
@@ -17746,7 +19855,7 @@
     },
     {
      "who": "kubota",
-     "text": "助役が、あなたの分も。私の新人のときも同じでした。",
+     "text": "助役が、あなたの分も。",
      "mood": "smile"
     },
     {
@@ -17755,11 +19864,6 @@
     }
    ],
    "next": "ch3.hub",
-   "effects": [
-    {
-     "set": "ch3.merge_seen"
-    }
-   ],
    "view": {
     "mode": "25d",
     "bg": "office",
@@ -17789,11 +19893,6 @@
     }
    ],
    "next": "ch3.hub",
-   "effects": [
-    {
-     "set": "ch3.merge_seen"
-    }
-   ],
    "view": {
     "mode": "25d",
     "bg": "office",
@@ -17816,10 +19915,6 @@
      "who": "kubota",
      "text": "長い朝でしたね。",
      "mood": "smile"
-    },
-    {
-     "who": "sugiura",
-     "text": "慣れると一瞬だ。それが怖い。……夜明けは見たか。五時十四分。"
     }
    ],
    "next": "ch3.bf_branch",
@@ -17849,6 +19944,12 @@
       "flag": "ch3.honest"
      },
      "goto": "ch3.bf_h"
+    },
+    {
+     "when": {
+      "flag": "ch3.told_kubota"
+     },
+     "goto": "ch3.bf_k"
     }
    ],
    "else": "ch3.bf_p"
@@ -17858,20 +19959,42 @@
    "type": "line",
    "lines": [
     {
-     "who": "sugiura",
-     "text": "眠いと言ったのが、今日いちばんの働きだ。"
+     "text": "杉浦が、一番最後に座った。飯は、冷めていた。",
+     "narration": true
     },
     {
      "who": "kubota",
-     "text": "助役が人を褒めるの、珍しいですよ。",
-     "mood": "smile"
+     "text": "あなたの十五分、助役は立ちっぱなしでした。"
     },
     {
      "who": "sugiura",
      "text": "余計なことを言うな。"
     }
    ],
-   "next": "ch3.bf_dawn",
+   "next": "ch3.bf_ts",
+   "view": {
+    "mode": "25d",
+    "bg": "hr",
+    "focus": [
+     "sugiura",
+     "kubota"
+    ]
+   }
+  },
+  "ch3.bf_k": {
+   "id": "ch3.bf_k",
+   "type": "line",
+   "lines": [
+    {
+     "who": "sugiura",
+     "text": "久保田に言ったそうだな。"
+    },
+    {
+     "who": "sugiura",
+     "text": "……次は、俺にも言え。"
+    }
+   ],
+   "next": "ch3.bf_ts",
    "view": {
     "mode": "25d",
     "bg": "hr",
@@ -17893,10 +20016,346 @@
      "who": "kubota",
      "text": "私は「眠れましたか」と送ります。",
      "mood": "smile"
+    }
+   ],
+   "next": "ch3.bf_ts",
+   "view": {
+    "mode": "25d",
+    "bg": "hr",
+    "focus": [
+     "sugiura",
+     "kubota"
+    ]
+   }
+  },
+  "ch3.bf_ts": {
+   "id": "ch3.bf_ts",
+   "type": "branch",
+   "cases": [
+    {
+     "when": {
+      "flag": "ch3.ts_told"
+     },
+     "goto": "ch3.bf_ts_t"
+    },
+    {
+     "when": {
+      "flag": "ch3.ts_kept"
+     },
+     "goto": "ch3.bf_ts_k"
+    },
+    {
+     "when": {
+      "flag": "ch3.ts_silent"
+     },
+     "goto": "ch3.bf_ts_s"
+    },
+    {
+     "when": {
+      "flag": "ch3.ts_late_known"
+     },
+     "goto": "ch3.bf_ts_l"
+    }
+   ],
+   "else": "ch3.bf_ts_m"
+  },
+  "ch3.bf_ts_t": {
+   "id": "ch3.bf_ts_t",
+   "type": "line",
+   "lines": [
+    {
+     "text": "机の上に、缶が一本。まだ、開いていない。",
+     "narration": true
+    },
+    {
+     "who": "sugiura",
+     "text": "二十五年、断らなかった。今日は、飲めなかった。"
+    }
+   ],
+   "next": "ch3.bf_dawn_0",
+   "view": {
+    "mode": "25d",
+    "bg": "hr",
+    "focus": [
+     "sugiura"
+    ]
+   }
+  },
+  "ch3.bf_ts_k": {
+   "id": "ch3.bf_ts_k",
+   "type": "line",
+   "lines": [
+    {
+     "who": "sugiura",
+     "text": "津村さん、今日が最後だったそうだ。さっき、坂井から聞いた。"
+    },
+    {
+     "who": "sugiura",
+     "text": "……知っていたな。"
     },
     {
      "who": "player",
-     "text": "次は、先に言います。"
+     "text": "……はい。"
+    },
+    {
+     "who": "sugiura",
+     "text": "言うなと、言われたか。"
+    },
+    {
+     "who": "player",
+     "text": "はい。"
+    },
+    {
+     "who": "sugiura",
+     "text": "そうか。"
+    }
+   ],
+   "next": "ch3.bf_dawn_0",
+   "effects": [
+    {
+     "rel": {
+      "char": "sugiura",
+      "trust": 0,
+      "rapport": -1
+     }
+    }
+   ],
+   "view": {
+    "mode": "25d",
+    "bg": "hr",
+    "focus": [
+     "sugiura"
+    ]
+   }
+  },
+  "ch3.bf_ts_s": {
+   "id": "ch3.bf_ts_s",
+   "type": "line",
+   "lines": [
+    {
+     "who": "sugiura",
+     "text": "津村さんが最後だったと、坂井から聞いた。"
+    },
+    {
+     "who": "sugiura",
+     "text": "あの時、お前は黙った。……分かってた。聞かんでおいた。"
+    }
+   ],
+   "next": "ch3.bf_dawn_0",
+   "effects": [
+    {
+     "rel": {
+      "char": "sugiura",
+      "trust": 0,
+      "rapport": 1
+     }
+    }
+   ],
+   "view": {
+    "mode": "25d",
+    "bg": "hr",
+    "focus": [
+     "sugiura"
+    ]
+   }
+  },
+  "ch3.bf_ts_l": {
+   "id": "ch3.bf_ts_l",
+   "type": "line",
+   "lines": [
+    {
+     "who": "sugiura",
+     "text": "坂井から聞いたか。お前も。"
+    },
+    {
+     "who": "sugiura",
+     "text": "津村さんは、今日が最後だったそうだ。……缶は、受け取った。それだけだ。"
+    }
+   ],
+   "next": "ch3.bf_dawn_0",
+   "effects": [
+    {
+     "lock": {
+      "id": "sugiura_goodbye",
+      "note": "杉浦助役は、津村さんに別れを言えなかった"
+     }
+    }
+   ],
+   "view": {
+    "mode": "25d",
+    "bg": "hr",
+    "focus": [
+     "sugiura"
+    ]
+   }
+  },
+  "ch3.bf_ts_m": {
+   "id": "ch3.bf_ts_m",
+   "type": "line",
+   "lines": [
+    {
+     "who": "sugiura",
+     "text": "津村さんは、今日が最後だったそうだ。聞いたのは、さっきだ。"
+    },
+    {
+     "who": "sugiura",
+     "text": "二十五年。……缶を、もう一本、受け取っておけばよかった。"
+    }
+   ],
+   "next": "ch3.bf_dawn_0",
+   "effects": [
+    {
+     "lock": {
+      "id": "sugiura_goodbye",
+      "note": "杉浦助役は、津村さんに別れを言えなかった"
+     }
+    }
+   ],
+   "view": {
+    "mode": "25d",
+    "bg": "hr",
+    "focus": [
+     "sugiura"
+    ]
+   }
+  },
+  "ch3.bf_dawn_0": {
+   "id": "ch3.bf_dawn_0",
+   "type": "line",
+   "lines": [
+    {
+     "who": "sugiura",
+     "text": "来年の三月、俺は定年だ。"
+    },
+    {
+     "who": "sugiura",
+     "text": "この鍵束を預ける奴を、探している。"
+    },
+    {
+     "who": "kubota",
+     "text": "助役、その話は……。",
+     "mood": "worry"
+    }
+   ],
+   "next": "ch3.bf_da",
+   "view": {
+    "mode": "25d",
+    "bg": "hr",
+    "focus": [
+     "sugiura",
+     "kubota"
+    ]
+   }
+  },
+  "ch3.bf_da": {
+   "id": "ch3.bf_da",
+   "type": "branch",
+   "cases": [
+    {
+     "when": {
+      "flag": "ch3.got_key"
+     },
+     "goto": "ch3.bf_da_k"
+    }
+   ],
+   "else": "ch3.bf_db"
+  },
+  "ch3.bf_da_k": {
+   "id": "ch3.bf_da_k",
+   "type": "line",
+   "lines": [
+    {
+     "who": "sugiura",
+     "text": "預けた鍵は、持っているな。"
+    },
+    {
+     "who": "player",
+     "text": "……はい。"
+    }
+   ],
+   "next": "ch3.bf_db",
+   "view": {
+    "mode": "25d",
+    "bg": "hr",
+    "focus": [
+     "sugiura"
+    ]
+   }
+  },
+  "ch3.bf_db": {
+   "id": "ch3.bf_db",
+   "type": "branch",
+   "cases": [
+    {
+     "when": {
+      "flag": "ch3.sugiura_story"
+     },
+     "goto": "ch3.bf_db_s"
+    }
+   ],
+   "else": "ch3.bf_dc"
+  },
+  "ch3.bf_db_s": {
+   "id": "ch3.bf_db_s",
+   "type": "line",
+   "lines": [
+    {
+     "who": "sugiura",
+     "text": "二十五年前の話を、聞かせた。恥を知っている奴の方が、鍵は預けやすい。"
+    }
+   ],
+   "next": "ch3.bf_dc",
+   "view": {
+    "mode": "25d",
+    "bg": "hr",
+    "focus": [
+     "sugiura"
+    ]
+   }
+  },
+  "ch3.bf_dc": {
+   "id": "ch3.bf_dc",
+   "type": "branch",
+   "cases": [
+    {
+     "when": {
+      "flag": "ch2.knows_key_story"
+     },
+     "goto": "ch3.bf_dc_k"
+    }
+   ],
+   "else": "ch3.bf_q"
+  },
+  "ch3.bf_dc_k": {
+   "id": "ch3.bf_dc_k",
+   "type": "line",
+   "lines": [
+    {
+     "who": "player",
+     "text": "駅長から、助役は鍵を誰にも預けたことがない、と聞きました。"
+    },
+    {
+     "who": "sugiura",
+     "text": "白石め。余計なことを。",
+     "mood": "smile"
+    }
+   ],
+   "next": "ch3.bf_q",
+   "view": {
+    "mode": "25d",
+    "bg": "hr",
+    "focus": [
+     "sugiura"
+    ]
+   }
+  },
+  "ch3.bf_q": {
+   "id": "ch3.bf_q",
+   "type": "line",
+   "lines": [
+    {
+     "who": "sugiura",
+     "text": "言っておくだけだ。……お前は、早番を続ける気があるか。"
     }
    ],
    "next": "ch3.bf_dawn",
@@ -17912,64 +20371,48 @@
   "ch3.bf_dawn": {
    "id": "ch3.bf_dawn",
    "type": "choice",
-   "prompt": "杉浦が窓を見たまま聞いた。「今日の夜明け、どうだった」",
+   "prompt": "杉浦は、窓を見たまま、待っている。",
    "options": [
     {
-     "id": "like",
-     "label": "「静かで、きれいでした。また見たいです」",
-     "goto": "ch3.bf_like",
+     "id": "accept",
+     "label": "「受け取りたいです。まだ、足りませんが」",
+     "goto": "ch3.bf_acc",
      "tone": "caring",
+     "requires": {
+      "rel": {
+       "char": "sugiura",
+       "key": "trust",
+       "op": ">=",
+       "val": 2
+      }
+     },
      "effects": [
       {
-       "set": "ch3.dawn_like"
+       "set": "ch3.successor_yes"
       },
       {
        "rel": {
         "char": "sugiura",
-        "trust": 1,
+        "trust": 2,
         "rapport": 2
        }
       },
       {
-       "eval": {
-        "key": "service",
-        "add": 1
+       "lock": {
+        "id": "late_shift_pref",
+        "note": "早番の後任候補になった。来年度の勤務表で、遅番や他部署の希望は通りにくくなる"
        }
       }
      ]
     },
     {
-     "id": "hard",
-     "label": "「正直、つらかったです。体が追いつきません」",
-     "goto": "ch3.bf_hard",
-     "tone": "honest",
-     "effects": [
-      {
-       "set": "ch3.dawn_hard"
-      },
-      {
-       "rel": {
-        "char": "sugiura",
-        "trust": 1,
-        "rapport": 1
-       }
-      },
-      {
-       "eval": {
-        "key": "reporting",
-        "add": 2
-       }
-      }
-     ]
-    },
-    {
-     "id": "unsure",
-     "label": "「まだ分かりません。もう何回か見てから決めます」",
-     "goto": "ch3.bf_unsure",
+     "id": "wait",
+     "label": "「三月まで、返事を待ってもらえませんか」",
+     "goto": "ch3.bf_wait",
      "tone": "careful",
      "effects": [
       {
-       "set": "ch3.dawn_unsure"
+       "set": "ch3.successor_wait"
       },
       {
        "rel": {
@@ -17977,17 +20420,54 @@
         "trust": 0,
         "rapport": 1
        }
+      }
+     ]
+    },
+    {
+     "id": "decline",
+     "label": "「早番を続ける自信がありません。お預かりできません」",
+     "goto": "ch3.bf_dec",
+     "tone": "honest",
+     "effects": [
+      {
+       "set": "ch3.successor_no"
       },
       {
-       "eval": {
-        "key": "accuracy",
-        "add": 1
+       "rel": {
+        "char": "sugiura",
+        "trust": 1,
+        "rapport": 0
+       }
+      },
+      {
+       "lock": {
+        "id": "sugiura_key",
+        "note": "杉浦助役の鍵束を預かる道は、閉じた"
+       }
+      }
+     ]
+    },
+    {
+     "id": "mute",
+     "label": "……答えない",
+     "goto": "ch3.bf_mute",
+     "effects": [
+      {
+       "set": "ch3.successor_mute"
+      },
+      {
+       "rel": {
+        "char": "sugiura",
+        "trust": 0,
+        "rapport": -1
        }
       }
      ]
     }
    ],
    "important": true,
+   "timeLimit": 20,
+   "defaultOption": "mute",
    "who": "sugiura",
    "view": {
     "mode": "25d",
@@ -17998,106 +20478,133 @@
     ]
    }
   },
-  "ch3.bf_like": {
-   "id": "ch3.bf_like",
+  "ch3.bf_acc": {
+   "id": "ch3.bf_acc",
    "type": "line",
    "lines": [
     {
      "who": "sugiura",
-     "text": "向く奴は、夜明けで足が止まる。"
+     "text": "……そうか。"
     },
+    {
+     "text": "杉浦は、鍵束を、一度だけ揺らした。ちゃり、と鳴った。",
+     "narration": true
+    }
+   ],
+   "next": "ch3.bf_acc_b",
+   "view": {
+    "mode": "25d",
+    "bg": "hr",
+    "focus": [
+     "sugiura"
+    ]
+   }
+  },
+  "ch3.bf_acc_b": {
+   "id": "ch3.bf_acc_b",
+   "type": "branch",
+   "cases": [
+    {
+     "when": {
+      "flag": "ch3.got_key"
+     },
+     "goto": "ch3.bf_acc_k"
+    }
+   ],
+   "else": "ch3.bf_acc_n"
+  },
+  "ch3.bf_acc_k": {
+   "id": "ch3.bf_acc_k",
+   "type": "line",
+   "lines": [
     {
      "who": "sugiura",
-     "text": "来年の三月、俺は定年だ。この鍵を誰に渡すか、考えている。"
-    },
+     "text": "更衣室の鍵は、もう、お前のものだ。残りは、三月までに、一本ずつ。"
+    }
+   ],
+   "next": "ch3.bf_acc_e",
+   "view": {
+    "mode": "25d",
+    "bg": "hr",
+    "focus": [
+     "sugiura"
+    ]
+   }
+  },
+  "ch3.bf_acc_n": {
+   "id": "ch3.bf_acc_n",
+   "type": "line",
+   "lines": [
+    {
+     "who": "sugiura",
+     "text": "鍵は、すぐには渡さん。まず、来週から、毎朝、俺の隣だ。"
+    }
+   ],
+   "next": "ch3.bf_acc_e",
+   "view": {
+    "mode": "25d",
+    "bg": "hr",
+    "focus": [
+     "sugiura"
+    ]
+   }
+  },
+  "ch3.bf_acc_e": {
+   "id": "ch3.bf_acc_e",
+   "type": "line",
+   "lines": [
     {
      "who": "kubota",
-     "text": "助役、その話はまだ……。",
+     "text": "（小声で）……私は、三年前に、断りました。",
      "mood": "worry"
-    },
-    {
-     "who": "sugiura",
-     "text": "言っておくだけだ。"
     }
    ],
    "next": "ch3.bf_end",
-   "effects": [
-    {
-     "set": "ch3.sugiura_retire_hint"
-    },
-    {
-     "rel": {
-      "char": "sugiura",
-      "trust": 1,
-      "rapport": 1
-     }
-    }
-   ],
    "view": {
     "mode": "25d",
     "bg": "hr",
     "focus": [
-     "sugiura",
      "kubota"
     ]
    }
   },
-  "ch3.bf_hard": {
-   "id": "ch3.bf_hard",
+  "ch3.bf_wait": {
+   "id": "ch3.bf_wait",
    "type": "line",
    "lines": [
     {
      "who": "sugiura",
-     "text": "つらいと言えるなら、続く。"
-    },
-    {
-     "who": "kubota",
-     "text": "三か月は、みんな寮で泣いてます。私もです。",
-     "mood": "smile"
+     "text": "三月までだ。待つのは。"
     },
     {
      "who": "sugiura",
-     "text": "壊れるな。続く範囲で続けろ。"
+     "text": "待っている間、他は探す。それでもいいか。"
     }
    ],
    "next": "ch3.bf_end",
-   "effects": [
-    {
-     "set": "ch3.early_hard"
-    },
-    {
-     "rel": {
-      "char": "kubota",
-      "trust": 1,
-      "rapport": 1
-     }
-    }
-   ],
    "view": {
     "mode": "25d",
     "bg": "hr",
     "focus": [
-     "sugiura",
-     "kubota"
+     "sugiura"
     ]
    }
   },
-  "ch3.bf_unsure": {
-   "id": "ch3.bf_unsure",
+  "ch3.bf_dec": {
+   "id": "ch3.bf_dec",
    "type": "line",
    "lines": [
     {
      "who": "sugiura",
-     "text": "分からんでいい。何回か見ろ。答えは向こうから来る。"
-    },
-    {
-     "who": "kubota",
-     "text": "私は三回目で分かって、五回目でまた分からなくなりました。",
-     "mood": "smile"
+     "text": "そうか。"
     },
     {
      "who": "sugiura",
-     "text": "それも込みで、早番だ。"
+     "text": "言えるなら、それでいい。別の者を探す。"
+    },
+    {
+     "text": "杉浦は、鍵束を、ポケットにしまった。",
+     "narration": true
     }
    ],
    "next": "ch3.bf_end",
@@ -18105,8 +20612,29 @@
     "mode": "25d",
     "bg": "hr",
     "focus": [
-     "sugiura",
-     "kubota"
+     "sugiura"
+    ]
+   }
+  },
+  "ch3.bf_mute": {
+   "id": "ch3.bf_mute",
+   "type": "line",
+   "lines": [
+    {
+     "text": "何か言おうとした。言葉が、先に消えた。",
+     "narration": true
+    },
+    {
+     "who": "sugiura",
+     "text": "……急がん。"
+    }
+   ],
+   "next": "ch3.bf_end",
+   "view": {
+    "mode": "25d",
+    "bg": "hr",
+    "focus": [
+     "sugiura"
     ]
    }
   },
@@ -18128,7 +20656,7 @@
     },
     {
      "log": {
-      "text": "早番の休憩。夜明けの感想を話す",
+      "text": "早番の休憩。杉浦の後継者の話を聞く",
       "tag": "work"
      }
     }
@@ -18160,8 +20688,8 @@
    "lines": [
     {
      "who": "sakai",
-     "text": "（売店の前で）津村さんには会えた？ 明日も同じ時間に来るわよ。",
-     "mood": "smile"
+     "text": "（売店の前で）明日の五時五十二分は、空いちゃうわね。",
+     "mood": "normal"
     }
    ],
    "next": "ch3.wrap_end",
@@ -18180,8 +20708,7 @@
    "lines": [
     {
      "who": "hamaguchi",
-     "text": "（電話）今朝の巡回報告、きれいでした。杉浦さんから聞いてます。",
-     "mood": "smile"
+     "text": "（電話）今朝の報告、受けました。順序が、きれいでした。"
     }
    ],
    "next": "ch3.wrap_end",
@@ -18221,19 +20748,240 @@
     {
      "text": "午後は券売機の補充を手伝い、十四時十五分に、定刻で上がった。",
      "narration": true
-    },
-    {
-     "text": "寮で夕方まで眠った。夢の中で、鍵束が、ちゃり、と鳴った。",
-     "narration": true
     }
    ],
-   "next": "ch3.end",
+   "next": "ch3.coda_y",
    "view": {
     "mode": "25d",
     "bg": "hr",
     "focus": [],
-    "caption": "4月19日（月） 15:00 社員寮"
+    "caption": "4月19日（月） 14:15 社員寮"
    }
+  },
+  "ch3.coda_y": {
+   "id": "ch3.coda_y",
+   "type": "branch",
+   "cases": [
+    {
+     "when": {
+      "flag": "ch3.helped_yama"
+     },
+     "goto": "ch3.cy_h"
+    },
+    {
+     "when": {
+      "flag": "ch3.yama_unanswered"
+     },
+     "goto": "ch3.cy_r"
+    },
+    {
+     "when": {
+      "flag": "ch3.slept_well"
+     },
+     "goto": "ch3.cy_s"
+    }
+   ],
+   "else": "ch3.cy_p"
+  },
+  "ch3.cy_h": {
+   "id": "ch3.cy_h",
+   "type": "line",
+   "lines": [
+    {
+     "who": "yamashina",
+     "text": "（メッセージ）志望書、出した。昨日の三行が、頭に残ってる。……枠は一名だ。恨むなよ。"
+    }
+   ],
+   "next": "ch3.coda_dream",
+   "view": {
+    "mode": "25d",
+    "bg": "hr",
+    "focus": [
+     "yamashina"
+    ]
+   }
+  },
+  "ch3.cy_r": {
+   "id": "ch3.cy_r",
+   "type": "line",
+   "lines": [
+    {
+     "who": "yamashina",
+     "text": "（メッセージ）昨日、電話した。……いや、いい。自分で書いた。"
+    }
+   ],
+   "next": "ch3.coda_dream",
+   "view": {
+    "mode": "25d",
+    "bg": "hr",
+    "focus": [
+     "yamashina"
+    ]
+   }
+  },
+  "ch3.cy_s": {
+   "id": "ch3.cy_s",
+   "type": "line",
+   "lines": [
+    {
+     "who": "yamashina",
+     "text": "（メッセージ）返信、見た。寝たならいい。俺は、まだ書いてる。"
+    }
+   ],
+   "next": "ch3.coda_dream",
+   "view": {
+    "mode": "25d",
+    "bg": "hr",
+    "focus": [
+     "yamashina"
+    ]
+   }
+  },
+  "ch3.cy_p": {
+   "id": "ch3.cy_p",
+   "type": "line",
+   "lines": [
+    {
+     "who": "yamashina",
+     "text": "（メッセージ）電話、出なかったな。……いい。出なくていい。"
+    }
+   ],
+   "next": "ch3.coda_dream",
+   "view": {
+    "mode": "25d",
+    "bg": "hr",
+    "focus": [
+     "yamashina"
+    ]
+   }
+  },
+  "ch3.coda_dream": {
+   "id": "ch3.coda_dream",
+   "type": "branch",
+   "cases": [
+    {
+     "when": {
+      "flag": "ch3.successor_yes"
+     },
+     "goto": "ch3.cd_y"
+    },
+    {
+     "when": {
+      "flag": "ch3.successor_no"
+     },
+     "goto": "ch3.cd_n"
+    },
+    {
+     "when": {
+      "flag": "ch3.successor_wait"
+     },
+     "goto": "ch3.cd_w"
+    },
+    {
+     "when": {
+      "flag": "ch3.successor_mute"
+     },
+     "goto": "ch3.cd_m"
+    }
+   ],
+   "else": "ch3.cd_m"
+  },
+  "ch3.cd_y": {
+   "id": "ch3.cd_y",
+   "type": "line",
+   "lines": [
+    {
+     "text": "寮で夕方まで眠った。夢の中で、鍵束が、ちゃり、と鳴った。",
+     "narration": true
+    },
+    {
+     "text": "音は、自分の手元からも、聞こえていた。",
+     "narration": true
+    }
+   ],
+   "next": "ch3.coda_depart",
+   "view": {
+    "mode": "25d",
+    "bg": "hr",
+    "focus": [],
+    "caption": "4月19日（月） 17:00 社員寮"
+   }
+  },
+  "ch3.cd_n": {
+   "id": "ch3.cd_n",
+   "type": "line",
+   "lines": [
+    {
+     "text": "寮で夕方まで眠った。夢の中で、鍵束が、ちゃり、と鳴った。",
+     "narration": true
+    },
+    {
+     "text": "音は、廊下の向こうへ、遠ざかっていった。追いかけなかった。",
+     "narration": true
+    }
+   ],
+   "next": "ch3.coda_depart",
+   "view": {
+    "mode": "25d",
+    "bg": "hr",
+    "focus": [],
+    "caption": "4月19日（月） 17:00 社員寮"
+   }
+  },
+  "ch3.cd_w": {
+   "id": "ch3.cd_w",
+   "type": "line",
+   "lines": [
+    {
+     "text": "寮で夕方まで眠った。夢の中で、鍵束が、ちゃり、と鳴った。",
+     "narration": true
+    },
+    {
+     "text": "三月まで、あと十一か月。数えて、やめた。",
+     "narration": true
+    }
+   ],
+   "next": "ch3.coda_depart",
+   "view": {
+    "mode": "25d",
+    "bg": "hr",
+    "focus": [],
+    "caption": "4月19日（月） 17:00 社員寮"
+   }
+  },
+  "ch3.cd_m": {
+   "id": "ch3.cd_m",
+   "type": "line",
+   "lines": [
+    {
+     "text": "寮で夕方まで眠った。夢の中で、鍵束が、ちゃり、と鳴った。",
+     "narration": true
+    },
+    {
+     "text": "誰の手の音か、分からなかった。",
+     "narration": true
+    }
+   ],
+   "next": "ch3.coda_depart",
+   "view": {
+    "mode": "25d",
+    "bg": "hr",
+    "focus": [],
+    "caption": "4月19日（月） 17:00 社員寮"
+   }
+  },
+  "ch3.coda_depart": {
+   "id": "ch3.coda_depart",
+   "type": "effect",
+   "effects": [
+    {
+     "depart": {
+      "char": "tsumura",
+      "note": "4月19日 津村さんは、この日を最後に始発に乗らなくなった"
+     }
+    }
+   ],
+   "next": "ch3.end"
   },
   "ch3.end": {
    "id": "ch3.end",
@@ -18241,7 +20989,7 @@
    "chapter": "ch3",
    "title": "第3章 はじめての早番",
    "nextChapter": "ch4",
-   "summary": "夜明け前から十時半までの、静かな一日。眠気を申告するか、無理をするか。その選択は、先輩の信頼と、自分の働き方の癖として、これからの勤務に残っていく。",
+   "summary": "夜明け前から十時半までの、静かな一日。前の晩に誰の電話に出たか。眠気を、誰に、どう伝えたか。津村さんの最後の朝を、杉浦に何と言ったか。鍵束の音は、聞こえ方を変えて、これからの勤務に残っていく。",
    "effects": [
     {
      "timeline": {
@@ -63843,6 +66591,11 @@
      "id": "o2",
      "label": "選んだ道 C",
      "color": "#6a3aa8"
+    },
+    {
+     "id": "o3",
+     "label": "選んだ道 D",
+     "color": "#a52a2a"
     }
    ],
    "nodes": [
@@ -63860,7 +66613,7 @@
      "id": "c0",
      "lane": 0,
      "x": 1,
-     "label": "気づいたことを、どう扱いますか？",
+     "label": "宇野さんの後ろに、列ができはじめ",
      "sub": "重要な選択",
      "star": true,
      "reveal": [
@@ -63872,7 +66625,7 @@
      "id": "c0o0",
      "lane": 1,
      "x": 2,
-     "label": "久保田さんに相談して、改善提案",
+     "label": "久保田と、提案書を書く。午後が",
      "sub": "道が決まる",
      "reveal": [
       "ch2.idea_c"
@@ -63882,7 +66635,7 @@
      "id": "c0o1",
      "lane": 2,
      "x": 2,
-     "label": "手書きの案内を作って、自分で券",
+     "label": "手書きの案内を作って、今すぐ券",
      "sub": "道が決まる",
      "reveal": [
       "ch2.idea_s"
@@ -63892,7 +66645,17 @@
      "id": "c0o2",
      "lane": 3,
      "x": 2,
-     "label": "今は自分の仕事を覚えるのが先。",
+     "label": "駅長に直接話す。久保田を通さず",
+     "sub": "道が決まる",
+     "reveal": [
+      "ch2.idea_b"
+     ]
+    },
+    {
+     "id": "c0o3",
+     "lane": 4,
+     "x": 2,
+     "label": "今は列を流すのが先。宇野さんを",
      "sub": "道が決まる",
      "reveal": [
       "ch2.idea_k"
@@ -63902,7 +66665,7 @@
      "id": "c1",
      "lane": 0,
      "x": 3,
-     "label": "昼休憩を、誰と過ごしますか？",
+     "label": "トレイを持ったまま、立っている。",
      "sub": "選択",
      "star": false,
      "reveal": [
@@ -63914,7 +66677,7 @@
      "id": "c1o0",
      "lane": 1,
      "x": 4,
-     "label": "久保田さんと、午前の振り返りを",
+     "label": "久保田の隣に座る",
      "sub": "道が決まる",
      "reveal": [
       "ch2.lunch_k"
@@ -63924,7 +66687,7 @@
      "id": "c1o1",
      "lane": 2,
      "x": 4,
-     "label": "山科さんと、お互いの近況を話す",
+     "label": "山科の向かいに座る",
      "sub": "道が決まる",
      "reveal": [
       "ch2.lunch_y"
@@ -63934,17 +66697,27 @@
      "id": "c1o2",
      "lane": 3,
      "x": 4,
-     "label": "駅長の隣に座って、駅の話を聞く",
+     "label": "駅長の隣に座る",
      "sub": "道が決まる",
      "reveal": [
       "ch2.lunch_s"
      ]
     },
     {
+     "id": "c1o3",
+     "lane": 4,
+     "x": 4,
+     "label": "誰にも声をかけず、隅の席で食べ",
+     "sub": "道が決まる",
+     "reveal": [
+      "ch2.lunch_a"
+     ]
+    },
+    {
      "id": "c2",
      "lane": 0,
      "x": 5,
-     "label": "来週、いちばん伸ばしたいことは？",
+     "label": "来週の研修枠は、一つしか空いてい",
      "sub": "重要な選択",
      "star": true,
      "reveal": [
@@ -63956,7 +66729,7 @@
      "id": "c2o0",
      "lane": 1,
      "x": 6,
-     "label": "お客様への声かけと、接客",
+     "label": "接客の稽古。声かけと、お客様の",
      "sub": "道が決まる",
      "reveal": [
       "ch2.closing"
@@ -63966,7 +66739,7 @@
      "id": "c2o1",
      "lane": 2,
      "x": 6,
-     "label": "正確さ。手順と確認の徹底",
+     "label": "確認の稽古。指差しと、二重確認",
      "sub": "道が決まる",
      "reveal": [
       "ch2.closing"
@@ -63976,16 +66749,120 @@
      "id": "c2o2",
      "lane": 3,
      "x": 6,
-     "label": "同僚との連携と、相談のしかた",
+     "label": "連携の稽古。先輩への相談と、引",
      "sub": "道が決まる",
      "reveal": [
-      "ch2.closing"
+      "ch2.rv_t1"
+     ]
+    },
+    {
+     "id": "c3",
+     "lane": 0,
+     "x": 7,
+     "label": "久保田は、書類を揃え続けている。",
+     "sub": "重要な選択",
+     "star": true,
+     "reveal": [
+      "ch2.pm_self_c"
+     ],
+     "choice": "ch2.pm_self_c"
+    },
+    {
+     "id": "c3o0",
+     "lane": 1,
+     "x": 8,
+     "label": "「私が貼りました。駅長に、話し",
+     "sub": "道が決まる",
+     "reveal": [
+      "ch2.ps_own"
+     ]
+    },
+    {
+     "id": "c3o1",
+     "lane": 2,
+     "x": 8,
+     "label": "「払い戻しの二人に、電話をかけ",
+     "sub": "道が決まる",
+     "reveal": [
+      "ch2.ps_rep"
+     ]
+    },
+    {
+     "id": "c3o2",
+     "lane": 3,
+     "x": 8,
+     "label": "「貼り紙で、宇野さんは買えまし",
+     "sub": "道が決まる",
+     "reveal": [
+      "ch2.ps_def"
+     ]
+    },
+    {
+     "id": "c3o3",
+     "lane": 4,
+     "x": 8,
+     "label": "……何も言わない",
+     "sub": "道が決まる",
+     "reveal": [
+      "ch2.ps_sil"
+     ]
+    },
+    {
+     "id": "c4",
+     "lane": 0,
+     "x": 9,
+     "label": "宇野さんが、こちらを見ている。",
+     "sub": "重要な選択",
+     "star": true,
+     "reveal": [
+      "ch2.pm_skip_c"
+     ],
+     "choice": "ch2.pm_skip_c"
+    },
+    {
+     "id": "c4o0",
+     "lane": 1,
+     "x": 10,
+     "label": "窓口を離れて、宇野さんを券売機",
+     "sub": "道が決まる",
+     "reveal": [
+      "ch2.psk_walk"
+     ]
+    },
+    {
+     "id": "c4o1",
+     "lane": 2,
+     "x": 10,
+     "label": "久保田に、窓口を頼む",
+     "sub": "道が決まる",
+     "reveal": [
+      "ch2.psk_ask"
+     ]
+    },
+    {
+     "id": "c4o2",
+     "lane": 3,
+     "x": 10,
+     "label": "「少しお待ちください」と言って",
+     "sub": "道が決まる",
+     "reveal": [
+      "ch2.psk_hold"
+     ]
+    },
+    {
+     "id": "c4o3",
+     "lane": 4,
+     "x": 10,
+     "label": "……何も言わない",
+     "sub": "道が決まる",
+     "reveal": [
+      "ch2.psk_sil"
      ]
     },
     {
      "id": "z",
      "lane": 0,
-     "x": 7,
+     "x": 11,
      "label": "章末",
      "sub": "評価と引き継ぎ",
      "reveal": [
@@ -64012,302 +66889,7 @@
     ],
     [
      "c0",
-     "c1"
-    ],
-    [
-     "c1",
-     "c1o0"
-    ],
-    [
-     "c1",
-     "c1o1"
-    ],
-    [
-     "c1",
-     "c1o2"
-    ],
-    [
-     "c1",
-     "c2"
-    ],
-    [
-     "c2",
-     "c2o0"
-    ],
-    [
-     "c2",
-     "c2o1"
-    ],
-    [
-     "c2",
-     "c2o2"
-    ],
-    [
-     "c0o0",
-     "c1"
-    ],
-    [
-     "c0o1",
-     "c1"
-    ],
-    [
-     "c0o2",
-     "c1"
-    ],
-    [
-     "c1o0",
-     "c2"
-    ],
-    [
-     "c1o1",
-     "c2"
-    ],
-    [
-     "c1o2",
-     "c2"
-    ],
-    [
-     "c2o0",
-     "z"
-    ],
-    [
-     "c2o1",
-     "z"
-    ],
-    [
-     "c2o2",
-     "z"
-    ]
-   ]
-  },
-  "ch3": {
-   "lanes": [
-    {
-     "id": "common",
-     "label": "共通の流れ",
-     "color": "#1a2f55"
-    },
-    {
-     "id": "o0",
-     "label": "選んだ道 A",
-     "color": "#1b6f45"
-    },
-    {
-     "id": "o1",
-     "label": "選んだ道 B",
-     "color": "#a35c00"
-    },
-    {
-     "id": "o2",
-     "label": "選んだ道 C",
-     "color": "#6a3aa8"
-    }
-   ],
-   "nodes": [
-    {
-     "id": "a0",
-     "lane": 0,
-     "x": 0,
-     "label": "はじめての早番",
-     "sub": "章のはじまり",
-     "reveal": [
-      "ch3.open"
-     ]
-    },
-    {
-     "id": "c0",
-     "lane": 0,
-     "x": 1,
-     "label": "消灯まで、あと数時間。どう過ごす",
-     "sub": "重要な選択",
-     "star": true,
-     "reveal": [
-      "ch3.eve_choice"
-     ],
-     "choice": "ch3.eve_choice"
-    },
-    {
-     "id": "c0o0",
-     "lane": 1,
-     "x": 2,
-     "label": "手順書は明日の自分に任せて、早",
-     "sub": "道が決まる",
-     "reveal": [
-      "ch3.eve_sleep"
-     ]
-    },
-    {
-     "id": "c0o1",
-     "lane": 2,
-     "x": 2,
-     "label": "眠くなるまで、手順書を読み込む",
-     "sub": "道が決まる",
-     "reveal": [
-      "ch3.eve_study"
-     ]
-    },
-    {
-     "id": "c0o2",
-     "lane": 3,
-     "x": 2,
-     "label": "眠れないという山科の電話に、つ",
-     "sub": "道が決まる",
-     "reveal": [
-      "ch3.eve_call"
-     ]
-    },
-    {
-     "id": "c1",
-     "lane": 0,
-     "x": 3,
-     "label": "津村が、ふと聞いた。「あんた、早",
-     "sub": "選択",
-     "star": false,
-     "reveal": [
-      "ch3.ts_choice"
-     ],
-     "choice": "ch3.ts_choice"
-    },
-    {
-     "id": "c1o0",
-     "lane": 1,
-     "x": 4,
-     "label": "「静かで心細いです。でも、夜明",
-     "sub": "道が決まる",
-     "reveal": [
-      "ch3.ts_a"
-     ]
-    },
-    {
-     "id": "c1o1",
-     "lane": 2,
-     "x": 4,
-     "label": "「まだ分かりません。一か月、続",
-     "reveal": [
-      "ch3.ts_b"
-     ]
-    },
-    {
-     "id": "c1o2",
-     "lane": 3,
-     "x": 4,
-     "label": "「津村さんは、なぜ二十五年も続",
-     "sub": "道が決まる",
-     "reveal": [
-      "ch3.ts_c"
-     ]
-    },
-    {
-     "id": "c2",
-     "lane": 0,
-     "x": 5,
-     "label": "眠気が、はっきりしてきた。ここで",
-     "sub": "重要な選択",
-     "star": true,
-     "reveal": [
-      "ch3.sleepy_choice"
-     ],
-     "choice": "ch3.sleepy_choice"
-    },
-    {
-     "id": "c2o0",
-     "lane": 1,
-     "x": 6,
-     "label": "「眠気が強くて、確認が不安です",
-     "sub": "道が決まる",
-     "reveal": [
-      "ch3.hn_1"
-     ]
-    },
-    {
-     "id": "c2o1",
-     "lane": 2,
-     "x": 6,
-     "label": "「大丈夫です」と答えて、そのま",
-     "sub": "道が決まる",
-     "reveal": [
-      "ch3.pu_1"
-     ]
-    },
-    {
-     "id": "c2o2",
-     "lane": 3,
-     "x": 6,
-     "label": "席を外して濃いコーヒーを飲み、",
-     "sub": "道が決まる",
-     "reveal": [
-      "ch3.pu_c"
-     ]
-    },
-    {
-     "id": "c3",
-     "lane": 0,
-     "x": 7,
-     "label": "杉浦が窓を見たまま聞いた。「今日",
-     "sub": "重要な選択",
-     "star": true,
-     "reveal": [
-      "ch3.bf_dawn"
-     ],
-     "choice": "ch3.bf_dawn"
-    },
-    {
-     "id": "c3o0",
-     "lane": 1,
-     "x": 8,
-     "label": "「静かで、きれいでした。また見",
-     "sub": "道が決まる",
-     "reveal": [
-      "ch3.bf_like"
-     ]
-    },
-    {
-     "id": "c3o1",
-     "lane": 2,
-     "x": 8,
-     "label": "「正直、つらかったです。体が追",
-     "sub": "道が決まる",
-     "reveal": [
-      "ch3.bf_hard"
-     ]
-    },
-    {
-     "id": "c3o2",
-     "lane": 3,
-     "x": 8,
-     "label": "「まだ分かりません。もう何回か",
-     "sub": "道が決まる",
-     "reveal": [
-      "ch3.bf_unsure"
-     ]
-    },
-    {
-     "id": "z",
-     "lane": 0,
-     "x": 9,
-     "label": "章末",
-     "sub": "評価と引き継ぎ",
-     "reveal": [
-      "ch3.end"
-     ]
-    }
-   ],
-   "edges": [
-    [
-     "a0",
-     "c0"
-    ],
-    [
-     "c0",
-     "c0o0"
-    ],
-    [
-     "c0",
-     "c0o1"
-    ],
-    [
-     "c0",
-     "c0o2"
+     "c0o3"
     ],
     [
      "c0",
@@ -64324,6 +66906,10 @@
     [
      "c1",
      "c1o2"
+    ],
+    [
+     "c1",
+     "c1o3"
     ],
     [
      "c1",
@@ -64358,6 +66944,30 @@
      "c3o2"
     ],
     [
+     "c3",
+     "c3o3"
+    ],
+    [
+     "c3",
+     "c4"
+    ],
+    [
+     "c4",
+     "c4o0"
+    ],
+    [
+     "c4",
+     "c4o1"
+    ],
+    [
+     "c4",
+     "c4o2"
+    ],
+    [
+     "c4",
+     "c4o3"
+    ],
+    [
      "c0o0",
      "c1"
     ],
@@ -64370,6 +66980,10 @@
      "c1"
     ],
     [
+     "c0o3",
+     "c1"
+    ],
+    [
      "c1o0",
      "c2"
     ],
@@ -64379,6 +66993,413 @@
     ],
     [
      "c1o2",
+     "c2"
+    ],
+    [
+     "c1o3",
+     "c2"
+    ],
+    [
+     "c2o0",
+     "c3"
+    ],
+    [
+     "c2o1",
+     "c3"
+    ],
+    [
+     "c2o2",
+     "c3"
+    ],
+    [
+     "c3o0",
+     "c4"
+    ],
+    [
+     "c3o1",
+     "c4"
+    ],
+    [
+     "c3o2",
+     "c4"
+    ],
+    [
+     "c3o3",
+     "c4"
+    ],
+    [
+     "c4o0",
+     "z"
+    ],
+    [
+     "c4o1",
+     "z"
+    ],
+    [
+     "c4o2",
+     "z"
+    ],
+    [
+     "c4o3",
+     "z"
+    ]
+   ]
+  },
+  "ch3": {
+   "lanes": [
+    {
+     "id": "common",
+     "label": "共通の流れ",
+     "color": "#1a2f55"
+    },
+    {
+     "id": "o0",
+     "label": "選んだ道 A",
+     "color": "#1b6f45"
+    },
+    {
+     "id": "o1",
+     "label": "選んだ道 B",
+     "color": "#a35c00"
+    },
+    {
+     "id": "o2",
+     "label": "選んだ道 C",
+     "color": "#6a3aa8"
+    },
+    {
+     "id": "o3",
+     "label": "選んだ道 D",
+     "color": "#a52a2a"
+    }
+   ],
+   "nodes": [
+    {
+     "id": "a0",
+     "lane": 0,
+     "x": 0,
+     "label": "はじめての早番",
+     "sub": "章のはじまり",
+     "reveal": [
+      "ch3.open"
+     ]
+    },
+    {
+     "id": "c0",
+     "lane": 0,
+     "x": 1,
+     "label": "着信が、鳴り続けている。",
+     "sub": "重要な選択",
+     "star": true,
+     "reveal": [
+      "ch3.eve_choice"
+     ],
+     "choice": "ch3.eve_choice"
+    },
+    {
+     "id": "c0o0",
+     "lane": 1,
+     "x": 2,
+     "label": "出る。山科の志望書を、一緒に書",
+     "sub": "道が決まる",
+     "reveal": [
+      "ch3.eve_help"
+     ]
+    },
+    {
+     "id": "c0o1",
+     "lane": 2,
+     "x": 2,
+     "label": "出ない。「ごめん、明日早い」と",
+     "sub": "道が決まる",
+     "reveal": [
+      "ch3.eve_sleep"
+     ]
+    },
+    {
+     "id": "c0o2",
+     "lane": 3,
+     "x": 2,
+     "label": "出ない。画面を伏せて、手順書を",
+     "sub": "道が決まる",
+     "reveal": [
+      "ch3.eve_study"
+     ]
+    },
+    {
+     "id": "c0o3",
+     "lane": 4,
+     "x": 2,
+     "label": "画面を見つめたまま、何もしない",
+     "sub": "道が決まる",
+     "reveal": [
+      "ch3.eve_ring2"
+     ]
+    },
+    {
+     "id": "c1",
+     "lane": 0,
+     "x": 3,
+     "label": "数字が、二重に見える。",
+     "sub": "重要な選択",
+     "star": true,
+     "reveal": [
+      "ch3.sleepy_choice"
+     ],
+     "choice": "ch3.sleepy_choice"
+    },
+    {
+     "id": "c1o0",
+     "lane": 1,
+     "x": 4,
+     "label": "「眠気が強くて、確認が不安です",
+     "sub": "道が決まる",
+     "reveal": [
+      "ch3.hn_1"
+     ]
+    },
+    {
+     "id": "c1o1",
+     "lane": 2,
+     "x": 4,
+     "label": "久保田にだけ、小声で言う。「読",
+     "sub": "道が決まる",
+     "reveal": [
+      "ch3.kb_1"
+     ]
+    },
+    {
+     "id": "c1o2",
+     "lane": 3,
+     "x": 4,
+     "label": "「大丈夫です」と答えて、そのま",
+     "sub": "道が決まる",
+     "reveal": [
+      "ch3.pu_1"
+     ]
+    },
+    {
+     "id": "c1o3",
+     "lane": 4,
+     "x": 4,
+     "label": "席を外して、濃いコーヒーを飲ん",
+     "sub": "道が決まる",
+     "reveal": [
+      "ch3.pu_c"
+     ]
+    },
+    {
+     "id": "c2",
+     "lane": 0,
+     "x": 5,
+     "label": "列車が、ホームに入ってくる。杉浦",
+     "sub": "重要な選択",
+     "star": true,
+     "reveal": [
+      "ch3.ts_choice"
+     ],
+     "choice": "ch3.ts_choice"
+    },
+    {
+     "id": "c2o0",
+     "lane": 1,
+     "x": 6,
+     "label": "「今日が最後だと、仰っていまし",
+     "sub": "道が決まる",
+     "reveal": [
+      "ch3.ts_tell"
+     ]
+    },
+    {
+     "id": "c2o1",
+     "lane": 2,
+     "x": 6,
+     "label": "「いえ。特には」",
+     "sub": "道が決まる",
+     "reveal": [
+      "ch3.ts_keep"
+     ]
+    },
+    {
+     "id": "c2o2",
+     "lane": 3,
+     "x": 6,
+     "label": "……何も言わない",
+     "sub": "道が決まる",
+     "reveal": [
+      "ch3.ts_sil"
+     ]
+    },
+    {
+     "id": "c3",
+     "lane": 0,
+     "x": 7,
+     "label": "杉浦は、窓を見たまま、待っている",
+     "sub": "重要な選択",
+     "star": true,
+     "reveal": [
+      "ch3.bf_dawn"
+     ],
+     "choice": "ch3.bf_dawn"
+    },
+    {
+     "id": "c3o0",
+     "lane": 1,
+     "x": 8,
+     "label": "「受け取りたいです。まだ、足り",
+     "sub": "道が決まる",
+     "reveal": [
+      "ch3.bf_acc"
+     ]
+    },
+    {
+     "id": "c3o1",
+     "lane": 2,
+     "x": 8,
+     "label": "「三月まで、返事を待ってもらえ",
+     "sub": "道が決まる",
+     "reveal": [
+      "ch3.bf_wait"
+     ]
+    },
+    {
+     "id": "c3o2",
+     "lane": 3,
+     "x": 8,
+     "label": "「早番を続ける自信がありません",
+     "sub": "道が決まる",
+     "reveal": [
+      "ch3.bf_dec"
+     ]
+    },
+    {
+     "id": "c3o3",
+     "lane": 4,
+     "x": 8,
+     "label": "……答えない",
+     "sub": "道が決まる",
+     "reveal": [
+      "ch3.bf_mute"
+     ]
+    },
+    {
+     "id": "z",
+     "lane": 0,
+     "x": 9,
+     "label": "章末",
+     "sub": "評価と引き継ぎ",
+     "reveal": [
+      "ch3.end"
+     ]
+    }
+   ],
+   "edges": [
+    [
+     "a0",
+     "c0"
+    ],
+    [
+     "c0",
+     "c0o0"
+    ],
+    [
+     "c0",
+     "c0o1"
+    ],
+    [
+     "c0",
+     "c0o2"
+    ],
+    [
+     "c0",
+     "c0o3"
+    ],
+    [
+     "c0",
+     "c1"
+    ],
+    [
+     "c1",
+     "c1o0"
+    ],
+    [
+     "c1",
+     "c1o1"
+    ],
+    [
+     "c1",
+     "c1o2"
+    ],
+    [
+     "c1",
+     "c1o3"
+    ],
+    [
+     "c1",
+     "c2"
+    ],
+    [
+     "c2",
+     "c2o0"
+    ],
+    [
+     "c2",
+     "c2o1"
+    ],
+    [
+     "c2",
+     "c2o2"
+    ],
+    [
+     "c2",
+     "c3"
+    ],
+    [
+     "c3",
+     "c3o0"
+    ],
+    [
+     "c3",
+     "c3o1"
+    ],
+    [
+     "c3",
+     "c3o2"
+    ],
+    [
+     "c3",
+     "c3o3"
+    ],
+    [
+     "c0o0",
+     "c1"
+    ],
+    [
+     "c0o1",
+     "c1"
+    ],
+    [
+     "c0o2",
+     "c1"
+    ],
+    [
+     "c0o3",
+     "c1"
+    ],
+    [
+     "c1o0",
+     "c2"
+    ],
+    [
+     "c1o1",
+     "c2"
+    ],
+    [
+     "c1o2",
+     "c2"
+    ],
+    [
+     "c1o3",
      "c2"
     ],
     [
@@ -64403,6 +67424,10 @@
     ],
     [
      "c3o2",
+     "z"
+    ],
+    [
+     "c3o3",
      "z"
     ]
    ]
