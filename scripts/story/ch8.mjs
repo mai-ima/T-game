@@ -4,7 +4,7 @@
 // 志望ルート（第6章の ch6.wish_*）で中盤が別物：station=駅の見学受入れ／depot=基地の見学案内／dispatch=指令室の見学対応／planning=地域向け説明会。
 // 後の章へ渡すフラグ：ch8.tour_done / ch8.elder_helped / ch8.route_done_station|depot|dispatch|planning
 export default function ch8(k) {
-  const { N, characters, line, choice, branch, fx, opt, set, rel, ev, sk, tl, log, time, F, ALL, T, hm, v3, v25, mini, hub, P, res3 } = k;
+  const { N, characters, line, choice, branch, fx, opt, set, rel, ev, sk, tl, log, time, F, NF, ANY, ALL, T, hm, v3, v25, mini, hub, P, res3 } = k;
 
   characters.wakabayashi = characters.wakabayashi ?? { id: 'wakabayashi', name: '若林 里奈', kana: 'わかばやし りな', role: '小学校の教諭（3年2組）', dept: 'none', age: 33, years: 0, uniform: '#5a7a6a', hair: '#2b2118', skin: '#f0cfae', trait: '子どもの「間」を待てる。段取りには厳しい。', bio: '青浜第二小学校の3年担任。今日の社会科見学の引率。', gender: 'f', accessory: 'bag' };
   characters.daichi = characters.daichi ?? { id: 'daichi', name: '大地', kana: 'だいち', role: '小学3年生', dept: 'none', age: 8, years: 0, uniform: '#3a6a9a', hair: '#1c1c28', skin: '#efc9a6', trait: '質問が止まらない。声が大きい。', bio: '電車が好きで、何でも「なんで？」と聞く。', gender: 'm', accessory: 'bag' };
@@ -35,11 +35,14 @@ export default function ch8(k) {
   const XV = (who, cap) => v25('office', who, cap ?? '輸送指令室');
   const PV = (who, cap) => v25('office', who, cap ?? '地区センター 会議室');
 
-  // 第7章の夏の判断を、朝の一言で拾う（ルートごとに話し手が違う）
+  const RL = (char, key, op, val) => ({ rel: { char, key, op, val } });
+  const chain = (pre, next, items, view) => items.forEach(([cond, lines], i) => { const nx = i + 1 < items.length ? pre + (i + 1) : next; branch(pre + i, [[cond, pre + i + 'y']], nx); line(pre + i + 'y', lines, nx, { view }); });
+  // 第7章の夏の判断を、朝の場面で拾う（ルートごとに話し手が違う）。結果は、その夜に起きたことで語る。
   const ref = (pre, who, view, next) => {
-    branch(pre, [[F('ch7.limited'), pre + '_l'], [F('ch7.flowed'), pre + '_f']], next);
-    line(pre + '_l', [[who, '夏の花火、止める判断をしたな。恨まれた分、顔つきが少し変わった。']], next, { view });
-    line(pre + '_f', [[who, '夏の花火、流れを止めずに運んだな。紙一重だった分、今日は確かめて動け。']], next, { view });
+    branch(pre, [[F('ch7.hesitated'), pre + '_h'], [F('ch7.limited'), pre + '_l'], [F('ch7.flowed'), pre + '_f']], next);
+    line(pre + '_h', [[who, '夏の夜、君は、決められなかったな。…今日は、決める場面が来る。先に腹を決めておけ。']], next, { view });
+    line(pre + '_l', [[who, '夏の花火、止めたな。待たされた人の顔は、君も見ただろう。…あの顔を、今日も、思い出せ。']], next, { view });
+    line(pre + '_f', [[who, '夏の花火、止めずに運んだな。紙一重だった。今日は、確かめてから、動け。']], next, { view });
   };
 
   branch('ch8.open', [[F('ch6.wish_depot'), 'ch8.d_open'], [F('ch6.wish_dispatch'), 'ch8.x_open'], [F('ch6.wish_planning'), 'ch8.p_open']], 'ch8.s_open', { effects: [{ clock: { addDay: 32, minute: hm(8, 30) } }, log('第8章 ホームの声', 'chapter')] });
@@ -55,7 +58,16 @@ export default function ch8(k) {
     ['kubota', '今日の標語は「声を拾う」。大きな声より、小さい声のほうを。'],
     ['shiraishi', '二つが重なったら、どちらを取るか自分で決めろ。その決め方が、駅員の形になる。']
   ], 'ch8.s_ref', { effects: [tl('9月15日 社会科見学の受入れ。B班を担当')], view: OV(['shiraishi', 'kubota'], '9月15日（水） 8:30 駅事務室') });
-  ref('ch8.s_ref', 'shiraishi', OV(['shiraishi']), 'ch8.brief');
+  ref('ch8.s_ref', 'shiraishi', OV(['shiraishi']), 'ch8.s_ev0');
+  // 夏の夜の続き：はがき・物・噂（客演の再登場）
+  chain('ch8.s_ev', 'ch8.brief', [
+    [F('ch7.ogawa_thanks'), [['kubota', '小川さんから、はがきです。娘さんの字で、「えきいんさんへ」。青いワンピースの絵が、描いてあります。', 'smile']]],
+    [F('ch7.ogawa_unheard'), [['kubota', '小川さんのお嬢さんが、先月、定期を作りに来ました。お父さんは、改札の外で、待っていたそうです。…こちらを見ずに。']]],
+    [ANY(F('ch7.ogawa_hurry'), F('ch7.ogawa_rule')), [['kubota', '小川さんは、あの夜のことは、何も。…「間に合う」と言われた側は、案外、覚えているものです。']]],
+    [F('ch7.inc_plaza'), [['shiraishi', '広場の遊軍の件、警備会社に、人員の見直しを出しておいた。筒井さんの膝は、診断書つきで通った。']]],
+    [F('ch7.mizuki_helped'), [['shiraishi', '水城が、先週、駅に来た。耳栓を一つ、置いていった。「ベルの日に、誰かが使えるように」と。']]],
+    [F('ch7.haha_helped'), [['kubota', '階段の母親、今朝、ベビーカーで来ていました。エレベーターの場所を、迷わず。…声をかけると、深く、頭を下げて。']]]
+  ], OV(['shiraishi', 'kubota'], '8:40 駅事務室'));
   fx('ch8.brief', [set('ch8.brief'), log('社会科見学の受入れ準備が始まる', 'work')], 'ch8.hub');
   hub('ch8', {
     title: '青嶺中央駅 社会科見学の朝（9月15日・水）',
@@ -103,7 +115,9 @@ export default function ch8(k) {
     ['sakai', 'ここだけの話、気分の悪い人にも効くの。糖分がすぐ入るから。'],
     ['player', '野村さん、朝は食べないらしいです。'],
     ['sakai', 'なら、冷蔵庫の手前に一本、別にしておく。いざという時、声をかけて。']
-  ], 'ch8.s_sakai_e', { view: OV(['sakai'], '9:15 売店前') });
+  ], 'ch8.s_sakai_w', { view: OV(['sakai'], '9:15 売店前') });
+  branch('ch8.s_sakai_w', [[F('ch7.nomura_water'), 'ch8.s_sakai_w1']], 'ch8.s_sakai_e');
+  line('ch8.s_sakai_w1', [['sakai', '花火の夜も、野村さんに水を渡したのよ。「いいよ」って言いながら、全部、飲んだの。…今日は、水じゃなくて、ラムネね。', 'smile']], 'ch8.s_sakai_e', { view: OV(['sakai'], '9:16 売店前') });
   fx('ch8.s_sakai_e', [set('ch8.sakai_ramune'), rel('sakai', 1, 1), time(10), log('坂井さんに、ラムネを取っておいてもらう', 'work')], 'ch8.hub');
 
   line('ch8.s_tour_1', [
@@ -117,7 +131,13 @@ export default function ch8(k) {
     ['hinata', 'あっ！ 花火の日の、えきいんさん！', 'smile'],
     ['hinata', 'みんなに言ったの。だれも、しんじてくれなかった。'],
     ['player', 'じゃあ、今日、本物の駅員の仕事を見せよう。']
-  ], 'ch8.s_qa1_in', { effects: [rel('hinata', 1, 2)], view: v3('concourse', '10:02 コンコース') });
+  ], 'ch8.s_hinata_u', { effects: [rel('hinata', 1, 2)], view: v3('concourse', '10:02 コンコース') });
+  branch('ch8.s_hinata_u', [[F('ch7.found_uchiwa'), 'ch8.s_hinata_u1']], 'ch8.s_qa1_in');
+  line('ch8.s_hinata_u1', [
+    ['player', 'これ、広場に落ちてたんだ。…君のだよね。裏に、名前。'],
+    ['hinata', 'あっ！ なくしたと思ってた！ …えきいんさん、まほうつかい？', 'smile'],
+    '団扇の端に、ひと夏ぶんの汗の跡。それでも、女の子は、胸にぎゅっと抱いた。'
+  ], 'ch8.s_qa1_in', { effects: [set('ch8.uchiwa_back'), rel('hinata', 1, 3)], view: v3('concourse', '10:03 コンコース') });
   line('ch8.s_qa1_in', [
     '券売機の前。大地が、いちばん前に飛び出した。',
     ['daichi', 'えきいんさんって、きっぷを切る人でしょ！ おじいちゃんが言ってた！']
@@ -170,11 +190,31 @@ export default function ch8(k) {
     ['wakabayashi', '次は先頭車両の運転台です。11時の特急の前に、移動したいです。'],
     '電車に歓声があがる。その陰で、野村さんの手から、杖がかたんと落ちた。拾わない。拾えない。',
     '止めれば、先生の段取りも、子どもたちの楽しみも崩れる。でも、あの手は、杖に届いていない。'
-  ], 'ch8.s_elder', { view: v3('platform', '10:42 ホーム') });
+  ], 'ch8.s_el0', { view: v3('platform', '10:42 ホーム') });
+  chain('ch8.s_el', 'ch8.s_elder', [
+    [F('ch8.kaji_told'), [['player', '（梶原さんの言葉が、耳に戻る。「顔色と、杖の音を、見ててあげて」）']]],
+    [F('ch8.noticed_full'), [['player', '（杖の音、額の汗、見送った二本の電車。手がかりは、三つ、揃っていた。見ていた者として、知らなかったとは、言えない）']]]
+  ], v3('platform', '10:43 ホーム'));
   choice('ch8.s_elder', '見学の途中で、野村さんの様子が気になる。どうする？', [
-    opt('pause', '見学をいったん止めて、野村さんのところへ行く', 'ch8.s_pause_1', { tone: 'caring', effects: [set('ch8.elder_helped')], hint: '子どもたちの予定は、ずれる' }),
-    opt('keep', '段取りを保ち、後で様子を見に戻ると決める', 'ch8.s_keep_1', { tone: 'careful', effects: [set('ch8.elder_missed')], hint: '予定は守れる。その間、野村さんは一人' })
-  ], { important: true, view: v3('platform', '10:42 ホーム') });
+    opt('pause', '見学をいったん止めて、野村さんのところへ行く', 'ch8.s_pause_1', { tone: 'caring', effects: [set('ch8.elder_helped')] }),
+    opt('keep', '段取りを保ち、後で様子を見に戻ると決める', 'ch8.s_keep_1', { tone: 'careful', effects: [set('ch8.elder_missed')] }),
+    opt('silent', '（どうすべきか決められず、声が出ない）', 'ch8.s_sil_1', { tone: 'neutral' })
+  ], { important: true, timeLimit: 40, defaultOption: 'silent', view: v3('platform', '10:42 ホーム') });
+  line('ch8.s_sil_1', [
+    ['player', '（止めるべきか。続けるべきか。杖の音は、まだ、鳴っている）'],
+    ['wakabayashi', '（子どもたちの背後で）…あの、杖の方、お加減が。…駅員さん？'],
+    '先生の声で、ようやく、足が動く。その間に、杖は、二度、床を叩いて、止まった。'
+  ], 'ch8.s_sil_2', { view: v3('platform', '10:44 ホーム') });
+  line('ch8.s_sil_2', [
+    '隣にしゃがむ。顔色は、さっきより、悪い。',
+    ['nomura', '…いいよ、いいよ。…少し、遅かったな。', 'worry'],
+    ['shiraishi', '（駆けつけて）医院に連絡する。タクシーも。…{player}。次は、声を、先に出せ。']
+  ], 'ch8.s_sil_3', { effects: [rel('nomura', 0, -1), rel('shiraishi', -1, 0)], view: v3('platform', '10:50 ホーム・ベンチ') });
+  line('ch8.s_sil_3', [
+    ['wakabayashi', '予定が押しました。運転台は、見送ります。バスの時間があるので。'],
+    ['daichi', 'えー！ うんてんだい、見たかったのに！', 'surprise'],
+    '決めなかった時間の分だけ、誰かの楽しみが、削れた。'
+  ], 'ch8.s_tour_end', { effects: [set('ch8.elder_late'), set('ch8.tour_cut'), { lock: { id: 'ch8.cab_visit', note: '運転台の見学は、今年は叶わなかった' } }, set('ch8.cab_locked')], view: v3('platform', '11:05 ホーム') });
   line('ch8.s_pause_1', [
     ['player', '若林先生、数分ください。ベンチの方の具合が。久保田さんに補助を頼みます。'],
     ['wakabayashi', '（一瞬、眉が動く。子どもたちを見て）…行ってあげてください。'],
@@ -208,7 +248,7 @@ export default function ch8(k) {
     ['wakabayashi', '予定が押しました。運転台は、見送ります。バスの時間があるので。'],
     ['daichi', 'えー！ うんてんだい、見たかったのに！', 'surprise'],
     ['mio', '（小声で）…でも、おじいちゃんが元気になったから、いい。']
-  ], 'ch8.s_tour_end', { effects: [set('ch8.tour_cut')], view: v3('platform', '11:05 ホーム') });
+  ], 'ch8.s_tour_end', { effects: [set('ch8.tour_cut'), { lock: { id: 'ch8.cab_visit', note: '運転台の見学は、今年は叶わなかった' } }, set('ch8.cab_locked')], view: v3('platform', '11:05 ホーム') });
   line('ch8.s_keep_1', [
     ['player', '（後で、必ず戻る。今は、二十七人が先だ）'],
     ['wakabayashi', '時間どおりで、助かります。運転台へ。'],
@@ -220,16 +260,23 @@ export default function ch8(k) {
     ['player', '（急いでホームの端へ。ベンチは、空だった）'],
     ['kubota', '（無線）野村さん、次の電車で。足取りは確かでした。たぶん、大丈夫です。', 'worry'],
     '何もなかったのかもしれない。ただ、あの一歩を踏み出せなかったことが、小石のように残った。ベンチの下に、帽子。'
-  ], 'ch8.s_tour_end', { effects: [set('ch8.hat_left')], view: v3('platform', '11:08 ホーム') });
+  ], 'ch8.s_keep_3', { effects: [set('ch8.hat_left')], view: v3('platform', '11:08 ホーム') });
+  line('ch8.s_keep_3', [
+    '帽子を拾う。内側に、色あせた糸で、「野村」と縫い取りがある。',
+    ['kubota', '（無線）券売機の前を通るとき、野村さん、駅員に会釈もしないで。…あの人らしくないです。'],
+    '改札の向こうに、杖の背中が、小さくなる。呼び止める言葉を、探している間に、見えなくなった。'
+  ], 'ch8.s_tour_end', { effects: [set('ch8.nomura_gone'), { depart: { char: 'nomura', note: '野村さんは、水曜の通院を、別の駅に変えた。帽子だけが残った' } }], view: v3('platform', '11:10 ホーム') });
   line('ch8.s_tour_end', [
     '11時15分。バスの前で、先生が言った。一人だけ、質問していい、と。',
     ['hinata', 'えきいんさんは、「ありがとう」って、いわれる？ いちばんうれしかったのは、なあに？']
   ], 'ch8.s_hi_choice', { effects: [{ clock: { minute: hm(11, 15) } }], view: v3('concourse', '11:15 コンコース') });
   choice('ch8.s_hi_choice', 'ひなたさんに、どう答える？', [
-    opt('today', '今日のことを、正直に話す', 'ch8.s_hi_a', { tone: 'honest', effects: [{ var: { key: 'ch8.listen', add: 2 } }] }),
-    opt('general', '「お客様が、笑って帰ってくれること」と答える', 'ch8.s_hi_b', { tone: 'caring', effects: [{ var: { key: 'ch8.listen', add: 1 } }] }),
-    opt('ask', '「ひなたさんは、誰に『ありがとう』を言いたい？」と聞き返す', 'ch8.s_hi_c', { tone: 'caring', effects: [{ var: { key: 'ch8.listen', add: 2 } }, rel('hinata', 1, 3)] })
-  ], { view: v3('concourse', '11:15 コンコース') });
+    opt('today', '今日のことを、正直に話す', 'ch8.s_hi_a', { tone: 'honest', effects: [set('ch8.hi_today'), { var: { key: 'ch8.listen', add: 2 } }] }),
+    opt('general', '「お客様が、笑って帰ってくれること」と答える', 'ch8.s_hi_b', { tone: 'caring', effects: [set('ch8.hi_general'), { var: { key: 'ch8.listen', add: 1 } }] }),
+    opt('ask', '「ひなたさんは、誰に『ありがとう』を言いたい？」と聞き返す', 'ch8.s_hi_c', { tone: 'caring', effects: [set('ch8.hi_ask'), { var: { key: 'ch8.listen', add: 2 } }, rel('hinata', 1, 3)] }),
+    opt('silent', '（答えが、見つからない）', 'ch8.s_hi_s', { tone: 'neutral', effects: [set('ch8.hi_silent')] })
+  ], { timeLimit: 20, defaultOption: 'silent', view: v3('concourse', '11:15 コンコース') });
+  line('ch8.s_hi_s', [['hinata', '…。（うつむいて、団扇の端を、ぎゅっと握る）'], ['wakabayashi', 'ひなたさん、行きましょう。…駅員さん、ありがとうございました。']], 'ch8.s_done', { effects: [rel('hinata', 0, -1)], view: v3('concourse', '11:18 コンコース') });
   line('ch8.s_hi_a', [
     ['player', '今日ね、ベンチに具合の悪いおじいさんがいた。気づいた人と、気づけなかった人がいたかもしれない。'],
     ['player', '「ありがとう」より、気づくことのほうが、大事だと思った。'],
@@ -309,17 +356,45 @@ export default function ch8(k) {
     ['nomura', '（小声で）…大丈夫。続けるよ。子どもたちが、待ってる。']
   ], 'ch8.d_elder', { view: DV(['nomura', 'wakabayashi'], '10:42 検修庫') });
   choice('ch8.d_elder', '野村さんの様子が気になる。どうする？', [
-    opt('pause', '説明をいったん止め、野村さんを涼しい詰所へ連れていく', 'ch8.d_pause_1', { tone: 'caring', effects: [set('ch8.elder_helped')], hint: '見学は、ずれる' }),
-    opt('keep', '説明が終わるまで段取りを保つ。終わり次第、様子を見る', 'ch8.d_keep_1', { tone: 'careful', effects: [set('ch8.elder_missed')], hint: '予定は守れる。野村さんは無理を続ける' })
-  ], { important: true, view: DV(['nomura']) });
+    opt('pause', '説明をいったん止め、野村さんを涼しい詰所へ連れていく', 'ch8.d_pause_1', { tone: 'caring', effects: [set('ch8.elder_helped')] }),
+    opt('chair', '「座って話してください」と、木箱を椅子に差し出す。説明は、野村さんに続けてもらう', 'ch8.d_chair_1', { tone: 'honest', requires: RL('tachibana', 'trust', '>=', 3), effects: [set('ch8.elder_helped'), set('ch8.nomura_honored')] }),
+    opt('keep', '説明が終わるまで段取りを保つ。終わり次第、様子を見る', 'ch8.d_keep_1', { tone: 'careful', effects: [set('ch8.elder_missed')] }),
+    opt('silent', '（言葉が出ない）', 'ch8.d_sil_1', { tone: 'neutral' })
+  ], { important: true, timeLimit: 40, defaultOption: 'silent', view: DV(['nomura']) });
+  line('ch8.d_chair_1', [
+    ['player', '野村さん、座って話しましょう。…橘さん、木箱を。'],
+    ['nomura', '…いや、立って話すのが、俺の仕事で…'],
+    ['tachibana', '（黙って木箱を、野村の膝の高さに置く）座れ。OBの席だ。', 'smile']
+  ], 'ch8.d_chair_2', { view: DV(['nomura', 'tachibana'], '10:43 検修庫 見学窓') });
+  line('ch8.d_chair_2', [
+    '野村さんは、杖を持ち替えて、ゆっくり腰を下ろした。子どもたちが、半円に座る。',
+    '説明は、さっきより、ずっと、静かに伝わった。杖の先の、かりかりという音が、止まっている。'
+  ], 'ch8.d_chair_3', { view: DV(['nomura', 'daichi'], '10:48 検修庫 見学窓') });
+  line('ch8.d_chair_3', [
+    ['nomura', '…ありがとうな。客扱いは、いやでな。座らせてもらったのは、初めてだ。', 'smile'],
+    ['tachibana', '…誰かが、先に、座れと言ってやるべきだった。', 'serious']
+  ], 'ch8.d_tachi', { effects: [rel('nomura', 2, 3), rel('tachibana', 1, 2), set('ch8.tour_done'), ev('service', 3)], view: DV(['nomura', 'tachibana'], '10:55 検修庫') });
+  line('ch8.d_sil_1', [
+    ['player', '（止めるのか。続けさせるのか。野村さんの目が、こちらを見ている）'],
+    ['tachibana', '…黙るな。', 'serious']
+  ], 'ch8.d_sil_2', { view: DV(['nomura', 'tachibana'], '10:42 検修庫') });
+  line('ch8.d_sil_2', [
+    ['tachibana', '野村。来い。詰所だ。説明は、私が引き取る。'],
+    '橘が、野村の腕を、無言で取った。野村は、抵抗しなかった。…抵抗できないほど、疲れていた。'
+  ], 'ch8.d_sil_3', { effects: [rel('tachibana', -1, 0)], view: DV(['nomura', 'tachibana'], '10:46 検修庫') });
+  line('ch8.d_sil_3', [
+    ['wakabayashi', '出区の見学は、見送らせてください。バスの時間が。'],
+    ['daichi', 'えー！ でんしゃが出るとこ、見たかった！', 'surprise'],
+    '見送った背中に、「次は、先に、声を」と、言われた気がした。'
+  ], 'ch8.d_tachi', { effects: [set('ch8.elder_late'), set('ch8.tachi_stepped'), set('ch8.tour_cut'), { lock: { id: 'ch8.cab_visit', note: '出区の見学は、今年は叶わなかった' } }, set('ch8.cab_locked')], view: DV(['wakabayashi', 'daichi'], '11:05 検修庫') });
   line('ch8.d_pause_1', [
     ['player', '野村さん、涼しいところへ。続きは、あとで。'],
     ['nomura', '…いや、子どもたちが…。', 'worry'],
     ['tachibana', '（駆けつけて）君は昔から、無理を無理と言わん。詰所へ。氷を。'],
     '詰所の冷房の下で、野村さんが冷たい麦茶を、ゆっくり飲む。',
-    ['nomura', '…すまんね。朝、薬だけ飲んで来た。'],
+    ['nomura', '…すまんね。朝、薬だけ飲んで来た。…OBを、客扱いするな。（小声で）'],
     ['tachibana', '馬鹿者。朝飯も食わんでOBが来るか。…よく来てくれた。', 'smile']
-  ], 'ch8.d_pause_c', { effects: [ev('service', 3), rel('nomura', 2, 3), rel('tachibana', 1, 2)], view: DV(['nomura', 'tachibana'], '10:50 詰所') });
+  ], 'ch8.d_pause_c', { effects: [ev('service', 3), rel('nomura', 2, 0), rel('tachibana', 1, 2), set('ch8.nomura_stung')], view: DV(['nomura', 'tachibana'], '10:50 詰所') });
   line('ch8.d_pause_c', [
     '窓の向こうで、子どもたちが静かにこちらを見ている。大地が、水筒を握りしめて。',
     ['daichi', 'おじいちゃん、これ、ぼくの。ちょっとのんで。'],
@@ -327,8 +402,8 @@ export default function ch8(k) {
     ['wakabayashi', '（子どもたちへ）基地の人が見せてくれたのは、電車の中身だけじゃなかったね。']
   ], 'ch8.d_resume_b', { effects: [rel('wakabayashi', 1, 1)], view: DV(['wakabayashi', 'daichi'], '10:58 詰所の前') });
   branch('ch8.d_resume_b', [[F('ch8.route_ok'), 'ch8.d_resume_y']], 'ch8.d_resume_n');
-  line('ch8.d_resume_y', [['wakabayashi', '予定は押しましたが、経路が詰めてあったので、出区には間に合います。'], ['nomura', '…座ったままで、いいなら、続きを話すよ。']], 'ch8.d_end_in', { effects: [set('ch8.tour_done'), ev('accuracy', 1)], view: DV(['wakabayashi', 'nomura'], '11:05 検修庫') });
-  line('ch8.d_resume_n', [['wakabayashi', '出区の見学は、見送らせてください。バスの時間が。'], ['daichi', 'えー！ でんしゃが出るとこ、見たかった！', 'surprise'], ['player', 'ごめんね。人を大事にするところは、見せられたよ。']], 'ch8.d_end_in', { effects: [set('ch8.tour_cut')], view: DV(['wakabayashi', 'daichi'], '11:05 検修庫') });
+  line('ch8.d_resume_y', [['wakabayashi', '予定は押しましたが、経路が詰めてあったので、出区には間に合います。'], ['nomura', '…座ったままで、いいなら、続きを話すよ。']], 'ch8.d_tachi', { effects: [set('ch8.tour_done'), ev('accuracy', 1)], view: DV(['wakabayashi', 'nomura'], '11:05 検修庫') });
+  line('ch8.d_resume_n', [['wakabayashi', '出区の見学は、見送らせてください。バスの時間が。'], ['daichi', 'えー！ でんしゃが出るとこ、見たかった！', 'surprise'], ['player', 'ごめんね。人を大事にするところは、見せられたよ。']], 'ch8.d_tachi', { effects: [set('ch8.tour_cut'), { lock: { id: 'ch8.cab_visit', note: '出区の見学は、今年は叶わなかった' } }, set('ch8.cab_locked')], view: DV(['wakabayashi', 'daichi'], '11:05 検修庫') });
   line('ch8.d_keep_1', [
     ['player', '（説明が終わったら、すぐ様子を見よう）'],
     ['nomura', '…ブレーキはな、…ええと、何を言おうとしたか。'],
@@ -342,15 +417,30 @@ export default function ch8(k) {
     ['nomura', '謝ることはない。私が言えなかっただけだ。じゃあな。', 'worry'],
     '杖の音が、出口へ遠ざかる。木箱の上に、作業帽が置かれたまま。',
     ['tachibana', '…預かっておく。次に来た時、返す。']
-  ], 'ch8.d_end_in', { effects: [set('ch8.hat_left')], view: DV(['nomura', 'tachibana'], '11:05 出口') });
+  ], 'ch8.d_tachi', { effects: [set('ch8.hat_left'), set('ch8.nomura_gone'), { depart: { char: 'nomura', note: '野村さんは、基地に来なくなった。作業帽だけが残った' } }], view: DV(['nomura', 'tachibana'], '11:05 出口') });
+  // 橘の秘密（夏の休憩で聞いた「この秋で降りる」）が、野村さんの前で、静かに明かされる／帽子に約束が付く
+  branch('ch8.d_tachi', [[ALL(F('ch7.tachi_secret'), F('ch8.elder_missed')), 'ch8.d_tachi_m'], [ALL(F('ch7.tachi_secret'), NF('ch8.elder_missed')), 'ch8.d_tachi_p']], 'ch8.d_end_in');
+  line('ch8.d_tachi_p', [
+    ['tachibana', '野村さん。…私も、この秋で降ります。あなたが降りた年と、同じ年だ。'],
+    ['nomura', '…そうか。お前は、最後まで、台車を見ていたな。'],
+    '二人の老いた背中が、並んだ。口止めされた秘密は、もう、秘密ではなくなっていた。',
+    ['tachibana', '…聞かなかったことにしろ。（小声で、{player}へ）', 'smile']
+  ], 'ch8.d_end_in', { effects: [set('ch8.tachi_told_nomura'), rel('tachibana', 1, 2)], view: DV(['tachibana', 'nomura'], '11:10 検修庫') });
+  line('ch8.d_tachi_m', [
+    ['tachibana', '帽子は、預かっておく。次に来た時、返す。…その頃、私は、もう基地にいないかもしれん。'],
+    ['player', '降りる前に、返しましょう。住所は、梶原さんが知っているはずです。'],
+    ['tachibana', '…降りる前に、返す。それが、最後の仕事の、一つだ。（作業帽を、引き出しにしまう）']
+  ], 'ch8.d_end_in', { effects: [set('ch8.tachi_hat_promise'), rel('tachibana', 1, 1)], view: DV(['tachibana'], '11:10 事務所') });
   line('ch8.d_end_in', [
     '11時20分。バスの前。先生が、一人だけ質問していいと言った。',
     ['hinata', 'きちの人は、おきゃくさんの顔、みえないでしょ。さみしくないの？']
   ], 'ch8.d_hi_choice', { effects: [{ clock: { minute: hm(11, 20) } }], view: DV(['hinata'], '11:20 正門') });
   choice('ch8.d_hi_choice', 'ひなたさんに、どう答える？', [
-    opt('honest', '「見えないよ。でも、乗る人の顔を想像して働いてるんだ」と答える', 'ch8.d_hi_a', { tone: 'honest', effects: [{ var: { key: 'ch8.listen', add: 2 } }] }),
-    opt('ask', '「ひなたさんは、顔が見えなくても、がんばれることある？」と聞き返す', 'ch8.d_hi_b', { tone: 'caring', effects: [{ var: { key: 'ch8.listen', add: 2 } }, rel('hinata', 1, 3)] })
-  ], { view: DV(['hinata']) });
+    opt('honest', '「見えないよ。でも、乗る人の顔を想像して働いてるんだ」と答える', 'ch8.d_hi_a', { tone: 'honest', effects: [set('ch8.hi_honest'), { var: { key: 'ch8.listen', add: 2 } }] }),
+    opt('ask', '「ひなたさんは、顔が見えなくても、がんばれることある？」と聞き返す', 'ch8.d_hi_b', { tone: 'caring', effects: [set('ch8.hi_ask'), { var: { key: 'ch8.listen', add: 2 } }, rel('hinata', 1, 3)] }),
+    opt('silent', '（答えが、見つからない）', 'ch8.d_hi_s', { tone: 'neutral', effects: [set('ch8.hi_silent')] })
+  ], { timeLimit: 20, defaultOption: 'silent', view: DV(['hinata']) });
+  line('ch8.d_hi_s', [['hinata', '…。（うつむいて、団扇の端を、ぎゅっと握る）'], ['wakabayashi', 'ひなたさん、行きましょう。…駅員さん、ありがとうございました。']], 'ch8.d_done', { effects: [rel('hinata', 0, -1)], view: DV(['hinata'], '11:22 正門') });
   line('ch8.d_hi_a', [['player', '乗る人の顔を、想像して働いてるんだ。だから今日、みんなが来てくれて、うれしい。'], ['hinata', 'わたしが大きく手をふったら、見える？', 'smile'], ['player', '見える。今日の顔は、ずっと覚えてる。']], 'ch8.d_done', { effects: [ev('service', 1)], view: DV(['hinata'], '11:22 正門') });
   line('ch8.d_hi_b', [['hinata', 'かきとりのれんしゅう。だれも見てないけど、あした、ほめてもらえるかなって。'], ['player', '基地の人と、おんなじ気持ちだ。', 'smile'], ['hinata', 'じゃあ、わたし、きちの人だ！']], 'ch8.d_done', { effects: [ev('service', 2)], view: DV(['hinata'], '11:22 正門') });
   fx('ch8.d_done', [set('ch8.route_done_depot'), tl('9月15日 基地で、小学生の見学と、OBの方の気配に向き合った'), log('基地の見学受入れを終える', 'work'), { clock: { minute: hm(12, 20) } }], 'ch8.after');
@@ -420,10 +510,35 @@ export default function ch8(k) {
     '耳を澄ます。放送。ブレーキ。その向こうに、かん、かん、と、不規則な音。',
     ['hamaguchi', '見学はあと20分。止めるかどうか、あなたの意見を聞く。', 'serious']
   ], 'ch8.x_elder', { effects: [{ clock: { minute: hm(11, 18) } }], view: XV(['hamaguchi', 'kubota'], '11:18 輸送指令室') });
-  choice('ch8.x_elder', '電話の向こうの野村さんが、気になる。どうする？', [
-    opt('pause', '見学を一時止め、指令室から駅の対応を支える（列車の扱いと、救護の連絡）', 'ch8.x_pause_1', { tone: 'caring', effects: [set('ch8.elder_helped')], hint: '見学は中断する' }),
-    opt('keep', '見学の段取りを保つ。駅の対応は、駅に任せる', 'ch8.x_keep_1', { tone: 'careful', effects: [set('ch8.elder_missed')], hint: '予定は守れる。駅は手が足りない' })
-  ], { important: true, view: XV(['hamaguchi']) });
+  choice('ch8.x_elder', '電話の向こうの野村さんが、気になる。誰に頼む？', [
+    opt('kaji', '梶原さんに頼む。ロビーにいる。野村さんの扱いを知っている人だ', 'ch8.x_kaji_1', { tone: 'caring', effects: [set('ch8.elder_helped'), set('ch8.x_kaji')] }),
+    opt('chief', '白石駅長に頼む。医院とタクシーを、手配できる人だ。見学は止める', 'ch8.x_pause_1', { tone: 'careful', effects: [set('ch8.elder_helped'), set('ch8.x_chief'), set('ch8.nomura_stung')] }),
+    opt('keep', '駅に任せ、見学を続ける', 'ch8.x_keep_1', { tone: 'quick', effects: [set('ch8.elder_missed')] }),
+    opt('silent', '（誰に頼めばいいか、決められない）', 'ch8.x_sil_1', { tone: 'neutral' })
+  ], { important: true, timeLimit: 40, defaultOption: 'silent', view: XV(['hamaguchi']) });
+  line('ch8.x_kaji_1', [
+    ['player', '梶原さんは、ロビーにいますか。野村さんに、「いいよ、じゃないでしょう」と、言ってあげられる人です。'],
+    ['hamaguchi', '…久保田さん、ロビーの梶原さんを。指令からの、お願いだと。'],
+    ['kubota', '（電話）…！ 今、呼びます。']
+  ], 'ch8.x_kaji_2', { view: XV(['hamaguchi', 'kubota'], '11:21 輸送指令室') });
+  line('ch8.x_kaji_2', [
+    '電話の向こうで、杖の音が、近づく別の足音に、重なる。',
+    ['kajiwara', '（遠く）野村さん。…いいよ、じゃ、ないでしょう。座りなさい。薬、飲んだの？'],
+    ['nomura', '（遠く）…参ったな。']
+  ], 'ch8.x_kaji_3', { view: XV(['hamaguchi'], '11:23 輸送指令室') });
+  line('ch8.x_kaji_3', [
+    ['kubota', '（電話）野村さんは、梶原さんの隣で、薬を飲まれました。…見学は、続けて大丈夫です。'],
+    ['hamaguchi', '電話で、人を動かした。…いい仕事。', 'smile'],
+    ['mio', '（小声で）…でんわ、すごい。']
+  ], 'ch8.x_end_in', { effects: [rel('nomura', 2, 2), rel('kajiwara', 1, 3), rel('hamaguchi', 1, 2), set('ch8.tour_done'), ev('service', 3)], view: XV(['hamaguchi', 'mio'], '11:30 輸送指令室') });
+  line('ch8.x_sil_1', [
+    ['hamaguchi', '…時間がない。久保田さんが、待っている。', 'serious'],
+    ['player', '（誰に。駅長か。久保田さんか。梶原さんか。…電話は、鳴りっぱなしだ）']
+  ], 'ch8.x_sil_2', { view: XV(['hamaguchi', 'kubota'], '11:20 輸送指令室') });
+  line('ch8.x_sil_2', [
+    ['hamaguchi', '久保田さん、私の判断で、白石駅長へ。見学は、止めない。…{player}、次は、声に出して決めて。'],
+    '電話の向こうで、駅員たちの声が、重なっていく。誰も、こちらを責めない。それが、少しだけ、つらかった。'
+  ], 'ch8.x_end_in', { effects: [set('ch8.elder_late'), rel('hamaguchi', -1, 0), set('ch8.tour_done')], view: XV(['hamaguchi'], '11:28 輸送指令室') });
   line('ch8.x_pause_1', [
     ['player', '見学を止めてください。駅を支えたい。'],
     ['hamaguchi', '若林先生、少しだけ止めさせてください。'],
@@ -441,22 +556,24 @@ export default function ch8(k) {
   ], 'ch8.x_resume_b', { view: XV(['wakabayashi', 'daichi'], '11:30 輸送指令室') });
   branch('ch8.x_resume_b', [[F('ch8.route_ok'), 'ch8.x_resume_y']], 'ch8.x_resume_n');
   line('ch8.x_resume_y', [['wakabayashi', '時間は押しましたが、説明の言葉が整っていたので、残りを手短に聞けました。']], 'ch8.x_end_in', { effects: [set('ch8.tour_done'), ev('accuracy', 1)], view: XV(['wakabayashi'], '11:35 輸送指令室') });
-  line('ch8.x_resume_n', [['wakabayashi', '時間が押しました。残りの質問は、見送らせてください。'], ['player', '説明の言葉を、もう少し整えておけば。']], 'ch8.x_end_in', { effects: [set('ch8.tour_cut')], view: XV(['wakabayashi'], '11:35 輸送指令室') });
+  line('ch8.x_resume_n', [['wakabayashi', '時間が押しました。残りの質問は、見送らせてください。'], ['player', '説明の言葉を、もう少し整えておけば。']], 'ch8.x_end_in', { effects: [set('ch8.tour_cut'), { lock: { id: 'ch8.cab_visit', note: '指令室の見学は、今年は途中までだった' } }, set('ch8.cab_locked')], view: XV(['wakabayashi'], '11:35 輸送指令室') });
   line('ch8.x_keep_1', [
     ['player', '見学を続けてください。駅は、駅の人が対応してくれると信じます。'],
     ['hamaguchi', '…分かった。久保田さん、駅の判断で。必要なら、すぐ連絡を。'],
     ['kubota', '（電話）了解。', 'worry'],
     '見学は予定どおり進んだ。子どもたちの目が、表示盤で光っている。耳の奥では、さっきの杖の音が、かん、かん、と鳴り続けていた。',
     ['kubota', '（11時35分、電話）野村さん、次の電車でお帰りに。帽子だけ、駅長が預かりました。', 'worry']
-  ], 'ch8.x_end_in', { effects: [{ clock: { minute: hm(11, 35) } }, set('ch8.tour_done'), set('ch8.hat_left'), ev('accuracy', 1)], view: XV(['hamaguchi', 'kubota'], '11:35 輸送指令室') });
+  ], 'ch8.x_end_in', { effects: [{ clock: { minute: hm(11, 35) } }, set('ch8.tour_done'), set('ch8.hat_left'), set('ch8.nomura_gone'), { depart: { char: 'nomura', note: '野村さんは、水曜の通院を、別の駅に変えた。帽子だけが残った' } }, ev('accuracy', 1)], view: XV(['hamaguchi', 'kubota'], '11:35 輸送指令室') });
   line('ch8.x_end_in', [
     '11時45分。出口で、先生が言った。一人だけ、質問していい。',
     ['hinata', 'しれいしつの人は、まい日、いろんな人の声をきくでしょ。つかれない？']
   ], 'ch8.x_hi_choice', { effects: [{ clock: { minute: hm(11, 45) } }], view: XV(['hinata'], '11:45 輸送指令室') });
   choice('ch8.x_hi_choice', 'ひなたさんに、どう答える？', [
-    opt('honest', '「疲れる日もある。でも、声を聞いて誰かが助かると、元気が出る」と答える', 'ch8.x_hi_a', { tone: 'honest', effects: [{ var: { key: 'ch8.listen', add: 2 } }] }),
-    opt('ask', '「ひなたさんは、人の声を聞くのが好き？」と聞き返す', 'ch8.x_hi_b', { tone: 'caring', effects: [{ var: { key: 'ch8.listen', add: 2 } }, rel('hinata', 1, 3)] })
-  ], { view: XV(['hinata']) });
+    opt('honest', '「疲れる日もある。でも、声を聞いて誰かが助かると、元気が出る」と答える', 'ch8.x_hi_a', { tone: 'honest', effects: [set('ch8.hi_honest'), { var: { key: 'ch8.listen', add: 2 } }] }),
+    opt('ask', '「ひなたさんは、人の声を聞くのが好き？」と聞き返す', 'ch8.x_hi_b', { tone: 'caring', effects: [set('ch8.hi_ask'), { var: { key: 'ch8.listen', add: 2 } }, rel('hinata', 1, 3)] }),
+    opt('silent', '（答えが、見つからない）', 'ch8.x_hi_s', { tone: 'neutral', effects: [set('ch8.hi_silent')] })
+  ], { timeLimit: 20, defaultOption: 'silent', view: XV(['hinata']) });
+  line('ch8.x_hi_s', [['hinata', '…。（うつむいて、団扇の端を、ぎゅっと握る）'], ['wakabayashi', 'ひなたさん、行きましょう。…駅員さん、ありがとうございました。']], 'ch8.x_done', { effects: [rel('hinata', 0, -1)], view: XV(['hinata'], '11:48 輸送指令室') });
   line('ch8.x_hi_a', [['hinata', 'ふうん。声をきくのも、おしごとなんだね。', 'smile'], ['hamaguchi', '（隣で、小さくうなずく）']], 'ch8.x_done', { effects: [ev('service', 1)], view: XV(['hinata'], '11:48 輸送指令室') });
   line('ch8.x_hi_b', [['hinata', 'うん。おばあちゃんの話、すき。おなじ話でも、うれしそうだから。'], ['player', 'それが、いちばん大事な力。', 'smile'], ['hamaguchi', '（小声で）もう立派な指令員ね。']], 'ch8.x_done', { effects: [ev('service', 2)], view: XV(['hinata'], '11:48 輸送指令室') });
   fx('ch8.x_done', [set('ch8.route_done_dispatch'), tl('9月15日 指令室で、小学生の見学と、電話越しの気配に向き合った'), log('指令室の見学対応を終える', 'work'), { clock: { minute: hm(12, 20) } }], 'ch8.after');
@@ -503,9 +620,11 @@ export default function ch8(k) {
     '10時20分。前の席で、美緒が母親の袖を引いて、何か言った。',
     ['mio', '（母親の耳もとへ）…あっちのおじいさん、ずっとうなずいてるけど、きいてない、みたい。'],
     ['player', '（その小さな声を、そっと拾う）美緒さん、もう一度、教えてくれる？']
-  ], 'ch8.p_qa1_c', { effects: [{ clock: { minute: hm(10, 20) } }], view: PV(['mio'], '10:20 説明会') });
+  ], 'ch8.p_ql', { effects: [{ clock: { minute: hm(10, 20) } }], view: PV(['mio'], '10:20 説明会') });
+  branch('ch8.p_ql', [[F('ch8.listen_ok'), 'ch8.p_ql_y']], 'ch8.p_qa1_c');
+  line('ch8.p_ql_y', [['sawada', '（小声で）冒頭の一言のおかげです。「聞こえにくいときは、言ってください」と、先に言ってあった。…子どもが、先に、声を出せた。', 'smile']], 'ch8.p_qa1_c', { view: PV(['sawada', 'mio'], '10:21 説明会') });
   choice('ch8.p_qa1_c', '美緒さんの小さな声に、どう応える？', [
-    opt('ask', '「教えてくれてありがとう。どうして、そう思ったの？」と続きを聞く', 'ch8.p_qa1_a', { tone: 'caring', effects: [{ var: { key: 'ch8.listen', add: 2 } }, rel('hinata', 0, 1)] }),
+    opt('ask', '「教えてくれてありがとう。どうして、そう思ったの？」と続きを聞く', 'ch8.p_qa1_a', { tone: 'caring', effects: [{ var: { key: 'ch8.listen', add: 2 } }, rel('hinata', 0, 1), set('ch8.mio_heard')] }),
     opt('note', '「ありがとう。あとで見ておくね」と受け止めて、進行を続ける', 'ch8.p_qa1_b', { tone: 'careful', effects: [{ var: { key: 'ch8.listen', add: 1 } }] })
   ], { view: PV(['mio']) });
   line('ch8.p_qa1_a', [
@@ -524,11 +643,40 @@ export default function ch8(k) {
     ['nomura', '（隣の梶原へ、小声で）…いま、何の話だった？ …いや、いい。聞こえてるよ。', 'worry'],
     ['kajiwara', '（小声で）また「いいよ」って言ってる。昔から、そうなの。'],
     ['sawada', '（小声で）このあと運賃の重要箇所です。予定は、少し押してます。']
-  ], 'ch8.p_elder', { effects: [{ clock: { minute: hm(10, 50) } }], view: PV(['nomura', 'kajiwara'], '10:50 説明会 後方') });
+  ], 'ch8.p_el_b', { effects: [{ clock: { minute: hm(10, 50) } }], view: PV(['nomura', 'kajiwara'], '10:50 説明会 後方') });
+  branch('ch8.p_el_b', [[F('ch8.mio_heard'), 'ch8.p_el_e']], 'ch8.p_elder');
+  line('ch8.p_el_e', ['美緒の「聞こえていない」という一言が、頭に残っていた。だから、補聴器の小さな「ピー」に、一拍、早く気づけた。'], 'ch8.p_elder', { view: PV(['nomura', 'mio'], '10:50 説明会 後方') });
   choice('ch8.p_elder', '野村さんが、聞こえていないようだ。どうする？', [
-    opt('pause', '説明をいったん止めてもらい、野村さんの近くで、聞こえ方を一緒に確かめる', 'ch8.p_pause_1', { tone: 'caring', effects: [set('ch8.elder_helped')], hint: '予定は押す。野村さんは、運賃の話を聞き取れる' }),
-    opt('keep', '予定どおり進める。終了後に、個別に伝える', 'ch8.p_keep_1', { tone: 'careful', effects: [set('ch8.elder_missed')], hint: '予定は守れる。その場の説明を、野村さんは聞き取れない' })
-  ], { important: true, view: PV(['nomura']) });
+    opt('pause', '説明をいったん止めてもらい、野村さんの近くで、聞こえ方を一緒に確かめる', 'ch8.p_pause_1', { tone: 'caring', effects: [set('ch8.elder_helped')] }),
+    opt('quiet', '説明は止めない。後ろの席へ歩いて、替えの電池を、そっと手に渡す', 'ch8.p_quiet_1', { tone: 'honest', requires: F('ch8.mio_heard'), effects: [set('ch8.elder_helped'), set('ch8.p_quiet')] }),
+    opt('keep', '予定どおり進める。終了後に、個別に伝える', 'ch8.p_keep_1', { tone: 'careful', effects: [set('ch8.elder_missed')] }),
+    opt('silent', '（言葉が出ない）', 'ch8.p_sil_1', { tone: 'neutral' })
+  ], { important: true, timeLimit: 40, defaultOption: 'silent', view: PV(['nomura']) });
+  line('ch8.p_quiet_1', [
+    '会場の後ろへ。腰をかがめて、補聴器の電池を、野村さんの掌にのせる。',
+    ['nomura', '…ああ。…すまんな。替えは、持ってきてたんだが。'],
+    ['kajiwara', '（小声で）忘れてたのよ。いつものこと。']
+  ], 'ch8.p_quiet_2', { view: PV(['nomura', 'kajiwara'], '10:53 説明会 後方') });
+  line('ch8.p_quiet_2', [
+    '電池が替わる。「ピー」が、止まった。野村さんの顔が、ぱっと明るくなる。',
+    ['nomura', '…聞こえる。いろんな音が、戻ってきた。'],
+    '説明会は、一秒も、止まらなかった。前の席の美緒が、振り返って、小さく親指を立てた。'
+  ], 'ch8.p_quiet_3', { effects: [rel('nomura', 2, 2), rel('sawada', 1, 2), rel('hinata', 0, 1)], view: PV(['nomura', 'mio'], '10:56 説明会 後方') });
+  line('ch8.p_quiet_3', [
+    ['sawada', '（小声で、あとで）…気づいてから動くまでが、速かった。聞いてくれた人の声は、こういう時に、効く。', 'smile']
+  ], 'ch8.p_end_in', { effects: [set('ch8.tour_done'), ev('service', 3), ev('teamwork', 1)], view: PV(['sawada'], '11:30 説明会') });
+  line('ch8.p_sil_1', [
+    ['player', '（止めるか。続けるか。あの電池のことか。…口が、動かない）'],
+    ['sawada', '（小声で）…動けますか。動けないなら、私が。']
+  ], 'ch8.p_sil_2', { view: PV(['sawada', 'nomura'], '10:52 説明会') });
+  line('ch8.p_sil_2', [
+    '沢田が、説明を中断して、後ろの席へ歩いていく。会場が、ざわめく。',
+    ['sawada', '電池の交換を。少し、休憩にします。…（小声で）次は、あなたが。']
+  ], 'ch8.p_sil_3', { effects: [rel('sawada', -1, 0)], view: PV(['sawada', 'nomura'], '10:56 説明会') });
+  line('ch8.p_sil_3', [
+    ['sawada', '席の入れ替えに手間取りました。後半のバリアフリーの説明は、短縮させてください。'],
+    '決めなかった時間の分だけ、誰かの話が、削れた。'
+  ], 'ch8.p_end_in', { effects: [set('ch8.elder_late'), set('ch8.tour_cut'), { lock: { id: 'ch8.cab_visit', note: '後半の説明は、短縮された' } }, set('ch8.cab_locked'), set('ch8.tour_done')], view: PV(['sawada'], '11:10 説明会') });
   line('ch8.p_pause_1', [
     ['player', '沢田さん、五分、休憩を。後ろの席に、聞こえにくい方が。'],
     ['sawada', '…分かった。皆さん、五分休憩です。お茶をどうぞ。'],
@@ -547,7 +695,7 @@ export default function ch8(k) {
   ], 'ch8.p_resume_b', { effects: [ev('service', 3), rel('nomura', 2, 3), rel('sawada', 1, 2)], view: PV(['nomura', 'sawada'], '11:02 説明会') });
   branch('ch8.p_resume_b', [[F('ch8.route_ok'), 'ch8.p_resume_y']], 'ch8.p_resume_n');
   line('ch8.p_resume_y', [['sawada', '動線を整えておいたので、休憩中の移動がスムーズでした。残りは詰められます。']], 'ch8.p_end_in', { effects: [set('ch8.tour_done'), ev('accuracy', 1)], view: PV(['sawada'], '11:10 説明会') });
-  line('ch8.p_resume_n', [['sawada', '席の入れ替えに手間取りました。後半のバリアフリーの説明は、短縮させてください。']], 'ch8.p_end_in', { effects: [set('ch8.tour_cut')], view: PV(['sawada'], '11:10 説明会') });
+  line('ch8.p_resume_n', [['sawada', '席の入れ替えに手間取りました。後半のバリアフリーの説明は、短縮させてください。']], 'ch8.p_end_in', { effects: [set('ch8.tour_cut'), { lock: { id: 'ch8.cab_visit', note: '後半の説明は、短縮された' } }, set('ch8.cab_locked')], view: PV(['sawada'], '11:10 説明会') });
   line('ch8.p_keep_1', [
     ['player', '（予定どおり。終わったら、個別にお話しすればいい）'],
     '説明は順調に進んだ。質問も出て、答えも返った。後ろの席で、野村さんだけが、同じ姿勢のまま、うなずき続けていた。',
@@ -561,15 +709,17 @@ export default function ch8(k) {
     ['player', '…気づけなくて、すみません。'],
     ['kajiwara', 'あの人が言わなかったの。…でも、気づいてほしかった気持ちも、あったかもね。', 'worry'],
     '空いた席に、運賃表のパンフレット。付箋に「ここ、読んで」と書いたまま、剥がれかけていた。'
-  ], 'ch8.p_end_in', { effects: [set('ch8.hat_left')], view: PV(['kajiwara'], '11:30 説明会 後方') });
+  ], 'ch8.p_end_in', { effects: [set('ch8.hat_left'), set('ch8.nomura_gone'), { depart: { char: 'nomura', note: '野村さんは、説明会にも、駅にも、来なくなった。付箋だけが残った' } }], view: PV(['kajiwara'], '11:30 説明会 後方') });
   line('ch8.p_end_in', [
     '11時35分。子どもたちの質問の時間。',
     ['hinata', 'どうして、せつめいは、むずかしい言葉に、するの？']
   ], 'ch8.p_hi_choice', { effects: [{ clock: { minute: hm(11, 35) } }], view: PV(['hinata'], '11:35 説明会') });
   choice('ch8.p_hi_choice', 'ひなたさんに、どう答える？', [
-    opt('honest', '「ごめんね。やさしい言葉で言えたらいいんだ。がんばるよ」と答える', 'ch8.p_hi_a', { tone: 'honest', effects: [{ var: { key: 'ch8.listen', add: 2 } }] }),
-    opt('ask', '「ひなたさんは、どう言ってもらったら、わかりやすい？」と聞き返す', 'ch8.p_hi_b', { tone: 'caring', effects: [{ var: { key: 'ch8.listen', add: 2 } }, rel('hinata', 1, 3)] })
-  ], { view: PV(['hinata']) });
+    opt('honest', '「ごめんね。やさしい言葉で言えたらいいんだ。がんばるよ」と答える', 'ch8.p_hi_a', { tone: 'honest', effects: [set('ch8.hi_honest'), { var: { key: 'ch8.listen', add: 2 } }] }),
+    opt('ask', '「ひなたさんは、どう言ってもらったら、わかりやすい？」と聞き返す', 'ch8.p_hi_b', { tone: 'caring', effects: [set('ch8.hi_ask'), { var: { key: 'ch8.listen', add: 2 } }, rel('hinata', 1, 3)] }),
+    opt('silent', '（答えが、見つからない）', 'ch8.p_hi_s', { tone: 'neutral', effects: [set('ch8.hi_silent')] })
+  ], { timeLimit: 20, defaultOption: 'silent', view: PV(['hinata']) });
+  line('ch8.p_hi_s', [['hinata', '…。（うつむいて、団扇の端を、ぎゅっと握る）'], ['wakabayashi', 'ひなたさん、行きましょう。…駅員さん、ありがとうございました。']], 'ch8.p_done', { effects: [rel('hinata', 0, -1)], view: PV(['hinata'], '11:38 説明会') });
   line('ch8.p_hi_a', [['player', '大人が、慣れちゃってるだけなんだ。これから、やさしい言葉で言う。'], ['hinata', 'うん！ まってる！', 'smile'], ['sawada', '（そっと）手厳しい先生が、一人増えましたね。']], 'ch8.p_done', { effects: [ev('service', 1)], view: PV(['hinata'], '11:38 説明会') });
   line('ch8.p_hi_b', [['hinata', '「あしたの、あさ、なんじ」って、はっきり言うとわかりやすい。'], ['player', '「いつ」を、はっきり言う。次の説明会で使わせてもらうよ。', 'smile'], ['hinata', 'やくそくだよ！']], 'ch8.p_done', { effects: [ev('service', 2)], view: PV(['hinata'], '11:38 説明会') });
   fx('ch8.p_done', [set('ch8.route_done_planning'), tl('9月15日 地域向け説明会で、聞き取れない人の声に向き合った'), log('地域向け説明会を終える', 'work'), { clock: { minute: hm(12, 20) } }], 'ch8.after');
@@ -582,31 +732,70 @@ export default function ch8(k) {
     ['kubota', 'お疲れさまでした。同時に二つ受けるのは、簡単じゃなかったでしょう。'],
     ['shiraishi', '梶原さんが、ロビーで待っている。報告は、そのあとだ。']
   ], 'ch8.af_e', { view: OV(['shiraishi', 'kubota'], '12:20 駅事務室') });
-  branch('ch8.af_e', [[F('ch8.elder_helped'), 'ch8.af_help']], 'ch8.af_miss');
+  branch('ch8.af_e', [[F('ch8.elder_helped'), 'ch8.af_help'], [F('ch8.elder_late'), 'ch8.af_late']], 'ch8.af_miss');
   line('ch8.af_help', [
     ['kajiwara', '野村さん、帰りにうちへ電話くれたのよ。「若い駅員に、助けてもらった」って。', 'smile'],
     ['kajiwara', 'あの人が「助けてもらった」なんて言うの、四十年近く近所にいて、初めて。'],
     ['player', '気になって、足が動いただけです。'],
     ['kajiwara', 'それが一番難しいの。…これ、庭の柿。駅長さん、今日は特別、いいでしょう？'],
     ['shiraishi', '…今日は、いただこう。']
-  ], 'ch8.af_t', { effects: [rel('kajiwara', 2, 3), rel('nomura', 1, 2), tl('9月15日 野村さんが「助けてもらった」と話してくれた')], view: OV(['kajiwara', 'shiraishi'], '12:25 駅事務室') });
+  ], 'ch8.af_kr', { effects: [rel('kajiwara', 2, 3), rel('nomura', 1, 2), tl('9月15日 野村さんが「助けてもらった」と話してくれた')], view: OV(['kajiwara', 'shiraishi'], '12:25 駅事務室') });
+  line('ch8.af_late', [
+    ['kajiwara', '野村さん、帰りに電話をくれたのよ。「助けてもらった。でも、遅かった」って。', 'worry'],
+    ['player', '…遅くて、すみません。'],
+    ['kajiwara', 'あの人が、人に「遅かった」と言ったの、初めて。言えるようになったのよ。…次は、早く、ね。']
+  ], 'ch8.af_kr', { effects: [rel('kajiwara', 1, 2), tl('9月15日 野村さんの異変に、遅れて気づいた。「遅かった」と言ってもらえた')], view: OV(['kajiwara'], '12:25 駅事務室') });
   line('ch8.af_miss', [
-    ['kajiwara', '野村さん、先に帰ったのよ。ご存じ？'],
+    ['kajiwara', '野村さん、来週から、水曜の通院を、別の駅に変えるんですって。さっき、電話で。それだけ。'],
     ['player', '…気づくのが、遅くて。'],
-    ['kajiwara', '責めてないの。あの人は「いいよ」としか言えない人。…本当は「いいよ、じゃないでしょう」って、誰かに言ってほしい人なのよ。', 'worry'],
-    ['kajiwara', 'これ、あの人の忘れ物。次に来たとき、直接、渡してあげて。'],
-    ['player', '必ず。次は、聞き逃しません。']
-  ], 'ch8.af_t', { effects: [rel('kajiwara', 1, 2), tl('9月15日 野村さんの異変に気づけなかった。忘れ物の預かり')], view: OV(['kajiwara'], '12:25 駅事務室') });
+    ['kajiwara', '責めてないの。「いいよ」の一言で、片づけようとする人だから。…本当は「いいよ、じゃないでしょう」って、誰かに言ってほしい人なのよ。', 'worry'],
+    ['kajiwara', '帽子の預かり先は、あの人の家。住所は、聞いてあるわ。送るなら、今のうちよ。'],
+    ['player', '…必ず。次は、聞き逃しません。']
+  ], 'ch8.af_kr', { effects: [rel('kajiwara', 1, 2), tl('9月15日 野村さんの異変に気づけなかった。野村さんは、通院の駅を変えた')], view: OV(['kajiwara'], '12:25 駅事務室') });
+  // 関係値が深いと、梶原さんは、帽子の由来を話す
+  branch('ch8.af_kr', [[RL('kajiwara', 'rapport', '>=', 6), 'ch8.af_kr_y']], 'ch8.af_t');
+  line('ch8.af_kr_y', [
+    ['kajiwara', '…野村さんの作業帽ね。内側の「野村」の糸は、奥さんの字なの。'],
+    ['kajiwara', '「いいよ」しか言わなくなったのは、奥さんが亡くなってから。…誰かに頼ると、思い出すんでしょうね。'],
+    '湯呑みの湯気が、少しの間、二人の間に立っていた。'
+  ], 'ch8.af_t', { effects: [set('ch8.hat_story')], view: OV(['kajiwara'], '12:28 駅事務室') });
   branch('ch8.af_t', [[F('ch8.tour_done'), 'ch8.af_tour']], 'ch8.af_cut');
   line('ch8.af_tour', [
-    ['wakabayashi', '（電話）若林です。帰りのバスで、子どもたち、ずっと駅員さんの話を。'],
-    ['wakabayashi', 'ひなたさんが「ありがとうより、気づくことが、だいじなんだよ」と。…何か、おっしゃいました？'],
-    ['player', '…いえ。本当のことを、話しただけです。']
-  ], 'ch8.af_r', { effects: [ev('service', 2), rel('wakabayashi', 1, 2)], view: OV(['shiraishi'], '12:35 電話') });
+    ['wakabayashi', '（電話）若林です。見学、予定どおりに終えられました。ありがとうございました。'],
+    ['player', '…いえ。こちらこそ。']
+  ], 'ch8.af_hi0', { effects: [ev('service', 2), rel('wakabayashi', 1, 2)], view: OV(['shiraishi'], '12:35 電話') });
   line('ch8.af_cut', [
     ['wakabayashi', '（電話）若林です。全部は見られませんでしたが、子どもたちは「次は全部見たい」と。'],
     ['player', '…もちろんです。次は、全部、お見せします。']
-  ], 'ch8.af_r', { effects: [ev('service', 1)], view: OV(['shiraishi'], '12:35 電話') });
+  ], 'ch8.af_hi0', { effects: [ev('service', 1)], view: OV(['shiraishi'], '12:35 電話') });
+  // 子どもたちの帰りのバスと、人々の反応（選んだ答え・伝えたことが、人の口から戻ってくる）
+  chain('ch8.af_hi', 'ch8.af_wk', [
+    [F('ch8.hi_today'), [['wakabayashi', 'ひなたさんが、バスで「ありがとうより、気づくことが、だいじなんだよ」と。…何か、おっしゃいました？'], ['player', '…いえ。本当のことを、話しただけです。']]],
+    [F('ch8.hi_general'), [['wakabayashi', 'ひなたさんが、「えがおって、かっこいい」と、バスでずっと。…大地くんは、「ぼくも駅員になる」と。']]],
+    [F('ch8.hi_ask'), [['wakabayashi', 'ひなたさん、帰りのバスで、お母さんへの手紙を、書き始めました。「おべんとう、ありがとう」と。…聞かれたから、書けたそうです。', 'smile']]],
+    [F('ch8.hi_honest'), [['wakabayashi', 'ひなたさんが、「うそを言わない人だった」と。…何を、お話しされたんですか。']]],
+    [F('ch8.hi_silent'), [['wakabayashi', 'ひなたさん、帰りのバスで、少し静かでした。…何か、聞いてほしかったことが、あったのかもしれません。', 'worry']]],
+    [F('ch8.focus_safety'), [['wakabayashi', '子どもたち、「黄色い線の内側」を、帰りのバスで合唱していました。…安全が、歌になりました。']]],
+    [F('ch8.focus_people'), [['wakabayashi', '大地くんが、「こまってる人を、さがす仕事」と、何度も。先生より、上手に言いますよ。']]],
+    [F('ch8.focus_machine'), [['wakabayashi', '運転台や仕組みの話ばかりで、美緒さんは、うとうとしていましたが…「ブレーキの音」だけは、覚えていました。']]],
+    [F('ch8.cab_locked'), [['wakabayashi', '見られなかった場所を、大地くんが、毎日、鉛筆で描いています。…来年は、必ず、伺います。']]],
+    [F('ch7.note_proc'), [['shiraishi', '夏の記録に、「手順」と書いたな。今朝の段取りは、あの紙を、写したそうだ。']]],
+    [F('ch7.note_limit'), [['shiraishi', '夏の記録に、「目安を数字で」と書いたな。今朝の見学も、「十時、十時半、十一時」と、時刻で切ってあった。']]],
+    [F('ch7.note_care'), [['shiraishi', '夏の記録に、「外で待つ人と、働く人の体調」と書いたな。今朝、君が、水を一本、多く持っていたのを見た。']]],
+    [F('ch8.nomura_stung'), [['tachibana', '（電話）野村さん、帰りに零していた。「OBを、客扱いするな」と。…分かる奴にだけ、分かる。']]],
+    [F('ch8.tachi_stepped'), [['tachibana', '（電話）あの時、黙ったな。…次は、お前の声で止めろ。']]],
+    [F('ch8.x_kaji'), [['hamaguchi', '（電話）梶原さんに頼んだ件。本当に、「いいよ、じゃない」と叱ったそうよ。…人選も、判断のうち。']]],
+    [F('ch8.x_chief'), [['hamaguchi', '（電話）駅長に頼んだ件。野村さんは、「大げさだ」と怒っていたそうよ。…動かす人は、動かされる人の気持ちも見て。']]],
+    [F('ch8.p_quiet'), [['sawada', '（電話）沢田です。止めずに、電池を渡した件。…聞いてくれた人の動きは、速い。次の資料に、「聞こえない人の席」を作ります。']]],
+    [F('ch8.mio_heard'), [['sawada', '（電話）美緒さんの一言、拾ってくれてありがとう。あの子は、来年も、小さな声で、正しいことを言います。']]]
+  ], OV(['shiraishi'], '12:38 電話'));
+  // 関係値で開く話：先生が、来年の約束を持ち出す
+  branch('ch8.af_wk', [[RL('wakabayashi', 'trust', '>=', 2), 'ch8.af_wk_y']], 'ch8.af_r');
+  line('ch8.af_wk_y', [
+    ['wakabayashi', '（電話）それと。来年も、お願いしたいんです。三年生が四年生になった時、「あの駅員さん、まだいる？」と、聞かれる気がして。'],
+    ['player', '…います。どこの持ち場にいても、水曜の午前は、空けておきます。', 'smile']
+  ], 'ch8.af_r', { effects: [set('ch8.school_invite')], view: OV(['shiraishi'], '12:42 電話') });
+
   branch('ch8.af_r', [[F('ch8.route_done_depot'), 'ch8.af_rd'], [F('ch8.route_done_dispatch'), 'ch8.af_rx'], [F('ch8.route_done_planning'), 'ch8.af_rp']], 'ch8.af_rs');
   line('ch8.af_rs', [['kubota', '駅は、今日みたいな日の、いちばん前に立つ場所です。声を拾うのは、ここから始まります。']], 'ch8.af_p', { view: OV(['kubota']) });
   line('ch8.af_rd', [['tachibana', '（電話）橘だ。基地の人間は、機械の音ばかり聞く。人の音を忘れがちだ。今日は、君がいて助かった。']], 'ch8.af_p', { effects: [rel('tachibana', 1, 2)], view: DV(['tachibana'], '12:40 電話') });
@@ -632,4 +821,5 @@ export default function ch8(k) {
   N['ch8.end'] = { id: 'ch8.end', type: 'end', chapter: 'ch8', title: '第8章 ホームの声', nextChapter: 'ch9',
     summary: '子どもたちの質問と、高齢の常連の小さな異変が重なった一日。足を止めたか、段取りを守ったか。拾えた声と拾えなかった声が、これからの駅員としての形を作っていく。',
     effects: [tl('9月15日 ホームの声を聞く一日を終える'), log('第8章を終了', 'chapter')] };
+  k.shuffleCompose('ch8.');
 }
