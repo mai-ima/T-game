@@ -64,6 +64,7 @@ export function GameScreen({ c, onExit }: { c: GameController; onExit: () => voi
       {(!stage || c.story.persistentHud) && <Hud c={c} onExit={onExit} />}
       {hub && !c.panel && <HubControls c={c} />}
       {v?.kind === 'line' && <DialogueBox c={c} />}
+      <TitleCard c={c} />
       {v?.kind === 'choice' && <ChoiceBox c={c} />}
       {v?.kind === 'task' && <TaskHost c={c} />}
       {c.endResult && v?.kind === 'end' && <ChapterEnd c={c} onExit={onExit} />}
@@ -129,6 +130,15 @@ function HubControls({ c }: { c: GameController }) {
   );
 }
 
+/** 章の始まりに出す題字。タップで閉じる。動きを減らす設定では静止表示。 */
+function TitleCard({ c }: { c: GameController }) {
+  const id = c.view && 'node' in c.view ? c.view.node.id : ''; const m = /^(ch\d+)\.open$/.exec(id); const key = m ? m[1] : null;
+  const [shown, setShown] = useState<string | null>(null);
+  useEffect(() => { if (!key) return; setShown(key); const t = window.setTimeout(() => setShown(null), 2800); return () => clearTimeout(t); }, [key]);
+  if (!key || shown !== key) return null; const meta = c.story.chapters.find(x => x.id === key); if (!meta) return null;
+  return <div className="title-card" onClick={() => setShown(null)} role="presentation"><div className="tc-no">第{key.slice(2)}章</div><div className="tc-name">{meta.title}</div><i className="tc-line" /></div>;
+}
+
 function StageView({ c }: { c: GameController }) {
   const v = c.view!; if (v.kind === 'hub') return null; const h = v.node.view!; const line = v.kind === 'line' ? v.node.lines[c.lineIndex] : null;
   return <Stage25D bg={h.bg ?? 'office'} cast={h.focus ?? []} speaker={line?.who ?? (v.kind === 'choice' ? v.node.who : undefined)} characters={c.story.characters} caption={h.caption} mood={line?.mood} tod={todOf(c.world.clock.minute)} cinema={v.kind === 'choice' && !!v.node.important} sceneKey={v.node.id.split('.').slice(0, 2).join('.')} />;
@@ -161,10 +171,11 @@ function ChoiceBox({ c }: { c: GameController }) {
   const v = c.view; if (v?.kind !== 'choice') return null;
   const left = c.choiceDeadline ? Math.max(0, (c.choiceDeadline - now) / 1000) : null;
   return (
-    <div className="choice" data-ui role="dialog" aria-label="選択">
+    <div className={'choice' + (left !== null && left <= 5 ? ' urgent' : '')} data-ui role="dialog" aria-label="選択">
+      {left !== null && left <= 5 && <div className="tension" aria-hidden />}
       <div className="choice-in">
         <div className="choice-q">{v.node.important && <span className="imp">重要な選択</span>}{c.textWorld(v.node.prompt)}</div>
-        {left !== null && <div><div className="timer" aria-label="残り時間"><i style={{ width: (left / c.choiceTotal) * 100 + '%' }} /></div><div className="small">残り {Math.ceil(left)} 秒（時間切れは「{c.textWorld(v.node.options.find(o => o.id === v.node.defaultOption)?.label ?? '')}」）</div></div>}
+        {left !== null && <div className="tring"><svg viewBox="0 0 44 44" width="44" height="44" aria-label={'残り' + Math.ceil(left) + '秒'}><circle cx="22" cy="22" r="19" className="bg" /><circle cx="22" cy="22" r="19" className="fg" strokeDasharray={119.4} strokeDashoffset={119.4 * (1 - left / c.choiceTotal)} /></svg><b>{Math.ceil(left)}</b><span className="small">時間切れは「{c.textWorld(v.node.options.find(o => o.id === v.node.defaultOption)?.label ?? '')}」</span></div>}
         {v.options.map((o, i) => <button key={o.id} className="choice-opt" onClick={() => c.choose(o.id)}><span className="n">{i + 1}</span><span>{c.textWorld(o.label)}{o.hint && <div className="small">{o.hint}</div>}</span></button>)}
       </div>
     </div>

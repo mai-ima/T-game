@@ -1,108 +1,38 @@
 {
- "generated": "2026-11-28T08:39:29.220Z",
+ "generated": "2026-11-28T08:42:58.360Z",
  "models": {
   "human": {
    "top": [
     [
      "TorsoParts_Uniform",
-     3424
+     2272
     ],
     [
      "HeadParts_Skin",
-     2192
-    ],
-    [
-     "HairLongTop",
-     800
-    ],
-    [
-     "HairShortMesh",
-     720
-    ],
-    [
-     "HairBunTop",
-     720
-    ],
-    [
-     "ForearmParts_Skin",
-     636
-    ],
-    [
-     "ForearmParts_Skin",
-     636
-    ]
-   ],
-   "tris": 21528,
-   "meshes": 65,
-   "materials": [
-    "Uniform",
-    "Shirt",
-    "Brass",
-    "Black",
-    "NameTag",
-    "Tie",
-    "Skin",
-    "EyeWhite",
-    "Iris",
-    "Hair",
-    "Lip",
-    "MouthDark",
-    "Accessory",
-    "Trousers",
-    "Shoes",
-    "Sole",
-    "BagLeather",
-    "CaneWood",
-    "CaneWood2",
-    "SuitcaseShell",
-    "SuitcaseHandle"
-   ],
-   "size": [
-    0.994,
-    1.756,
-    0.38
-   ],
-   "center": [
-    0.223,
-    0.878,
-    0.03
-   ],
-   "named": 91,
-   "glbKB": 251,
-   "rawKB": 745
-  },
-  "human_lo": {
-   "top": [
-    [
-     "TorsoParts_Uniform",
-     1656
-    ],
-    [
-     "HeadParts_Skin",
-     1112
+     1668
     ],
     [
      "TorsoParts_Brass",
-     504
+     552
     ],
     [
-     "HeadParts_EyeWhite",
-     432
+     "HairShortMesh",
+     392
     ],
     [
-     "HeadParts_Black",
+     "HairLongTop",
+     392
+    ],
+    [
+     "HairBunTop",
+     392
+    ],
+    [
+     "ArmParts_Uniform",
      352
-    ],
-    [
-     "ArmParts_Uniform",
-     312
-    ],
-    [
-     "ArmParts_Uniform",
-     312
     ]
    ],
-   "tris": 12348,
+   "tris": 15576,
    "meshes": 65,
    "materials": [
     "Uniform",
@@ -129,17 +59,87 @@
    ],
    "size": [
     0.993,
-    1.756,
+    1.767,
     0.38
    ],
    "center": [
     0.223,
-    0.878,
+    0.884,
     0.03
    ],
    "named": 91,
-   "glbKB": 207,
-   "rawKB": 529
+   "glbKB": 221,
+   "rawKB": 611
+  },
+  "human_lo": {
+   "top": [
+    [
+     "TorsoParts_Uniform",
+     1224
+    ],
+    [
+     "HeadParts_Skin",
+     908
+    ],
+    [
+     "TorsoParts_Brass",
+     504
+    ],
+    [
+     "CaseShell",
+     300
+    ],
+    [
+     "HeadParts_EyeWhite",
+     280
+    ],
+    [
+     "HeadParts_Black",
+     264
+    ],
+    [
+     "ArmParts_Uniform",
+     264
+    ]
+   ],
+   "tris": 10696,
+   "meshes": 65,
+   "materials": [
+    "Uniform",
+    "Shirt",
+    "Brass",
+    "Black",
+    "NameTag",
+    "Tie",
+    "Skin",
+    "EyeWhite",
+    "Iris",
+    "Hair",
+    "Lip",
+    "MouthDark",
+    "Accessory",
+    "Trousers",
+    "Shoes",
+    "Sole",
+    "BagLeather",
+    "CaneWood",
+    "CaneWood2",
+    "SuitcaseShell",
+    "SuitcaseHandle"
+   ],
+   "size": [
+    0.993,
+    1.767,
+    0.38
+   ],
+   "center": [
+    0.223,
+    0.884,
+    0.03
+   ],
+   "named": 91,
+   "glbKB": 197,
+   "rawKB": 494
   }
  }
 }
