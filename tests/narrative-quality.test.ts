@@ -31,7 +31,7 @@ export function measure(S: StoryData) {
 }
 
 // ラチェット：現状の値。改善したら、この数値を必ず下げる（上げてはならない）。
-const CEILING = { R7: { deadShare: 0.34, quickMergeShare: 0.82, neverReadShare: 0.55 }, R8: { deadShare: 0.56, quickMergeShare: 1.0, neverReadShare: 0.60 } } as const;
+const CEILING = { R7: { deadShare: 0.33, quickMergeShare: 0.73, neverReadShare: 0.39 }, R8: { deadShare: 0.56, quickMergeShare: 1.0, neverReadShare: 0.60 } } as const;
 // 目標（Detroit級に向けた到達基準）。まだ満たしていない。満たしたら CEILING をここまで引き下げる。
 export const TARGET = { deadShare: 0.1, quickMergeShare: 0.25, neverReadShare: 0.15, timedMin: 12 };
 
