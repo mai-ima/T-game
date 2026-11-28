@@ -1,12 +1,19 @@
 # PROGRESS — セッション引継ぎ
 
-最終更新：2026-11-23
+最終更新：2026-11-28
 
 - 状態：**IN PROGRESS**（R7第1〜10章とR8第1章は実装済み。総合監査は再実行待ち。全体の1%程度であり、完成ではない）
 - ブランチ：`claude/determined-babbage-4drhs6`（pushは開発ブランチのみ。main直push・force push禁止）
 - ビルド：`npx vite build` OK、`npm run check`（tsc／ESLint／madge／vitest 56件）PASS
 - iPhone実機：UNVERIFIED／実機の音・FPS・発熱：UNVERIFIED／ESLint導入済み（0エラー）
 - Artifact：ユーザー判断により**試作の公開は不要**（DEC-012）。`artifact/index.html` は生成のみ維持。Vercelは使わない
+
+## 直近の更新（2026-11-28）
+- 分岐の基盤を作り直し：`docs/DESIGN_PRINCIPLES.md`（原則・測定目標）、効果 `depart`/`lock`、条件 `gone`/`locked`、品質ゲート `tests/narrative-quality.test.ts`（CEILINGは下げる一方）。
+- R7第2〜10章を story-architect で書き直して統合（採点講評の撤去、rel条件、時限選択25個、取り返しのつかない変化、3Dハブの復活）。引き継ぎフラグは `docs/analysis/handoff-ch*.md`。目標値（dead≤10%、3ノード合流≤25%、未読≤15%）は未達（UNVERIFIED：実プレイ未実施）。
+- 演出：立ち絵のまばたき・呼吸・口パク、2D場面の時間帯の色味、句読点の間、時限選択のリング、章の題字カード。3D：最高品質でGTAO・Bloom。
+- 3Dモデル（人物GLB・駅の素材）は担当エージェントが作業中（RRR-3D-001）。
+- 整理：生成物 `audit/models`・`audit/shots` を追跡から外した。`scripts/dev/README.md`、`docs/README.md` を追加。
 
 ## 今回までの成果（実装済み）
 14モードメニュー（R7・R8がプレイ可）／共通エンジン（条件・効果・保存・キャリア）／R7第1〜10章（約1,800ノード。第1章は34依頼・6種のミニゲーム、第3章以降は永続ルート分岐、第7〜10章は希望部署ごとに別の中盤）、R8第1章／3D駅（GLBモデル、改札・扉・事務室）／3D・擬似3D・2D切替／2Dピクセル会話／BGM・効果音／スマホHUD・目的地ナビ。
